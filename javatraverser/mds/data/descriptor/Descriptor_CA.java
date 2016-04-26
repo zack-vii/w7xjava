@@ -2,7 +2,6 @@ package mds.data.descriptor;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import mds.MdsException;
 import mds.mdsip.Message;
 
 /** Compressed Array Descriptor **/
@@ -171,12 +170,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
 
     @Override
     public final String decompile() {
-        if(this.payload == null) try{
-            final Descriptor_S d = Descriptor_S.deserialize(this.b);
-            return d.decompile();
-        }catch(final Exception e){
-            return "<" + e.getMessage() + ">";
-        }
+        if(this.payload == null) return new StringBuffer(64).append("ZERO(").append(this.arsize / this.length).append(", 0").append(DTYPE.getSuffix(this.dtype)).append(')').toString();
         try{
             return Descriptor_CA.mdsXpand(this.arsize / this.length, (ARRAY)this.payload.dscptrs[3], this, 0).decompile();
         }catch(final Exception e){
@@ -217,14 +211,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
 
     @Override
     public final String toString() {
-        if(this.payload == null){
-            try{
-                this.payload = Descriptor_R.deserialize(this.b);
-                return this.payload.decompile();
-            }catch(final MdsException e){
-                return "<" + e.getMessage() + ">";
-            }
-        }
+        if(this.payload == null) return new StringBuffer(64).append("ZERO(").append(this.arsize / this.length).append(", 0").append(DTYPE.getSuffix(this.dtype)).append(')').toString();
         try{
             return Descriptor_CA.mdsXpand(this.arsize / this.length, (ARRAY)this.payload.dscptrs[3], this, 0).toString();
         }catch(final Exception e){
