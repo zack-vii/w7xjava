@@ -103,7 +103,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
             case DTYPE.MISSING:
                 return new EmptyArray(b);
         }
-        throw new MdsException(String.format("Unsupported dtype %d for class %d", Byte.toUnsignedInt(b.get(Descriptor._typB)), Byte.toUnsignedInt(b.get(Descriptor._clsB))), 0);
+        throw new MdsException(String.format("Unsupported dtype %s for class %s", Descriptor.getDTypeName(b.get(Descriptor._typB)), Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
 
     public static final Descriptor_A readMessage(final Message msg) throws MdsException {

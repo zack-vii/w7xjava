@@ -77,7 +77,7 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
             case DTYPE.SLOPE:
                 return new Slope(b);
         }
-        throw new MdsException(String.format("Unsupported dtype %d for class %d", Byte.toUnsignedInt(b.get(Descriptor._typB)), Byte.toUnsignedInt(b.get(Descriptor._clsB))), 0);
+        throw new MdsException(String.format("Unsupported dtype %s for class %s", Descriptor.getDTypeName(b.get(Descriptor._typB)), Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
     public final Descriptor[] dscptrs;
     public final byte         ndesc;

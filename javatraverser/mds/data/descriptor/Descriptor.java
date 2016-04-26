@@ -54,7 +54,7 @@ public abstract class Descriptor<T>{
             case Descriptor_XS.CLASS:
                 return Descriptor_XS.deserialize(b);
         }
-        throw new MdsException(String.format("Unsupported class %d", Byte.toUnsignedInt(b.get(Descriptor._clsB))), 0);
+        throw new MdsException(String.format("Unsupported class %s", Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
 
     public static final int getDataSize(final byte type, final byte[] body) {
