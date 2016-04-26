@@ -25,7 +25,7 @@ import mds.data.descriptor_s.Uint64;
 import mds.data.descriptor_s.Uint8;
 import mds.mdsip.Message;
 
-/** Fixed-Length (static) Descriptor **/
+/** Fixed-Length (static) Descriptor (1) **/
 @SuppressWarnings("deprecation")
 public abstract class Descriptor_S<T>extends Descriptor<T>{
     public static final byte     CLASS    = 1;

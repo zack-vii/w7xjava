@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import mds.mdsip.Message;
 
-/** Compressed Array Descriptor **/
+/** Compressed Array Descriptor (-61 : 195) **/
 public class Descriptor_CA extends ARRAY<ByteBuffer>{
     public static final byte CLASS = -61;// 195
 

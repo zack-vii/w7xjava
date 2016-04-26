@@ -3,9 +3,7 @@ package mds.data.descriptor;
 import java.nio.ByteBuffer;
 import mds.MdsException;
 
-/*
- * Array Descriptor
- */
+/** Array of Descriptor (-60 : 196) **/
 public class Descriptor_APD extends Descriptor_A<Descriptor>{
     public static final byte   CLASS = -60;
     public static final String name  = "APD";

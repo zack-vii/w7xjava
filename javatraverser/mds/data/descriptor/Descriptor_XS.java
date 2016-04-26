@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.mdsip.Message;
 
+/** XS (-63 : 193) **/
 public class Descriptor_XS extends Descriptor<Descriptor>{
     public static final int  _l_len = 8;
     public static final int  BYTES  = 12;

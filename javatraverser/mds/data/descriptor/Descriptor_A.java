@@ -22,7 +22,7 @@ import mds.data.descriptor_a.Uint64Array;
 import mds.data.descriptor_a.Uint8Array;
 import mds.mdsip.Message;
 
-/** Array Descriptor **/
+/** Array Descriptor (4) **/
 public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     private final class AStringBuilder{
         private int                 i  = 0;

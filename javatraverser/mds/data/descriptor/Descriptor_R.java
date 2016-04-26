@@ -24,9 +24,7 @@ import mds.data.descriptor_r.With_Error;
 import mds.data.descriptor_r.With_Units;
 import mds.mdsip.Message;
 
-/*
- * Fixed-Length (static) Descriptor
- */
+/** Fixed-Length (static) Descriptor (-62 : 194) **/
 @SuppressWarnings("deprecation")
 public class Descriptor_R<T extends Number>extends Descriptor<T>{
     public static final byte _dscoff = 12;

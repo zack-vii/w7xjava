@@ -8,6 +8,7 @@ import mds.data.descriptor_s.CString;
 import mds.mdsip.Connection;
 import mds.mdsip.Message;
 
+/** DSC (24) **/
 public abstract class Descriptor<T>{
     public static final int     _clsB    = 3;
     public static final int     _lenS    = 0;
