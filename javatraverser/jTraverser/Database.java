@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JOptionPane;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
@@ -167,7 +168,12 @@ public final class Database{
         int status = 0;
         if(this.isEditable()){
             status = Database.mds.getInteger(String.format("TreeShr->TreeOpenEdit(ref('%s'),val(%d))", this.expt, this.shot));
-            if((status & 1) == 0) status = Database.mds.getInteger(String.format("TreeShr->TreeOpenNew(ref('%s'),val(%d))", this.expt, this.shot));
+            if((status & 1) == 0){
+                final int n = JOptionPane.showConfirmDialog(null, "Tree " + this.expt + " cannot be opened in edit mode. Create new instead?", "Editing Tree ", JOptionPane.YES_NO_OPTION);
+                if(n == JOptionPane.YES_OPTION) this._open_new();
+                this.handleStatus(status);
+                return;
+            }
         }
         if((status & 1) == 0) status = Database.mds.getInteger(String.format("TreeShr->TreeOpen(ref('%s'),val(%d),val(%d))", this.expt, this.shot, this.isReadonly() ? 1 : 0));
         this.handleStatus(status);
@@ -176,8 +182,7 @@ public final class Database{
     }
 
     private final void _open_new() throws MdsException {
-        int status = Database.mds.getInteger(String.format("TreeShr->TreeOpenNew(ref('%s'),val(%d))", this.expt, this.shot));
-        if((status & 1) == 0) status = Database.mds.getInteger(String.format("TreeShr->TreeOpen(ref('%s'),val(%d),val(%d))", this.expt, this.shot, this.isReadonly() ? 1 : 0));
+        final int status = Database.mds.getInteger(String.format("TreeShr->TreeOpenNew(ref('%s'),val(%d))", this.expt, this.shot));
         this.handleStatus(status);
         this.is_open = true;
         Database.updateCurrent();
@@ -452,7 +457,7 @@ public final class Database{
 
     public final void renameNode(final Nid nid, final String name) throws MdsException {
         this._checkContext();
-        final int status = Database.mds.getInteger(String.format("TreeShr->TreeRenameNode(val(%d),ref('%s'))", nid.getValue(), name));
+        final int status = Database.mds.getInteger(new StringBuilder(256).append("TreeShr->TreeRenameNode(val(").append(nid.getValue()).append("),ref('").append(name.replace("\\", "\\\\")).append("'))").toString());
         this.handleStatus(status);
     }
 
@@ -473,7 +478,7 @@ public final class Database{
         this.saveContext();
         return success;
     }
-
+    
     private final boolean saveContext() throws MdsException {
         this.saveslot = 0;
         System.out.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));
@@ -537,7 +542,7 @@ public final class Database{
         for(int i = 0; i < nids.length; i++)
             nidnum[i] = nids[i].getValue();
         final String array = Arrays.toString(nidnum);
-        final int[] nid_nums = Database.mds.getIntegerArray(String.format("COMMA(_ans=%s,_ntd=0,FOR(_i=0;_i<%d;_i++)TreeShr->TreeDeleteNodeInitialize(val(_ans[_i]),ref(_ntd),val(_i==0)),_ans=ZERO(_ntd-=%d,0),FOR(_i=0;_i<_ntd;_i++)TreeShr->TreeDeleteNodeGetNid(ref(_ans[_i])),_ans)", array, nids.length, nids.length));
+        final int[] nid_nums = Database.mds.getIntegerArray(String.format("COMMA(_ans=%s,_ntd=0,FOR(_i=0,_i<1,_i++,TreeShr->TreeDeleteNodeInitialize(val(_ans[_i]),ref(_ntd),val(_i==0))),_ans=ZERO(_ntd-=1,0),FOR(_i=0,_i<_ntd,_i++,TreeShr->TreeDeleteNodeGetNid(ref(_ans[_i]))),_ans)", array, nids.length, nids.length));
         return Nid.getArrayOfNids(nid_nums);
     }
 

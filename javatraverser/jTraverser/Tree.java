@@ -253,7 +253,7 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     public Node addNode(final int usage, final String name, final Node toNode) {
         Node new_node;
         DefaultMutableTreeNode new_tree_node;
-        final DefaultMutableTreeNode toTreeNode = toNode.getTreeNode();
+        // final DefaultMutableTreeNode toTreeNode = toNode.getTreeNode();
         if(name == null || name.length() == 0 || name.length() > 12){
             JOptionPane.showMessageDialog(this.treeman.getFrame(), "Name length must range between 1 and 12 characters", "Error adding Node", JOptionPane.WARNING_MESSAGE);
             return null;
@@ -262,7 +262,7 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
             new_node = toNode.addNode(name, usage);
             new_tree_node = new DefaultMutableTreeNode(new_node);
             new_node.setTreeNode(new_tree_node);
-            this.addNodeToParent(new_tree_node, toTreeNode);
+            // this.addNodeToParent(new_tree_node, toTreeNode);
         }catch(final Exception e){
             JOptionPane.showMessageDialog(this.treeman.getFrame(), e.getMessage(), "Error adding Node", JOptionPane.WARNING_MESSAGE);
             return null;
