@@ -63,7 +63,7 @@ public class TreeNode extends JLabel{
                 else{
                     final Descriptor data = this.node.getData();
                     if(data == null) text = null;
-                    else text = data.toStringX().replace("\n", "<br>").replace("\t", "&nbsp&nbsp&nbsp&nbsp ");
+                    else text = data.toStringX().replace("<", "&lt;").replace(">", "&gt;").replace("\t", "&nbsp&nbsp&nbsp&nbsp ").replace("\n", "<br>");
                 }
             }catch(final MdsException e){
                 return e.toString();
