@@ -5,12 +5,16 @@ import java.nio.ByteBuffer;
 /** Array Descriptor **/
 public abstract class ARRAY<T>extends Descriptor<T>{
     public static final class aflags{
-        boolean            binscale = true; // if set, scale is a power-of-two, otherwise, -ten
-        boolean            bounds   = true; // if set, indicates the bounds block is present
-        public final short BYTES    = 8;
-        boolean            coeff    = true; // if set, indicates the multipliers block is present
-        boolean            column   = true; // if set, indicates column-major order (FORTRAN)
-        boolean            redim    = true; // if set, indicates the array can be re-dimensioned
+        /** if set, scale is a power-of-two, otherwise, -ten **/
+        boolean binscale = true;
+        /** if set, indicates the bounds block is present **/
+        boolean bounds   = true;
+        /** if set, indicates the multipliers block is present **/
+        boolean coeff    = true;
+        /** if set, indicates column-major order (FORTRAN) **/
+        boolean column   = true;
+        /** if set, indicates the array can be re-dimensioned **/
+        boolean redim    = true;
 
         public aflags(final boolean binscale, final boolean redim, final boolean column, final boolean coeff, final boolean bounds){
             this.binscale = binscale;
@@ -59,13 +63,21 @@ public abstract class ARRAY<T>extends Descriptor<T>{
     protected static final aflags f_bounds = new aflags(false, true, true, true, true);
     protected static final aflags f_coeff  = new aflags(false, true, true, true, false);
     public static final byte      MAX_DIM  = 8;
+    /** (16,i) a0 **/
     public final int              a0;
+    /** (10,b) array flags **/
     public final aflags           aflags;
+    /** (12,i) array size **/
     public final int              arsize;
+    /** (20+dimct*4,2i) bounds **/
     public final bounds[]         bounds;
+    /** (9,b) digits **/
     public final byte             digits;
+    /** (11,b) dim count **/
     public final byte             dimct;
+    /** (20,i) dimensions **/
     public final int[]            dims;
+    /** (8,b) scale **/
     public final byte             scale;
 
     public ARRAY(final byte dtype, final byte dclass, final byte[] buf, final int nelements){

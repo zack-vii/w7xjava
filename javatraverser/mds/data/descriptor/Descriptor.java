@@ -143,10 +143,14 @@ public abstract class Descriptor<T>{
         return t == null ? "*" : t.toString();
     }
     public final ByteBuffer b;
-    public final byte       dclass;  // descriptor class code
-    public final byte       dtype;   // data type code
-    public final short      length;  // specific to descriptor class; typically a 16-bit (unsigned) length
-    public final int        pointer; // address of first byte of data element 4bytes
+    /** (3,b) descriptor class code **/
+    public final byte       dclass;
+    /** (2,b) data type code **/
+    public final byte       dtype;
+    /** (0,s) specific length typically a 16-bit (unsigned) length **/
+    public final short      length;
+    /** (4,i) address of first byte of data element **/
+    public final int        pointer;
 
     public Descriptor(final ByteBuffer b){
         this.b = b.slice().order(b.order());
