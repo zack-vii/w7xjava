@@ -2,6 +2,9 @@ package mds.data.descriptor;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import jTraverser.Database;
+import mds.MdsException;
+import mds.data.descriptor_s.Nid;
 import mds.mdsip.Message;
 
 /** Compressed Array Descriptor (-61 : 195) **/
@@ -15,67 +18,83 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         return null;
     }
 
+    public static final void main(final String[] args) throws MdsException {// TODO: main
+        final Database db = new Database(null, "TEST", 1l, Database.NORMAL);
+        final Descriptor rec = db.getData(new Nid(9));
+        System.out.println(rec.decompile());
+        final int size = 31;
+        int full, max, mask;
+        full = 1 << size;
+        max = 1 << (size - 1);
+        mask = full - 1;
+        System.out.println(String.format("%x , %x , %x", full, mask, max));
+        System.out.println(String.format("%x", -1 >> 31));
+        System.exit(0);
+    }
+
     private static int MdsUnpk(final byte nbits, final int nitems, final ByteBuffer pack, final IntBuffer items, final int bit) {
         pack.position((bit >> 5) * Integer.BYTES);
         items.position(0);
-        int off = bit & 31;
         final int size = nbits >= 0 ? nbits : -nbits;
+        int off = bit & 31;
         final int test = 32 - size;
-        long hold, last;
-        final long mask = (1l << size) - 1l;
+        int hold, last;
+        // zero fill
+        if(size == 0) for(int i = 0; i < nitems; i++)
+            items.put(0);
         // 32-bit data
-        if(test == 0){
-            if((off & 31) == 0){
+        else if(test == 0){
+            if((off & 7) == 0){
                 int i;
                 pack.position(pack.position() + off >> 3);
                 for(i = 0; i < nitems; i++)
                     items.put(pack.getInt());
             }else{
-                last = pack.getInt() & 0xFFFFFFFFl;
+                last = pack.getInt();
                 for(int i = 0; i < nitems; i++){
                     hold = last >> off;
-                    last = pack.getInt() & 0xFFFFFFFFl;
+                    last = pack.getInt();
                     hold |= last << (32 - off);
-                    items.put((int)hold);
+                    items.put(hold);
                 }
             }
-        }else if(nbits < 0){ // sign extended
-            final long full = mask + 1, max = mask >> 1;
-            last = pack.getInt() & 0xFFFFFFFFl;
-            for(int i = 0; i < nitems; i++)
-                if(off >= test){
-                    hold = (int)(last >> off);
-                    last = pack.getInt() & 0xFFFFFFFFl;
-                    hold |= (last << (32 - off)) & mask;
-                    if(hold > max) hold -= full;
-                    items.put((int)hold);
-                    off -= test;
-                }else{
-                    hold = (last >> off) & mask;
-                    if(hold > max) hold -= full;
-                    items.put((int)hold);
-                    off += size;
-                }
+        }else{
+            final int full = 1 << size, max = 1 << (size - 1);
+            final int mask = full - 1;
+            if(nbits < 0){ // sign extended
+                last = pack.getInt();
+                for(int i = 0; i < nitems; i++)
+                    if(off >= test){
+                        hold = last >> off;
+                        last = pack.getInt();
+                        hold |= (last << (32 - off)) & mask;
+                        if(hold > max) hold -= full;
+                        items.put(hold);
+                        off -= test;
+                    }else{
+                        hold = (last >> off) & mask;
+                        if(hold > max) hold -= full;
+                        items.put(hold);
+                        off += size;
+                    }
+            }
+            // zero extended
+            else if(nbits > 0){
+                last = pack.getInt();
+                for(int i = 0; i < nitems; i++)
+                    if(off >= test){
+                        hold = last >> off;
+                        last = pack.getInt();
+                        hold |= (last << (32 - off)) & mask;
+                        items.put(hold);
+                        off -= test;
+                    }else{
+                        hold = (last >> off) & mask;
+                        items.put(hold);
+                        off += size;
+                    }
+            }
         }
-        // zero extended
-        else if(nbits > 0){
-            last = pack.getInt() & 0xFFFFFFFFl;
-            for(int i = 0; i < nitems; i++)
-                if(off >= test){
-                    hold = last >> off;
-                    last = pack.getInt() & 0xFFFFFFFFl;
-                    hold |= (last << (32 - off)) & mask;
-                    items.put((int)hold);
-                    off -= test;
-                }else{
-                    hold = (last >> off) & mask;
-                    items.put((int)hold);
-                    off += size;
-                }
-        }
-        // zero fill
-        else for(int i = 0; i < nitems; i++)
-            items.put(0);
         items.position(0);
         return bit + size * nitems;
     }
