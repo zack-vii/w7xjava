@@ -44,12 +44,12 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
             this.sb.append("[");
             int j = 0;
             final int len = this.shape[l - 1];
-            for(; j < len && j < 128 && this.i < 10000; j++){
+            for(; j < len && this.i < 1000; j++){
                 if(j > 0) this.sb.append(", ");
                 this.level(l - 1);
             }
             j = len - j;
-            if(j > 0 || this.i >= 10000) this.sb.append(",...(").append(len).append(')');
+            if(j > 0 || this.i >= 1000) this.sb.append(",...(").append(len).append(')');
             this.sb.append(']');
         }
 
@@ -249,9 +249,9 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
             final String[] dimstr = new String[this.dims.length];
             for(int i = 0; i < dimstr.length; i++)
                 dimstr[i] = Integer.toString(this.dims[i]);
-            size = String.join("x", dimstr);
+            size = String.join(",", dimstr);
         }
-        return new StringBuilder(256).append(this.getDName()).append('(').append(size).append('@').append(this.length).append("B)").toString();
+        return this.format(new StringBuilder(64).append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/))").toString());
     }
 
     public String toString(final int idx) {
