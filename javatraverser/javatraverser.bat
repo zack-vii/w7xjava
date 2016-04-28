@@ -258,7 +258,7 @@ COPY /Y jTraverser\*.gif %JARDIR%\jTraverser >NUL
 ECHO creating jar packages
 PUSHD %JARDIR%
 %JAR% -cmf %DBMANIFEST% devicebeans.jar %DEVICE_CLS% %DEVICE_GIFS%
-%JAR% -cmf %JTMANIFEST% jTraverser.jar %TRAV_CLS% %TRAV_GIFS% %MDSIP_CLS% %TOOLS_SRC% %DEVICE_CLS% %DEVICE_GIFS%
+%JAR% -cmf %JTMANIFEST% jTraverser.jar %TRAV_CLS% %TRAV_GIFS% %MDSIP_CLS% %TOOLS_CLS% %DEVICE_CLS% %DEVICE_GIFS%
 rem %JAR% -cf localDatabase.jar %LOCAL_CLS%
 %JAR% -cf MDSIP.jar %MDSIP_CLS%
 rem %JAR% -cf jTraverserTools.jar %TOOLS_CLS%
