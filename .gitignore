@@ -1,0 +1,94 @@
+Makefile
+.deps
+config.log
+config.status
+Makefile.inc
+stamp-h1
+config.h
+rpm/envsyms  
+rpm/Makefile
+rpm/post_install_script
+envsyms
+bin/
+bin32/
+bin64/
+bin_x86/
+bin_x86_64/
+etc/
+lib/
+lib32/
+lib64/
+*.class
+*.jar
+*.manifest
+*.egg-info
+*.stamp
+*.gcno
+*.gcda
+*.gcov
+actions/actions
+actions/actmon
+cdu/cdu
+dwscope/dwpad
+dwscope/dwscope
+dwscope/dwscope_remote
+*.uid
+javadispatcher/jDispatchMonitor
+javadispatcher/jDispatcherIp
+javadispatcher/jServer
+javascope/scripts/
+javatraverser/jTraverser
+mitdevices/acq_root_filesystem/ffs/user/MitFilesDate
+setevent/setevent
+wfevent/wfevent
+xmdsshr/.dirstamp
+camshr/cts_commands.c
+# Emacs autosave files
+\#*#
+
+# vi autosave files
+*~
+
+# python compiled files
+*.pyc
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# automake 
+aclocal.m4
+autom4te.cache
+
+# gfortran objects on macintosh
+*.o_i386
+*.dylib_i386
+*.lnk
+
+# python version module
+_version.py
