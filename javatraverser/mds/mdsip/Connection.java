@@ -58,7 +58,7 @@ public class Connection{
             if(DEBUG.D) time = System.nanoTime() - time;
             final Message msg = this.message;
             this.message = null;
-            if(DEBUG.D) System.out.println(msg.msglen + "B in " + time / 1e9 + "sec (" + msg.asString().substring(0, (msg.length < 64) ? msg.length : 64) + ")");
+            if(DEBUG.D) System.out.println(msg.msglen + "B in " + time / 1e9 + "sec" + (msg.body.capacity() == 0 ? "" : " (" + msg.asString().substring(0, (msg.body.capacity() < 64) ? msg.body.capacity() : 64) + ")"));
             return msg;
         }
 
