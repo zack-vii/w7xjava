@@ -14,9 +14,8 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 
+@SuppressWarnings("serial")
 public abstract class DeviceMultiComponent extends DeviceComponent{
-    private static final long serialVersionUID = -7778546697746673348L;
-
     protected static String getNameSeparator() {
         return "/";
     }

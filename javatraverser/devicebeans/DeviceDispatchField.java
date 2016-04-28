@@ -10,8 +10,8 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Action;
 import mds.data.descriptor_r.Dispatch;
 
+@SuppressWarnings("serial")
 public class DeviceDispatchField extends DeviceComponent{
-    private static final long   serialVersionUID = 3063498160136657048L;
     protected Action            action;
     protected Dispatch          dispatch;
     protected LabeledExprEditor ident, phase, when, completion;

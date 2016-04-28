@@ -2,9 +2,8 @@ package mds;
 
 import java.io.IOException;
 
+@SuppressWarnings("serial")
 public final class MdsException extends IOException{
-    private static final long serialVersionUID = -1977560342812497985L;
-
     private static final String parseMessage(final String message) {
         final String[] parts = message.split(":", 2);
         return parts[parts.length - 1];

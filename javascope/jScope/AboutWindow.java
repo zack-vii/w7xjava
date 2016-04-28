@@ -8,10 +8,10 @@ import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public class AboutWindow extends JLabel{
-    static String     javaVersion      = System.getProperty("java.version");
-    static final long serialVersionUID = 47643264578461L;
-    ImageIcon         io               = null;
+    static String javaVersion = System.getProperty("java.version");
+    ImageIcon     io          = null;
 
     public AboutWindow(){
         try{

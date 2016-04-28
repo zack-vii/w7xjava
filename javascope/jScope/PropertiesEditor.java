@@ -14,10 +14,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
-final public class PropertiesEditor extends JDialog{
-    static final long serialVersionUID = 34724623452341L;
-    String            prFile;
-    JEditorPane       text;
+@SuppressWarnings("serial")
+public final class PropertiesEditor extends JDialog{
+    String      prFile;
+    JEditorPane text;
 
     public PropertiesEditor(final JFrame owner, final String propetiesFile){
         super(owner);
@@ -38,7 +38,7 @@ final public class PropertiesEditor extends JDialog{
         p.add(save);
         save.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 try{
                     PropertiesEditor.this.text.write(new FileWriter(PropertiesEditor.this.prFile));
                     JOptionPane.showMessageDialog(PropertiesEditor.this, "The changes will take effect the next time you restart jScope.", "Info", JOptionPane.WARNING_MESSAGE);
@@ -52,7 +52,7 @@ final public class PropertiesEditor extends JDialog{
         p.add(close);
         close.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 PropertiesEditor.this.setVisible(false);
                 PropertiesEditor.this.dispose();
             }

@@ -12,9 +12,9 @@ import jTraverser.Node;
 import jTraverser.jTraverserFacade;
 import jTraverser.editor.NodeEditor;
 
+@SuppressWarnings("serial")
 public class DisplayNci extends NodeEditor implements ActionListener{
-    private static final long serialVersionUID = -623170674315001785L;
-    JLabel                    label;
+    JLabel label;
 
     public DisplayNci(){
         this.setLayout(new BorderLayout());

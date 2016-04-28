@@ -3,10 +3,9 @@ package mds.data.descriptor_s;
 import java.nio.ByteBuffer;
 import mds.data.descriptor_s.Uint16.UShort;
 
+@SuppressWarnings("serial")
 public final class Uint16 extends NUMBER<UShort>{
     public static final class UShort extends Number{
-        private static final long serialVersionUID = 1L;
-
         public static final UShort fromBuffer(final ByteBuffer b) {
             return new UShort(b.getShort());
         }

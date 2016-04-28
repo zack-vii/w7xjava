@@ -3,14 +3,14 @@ package jScope;
 /* $Id$ */
 import java.awt.AWTEvent;
 
+@SuppressWarnings("serial")
 public class WaveContainerEvent extends AWTEvent{
-    public static final int  END_UPDATE       = AWTEvent.RESERVED_ID_MAX + 5;
-    public static final int  KILL_UPDATE      = AWTEvent.RESERVED_ID_MAX + 6;
-    public static final long serialVersionUID = 5348434867648L;
-    public static final int  START_UPDATE     = AWTEvent.RESERVED_ID_MAX + 4;
-    public static final int  WAVEFORM_EVENT   = AWTEvent.RESERVED_ID_MAX + 7;
-    private final String     info;
-    private final AWTEvent   we;
+    public static final int END_UPDATE     = AWTEvent.RESERVED_ID_MAX + 5;
+    public static final int KILL_UPDATE    = AWTEvent.RESERVED_ID_MAX + 6;
+    public static final int START_UPDATE   = AWTEvent.RESERVED_ID_MAX + 4;
+    public static final int WAVEFORM_EVENT = AWTEvent.RESERVED_ID_MAX + 7;
+    private final String    info;
+    private final AWTEvent  we;
 
     public WaveContainerEvent(final Object source, final AWTEvent we){
         super(source, WaveContainerEvent.WAVEFORM_EVENT);

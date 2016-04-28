@@ -10,9 +10,9 @@ import jTraverser.Database;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 
+@SuppressWarnings("serial")
 public abstract class DeviceComponent extends JPanel{
-    public static final int   DATA             = 0, STATE = 1, DISPATCH = 2;
-    private static final long serialVersionUID = 7247369948407771866L;
+    public static final int DATA = 0, STATE = 1, DISPATCH = 2;
 
     // Copy-Paste management
     protected static Object copyData() {

@@ -3,10 +3,9 @@ package mds.data.descriptor_s;
 import java.nio.ByteBuffer;
 import mds.data.descriptor_s.Uint8.UByte;
 
+@SuppressWarnings("serial")
 public final class Uint8 extends NUMBER<UByte>{
     public static final class UByte extends Number{
-        private static final long serialVersionUID = 1L;
-
         public static final UByte fromBuffer(final ByteBuffer b) {
             return new UByte(b.get());
         }

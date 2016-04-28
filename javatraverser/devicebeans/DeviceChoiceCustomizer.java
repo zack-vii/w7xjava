@@ -18,9 +18,8 @@ import java.beans.PropertyChangeSupport;
 import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 
+@SuppressWarnings("serial")
 public class DeviceChoiceCustomizer extends DeviceCustomizer implements Customizer{
-    private static final long serialVersionUID = -4604458650122323403L;
-
     protected static float[] convertFloat(final String inText) {
         final String[] items = DeviceChoiceCustomizer.convertText(inText);
         final float out[] = new float[items.length];

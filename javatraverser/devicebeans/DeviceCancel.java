@@ -1,8 +1,7 @@
 package devicebeans;
 
+@SuppressWarnings("serial")
 public class DeviceCancel extends DeviceControl{
-    private static final long serialVersionUID = -3103218818878298711L;
-
     public DeviceCancel(){
         this.setText("Cancel");
     }

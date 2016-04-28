@@ -6,11 +6,11 @@ import jTraverser.Node;
 import jTraverser.Tree;
 import jTraverser.dialogs.TreeDialog;
 
+@SuppressWarnings("serial")
 public class NodeEditor extends JPanel{
-    private static final long serialVersionUID = -621239038738815183L;
-    protected TreeDialog      frame;
-    protected Node            node;
-    Tree                      tree;
+    protected TreeDialog frame;
+    protected Node       node;
+    Tree                 tree;
 
     public final void setFrame(final TreeDialog frame) {
         this.frame = frame;

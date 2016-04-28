@@ -14,15 +14,15 @@ import java.beans.Customizer;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@SuppressWarnings("serial")
 public class DeviceChannelCustomizer extends DeviceCustomizer implements Customizer{
-    private static final long serialVersionUID = -5134105662707684010L;
-    DeviceChannel             bean             = null;
-    Button                    doneButton;
-    TextField                 labelString, lines, columns, updateId, showVal;
-    PropertyChangeSupport     listeners        = new PropertyChangeSupport(this);
-    Choice                    nids;
-    Object                    obj;
-    Checkbox                  showBorder, inSameLine, showState;
+    DeviceChannel         bean      = null;
+    Button                doneButton;
+    TextField             labelString, lines, columns, updateId, showVal;
+    PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+    Choice                nids;
+    Object                obj;
+    Checkbox              showBorder, inSameLine, showState;
 
     public DeviceChannelCustomizer(){}
 

@@ -19,6 +19,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import jTraverser.TreeManager.Menu;
 
+@SuppressWarnings("serial")
 public final class jTraverserFacade extends JFrame{
     private class MenuChecker implements MenuListener{
         private final JMenu jmenu;
@@ -40,9 +41,8 @@ public final class jTraverserFacade extends JFrame{
             if(this.jmenu.isEnabled()) this.menu.checkSupport();
         }
     }
-    private static final long   serialVersionUID = 3044553985814315370L;
-    static JLabel               status           = new JLabel("jTaverser started");
-    private static final String titlenotree      = "jTraverser - no tree open";
+    static JLabel               status      = new JLabel("jTaverser started");
+    private static final String titlenotree = "jTraverser - no tree open";
 
     public static void stderr(final String line, final Exception exc) {
         jTraverserFacade.status.setForeground(Color.RED);

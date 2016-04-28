@@ -3,10 +3,10 @@ package jTraverser.dialogs;
 import javax.swing.JFrame;
 import jTraverser.editor.NodeEditor;
 
+@SuppressWarnings("serial")
 public class TreeDialog extends JFrame{
-    private static final long serialVersionUID = 3001139805975114751L;
-    boolean                   in_use;
-    NodeEditor                node_editor;
+    boolean    in_use;
+    NodeEditor node_editor;
 
     public TreeDialog(final NodeEditor editor){
         this.in_use = true;

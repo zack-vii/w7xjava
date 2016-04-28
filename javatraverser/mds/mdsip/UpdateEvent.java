@@ -2,6 +2,7 @@ package mds.mdsip;
 
 /* $Id$ */
 import java.awt.AWTEvent;
+import jScope.DataProvider;
 
 /**
  * An UpdateEvent instance is passed to UpdateEventListener implementations as argument of processUpdateEvent in order to notify the receipt of an asynchronous event triggering the display of a waveform.
@@ -9,12 +10,12 @@ import java.awt.AWTEvent;
  * @see UpdateEventListener
  * @see DataProvider
  */
+@SuppressWarnings("serial")
 public class UpdateEvent extends AWTEvent{
-    static final long serialVersionUID = 47623770978461L;
     /**
      * The name of the event just received.
      */
-    String            name;
+    String name;
 
     public UpdateEvent(final Object source, final String event){
         super(source, 0);

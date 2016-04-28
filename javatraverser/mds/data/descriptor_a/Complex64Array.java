@@ -3,10 +3,9 @@ package mds.data.descriptor_a;
 import java.nio.ByteBuffer;
 import mds.data.descriptor_s.COMPLEX.Complex;
 
+@SuppressWarnings("serial")
 public final class Complex64Array extends COMPLEXArray<Double>{
     private final class ComplexDouble extends Complex<Double>{
-        private static final long serialVersionUID = 1L;
-
         public ComplexDouble(final Double real, final Double imag){
             super(real, imag);
         }

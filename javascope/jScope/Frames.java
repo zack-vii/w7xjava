@@ -31,6 +31,7 @@ import java.util.Vector;
 import debug.DEBUG;
 import jScope.ColorMap.ColorProfile;
 
+@SuppressWarnings("serial")
 public final class Frames extends Canvas{
     static final class FrameCache{
         public static final class FrameDescriptor{
@@ -390,7 +391,6 @@ public final class Frames extends Canvas{
             }
         }
     } // End class FrameCache
-    private static final long serialVersionUID = 345323264578461L;
 
     public static final int DecodeImageType(final byte buf[]) {
         if(DEBUG.M) System.out.println("Frames.DecodeImageType(" + buf + ")");

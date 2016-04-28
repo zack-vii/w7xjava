@@ -15,8 +15,8 @@ import jTraverser.NodeInfo;
 import jTraverser.TreeManager;
 import jTraverser.jTraverserFacade;
 
+@SuppressWarnings("serial")
 public final class AddNode extends JDialog{
-    private static final long serialVersionUID = -6368448328454620096L;
     private Node              currnode;
     private final JTextField  e_name, e_tag;
     private final TreeManager treeman;

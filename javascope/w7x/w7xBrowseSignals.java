@@ -48,13 +48,13 @@ import jScope.jScopeBrowseSignals;
 import jScope.jScopeFacade;
 import jScope.jScopeWaveContainer;
 
+@SuppressWarnings("serial")
 public final class w7xBrowseSignals extends jScopeBrowseSignals{
     static final class DateTimePicker extends JXDatePicker{
-        public static final DateFormat  format           = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        private static final long       serialVersionUID = 77777773L;
-        private static final int[]      time             = new int[]{Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND};
-        private static final DateFormat timeFormat       = new SimpleDateFormat("HH:mm:ss.SSS");
-        public static final TimeZone    UTC              = TimeZone.getTimeZone("UTC");
+        public static final DateFormat  format     = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        private static final int[]      time       = new int[]{Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND};
+        private static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+        public static final TimeZone    UTC        = TimeZone.getTimeZone("UTC");
         private JPanel                  timePanel;
         private JSpinner                timeSpinner;
 
@@ -140,7 +140,6 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
         }
     }
     public final class w7xDataBase extends w7xNode{
-        private static final long serialVersionUID = 77777772L;
         private final String      name;
         public final signalaccess sa;
 
@@ -156,8 +155,7 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
         }
     }
     public class w7xNode extends DefaultMutableTreeNode{
-        private static final long serialVersionUID = 77777771L;
-        private boolean           loaded           = false;
+        private boolean loaded = false;
 
         public w7xNode(final SignalAddress userObject){
             super(userObject);
@@ -206,7 +204,6 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
             return ((SignalAddress)this.getUserObject()).tail();
         }
     }
-    private static final long serialVersionUID = 77777770L;
 
     public static void main(final String[] args) {
         EventQueue.invokeLater(new Runnable(){

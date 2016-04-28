@@ -4,12 +4,12 @@ import java.awt.Panel;
 import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 
+@SuppressWarnings("serial")
 public class DeviceCustomizer extends Panel{
     static mds.mdsip.Connection deviceProvider;
     static String               lastDeviceProvider = null;
     static String               lastDeviceType     = null;
     static String[]             lastFields;
-    private static final long   serialVersionUID   = -4104236469102475682L;
 
     public static String[] getDeviceFields() {
         if(DeviceSetupBeanInfo.beanDeviceType == null){

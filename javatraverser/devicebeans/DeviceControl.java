@@ -6,10 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
+@SuppressWarnings("serial")
 public abstract class DeviceControl extends JButton{
-    private static final long serialVersionUID = 4129067720008275635L;
-    protected String[]        checkExpressions, checkMessages;
-    DeviceSetup               deviceSetup      = null;
+    protected String[] checkExpressions, checkMessages;
+    DeviceSetup        deviceSetup = null;
 
     DeviceControl(){
         this.addActionListener(new ActionListener(){

@@ -30,11 +30,10 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
 
+@SuppressWarnings("serial")
 public class Tree extends JTree implements TreeSelectionListener, DataChangeListener{
     // Inner class FromTranferHandler managed drag operation
     class FromTransferHandler extends TransferHandler{
-        private static final long serialVersionUID = -8913781547508869425L;
-
         @Override
         public final Transferable createTransferable(final JComponent comp) {
             try{
@@ -50,8 +49,6 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
         }
     }
     private final class MDSCellRenderer extends DefaultTreeCellRenderer{
-        private static final long serialVersionUID = -6705089616475773220L;
-
         @Override
         public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean isSelected, final boolean expanded, final boolean hasFocus, final int row, final boolean leaf) {
             final Object usrObj = ((DefaultMutableTreeNode)value).getUserObject();
@@ -71,7 +68,6 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
             return node.getIcon(isSelected);
         }
     };
-    private static final long serialVersionUID = -6836353452954483453L;;
 
     public static final Descriptor compile(final String expr) throws MdsException {
         return Database.tdiCompile(expr);

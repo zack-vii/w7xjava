@@ -7,11 +7,10 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Program;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "serial"})
 public class ProgramEditor extends JPanel implements Editor{
-    private static final long serialVersionUID = -7840137374103863094L;
-    Program                   program;
-    LabeledExprEditor         program_edit, timeout_edit;
+    Program           program;
+    LabeledExprEditor program_edit, timeout_edit;
 
     public ProgramEditor(){
         this(null);

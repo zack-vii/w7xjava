@@ -6,10 +6,10 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Range;
 
+@SuppressWarnings("serial")
 public class RangeEditor extends JPanel implements Editor{
-    private static final long serialVersionUID = 8930270158951086998L;
-    LabeledExprEditor         begin_edit, end_edit, delta_edit;
-    Descriptor                range;
+    LabeledExprEditor begin_edit, end_edit, delta_edit;
+    Descriptor        range;
 
     public RangeEditor(){
         this(null);

@@ -1,8 +1,7 @@
 package devicebeans;
 
+@SuppressWarnings("serial")
 public class DeviceReset extends DeviceControl{
-    private static final long serialVersionUID = 5554215138143980257L;
-
     public DeviceReset(){
         this.setText("Reset");
     }

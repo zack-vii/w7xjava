@@ -36,10 +36,9 @@ import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.Float32;
 import mds.data.descriptor_s.Nid;
 
+@SuppressWarnings("serial")
 public class DeviceWave extends DeviceComponent{
     private final class TableModel extends DefaultTableModel{
-        private static final long serialVersionUID = 1L;
-
         @Override
         public void addTableModelListener(final TableModelListener l) {}
 
@@ -113,12 +112,11 @@ public class DeviceWave extends DeviceComponent{
             DeviceWave.this.waveEditor.setWaveform(DeviceWave.this.waveX, DeviceWave.this.waveY, DeviceWave.this.minY, DeviceWave.this.maxY);
         }
     }
-    private static final String[] columnNames      = new String[]{"Time", "Value"};
-    static final int              MAX_POINTS       = 50;
-    static final double           MIN_STEP         = 1E-5;
+    private static final String[] columnNames  = new String[]{"Time", "Value"};
+    static final int              MAX_POINTS   = 50;
+    static final double           MIN_STEP     = 1E-5;
     protected static float        savedMinX, savedMinY, savedMaxX, savedMaxY;
-    protected static float        savedWaveX[]     = null, savedWaveY[] = null;
-    private static final long     serialVersionUID = 1L;
+    protected static float        savedWaveX[] = null, savedWaveY[] = null;
 
     public static void main(final String args[]) {
         new DeviceWave();

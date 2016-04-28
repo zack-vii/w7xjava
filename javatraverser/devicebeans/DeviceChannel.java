@@ -1,6 +1,5 @@
 package devicebeans;
 
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -26,10 +25,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import mds.data.descriptor.Descriptor;
 
+@SuppressWarnings("serial")
 public class DeviceChannel extends DeviceComponent{
     // Keep copied data for channel components: indexed by the offset between this nid and the component nid
-    static Hashtable<Integer, Object> componentHash    = new Hashtable<Integer, Object>();
-    private static final long         serialVersionUID = 532591216272273721L;
+    static Hashtable<Integer, Object> componentHash = new Hashtable<Integer, Object>();
 
     public static void main(final String[] args) {}
     public boolean              borderVisible     = false;

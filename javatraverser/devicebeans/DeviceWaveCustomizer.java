@@ -14,18 +14,18 @@ import java.beans.Customizer;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@SuppressWarnings("serial")
 public class DeviceWaveCustomizer extends DeviceCustomizer implements Customizer{
-    private static final long serialVersionUID = -2300317292623008002L;
-    DeviceWave                bean             = null;
-    Button                    doneButton;
-    TextField                 identifier, updateIdentifier, updateExpression;
-    PropertyChangeSupport     listeners        = new PropertyChangeSupport(this);
-    Checkbox                  maxXVisible;
-    Checkbox                  maxYVisible;
-    Checkbox                  minXVisible;
-    Checkbox                  minYVisible;
-    Choice                    nids;
-    Object                    obj;
+    DeviceWave            bean      = null;
+    Button                doneButton;
+    TextField             identifier, updateIdentifier, updateExpression;
+    PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+    Checkbox              maxXVisible;
+    Checkbox              maxYVisible;
+    Checkbox              minXVisible;
+    Checkbox              minYVisible;
+    Choice                nids;
+    Object                obj;
 
     public DeviceWaveCustomizer(){}
 

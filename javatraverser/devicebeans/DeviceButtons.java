@@ -1,12 +1,11 @@
 package devicebeans;
 
-
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class DeviceButtons extends JPanel{
-    private static final long serialVersionUID = -1364376360190126183L;
-    protected DeviceControl   apply, ok, cancel;
-    public String             methods[];
+    protected DeviceControl apply, ok, cancel;
+    public String           methods[];
 
     public DeviceButtons(){
         this.add(this.ok = new DeviceOk());

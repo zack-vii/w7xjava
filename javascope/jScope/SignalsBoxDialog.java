@@ -13,18 +13,16 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+@SuppressWarnings("serial")
 final public class SignalsBoxDialog extends JDialog{
-    static final long serialVersionUID = 4362345435764563L;
-    TableModel        dataModel;
-    jScopeFacade      scope;
-    JTable            table;
+    TableModel   dataModel;
+    jScopeFacade scope;
+    JTable       table;
 
     SignalsBoxDialog(final JFrame f, final String title, final boolean modal){
         super(f, title, false);
         this.scope = (jScopeFacade)f;
         this.dataModel = new AbstractTableModel(){
-            static final long serialVersionUID = 43624535345564L;
-
             @Override
             public int getColumnCount() {
                 return 2;
@@ -65,7 +63,7 @@ final public class SignalsBoxDialog extends JDialog{
         final JButton add = new JButton("Add");
         add.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final int idx[] = SignalsBoxDialog.this.table.getSelectedRows();
                 final String x_expr[] = new String[idx.length];
                 final String y_expr[] = new String[idx.length];
@@ -84,7 +82,7 @@ final public class SignalsBoxDialog extends JDialog{
         final JButton cancel = new JButton("Cancel");
         cancel.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 SignalsBoxDialog.this.dispose();
             }
         });

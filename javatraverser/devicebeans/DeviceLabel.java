@@ -12,26 +12,26 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
 
+@SuppressWarnings("serial")
 public class DeviceLabel extends DeviceComponent{
-    private static final long serialVersionUID = 2377066253876685403L;
-    Descriptor                data;
+    Descriptor            data;
     // public boolean showState = false;
-    public boolean            displayEvaluated = false;
+    public boolean        displayEvaluated = false;
     @SuppressWarnings("unused")
-    private boolean           initial_state;
+    private boolean       initial_state;
     // protected boolean isGridBag = false;
-    protected String          initialField     = "<empty>";
-    protected boolean         initializing     = false;
-    JPanel                    jp;
+    protected String      initialField     = "<empty>";
+    protected boolean     initializing     = false;
+    JPanel                jp;
     // protected JCheckBox checkB;
-    protected JLabel          label;
+    protected JLabel      label;
     // protected JTextField textF;
-    public String             labelString      = "<empty>";
-    public int                numCols          = 10;
+    public String         labelString      = "<empty>";
+    public int            numCols          = 10;
     // GridBagLayout gridbag;
-    protected int             preferredWidth   = -1;
-    private final boolean     reportingChange  = false;
-    public boolean            textOnly         = false;
+    protected int         preferredWidth   = -1;
+    private final boolean reportingChange  = false;
+    public boolean        textOnly         = false;
 
     public DeviceLabel(){
         this.initializing = true;
@@ -161,8 +161,8 @@ public class DeviceLabel extends DeviceComponent{
     else
       return Tree.dataFromExpr(dataString);
       }
-
-
+    
+    
       protected boolean getState()
       {
     if (!showState)
@@ -170,7 +170,7 @@ public class DeviceLabel extends DeviceComponent{
     else
       return checkB.isSelected();
       }
-
+    
       public void setEnabled(boolean state)
       {
     if (!editable && state)
@@ -207,7 +207,7 @@ public class DeviceLabel extends DeviceComponent{
       {
     this.editable = editable;
       }
-
+    
       public boolean getEditable()
       {
     return editable;
@@ -245,14 +245,14 @@ public class DeviceLabel extends DeviceComponent{
         // initialField = data.toString();
         /*
            Container parent = getParent();
-
+        
            if (parent.getLayout() == null)
            {
              isGridBag = false;
            }
            else
              isGridBag = true;
-
+        
            GridBagConstraints gc = null;
            if (isGridBag)
            {
@@ -306,7 +306,7 @@ public class DeviceLabel extends DeviceComponent{
         reportingChange = false;
               }
             });
-
+        
             textF.setEnabled(editable);
             textF.setEditable(editable);
             if (preferredWidth > 0)

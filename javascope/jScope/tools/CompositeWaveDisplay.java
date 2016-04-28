@@ -50,6 +50,7 @@ import jScope.Waveform;
 import jScope.WaveformContainer;
 import jScope.WaveformEvent;
 
+@SuppressWarnings("serial")
 final public class CompositeWaveDisplay extends JApplet implements WaveContainerListener{
     public class AppendThread extends Thread{
         long    sleepTime = 100;
@@ -91,7 +92,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
             for(int i = 0; i < usds.length; i++);
             return null;
         }
-        
+
         private UpdSignalData mergeMessage(UpdSignalData upd1, UpdSignalData upd2)
         {
             if(upd1.name != upd2.name || upd1.type != upd2.type) return null;
@@ -100,14 +101,14 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
             {
                if(upd1.operation == CompositeWaveDisplay.CMND_CLEAR) return upd1 ;
                if(upd2.operation == CompositeWaveDisplay.CMND_CLEAR) return upd2 ;
-        
+
                 int numSignal1 = upd1.x.length / upd1.numPointsPerSignal;
                 int numSignal2 = upd2.x.length / upd2.numPointsPerSignal;
-        
+
                 if(numSignal1 != numSignal2) return null;
-        
+
                 float y[] = float[upd1.length]
-        
+
             }
         }
          */
@@ -293,13 +294,12 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
             return "Num point per signal " + this.numPointsPerSignal + " Operation " + this.operation + " Type " + this.type;
         }
     }
-    static public final int CMND_ADD         = 1;
-    static public final int CMND_CLEAR       = 0;
-    static public final int CMND_STOP        = -1;
+    static public final int CMND_ADD   = 1;
+    static public final int CMND_CLEAR = 0;
+    static public final int CMND_STOP  = -1;
     // private int print_scaling = 100;
     // private boolean fixed_legend = false;
-    static private JFrame   frame            = null;
-    static final long       serialVersionUID = 68434384573454L;
+    static private JFrame   frame      = null;
 
     public static void addProtocol(final DataAccess dataAccess) {
         DataAccessURL.addProtocol(dataAccess);
@@ -732,7 +732,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
         global_autentication = this.getParameter("AUTENTICATION");
         /*
         param = getParameter("PRINT_SCALING");
-        
+
         if(param != null){
             try{
                 print_scaling = Integer.parseInt(param);
@@ -846,8 +846,6 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
         panel1.add(pan);
         panel1.add(this.liveUpdate);
         final JPanel panel = new JPanel(){
-            static final long serialVersionUID = 43645646536534L;
-
             @Override
             public void print(final Graphics g) {}
 

@@ -12,17 +12,17 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Action;
 
+@SuppressWarnings("serial")
 public class ActionEditor extends JPanel implements ActionListener, Editor{
-    private static final long serialVersionUID = 5505321760234697543L;
-    JPanel                    action_panel, debug_panel;
-    JComboBox                 combo;
-    LabeledExprEditor         comp_edit, error_edit, expr_edit, perf_edit;
-    Descriptor                data;
-    TreeDialog                dialog;
-    DispatchEditor            dispatch_edit;
-    boolean                   editable;
-    int                       mode_idx, curr_mode_idx;
-    TaskEditor                task_edit;
+    JPanel            action_panel, debug_panel;
+    JComboBox         combo;
+    LabeledExprEditor comp_edit, error_edit, expr_edit, perf_edit;
+    Descriptor        data;
+    TreeDialog        dialog;
+    DispatchEditor    dispatch_edit;
+    boolean           editable;
+    int               mode_idx, curr_mode_idx;
+    TaskEditor        task_edit;
 
     @SuppressWarnings("unchecked")
     public ActionEditor(final Descriptor data, final TreeDialog dialog){

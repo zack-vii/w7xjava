@@ -27,9 +27,8 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import debug.DEBUG;
 
+@SuppressWarnings("serial")
 public class WavePopup extends JPopupMenu implements ItemListener{
-    static final long serialVersionUID = 247273265246434L;
-
     protected static void SelectListItem(final ButtonGroup bg, final int idx) {
         int i;
         JRadioButtonMenuItem b = null;

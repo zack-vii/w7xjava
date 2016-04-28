@@ -30,12 +30,12 @@ import jTraverser.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 
+@SuppressWarnings("serial")
 public class DeviceTable extends DeviceComponent{
-    static String             copiedColItems[], copiedRowItems[], copiedItems[];
+    static String           copiedColItems[], copiedRowItems[], copiedItems[];
     // int preferredWidth = 200;
     // int preferredHeight = 100;
-    static public final int   NORMAL           = 0, REFLEX = 1, REFLEX_INVERT = 2;
-    private static final long serialVersionUID = 8660675644952547526L;
+    static public final int NORMAL = 0, REFLEX = 1, REFLEX_INVERT = 2;
 
     private static boolean balancedParenthesis(final String inStr) {
         int roundCount = 0;
@@ -387,8 +387,6 @@ public class DeviceTable extends DeviceComponent{
             /**
              *
              */
-            private static final long serialVersionUID = 7304643932465467060L;
-
             /*
             private String convertValue(final String value) {
                 if(DeviceTable.this.refMode != DeviceTable.REFLEX_INVERT) return value;
@@ -515,7 +513,7 @@ public class DeviceTable extends DeviceComponent{
                           table.repaint();
                       }
                   }
-
+                
                               }
                               else //refMode == NORMAL
                 */ {

@@ -4,48 +4,48 @@ package jTraverser;
 import java.io.Serializable;
 import mds.data.descriptor.Descriptor;
 
+@SuppressWarnings("serial")
 public class NodeInfo implements Serializable{
-    public static final int   CACHED              = 1 << 3;
-    public static final int   COMPRESS_ON_PUT     = 1 << 10;
-    public static final int   COMPRESS_SEGMENTS   = 1 << 16;
-    public static final int   COMPRESSIBLE        = 1 << 8;
-    public static final int   DO_NOT_COMPRESS     = 1 << 9;
-    public static final int   ESSENTIAL           = 1 << 2;
-    public static final int   INCLUDE_IN_PULSE    = 1 << 15;
-    public static final int   NID_REFERENCE       = 1 << 14;
-    public static final int   NO_WRITE_MODEL      = 1 << 11;
-    public static final int   NO_WRITE_SHOT       = 1 << 12;
-    public static final int   PARENT_STATE        = 1 << 1;
-    public static final int   PATH_REFERENCE      = 1 << 13;
-    public static final int   SEGMENTED           = 1 << 5;
-    private static final long serialVersionUID    = 1L;
-    public static final int   SETUP               = 1 << 6;
-    public static final int   STATE               = 1 << 0;
-    public static final byte  USAGE_ACTION        = 2;
-    public static final byte  USAGE_ANY           = 0;
-    public static final byte  USAGE_AXIS          = 10;
-    public static final byte  USAGE_COMPOUND_DATA = 12;
-    public static final byte  USAGE_DEVICE        = 3;
-    public static final byte  USAGE_DISPATCH      = 4;
-    public static final byte  USAGE_MAXIMUM       = 12;
-    public static final byte  USAGE_NONE          = 1;
-    public static final byte  USAGE_NUMERIC       = 5;
-    public static final byte  USAGE_SIGNAL        = 6;
-    public static final byte  USAGE_STRUCTURE     = 1;
-    public static final byte  USAGE_SUBTREE       = 11;
-    public static final byte  USAGE_TASK          = 7;
-    public static final byte  USAGE_TEXT          = 8;
-    public static final byte  USAGE_WINDOW        = 9;
-    public static final int   VERSION             = 1 << 4;
-    public static final int   WRITE_ONCE          = 1 << 7;
+    public static final int  CACHED              = 1 << 3;
+    public static final int  COMPRESS_ON_PUT     = 1 << 10;
+    public static final int  COMPRESS_SEGMENTS   = 1 << 16;
+    public static final int  COMPRESSIBLE        = 1 << 8;
+    public static final int  DO_NOT_COMPRESS     = 1 << 9;
+    public static final int  ESSENTIAL           = 1 << 2;
+    public static final int  INCLUDE_IN_PULSE    = 1 << 15;
+    public static final int  NID_REFERENCE       = 1 << 14;
+    public static final int  NO_WRITE_MODEL      = 1 << 11;
+    public static final int  NO_WRITE_SHOT       = 1 << 12;
+    public static final int  PARENT_STATE        = 1 << 1;
+    public static final int  PATH_REFERENCE      = 1 << 13;
+    public static final int  SEGMENTED           = 1 << 5;
+    public static final int  SETUP               = 1 << 6;
+    public static final int  STATE               = 1 << 0;
+    public static final byte USAGE_ACTION        = 2;
+    public static final byte USAGE_ANY           = 0;
+    public static final byte USAGE_AXIS          = 10;
+    public static final byte USAGE_COMPOUND_DATA = 12;
+    public static final byte USAGE_DEVICE        = 3;
+    public static final byte USAGE_DISPATCH      = 4;
+    public static final byte USAGE_MAXIMUM       = 12;
+    public static final byte USAGE_NONE          = 1;
+    public static final byte USAGE_NUMERIC       = 5;
+    public static final byte USAGE_SIGNAL        = 6;
+    public static final byte USAGE_STRUCTURE     = 1;
+    public static final byte USAGE_SUBTREE       = 11;
+    public static final byte USAGE_TASK          = 7;
+    public static final byte USAGE_TEXT          = 8;
+    public static final byte USAGE_WINDOW        = 9;
+    public static final int  VERSION             = 1 << 4;
+    public static final int  WRITE_ONCE          = 1 << 7;
     /*
     public static final NodeInfo getNodeInfo(final int nid, final byte dclass, final byte dtype, final byte usage, final int flags, final int owner, final int length, final int conglomerate_nids, final int conglomerate_elt, final String date_inserted, final String name, final String fullpath, final String minpath, final String path) {
         return new NodeInfo(nid, dclass, dtype, usage, flags, owner, length, conglomerate_nids, conglomerate_elt, date_inserted, name, fullpath, minpath, path);
     }*/
-    private final String      date_inserted, name, fullpath, minpath, path;
-    private final byte        dtype, dclass, usage;
-    private int               flags;
-    private final int         nid, owner, length, conglomerate_elt, conglomerate_nids;
+    private final String     date_inserted, name, fullpath, minpath, path;
+    private final byte       dtype, dclass, usage;
+    private int              flags;
+    private final int        nid, owner, length, conglomerate_elt, conglomerate_nids;
 
     public NodeInfo(final int nid, final byte dclass, final byte dtype, final byte usage, final int flags, final int owner, final int length, final int conglomerate_nids, final int conglomerate_elt, final String date_inserted, final String name, final String fullpath, final String minpath, final String path){
         this.nid = nid;

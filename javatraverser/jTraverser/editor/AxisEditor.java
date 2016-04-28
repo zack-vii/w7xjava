@@ -11,18 +11,18 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Range;
 import mds.data.descriptor_r.With_Units;
 
+@SuppressWarnings("serial")
 public class AxisEditor extends JPanel implements ActionListener, Editor{
-    private static final long serialVersionUID = 8765062933985562610L;
-    JComboBox                 combo;
-    Descriptor                data;
-    TreeDialog                dialog;
-    boolean                   editable         = true;
-    LabeledExprEditor         expr_edit, units_edit;
-    int                       mode_idx, curr_mode_idx;
-    JPanel                    mode_panel;
-    Range                     range;
-    RangeEditor               range_edit;
-    Descriptor                units;
+    JComboBox         combo;
+    Descriptor        data;
+    TreeDialog        dialog;
+    boolean           editable = true;
+    LabeledExprEditor expr_edit, units_edit;
+    int               mode_idx, curr_mode_idx;
+    JPanel            mode_panel;
+    Range             range;
+    RangeEditor       range_edit;
+    Descriptor        units;
 
     @SuppressWarnings("unchecked")
     public AxisEditor(Descriptor data, final TreeDialog dialog){

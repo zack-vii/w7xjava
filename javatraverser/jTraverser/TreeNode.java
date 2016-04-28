@@ -7,9 +7,9 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+@SuppressWarnings("serial")
 public class TreeNode extends JLabel{
-    static Font               plain_f, bold_f;
-    private static final long serialVersionUID = -5991143423455919576L;
+    static Font plain_f, bold_f;
 
     static{
         TreeNode.plain_f = new Font("Serif", Font.PLAIN, 12);

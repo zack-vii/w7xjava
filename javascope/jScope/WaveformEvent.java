@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+@SuppressWarnings("serial")
 final public class WaveformEvent extends AWTEvent{
     public static final int     BROADCAST_SCALE    = AWTEvent.RESERVED_ID_MAX + 4;
     public static final int     CACHE_DATA         = AWTEvent.RESERVED_ID_MAX + 12;
@@ -19,7 +20,6 @@ final public class WaveformEvent extends AWTEvent{
     public static final int     POINT_IMAGE_UPDATE = AWTEvent.RESERVED_ID_MAX + 9;
     public static final int     POINT_UPDATE       = AWTEvent.RESERVED_ID_MAX + 1;
     public static final int     PROFILE_UPDATE     = AWTEvent.RESERVED_ID_MAX + 8;
-    public static final long    serialVersionUID   = 325464327645634L;
     public static final int     START_UPDATE       = AWTEvent.RESERVED_ID_MAX + 10;
     public static final int     STATUS_INFO        = AWTEvent.RESERVED_ID_MAX + 3;
     private static final String time               = "HH:mm:ss.SSS";

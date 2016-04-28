@@ -27,9 +27,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
+@SuppressWarnings("serial")
 class FontPanel extends JPanel{
-    static final long serialVersionUID = 47623773223236L;
-    Font              thisFont;
+    Font thisFont;
 
     public FontPanel(){
         this.thisFont = new Font("Arial", Font.PLAIN, 10);
@@ -70,24 +70,24 @@ class FontPanel extends JPanel{
     }
 }
 
+@SuppressWarnings("serial")
 public class FontSelection extends JDialog implements ActionListener, ItemListener{
-    static final long serialVersionUID = 4762373484632L;
-    JRadioButton      application_i, waveform_i;
-    String            envfonts[];
-    Font              font;
-    FontPanel         fontC;
-    String            fontchoice       = "fontchoice";
-    JLabel            fontLabel, sizeLabel, styleLabel, testLabel;
-    JComboBox         fonts;
-    int               index            = 0;
-    jScopeFacade      main_scope;
-    JButton           ok, cancel, apply;
-    String            siChoice         = "10";
-    String            size_l[];
-    JComboBox         sizes;
-    int               stChoice         = 0;
-    String            style_l[];
-    JComboBox         styles;
+    JRadioButton application_i, waveform_i;
+    String       envfonts[];
+    Font         font;
+    FontPanel    fontC;
+    String       fontchoice = "fontchoice";
+    JLabel       fontLabel, sizeLabel, styleLabel, testLabel;
+    JComboBox    fonts;
+    int          index      = 0;
+    jScopeFacade main_scope;
+    JButton      ok, cancel, apply;
+    String       siChoice   = "10";
+    String       size_l[];
+    JComboBox    sizes;
+    int          stChoice   = 0;
+    String       style_l[];
+    JComboBox    styles;
 
     @SuppressWarnings("unchecked")
     public FontSelection(final Frame dw, final String title){

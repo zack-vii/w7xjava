@@ -7,9 +7,8 @@ import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 import jScope.jScopeBrowseSignals;
 
+@SuppressWarnings("serial")
 public final class textorBrowseSignals extends jScopeBrowseSignals{
-    static final long serialVersionUID = 2434234236534654L;
-
     static private boolean reasonableShotNr(final String shot) {
         try{
             new Integer(shot);

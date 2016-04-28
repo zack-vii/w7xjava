@@ -3,11 +3,11 @@ package mds.data.descriptor_s;
 import java.nio.ByteBuffer;
 import mds.data.descriptor_s.COMPLEX.Complex;
 
+@SuppressWarnings("serial")
 public abstract class COMPLEX<T extends Number>extends NUMBER<Complex<T>>{
     public static class Complex<T extends Number>extends Number{
-        private static final long serialVersionUID = 1L;
-        public final T            imag;
-        public final T            real;
+        public final T imag;
+        public final T real;
 
         public Complex(final T real, final T imag){
             this.real = real;

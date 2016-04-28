@@ -7,11 +7,11 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Routine;
 
+@SuppressWarnings("serial")
 public class RoutineEditor extends JPanel implements Editor{
-    private static final long serialVersionUID = -7442386781619109098L;
-    ArgEditor                 arg_edit;
-    LabeledExprEditor         image_edit, routine_edit, timeout_edit;
-    Routine                   routine;
+    ArgEditor         arg_edit;
+    LabeledExprEditor image_edit, routine_edit, timeout_edit;
+    Routine           routine;
 
     public RoutineEditor(){
         this(null);

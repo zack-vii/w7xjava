@@ -12,11 +12,11 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Window;
 
+@SuppressWarnings("serial")
 public class WindowEditor extends JPanel implements ActionListener, Editor{
     static class WindowEdt extends JPanel{
-        private static final long serialVersionUID = -1087283057943746867L;
-        LabeledExprEditor         startidx_edit, endidx_edit, value0_edit;
-        Window                    window;
+        LabeledExprEditor startidx_edit, endidx_edit, value0_edit;
+        Window            window;
 
         public WindowEdt(){
             this(null);
@@ -54,14 +54,13 @@ public class WindowEditor extends JPanel implements ActionListener, Editor{
             if(this.value0_edit != null) this.value0_edit.setEditable(editable);
         }
     }
-    private static final long serialVersionUID = 4057231256009434757L;
-    JComboBox                 combo;
-    Descriptor                data;
-    TreeDialog                dialog;
-    boolean                   editable         = true;
-    ExprEditor                expr_edit;
-    int                       mode_idx, curr_mode_idx;
-    WindowEdt                 window_edit;
+    JComboBox  combo;
+    Descriptor data;
+    TreeDialog dialog;
+    boolean    editable = true;
+    ExprEditor expr_edit;
+    int        mode_idx, curr_mode_idx;
+    WindowEdt  window_edit;
 
     @SuppressWarnings("unchecked")
     public WindowEditor(final Descriptor data, final TreeDialog dialog){

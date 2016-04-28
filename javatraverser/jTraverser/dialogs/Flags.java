@@ -16,9 +16,8 @@ import jTraverser.Node;
 import jTraverser.TreeManager;
 import jTraverser.jTraverserFacade;
 
+@SuppressWarnings("serial")
 public final class Flags extends JDialog{
-    private static final long serialVersionUID = 937181175336298287L;
-
     public static final void main(final String[] args) {// TODO
         new Flags(null, null).open();
     }

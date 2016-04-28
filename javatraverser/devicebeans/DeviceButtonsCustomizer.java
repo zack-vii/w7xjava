@@ -16,15 +16,15 @@ import java.beans.PropertyChangeSupport;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+@SuppressWarnings("serial")
 public class DeviceButtonsCustomizer extends Panel implements Customizer{
-    private static final long serialVersionUID = -5388015934879138862L;
-    Button                    addButton, removeButton, doneButton;
-    DeviceButtons             bean             = null;
-    TextField                 expression, message, methods;
-    Vector<String>            expressionsV     = new Vector<String>();
-    java.awt.List             exprList;
-    PropertyChangeSupport     listeners        = new PropertyChangeSupport(this);
-    Vector<String>            messagesV        = new Vector<String>();
+    Button                addButton, removeButton, doneButton;
+    DeviceButtons         bean         = null;
+    TextField             expression, message, methods;
+    Vector<String>        expressionsV = new Vector<String>();
+    java.awt.List         exprList;
+    PropertyChangeSupport listeners    = new PropertyChangeSupport(this);
+    Vector<String>        messagesV    = new Vector<String>();
 
     public DeviceButtonsCustomizer(){}
 

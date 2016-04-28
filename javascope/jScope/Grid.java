@@ -16,16 +16,16 @@ import java.util.Date;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
+@SuppressWarnings("serial")
 public class Grid implements Serializable{
-    public static final long      dayMilliSeconds  = 86400000;                   // 24 * 60 * 60 * 1000;
-    final static String           GRID_MODE[]      = {"Dotted", "Gray", "None"};
-    public final static int       IS_DOTTED        = 0;
-    static final int              IS_GRAY          = 1;
-    static final int              IS_NONE          = 2;
-    final static int              IS_X             = 0, IS_Y = 1;
-    static final int              MAX_GRID         = 10;
-    static final long             serialVersionUID = 231274264578461L;
-    private static final TimeZone UTC              = TimeZone.getTimeZone("UTC");
+    public static final long      dayMilliSeconds = 86400000;                   // 24 * 60 * 60 * 1000;
+    final static String           GRID_MODE[]     = {"Dotted", "Gray", "None"};
+    public final static int       IS_DOTTED       = 0;
+    static final int              IS_GRAY         = 1;
+    static final int              IS_NONE         = 2;
+    final static int              IS_X            = 0, IS_Y = 1;
+    static final int              MAX_GRID        = 10;
+    private static final TimeZone UTC             = TimeZone.getTimeZone("UTC");
 
     public static long calculateDifference(final Date a, final Date b) {
         final Calendar cal1 = Calendar.getInstance();

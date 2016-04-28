@@ -12,15 +12,12 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Dispatch;
 
+@SuppressWarnings("serial")
 public class DispatchEditor extends JPanel implements ActionListener, Editor{
-    class DispatchEdt extends JPanel{
-        /**
-         *
-         */
-        private static final long serialVersionUID = -6076590353205086521L;
-        Dispatch                  data;
-        LabeledExprEditor         ident_edit, phase_edit, sequence_edit, completion_edit;
-        boolean                   is_sequential    = false;
+    public final class DispatchEdt extends JPanel{
+        Dispatch          data;
+        LabeledExprEditor ident_edit, phase_edit, sequence_edit, completion_edit;
+        boolean           is_sequential = false;
 
         public DispatchEdt(final Dispatch data, final byte sched){
             this.data = data;
@@ -72,14 +69,13 @@ public class DispatchEditor extends JPanel implements ActionListener, Editor{
             if(this.completion_edit != null) this.completion_edit.setEditable(editable);
         }
     }
-    private static final long serialVersionUID = -9187606764049896331L;
-    JComboBox                 combo;
-    Descriptor                data;
-    TreeDialog                dialog;
-    DispatchEdt               dispatch_edit;
-    boolean                   editable         = true;
-    LabeledExprEditor         expr_edit;
-    byte                      mode_idx, curr_mode_idx;
+    JComboBox         combo;
+    Descriptor        data;
+    TreeDialog        dialog;
+    DispatchEdt       dispatch_edit;
+    boolean           editable = true;
+    LabeledExprEditor expr_edit;
+    byte              mode_idx, curr_mode_idx;
 
     @SuppressWarnings("unchecked")
     public DispatchEditor(final Descriptor data, final TreeDialog dialog){

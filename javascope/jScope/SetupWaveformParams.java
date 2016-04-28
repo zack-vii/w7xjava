@@ -18,9 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+@SuppressWarnings("serial")
 final public class SetupWaveformParams extends JDialog implements ActionListener{
-    static final long serialVersionUID = 2324834354383L;
-
     private static float convertToFloat(final String s, final boolean min) {
         try{
             return Float.parseFloat(s);

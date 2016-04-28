@@ -35,6 +35,7 @@ import jTraverser.dialogs.TreeOpenDialog;
 import jTraverser.editor.NodeEditor;
 import mds.MdsException;
 
+@SuppressWarnings("serial")
 public class TreeManager extends JScrollPane{
     public static final class AddNodeMenu extends Menu{
         private final class addDevice implements ActionListener{
@@ -357,7 +358,6 @@ public class TreeManager extends JScrollPane{
                 this.items.get(i).setEnabled(mask[i]);
         }
     }
-    private static final long serialVersionUID = -6393859107589833312L;
 
     static{
         ToolTipManager.sharedInstance().setDismissDelay(60000);

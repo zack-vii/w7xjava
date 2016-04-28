@@ -6,12 +6,12 @@ import java.awt.Graphics;
 import jScope.Waveform;
 import mds.data.descriptor.Descriptor;
 
+@SuppressWarnings("serial")
 public class DeviceWaveDisplay extends DeviceComponent{
-    private static final long serialVersionUID = 7336737112620278118L;
-    protected Descriptor      oldData;
-    protected int             prefHeight       = 200;
-    protected Waveform        wave;
-    float                     x[]              = null, y[] = null;
+    protected Descriptor oldData;
+    protected int        prefHeight = 200;
+    protected Waveform   wave;
+    float                x[]        = null, y[] = null;
 
     public DeviceWaveDisplay(){}
 

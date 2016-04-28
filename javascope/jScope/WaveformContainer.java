@@ -34,9 +34,9 @@ import debug.DEBUG;
  * @see WaveformManager
  * @see MultiWaveform
  */
+@SuppressWarnings("serial")
 public class WaveformContainer extends RowColumnContainer implements WaveformManager, WaveformListener, Printable{
-    private static Waveform copy_waveform    = null;
-    static final long       serialVersionUID = 424436570978461L;
+    private static Waveform copy_waveform = null;
 
     public static void disableDoubleBuffering(final Component c) {
         final RepaintManager currentManager = RepaintManager.currentManager(c);

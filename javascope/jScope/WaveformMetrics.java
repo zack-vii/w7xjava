@@ -12,14 +12,14 @@ import java.awt.image.IndexColorModel;
 import java.io.Serializable;
 import java.util.Vector;
 
+@SuppressWarnings("serial")
 public final class WaveformMetrics implements Serializable{
-    private static final int    INT_MAX_VALUE    = (int)WaveformMetrics.MAX_VALUE;
-    private static final int    INT_MIN_VALUE    = (int)WaveformMetrics.MIN_VALUE;
+    private static final int    INT_MAX_VALUE = (int)WaveformMetrics.MAX_VALUE;
+    private static final int    INT_MIN_VALUE = (int)WaveformMetrics.MIN_VALUE;
     // static IndexColorModel cm = null;
-    private static final double LOG10            = 2.302585092994, MIN_LOG = 10E-100;
-    private static final double MAX_VALUE        = 10000.;
-    private static final double MIN_VALUE        = -10000.;
-    private static final long   serialVersionUID = 247232536324574434L;
+    private static final double LOG10         = 2.302585092994, MIN_LOG = 10E-100;
+    private static final double MAX_VALUE     = 10000.;
+    private static final double MIN_VALUE     = -10000.;
 
     /*
         private IndexColorModel getColorModel() {

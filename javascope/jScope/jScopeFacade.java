@@ -101,7 +101,8 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.basic.BasicArrowButton;
 import debug.DEBUG;
 
-final public class jScopeFacade extends JFrame implements ActionListener, ItemListener, WindowListener, WaveContainerListener, UpdateEventListener, ConnectionListener, Printable{
+@SuppressWarnings("serial")
+public final class jScopeFacade extends JFrame implements ActionListener, ItemListener, WindowListener, WaveContainerListener, UpdateEventListener, ConnectionListener, Printable{
     class FileFilter implements FilenameFilter{
         String fname = null;
 
@@ -132,12 +133,11 @@ final public class jScopeFacade extends JFrame implements ActionListener, ItemLi
         }
     }
     class PubVarDialog extends JDialog implements ActionListener{
-        static final long            serialVersionUID = 47667456425261L;
         private final JButton        apply, cancel, save, reset;
         jScopeFacade                 dw;
-        private final Vector<String> expr_list        = new Vector<String>();
-        boolean                      is_pv_apply      = false;
-        private final Vector<String> name_list        = new Vector<String>();
+        private final Vector<String> expr_list   = new Vector<String>();
+        boolean                      is_pv_apply = false;
+        private final Vector<String> name_list   = new Vector<String>();
 
         PubVarDialog(final Frame fw){
             super(fw, "Public Variables", false);
@@ -368,7 +368,6 @@ final public class jScopeFacade extends JFrame implements ActionListener, ItemLi
     public static boolean          not_sup_local    = false;
     private static int             num_scope        = 0;
     private static long            refreshPeriod    = -1;
-    private static final long      serialVersionUID = 476443678461L;
     public static DataServerItem[] server_ip_list;
     private static Object          T_message;
     private static int             T_messageType;
@@ -2149,6 +2148,7 @@ final public class jScopeFacade extends JFrame implements ActionListener, ItemLi
     }
 }
 
+@SuppressWarnings("serial")
 class ServerDialog extends JDialog implements ActionListener{
     private static String                   know_provider[]   = {"w7x.w7xDataProvider", "mds.mdsDataProvider",
                                                               // "mds.mdsDataProviderUdt",
@@ -2160,7 +2160,6 @@ class ServerDialog extends JDialog implements ActionListener{
                                                               // "asdex.asdexDataProvider",
                                                               // "ascii.asciiDataProvider",
                                                                         "local.localDataProvider", "mds.mdsAsynchDataProvider"};
-    static final long                       serialVersionUID  = 4734523460978461L;
     static private JList                    server_list;
     private final JButton                   add_b, remove_b, exit_b, connect_b, modify_b;
     JCheckBox                               automatic;
@@ -2519,16 +2518,16 @@ class ServerDialog extends JDialog implements ActionListener{
     }
 }
 
+@SuppressWarnings("serial")
 class WindowDialog extends JDialog implements ActionListener{
-    static final long serialVersionUID = 433426264578461L;
-    boolean           changed          = false;
-    int               in_row[];
-    JLabel            label;
-    JButton           ok, apply, cancel;
-    int               out_row[]        = new int[4];
-    jScopeFacade      parent;
-    JSlider           row_1, row_2, row_3, row_4;
-    JTextField        titleText, eventText, printEventText;
+    boolean      changed   = false;
+    int          in_row[];
+    JLabel       label;
+    JButton      ok, apply, cancel;
+    int          out_row[] = new int[4];
+    jScopeFacade parent;
+    JSlider      row_1, row_2, row_3, row_4;
+    JTextField   titleText, eventText, printEventText;
 
     WindowDialog(final JFrame dw, final String title){
         super(dw, title, true);

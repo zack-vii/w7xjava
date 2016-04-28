@@ -39,6 +39,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+@SuppressWarnings("serial")
 final class ColorDialog extends JDialog implements ActionListener, ItemListener{
     final static class Item{
         Color  color;
@@ -49,7 +50,6 @@ final class ColorDialog extends JDialog implements ActionListener, ItemListener{
             this.color = c;
         }
     }
-    static final long serialVersionUID = 4766785678461L;
 
     private static Vector<Item> CopyColorItemsVector(final Vector<Item> in) {
         final Vector<Item> out = new Vector<Item>(in.size());
@@ -138,7 +138,7 @@ final class ColorDialog extends JDialog implements ActionListener, ItemListener{
         this.colorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.colorList.addListSelectionListener(new ListSelectionListener(){
             @Override
-            public void valueChanged(ListSelectionEvent e) {
+            public void valueChanged(final ListSelectionEvent e) {
                 final int color_idx = ((JList)e.getSource()).getSelectedIndex();
                 if(color_idx >= 0 && color_idx < ColorDialog.this.color_set.size()){
                     final Item c_item = ColorDialog.this.color_set.elementAt(color_idx);
@@ -176,7 +176,7 @@ final class ColorDialog extends JDialog implements ActionListener, ItemListener{
         this.red.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
         this.red.addChangeListener(new ChangeListener(){
             @Override
-            public void stateChanged(ChangeEvent e) {
+            public void stateChanged(final ChangeEvent e) {
                 ColorDialog.this.colorValueChanged(e);
             }
         });
@@ -197,7 +197,7 @@ final class ColorDialog extends JDialog implements ActionListener, ItemListener{
         this.green.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
         this.green.addChangeListener(new ChangeListener(){
             @Override
-            public void stateChanged(ChangeEvent e) {
+            public void stateChanged(final ChangeEvent e) {
                 ColorDialog.this.colorValueChanged(e);
             }
         });
@@ -218,7 +218,7 @@ final class ColorDialog extends JDialog implements ActionListener, ItemListener{
         this.blue.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
         this.blue.addChangeListener(new ChangeListener(){
             @Override
-            public void stateChanged(ChangeEvent e) {
+            public void stateChanged(final ChangeEvent e) {
                 ColorDialog.this.colorValueChanged(e);
             }
         });

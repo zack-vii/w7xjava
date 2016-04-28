@@ -36,6 +36,7 @@ import javax.swing.border.Border;
 import debug.DEBUG;
 import jScope.ColorMap.ColorProfile;
 
+@SuppressWarnings("serial")
 public class Waveform extends JComponent implements SignalListener{
     protected final class SymContainer extends ContainerAdapter{
         @Override
@@ -79,7 +80,6 @@ public class Waveform extends JComponent implements SignalListener{
     public static final int      MODE_ZOOM         = 1;
     public static final int      NO_PRINT          = 0;
     public static final int      PRINT             = 2;
-    public static final long     serialVersionUID  = 86438438731453L;
     protected static int         vertical_offset   = 0;
     public static boolean        zoom_on_mb1       = true;
 

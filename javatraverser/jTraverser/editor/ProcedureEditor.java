@@ -7,12 +7,11 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Procedure;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "serial"})
 public class ProcedureEditor extends JPanel implements Editor{
-    private static final long serialVersionUID = 7305707909433418426L;
-    ArgEditor                 arg_edit;
-    Procedure                 procedure;
-    LabeledExprEditor         procedure_edit, language_edit, timeout_edit;
+    ArgEditor         arg_edit;
+    Procedure         procedure;
+    LabeledExprEditor procedure_edit, language_edit, timeout_edit;
 
     public ProcedureEditor(){
         this(null);

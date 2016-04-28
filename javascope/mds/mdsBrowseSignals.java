@@ -5,11 +5,11 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import jScope.jScopeBrowseSignals;
 
+@SuppressWarnings("serial")
 public class mdsBrowseSignals extends jScopeBrowseSignals{
-    public static final long serialVersionUID = 8643838486846L;
-    private String           server_url;
-    private String           shot;
-    private String           tree;
+    private String server_url;
+    private String shot;
+    private String tree;
 
     @Override
     protected String getServerAddr() {

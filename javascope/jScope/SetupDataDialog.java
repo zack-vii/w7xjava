@@ -44,6 +44,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+@SuppressWarnings("serial")
 final class SetupDataDialog extends JDialog implements ActionListener, ItemListener, KeyListener, WaveformListener{
     class Data{
         int     color_idx;
@@ -86,7 +87,6 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         }
     }
     class ExpandExp extends JDialog implements ActionListener{
-        static final long             serialVersionUID = 476237738567356L;
         private final SetupDataDialog conf_dialog;
         private final JLabel          lab_x, lab_y;
         private final JButton         ok, cancel;
@@ -152,7 +152,6 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         }
     }
     class SError extends JDialog implements ActionListener{
-        static final long        serialVersionUID = 476237704286796L;
         private final JTextField e_up, e_low;
         private final JButton    ok, cancel;
         private Data             ws;
@@ -218,16 +217,15 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         }
     }
     class SList extends JPanel implements ItemListener{
-        static final long              serialVersionUID = 476268765462546L;
         // private DefaultListModel list_model = new DefaultListModel();
-        private final DefaultListModel list_model       = new DefaultListModel();
-        private int                    list_num_shot    = 0;
+        private final DefaultListModel list_model    = new DefaultListModel();
+        private int                    list_num_shot = 0;
         private JTextField             marker_step_t;
         private JComboBox              mode1D, mode2D, color, marker;
-        private int                    sel_signal       = -1;
-        private long                   shots[]          = null;
+        private int                    sel_signal    = -1;
+        private long                   shots[]       = null;
         private JList                  sig_list;
-        private final Vector<Data>     signals          = new Vector<Data>();
+        private final Vector<Data>     signals       = new Vector<Data>();
 
         @SuppressWarnings("unchecked")
         public SList(){
@@ -709,10 +707,9 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
             if(object == SetupDataDialog.this) SetupDataDialog.this.SetupDataDialog_componentAdded(event);
         }
     }
-    static final int  BROWSE_X         = 0, BROWSE_Y = 1;
-    static final int  LINE             = 0, POINT = 1, BOTH = 2, NONE = 3;
-    static final long serialVersionUID = 40864646848676L;
-    public static int UNDEF_SHOT       = -99999;
+    static final int  BROWSE_X   = 0, BROWSE_Y = 1;
+    static final int  LINE       = 0, POINT = 1, BOTH = 2, NONE = 3;
+    public static int UNDEF_SHOT = -99999;
 
     private static void defaultButtonOperation(final Object obj, final boolean state, final String val) {
         if(obj instanceof JTextField){

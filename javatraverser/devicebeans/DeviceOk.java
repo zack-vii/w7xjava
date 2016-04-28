@@ -1,8 +1,7 @@
 package devicebeans;
 
+@SuppressWarnings("serial")
 public class DeviceOk extends DeviceControl{
-    private static final long serialVersionUID = -8547074693435300526L;
-
     public DeviceOk(){
         this.setText("Ok");
     }

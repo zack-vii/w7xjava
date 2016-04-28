@@ -10,11 +10,11 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+@SuppressWarnings("serial")
 public class MultiWavePopup extends WavePopup{
-    static final long       serialVersionUID = 864135413574153L;
     protected JMenuItem     legend, remove_legend;
     protected JMenu         signalList;
-    protected MultiWaveform wave             = null;
+    protected MultiWaveform wave = null;
 
     public MultiWavePopup(){
         this(null);

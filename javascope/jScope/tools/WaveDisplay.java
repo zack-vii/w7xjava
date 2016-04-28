@@ -31,9 +31,8 @@ import jScope.Waveform;
 import jScope.WaveformEvent;
 import jScope.WaveformListener;
 
+@SuppressWarnings("serial")
 public class WaveDisplay extends JApplet implements WaveformListener{
-    static final long serialVersionUID = 476443678461L;
-
     protected static String getParameterValue(final String context, final String param) {
         String value = null;
         final StringTokenizer st = new StringTokenizer(context);

@@ -6,9 +6,8 @@ import javax.swing.JPanel;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 
+@SuppressWarnings("serial")
 public class DeviceWaveParameters extends DeviceParameters{
-    private static final long serialVersionUID = -3104891286776580295L;
-
     public DeviceWaveParameters(){}
 
     @Override

@@ -6,9 +6,9 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Param;
 
+@SuppressWarnings("serial")
 public class ParameterEditor extends JPanel implements Editor{
-    private static final long serialVersionUID = -3338106916551980199L;
-    ExprEditor                expr, help, validition;
+    ExprEditor expr, help, validition;
 
     public ParameterEditor(){
         this(new ExprEditor(null, false), new ExprEditor(null, true), new ExprEditor(null, false));

@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.net.URL;
 import javax.swing.JButton;
 
+@SuppressWarnings("serial")
 public abstract class jScopeBrowseSignals extends jScopeBrowseUrl{
-    static final long   serialVersionUID = 32443264357561L;
     JButton             add_sig;
     JButton             add_sig_shot;
-    String              prev_type        = new String("text");
+    String              prev_type = new String("text");
     jScopeWaveContainer wave_panel;
 
     public jScopeBrowseSignals(){
@@ -22,7 +22,7 @@ public abstract class jScopeBrowseSignals extends jScopeBrowseUrl{
         this.p.add(this.add_sig);
         this.add_sig.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 jScopeBrowseSignals.this.addSignal(false);
             }
         });
@@ -31,7 +31,7 @@ public abstract class jScopeBrowseSignals extends jScopeBrowseUrl{
         this.p.add(this.add_sig_shot);
         this.add_sig_shot.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 jScopeBrowseSignals.this.addSignal(true);
             }
         });

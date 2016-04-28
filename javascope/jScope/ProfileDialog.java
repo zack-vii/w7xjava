@@ -6,14 +6,14 @@ import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 public final class ProfileDialog extends JDialog implements WaveformListener{
-    public static final long        serialVersionUID = 9845564654324L;
-    private static final String     TITLE[]          = {"X profile", "Y profile", "Pixel time profile"};
+    private static final String     TITLE[]        = {"X profile", "Y profile", "Pixel time profile"};
     private final WaveformContainer profile_container;
-    private final int               row[]            = {2};
+    private final int               row[]          = {2};
     private final Waveform          source_profile;
-    private Waveform                w_profile_line   = null;
-    private final Waveform          wave[]           = new Waveform[2];
+    private Waveform                w_profile_line = null;
+    private final Waveform          wave[]         = new Waveform[2];
 
     ProfileDialog(final JFrame parent, final Waveform source_profile, final boolean reversed){
         super(parent, "Profile Dialog");

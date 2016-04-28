@@ -8,8 +8,8 @@ import javax.swing.JScrollPane;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 
+@SuppressWarnings("serial")
 public class ArgEditor extends JScrollPane{
-    private static final long  serialVersionUID = 6964842722799941711L;
     private final ExprEditor[] args;
     private final int          num_args;
     protected final Dimension  preferred;

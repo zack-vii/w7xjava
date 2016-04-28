@@ -14,19 +14,18 @@ import mds.data.descriptor_r.Procedure;
 import mds.data.descriptor_r.Program;
 import mds.data.descriptor_r.Routine;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "serial"})
 public class TaskEditor extends JPanel implements ActionListener, Editor{
-    private static final long serialVersionUID = -5397713086983571561L;
-    JComboBox                 combo;
-    Descriptor                data;
-    TreeDialog                dialog;
-    boolean                   editable         = true;
-    LabeledExprEditor         expr_edit;
-    MethodEditor              method_edit;
-    int                       mode_idx, curr_mode_idx;
-    ProcedureEditor           procedure_edit;
-    ProgramEditor             program_edit;
-    RoutineEditor             routine_edit;
+    JComboBox         combo;
+    Descriptor        data;
+    TreeDialog        dialog;
+    boolean           editable = true;
+    LabeledExprEditor expr_edit;
+    MethodEditor      method_edit;
+    int               mode_idx, curr_mode_idx;
+    ProcedureEditor   procedure_edit;
+    ProgramEditor     program_edit;
+    RoutineEditor     routine_edit;
 
     @SuppressWarnings("unchecked")
     public TaskEditor(final Descriptor data, final TreeDialog dialog){

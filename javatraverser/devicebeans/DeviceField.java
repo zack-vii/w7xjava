@@ -22,25 +22,25 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
 
+@SuppressWarnings("serial")
 public class DeviceField extends DeviceComponent{
-    private static final long serialVersionUID = -4876951476949506659L;
-    protected JCheckBox       checkB;
-    Descriptor                data;
-    public boolean            displayEvaluated = false;
-    GridBagLayout             gridbag;
-    private boolean           initial_state;
-    protected String          initialField;
-    protected boolean         initializing     = false;
-    protected boolean         isGridBag        = false;
-    JPanel                    jp;
-    protected JLabel          label;
-    public String             labelString      = "";
-    public int                numCols          = 10;
-    protected int             preferredWidth   = -1;
-    private boolean           reportingChange  = false;
-    public boolean            showState        = false;
-    protected JTextField      textF;
-    public boolean            textOnly         = false;
+    protected JCheckBox  checkB;
+    Descriptor           data;
+    public boolean       displayEvaluated = false;
+    GridBagLayout        gridbag;
+    private boolean      initial_state;
+    protected String     initialField;
+    protected boolean    initializing     = false;
+    protected boolean    isGridBag        = false;
+    JPanel               jp;
+    protected JLabel     label;
+    public String        labelString      = "";
+    public int           numCols          = 10;
+    protected int        preferredWidth   = -1;
+    private boolean      reportingChange  = false;
+    public boolean       showState        = false;
+    protected JTextField textF;
+    public boolean       textOnly         = false;
 
     public DeviceField(){
         this.initializing = true;

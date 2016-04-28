@@ -1,6 +1,5 @@
 package devicebeans;
 
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -15,21 +14,21 @@ import mds.data.descriptor_s.Float32;
 import mds.data.descriptor_s.Float64;
 import mds.data.descriptor_s.Int32;
 
+@SuppressWarnings("serial")
 public class DeviceChoice extends DeviceComponent{
-    private static final long serialVersionUID     = -3130266074615234085L;
-    protected JCheckBox       checkB;
-    protected double          choiceDoubleValues[] = null;
-    protected float           choiceFloatValues[]  = null;
-    protected int             choiceIntValues[]    = null;
-    protected String          choiceItems[];
-    protected JComboBox       comboB;
-    protected boolean         convert              = false;
-    private boolean           initial_state;
-    protected boolean         initializing         = false;
-    protected JLabel          label;
-    protected String          labelString          = null;
-    private boolean           reportingChange      = false;
-    protected boolean         showState            = false;
+    protected JCheckBox checkB;
+    protected double    choiceDoubleValues[] = null;
+    protected float     choiceFloatValues[]  = null;
+    protected int       choiceIntValues[]    = null;
+    protected String    choiceItems[];
+    protected JComboBox comboB;
+    protected boolean   convert              = false;
+    private boolean     initial_state;
+    protected boolean   initializing         = false;
+    protected JLabel    label;
+    protected String    labelString          = null;
+    private boolean     reportingChange      = false;
+    protected boolean   showState            = false;
 
     @SuppressWarnings("unchecked")
     public DeviceChoice(){

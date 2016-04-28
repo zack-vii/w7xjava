@@ -15,15 +15,15 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.StringTokenizer;
 
+@SuppressWarnings("serial")
 public class DeviceTableCustomizer extends DeviceCustomizer implements Customizer{
-    private static final long serialVersionUID = 7125835834502042070L;
-    DeviceTable               bean             = null;
-    Checkbox                  displayRowNumC, editableC, binaryC, useExpressionsC;
-    Button                    doneButton;
-    TextField                 labelString, identifier, numCols, numRows, columnNames, rowNames, preferredColumnWidthT, preferredHeightT;
-    PropertyChangeSupport     listeners        = new PropertyChangeSupport(this);
-    Choice                    nids, modeChoice;
-    Object                    obj;
+    DeviceTable           bean      = null;
+    Checkbox              displayRowNumC, editableC, binaryC, useExpressionsC;
+    Button                doneButton;
+    TextField             labelString, identifier, numCols, numRows, columnNames, rowNames, preferredColumnWidthT, preferredHeightT;
+    PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+    Choice                nids, modeChoice;
+    Object                obj;
 
     public DeviceTableCustomizer(){}
 

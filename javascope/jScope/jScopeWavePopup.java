@@ -12,8 +12,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.Timer;
 
+@SuppressWarnings("serial")
 final class jScopeWavePopup extends MultiWavePopup{
-    static final long             serialVersionUID = 8641687468351L;
     protected JMenuItem           refresh;
     protected JMenuItem           selectWave;
     protected JSeparator          sep1;

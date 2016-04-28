@@ -14,18 +14,18 @@ import java.beans.Customizer;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@SuppressWarnings("serial")
 public class DeviceFieldCustomizer extends DeviceCustomizer implements Customizer{
-    private static final long serialVersionUID = 4195496221996739378L;
-    DeviceField               bean             = null;
-    Checkbox                  displayEvaluated;
-    Button                    doneButton;
-    Checkbox                  editable;
-    TextField                 labelString, identifier, numCols;
-    PropertyChangeSupport     listeners        = new PropertyChangeSupport(this);
-    Choice                    nids;
-    Object                    obj;
-    Checkbox                  showState;
-    Checkbox                  textOnly;
+    DeviceField           bean      = null;
+    Checkbox              displayEvaluated;
+    Button                doneButton;
+    Checkbox              editable;
+    TextField             labelString, identifier, numCols;
+    PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+    Choice                nids;
+    Object                obj;
+    Checkbox              showState;
+    Checkbox              textOnly;
 
     public DeviceFieldCustomizer(){}
 

@@ -8,10 +8,10 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
 import mds.data.descriptor_s.CString;
 
+@SuppressWarnings("serial")
 public final class Function extends Descriptor_R<Short>{
     private final class Arguments extends ArrayList<Descriptor>{
-        private static final long serialVersionUID = 1L;
-        private final boolean     deco;
+        private final boolean deco;
 
         public Arguments(final Descriptor[] descs, final int idx, final boolean deco){
             super(descs.length - idx);

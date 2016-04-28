@@ -10,10 +10,10 @@ import javax.swing.JPanel;
 import jTraverser.Node;
 import jTraverser.editor.NodeEditor;
 
+@SuppressWarnings("serial")
 public class DisplayTags extends NodeEditor implements ActionListener{
-    private static final long serialVersionUID = 845904969809735591L;
-    JLabel                    tagsLabel;
-    JPanel                    tagsPanel;
+    JLabel tagsLabel;
+    JPanel tagsPanel;
 
     public DisplayTags(){
         this.setLayout(new BorderLayout());

@@ -11,13 +11,13 @@ import java.beans.Customizer;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@SuppressWarnings("serial")
 public class DeviceWaveDisplayCustomizer extends DeviceCustomizer implements Customizer{
-    private static final long serialVersionUID = 6299782864592765238L;
-    DeviceWaveDisplay         bean             = null;
-    Button                    doneButton;
-    PropertyChangeSupport     listeners        = new PropertyChangeSupport(this);
-    Choice                    nids;
-    Object                    obj;
+    DeviceWaveDisplay     bean      = null;
+    Button                doneButton;
+    PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+    Choice                nids;
+    Object                obj;
 
     public DeviceWaveDisplayCustomizer(){}
 

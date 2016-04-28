@@ -18,9 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+@SuppressWarnings("serial")
 public final class SetupDefaults extends JDialog implements ActionListener{
-    static final long serialVersionUID = 476237743535423L;
-
     private static int IsGridMode(final String mode) {
         for(int i = 0; i < Grid.GRID_MODE.length; i++)
             if(Grid.GRID_MODE[i].equals(mode)) return i;

@@ -9,12 +9,12 @@ import java.awt.AWTEvent;
  * @see UpdateEventListener
  * @see DataProvider
  */
+@SuppressWarnings("serial")
 public class UpdateEvent extends AWTEvent{
-    static final long serialVersionUID = 47623770978461L;
     /**
      * The name of the event just received.
      */
-    String            name;
+    String name;
 
     public UpdateEvent(final Object source, final String event){
         super(source, 0);

@@ -20,11 +20,10 @@ import jScope.ColorMap.ColorProfile;
  * Class MultiWaveform extends the capability of class Waveform to deal with multiple
  * waveforms.
  */
+@SuppressWarnings("serial")
 final public class jScopeMultiWave extends MultiWaveform implements UpdateEventListener{
     // Inner class ToTransferHandler to receive jTraverser info
     class ToTransferHandler extends TransferHandler{
-        static final long serialVersionUID = 247273265246434L;
-
         @Override
         public boolean canImport(final TransferHandler.TransferSupport support) {
             if(!support.isDrop()) return false;
@@ -53,7 +52,6 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
             return true;
         }
     }
-    static final long serialVersionUID = 86131468442245L;
 
     public static String getBriefError(final String er, final boolean brief) {
         if(brief) return er.substring(0, (er.indexOf('\n') == -1 ? er.length() : er.indexOf('\n')));

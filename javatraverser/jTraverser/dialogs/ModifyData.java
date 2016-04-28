@@ -24,9 +24,8 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Range;
 
+@SuppressWarnings("serial")
 public class ModifyData extends NodeEditor{
-    private static final long serialVersionUID = -1402049893755852077L;
-
     private static final String tagList(final String[] tags) {
         if(tags == null || tags.length == 0) return "<no tags>";
         return String.join(", ", tags);

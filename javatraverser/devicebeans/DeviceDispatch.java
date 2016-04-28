@@ -16,6 +16,7 @@ import jTraverser.NodeInfo;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 
+@SuppressWarnings("serial")
 public class DeviceDispatch extends DeviceComponent{
     class DispatchComboEditor implements ComboBoxEditor{
         int    idx;
@@ -44,13 +45,12 @@ public class DeviceDispatch extends DeviceComponent{
         @Override
         public void setItem(final Object obj) {}
     }
-    private static final long serialVersionUID = 5261317294707988323L;
-    Descriptor                actions[];
-    JDialog                   dialog           = null;
-    DeviceDispatchField       dispatch_fields[], active_field;
-    int                       i, j, num_actions;
-    protected boolean         initializing     = false;
-    JComboBox                 menu;
+    Descriptor          actions[];
+    JDialog             dialog       = null;
+    DeviceDispatchField dispatch_fields[], active_field;
+    int                 i, j, num_actions;
+    protected boolean   initializing = false;
+    JComboBox           menu;
 
     public DeviceDispatch(){
         this.menu = new JComboBox();

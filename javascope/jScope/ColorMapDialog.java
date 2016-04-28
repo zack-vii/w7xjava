@@ -27,10 +27,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import jScope.ColorMap.ColorProfile;
 
+@SuppressWarnings("serial")
 final public class ColorMapDialog extends JDialog{
     public class ColorPalette extends JPanel{
-        static final long serialVersionUID = 4762377065452L;
-        Color             colors[];
+        Color colors[];
 
         ColorPalette(final Color colors[]){
             this.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -57,7 +57,6 @@ final public class ColorMapDialog extends JDialog{
             this.repaint();
         }
     }
-    static final long                    serialVersionUID = 476237696543563L;
     JCheckBox                            bitClip;
     JPanel                               bitOptionPanel, colorMapPanel;
     JComboBox                            cmComboBox;

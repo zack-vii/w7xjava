@@ -13,9 +13,9 @@ import java.sql.Connection;
  * @see Connection Listener
  * @see DataProvider
  */
+@SuppressWarnings("serial")
 public class ConnectionEvent extends AWTEvent{
-    public static final int LOST_CONNECTION  = AWTEvent.RESERVED_ID_MAX + 1;
-    static final long       serialVersionUID = 47623776584563L;
+    public static final int LOST_CONNECTION = AWTEvent.RESERVED_ID_MAX + 1;
     /**
      * Number ofbytes transferred so far.
      */

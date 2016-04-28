@@ -8,11 +8,11 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Method;
 
+@SuppressWarnings("serial")
 public class MethodEditor extends JPanel implements Editor{
-    private static final long serialVersionUID = -1402796582815519877L;
-    ArgEditor                 arg_edit;
-    LabeledExprEditor         device_edit, method_edit, timeout_edit;
-    Method                    method;
+    ArgEditor         arg_edit;
+    LabeledExprEditor device_edit, method_edit, timeout_edit;
+    Method            method;
 
     public MethodEditor(){
         this(null);

@@ -6,9 +6,9 @@ import javax.swing.JPanel;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 
+@SuppressWarnings("serial")
 public class DeviceParameters extends DeviceMultiComponent{
-    private static final long         serialVersionUID = -2359203244949049236L;
-    protected Vector<DeviceComponent> parameters       = new Vector<DeviceComponent>();
+    protected Vector<DeviceComponent> parameters = new Vector<DeviceComponent>();
 
     @Override
     protected void addParameter(final JPanel jp, final Nid nidData) {

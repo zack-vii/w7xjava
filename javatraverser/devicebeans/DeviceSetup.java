@@ -28,11 +28,11 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 
+@SuppressWarnings("serial")
 public class DeviceSetup extends JDialog{
     // public int width = 400, height = 200;
-    static Hashtable<Integer, DeviceSetup> activeNidHash    = new Hashtable<Integer, DeviceSetup>();
-    static Vector<DeviceSetup>             openDevicesV     = new Vector<DeviceSetup>();
-    private static final long              serialVersionUID = -5649256708031956257L;
+    static Hashtable<Integer, DeviceSetup> activeNidHash = new Hashtable<Integer, DeviceSetup>();
+    static Vector<DeviceSetup>             openDevicesV  = new Vector<DeviceSetup>();
 
     public static void activateDeviceSetup(final String deviceName, final String experiment, final int shot, final String rootName, final int x, final int y) {
         final Database tree;

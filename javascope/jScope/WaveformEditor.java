@@ -11,10 +11,10 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.Vector;
 import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 final public class WaveformEditor extends Waveform{
     static float[]            copyX, copyY;
-    public static final float MIN_STEP         = 1E-6F;
-    static final long         serialVersionUID = 23457567346312L;
+    public static final float MIN_STEP = 1E-6F;
 
     public static void main(final String args[]) {
         final float x[] = new float[10];

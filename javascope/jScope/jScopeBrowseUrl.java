@@ -24,19 +24,19 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import debug.DEBUG;
 
+@SuppressWarnings("serial")
 public class jScopeBrowseUrl extends JDialog{
-    static final long     serialVersionUID = 156468466436846L;
-    final static String   u_agent          = "jScopeBrowseUrl.java ($Revision$) for " + jScopeFacade.VERSION;
+    final static String   u_agent   = "jScopeBrowseUrl.java ($Revision$) for " + jScopeFacade.VERSION;
     JButton               back;
-    boolean               connected        = false;
-    int                   curr_url         = 0;
+    boolean               connected = false;
+    int                   curr_url  = 0;
     JButton               forward;
     JButton               home;
     protected JEditorPane html;
     protected String      mime_type;
     JPanel                p;
     URLConnection         url_con;
-    Vector<URL>           url_list         = new Vector<URL>();
+    Vector<URL>           url_list  = new Vector<URL>();
 
     public jScopeBrowseUrl(final JFrame owner){
         super(owner);

@@ -13,16 +13,16 @@ import mds.data.descriptor_a.CStringArray;
 import mds.data.descriptor_r.Function;
 import mds.data.descriptor_s.CString;
 
+@SuppressWarnings("serial")
 public class PythonEditor extends JPanel implements Editor{
-    static final short        OPC_FUN          = 162;
-    private static final long serialVersionUID = -6921161255217870790L;
-    boolean                   default_scroll;
-    boolean                   editable         = true;
-    String                    program;
-    String                    retVar;
-    int                       rows             = 7, columns = 20;
-    JTextArea                 text_area;
-    JTextField                text_field;
+    static final short OPC_FUN  = 162;
+    boolean            default_scroll;
+    boolean            editable = true;
+    String             program;
+    String             retVar;
+    int                rows     = 7, columns = 20;
+    JTextArea          text_area;
+    JTextField         text_field;
 
     public PythonEditor(final Descriptor[] descriptors){
         JScrollPane scroll_pane;

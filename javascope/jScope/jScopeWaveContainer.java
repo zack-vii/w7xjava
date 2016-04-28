@@ -36,6 +36,7 @@ import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 import debug.DEBUG;
 
+@SuppressWarnings("serial")
 public final class jScopeWaveContainer extends WaveformContainer{
     class UpdW extends Thread{
         boolean pending = false;
@@ -73,8 +74,7 @@ public final class jScopeWaveContainer extends WaveformContainer{
             this.notify();
         }
     }
-    private static final int MAX_COLUMN       = 4;
-    static final long        serialVersionUID = 4326578978461L;
+    private static final int MAX_COLUMN = 4;
 
     public static DataServerItem buildDataServerItem(final Properties pr, final String prompt) {
         DataServerItem server_item = null;

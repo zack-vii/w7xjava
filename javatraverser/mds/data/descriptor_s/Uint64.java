@@ -4,10 +4,10 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import mds.data.descriptor_s.Uint64.ULong;
 
+@SuppressWarnings("serial")
 public final class Uint64 extends NUMBER<ULong>{
     public static final class ULong extends Number{
-        private static final BigInteger max              = BigInteger.ONE.shiftLeft(64);
-        private static final long       serialVersionUID = 1L;
+        private static final BigInteger max = BigInteger.ONE.shiftLeft(64);
 
         public static final ULong fromBuffer(final ByteBuffer b) {
             return new ULong(b.getLong());

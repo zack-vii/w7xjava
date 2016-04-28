@@ -16,6 +16,7 @@ import debug.DEBUG;
  * Class MultiWaveform extends the capability of class Waveform to deal with multiple
  * waveforms.
  */
+@SuppressWarnings("serial")
 public class MultiWaveform extends Waveform{
     public static final int  HORIZONTAL         = 0;
     public static final int  LEGEND_BOTTOM      = 1;
@@ -24,7 +25,6 @@ public class MultiWaveform extends Waveform{
     public static final int  MAX_DRAG_POINT     = 200;
     public static final int  PRINT_BW           = 8;
     public static final int  PRINT_LEGEND       = 4;
-    public static final long serialVersionUID   = 2342326324434L;
     public static final int  VERTICAL           = 1;
     private boolean          asinchAutoscale    = false;
     private int              bottom_size        = 0;
@@ -595,11 +595,11 @@ public class MultiWaveform extends Waveform{
                 else
                 if (s.getType() == Signal.TYPE_2D)
                     mode = ( (Signal) signals.elementAt(idx)).getMode2D();
-    
+
             }
             return mode;
         }
-    
+
         public int getSignalMode()
         {
             return getSignalMode(curr_point_sig_idx);

@@ -15,9 +15,8 @@ import mds.data.descriptor_r.Param;
 import mds.data.descriptor_r.With_Units;
 import mds.data.descriptor_s.CString;
 
+@SuppressWarnings("serial")
 public class DataEditor extends JPanel implements ActionListener, Editor{
-    private static final long serialVersionUID = -7570715708392389979L;
-
     public static final void main(final String[] args) {// TODO
         final JFrame f = new JFrame();
         final DataEditor ed = new DataEditor(new CString("HELLO_WORLD"), null);

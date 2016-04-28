@@ -21,8 +21,8 @@ import jTraverser.Node;
 import jTraverser.TreeManager;
 import jTraverser.jTraverserFacade;
 
+@SuppressWarnings("serial")
 public final class ModifyTags extends JDialog{
-    private static final long              serialVersionUID = 8510111172505528007L;
     private final JTextField               curr_tag_selection;;
     private final DefaultListModel<String> curr_taglist_model;
     private Node                           currnode;

@@ -8,9 +8,9 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
 
+@SuppressWarnings("serial")
 public class LabeledExprEditor extends JPanel implements Editor{
-    private static final long serialVersionUID = -7771290623140577516L;
-    ExprEditor                expr;
+    ExprEditor expr;
 
     public LabeledExprEditor(final Descriptor data){
         this("Expression", new ExprEditor(data, (data != null && data instanceof CString), 7, 20));

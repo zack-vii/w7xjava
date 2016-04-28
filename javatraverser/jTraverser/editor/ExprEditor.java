@@ -24,6 +24,7 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
 
+@SuppressWarnings("serial")
 public class ExprEditor extends JPanel implements Editor{
     protected final class PopupAdapter extends MouseAdapter{
         JPopupMenu pop;
@@ -59,20 +60,19 @@ public class ExprEditor extends JPanel implements Editor{
             this.pop.show((JTextComponent)e.getSource(), e.getX(), e.getY());
         }
     }
-    private static final long serialVersionUID = -5215643316421671225L;
-    Descriptor                data;
-    boolean                   default_scroll;
-    boolean                   default_to_string;
-    boolean                   editable         = false;
+    Descriptor               data;
+    boolean                  default_scroll;
+    boolean                  default_to_string;
+    boolean                  editable = false;
     // private final JButton eval;
     // private final JTextField eval_field;
-    String                    expr;
-    private final JButton     left, right;
-    private final JPanel      pl, pr;
-    boolean                   quotes_added;
-    int                       rows, columns;
-    private final JTextArea   text_area;
-    private final JTextField  text_field;
+    String                   expr;
+    private final JButton    left, right;
+    private final JPanel     pl, pr;
+    boolean                  quotes_added;
+    int                      rows, columns;
+    private final JTextArea  text_area;
+    private final JTextField text_field;
 
     public ExprEditor(final boolean default_to_string){
         this(null, default_to_string, 1, 32);

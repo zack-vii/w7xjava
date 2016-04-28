@@ -14,8 +14,8 @@ import javax.swing.JTextField;
 import jTraverser.Node;
 import jTraverser.TreeManager;
 
+@SuppressWarnings("serial")
 public final class Rename extends JDialog{
-    private static final long serialVersionUID = -4759713694233429350L;
     private Node              currnode;
     private final JTextField  new_name;
     private final TreeManager treeman;

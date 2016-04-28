@@ -22,10 +22,9 @@ import javax.swing.JComponent;
  *
  * @see RowColumnLayout
  */
+@SuppressWarnings("serial")
 public class RowColumnContainer extends JComponent{
     class Btm extends Component{
-        static final long serialVersionUID = 84352451232653L;
-
         Btm(){
             this.setBackground(Color.lightGray);
         }
@@ -44,8 +43,7 @@ public class RowColumnContainer extends JComponent{
         @Override
         public void printAll(final Graphics g) {}
     }
-    static final long           serialVersionUID = 476237732565462L;
-    private Component           maximizeC        = null;
+    private Component           maximizeC     = null;
     /**
      * Normalize height of the components in column.
      *
@@ -58,7 +56,7 @@ public class RowColumnContainer extends JComponent{
      * @see RowColumnLayout
      */
     protected float             pw[];
-    private final Vector<Point> real_position    = new Vector<Point>();
+    private final Vector<Point> real_position = new Vector<Point>();
     /**
      * RowColumnLayout
      *
@@ -68,8 +66,8 @@ public class RowColumnContainer extends JComponent{
     /**
      * number of component in column
      */
-    protected int               rows[]           = {1, 0, 0, 0};
-    private Point               split_pos        = null;
+    protected int               rows[]        = {1, 0, 0, 0};
+    private Point               split_pos     = null;
 
     /**
      * Constructs a new RowColumnContainer with one row an column.
@@ -424,7 +422,7 @@ public class RowColumnContainer extends JComponent{
     }
 
     /*
-
+    
      private void upadateRealPosition(Point p)
      {
         for(int j = 1; j < real_position.size(); j+=2)

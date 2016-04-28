@@ -24,9 +24,8 @@ import javax.swing.border.EmptyBorder;
 import jTraverser.Database;
 import jTraverser.TreeManager;
 
+@SuppressWarnings("serial")
 public class TreeOpenDialog extends JDialog{
-    private static final long serialVersionUID = 1L;
-
     public static void main(final String[] args) {// TODO
         try{
             final TreeOpenDialog dialog = new TreeOpenDialog(null, null);
@@ -56,8 +55,6 @@ public class TreeOpenDialog extends JDialog{
         final JPanel grid = new JPanel();
         grid.setBorder(new EmptyBorder(5, 5, 5, 5));
         grid.setLayout(new GridLayout(3, 2){
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void layoutContainer(final Container parent) {
                 synchronized(parent.getTreeLock()){

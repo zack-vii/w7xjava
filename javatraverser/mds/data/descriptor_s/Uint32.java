@@ -3,10 +3,9 @@ package mds.data.descriptor_s;
 import java.nio.ByteBuffer;
 import mds.data.descriptor_s.Uint32.UInteger;
 
+@SuppressWarnings("serial")
 public final class Uint32 extends NUMBER<UInteger>{
     public static final class UInteger extends Number{
-        private static final long serialVersionUID = 1L;
-
         public static final UInteger fromBuffer(final ByteBuffer b) {
             return new UInteger(b.getInt());
         }
