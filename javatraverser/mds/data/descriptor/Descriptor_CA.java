@@ -63,7 +63,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
             if(test == 0){// 32-bit data
                 if(DEBUG.D) System.err.println("32-bit data");
                 if((off & 7) == 0){// is multiple of byte
-                    pack.position(pack.position() + off >> 3);
+                    pack.position(pack.position() + (off >> 3));
                     for(; nitems-- > 0;)
                         items.put(pack.getInt());
                     return;
