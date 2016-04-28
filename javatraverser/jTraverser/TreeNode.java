@@ -6,8 +6,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import mds.MdsException;
-import mds.data.descriptor.Descriptor;
 
 public class TreeNode extends JLabel{
     static Font               plain_f, bold_f;
@@ -47,31 +45,7 @@ public class TreeNode extends JLabel{
     }
 
     @Override
-    public String getToolTipText() {
-        /*if(false){
-            final String tags[] = this.node.getTags();
-            if(tags == null || tags.length == 0) return null;
-            final String text;
-            if(tags.length > 32) text = String.join("<br>", Arrays.copyOfRange(tags, 0, 32)) + "<br>...";
-            else text = String.join("<br>", tags);
-            return new StringBuilder("<html>").append(text).append("</html>").toString();
-        }else*/{
-            String text, info;
-            try{
-                info = this.node.getInfo().toString();
-                if(this.node.getUsage() == NodeInfo.USAGE_STRUCTURE || this.node.getUsage() == NodeInfo.USAGE_SUBTREE) text = null;
-                else{
-                    final Descriptor data = this.node.getData();
-                    if(data == null) text = null;
-                    else text = data.toStringX().replace("<", "&lt;").replace(">", "&gt;").replace("\t", "&nbsp&nbsp&nbsp&nbsp ").replace("\n", "<br>");
-                }
-            }catch(final MdsException e){
-                return e.toString();
-            }
-            if(text == null) return info;
-            final StringBuilder sb = new StringBuilder().append(info.substring(0, info.length() - 7)).append("<hr><table");
-            if(text.length() > 80) sb.append(" width=\"320\"");
-            return sb.append(">").append(text).append("</table></html>").toString();
-        }
+    public final String getToolTipText() {
+        return this.node.getToolTipText();
     }
 }

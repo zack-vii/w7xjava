@@ -49,7 +49,7 @@ public class Node{
         return Node.getNode((DefaultMutableTreeNode)treenode);
     }
 
-    public static String getUniqueName(String name, final String[] usedNames) {
+    public final static String getUniqueName(String name, final String[] usedNames) {
         int i;
         for(i = 0; i < usedNames.length && !name.equals(usedNames[i]); i++);
         if(i == usedNames.length) return name;
@@ -78,6 +78,8 @@ public class Node{
     public final Nid               nid;
     private Node                   parent;
     private Node[]                 sons;
+    private long                   ToolTipLife  = 0;
+    private String                 ToolTipText  = null;
     public final Tree              tree;
     private JLabel                 tree_label;
     private DefaultMutableTreeNode treenode;
@@ -109,11 +111,11 @@ public class Node{
         this.members = new Node[0];
     }
 
-    public Node addChild(final String name) throws MdsException {
+    public final Node addChild(final String name) throws MdsException {
         return this.addNode(name, NodeInfo.USAGE_STRUCTURE);
     }
 
-    public Node addDevice(final String name, final String type) throws MdsException {
+    public final Node addDevice(final String name, final String type) throws MdsException {
         Nid new_nid;
         final Nid prev_default = this.database.getDefault();
         this.database.setDefault(this.nid);
@@ -159,7 +161,7 @@ public class Node{
         return this.addNode(new_nid, usage);
     }
 
-    private boolean changePath(final Node newParent, final String newName) {
+    private final boolean changePath(final Node newParent, final String newName) {
         if((newParent == this.parent) && (newName == this.getName())) return false; // nothing to do
         if(newName.length() > 12 || newName.length() == 0){
             JOptionPane.showMessageDialog(this.tree, "Node name lengh must be between 1 and 12 characters", "Error renaming node: " + newName.length(), JOptionPane.WARNING_MESSAGE);
@@ -182,18 +184,18 @@ public class Node{
         return true;
     }
 
-    public void clearFlag(final byte idx) throws MdsException {
+    public final void clearFlag(final byte idx) throws MdsException {
         this.database.clearFlags(this.nid, 1 << idx);
         this.info.setFlags(this.database.getFlags(this.nid));
     }
 
-    public void copy() {
+    public final void copy() {
         Node.cut = false;
         Node.copied = this;
         jTraverserFacade.stdout("copy: " + Node.copied + " from " + Node.copied.parent);
     }
 
-    public void copyToClipboard() {
+    public final void copyToClipboard() {
         try{
             final Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection content;
@@ -205,18 +207,18 @@ public class Node{
         }
     }
 
-    public void cut() {
+    public final void cut() {
         Node.cut = true;
         Node.copied = this;
         jTraverserFacade.stdout("cut: " + Node.copied + " from " + Node.copied.parent);
     }
 
-    public void delete() {
+    public final void delete() {
         if(this.tree.isEditable()) this.tree.deleteNode(this);
         else jTraverserFacade.stdout("Cannot delete " + this + ". Tree not in edit mode.");
     }
 
-    public void doAction() throws MdsException {
+    public final void doAction() throws MdsException {
         try{
             this.database.doAction(this.nid);
         }catch(final Exception e){
@@ -224,7 +226,7 @@ public class Node{
         }
     }
 
-    public boolean executeDelete() {
+    public final boolean executeDelete() {
         try{
             this.database.executeDelete();
             return true;
@@ -234,7 +236,7 @@ public class Node{
         }
     }
 
-    public void expand() {
+    public final void expand() {
         try{
             int i;
             Nid sons_nid[] = this.database.getSons(this.nid);
@@ -262,7 +264,7 @@ public class Node{
         return this.info.getConglomerateNids();
     }
 
-    public Descriptor getData() throws MdsException {
+    public final Descriptor getData() throws MdsException {
         if(this.isSegmented()) this.data = this.database.getSegment(this.nid, 0);
         else this.data = this.database.getData(this.nid);
         return this.data;
@@ -281,7 +283,7 @@ public class Node{
         return this.info.getDType();
     }
 
-    public int getFlags() {
+    public final int getFlags() {
         try{
             this.info.setFlags(this.database.getFlags(this.nid));
         }catch(final Exception exc){
@@ -294,7 +296,7 @@ public class Node{
         return this.info.getFullPath();
     }
 
-    public JLabel getIcon(final boolean isSelected) {
+    public final JLabel getIcon(final boolean isSelected) {
         if(this.info == null) return null;
         ImageIcon icon = null;
         switch(this.getUsage()){
@@ -340,7 +342,7 @@ public class Node{
         return this.tree_label;
     }
 
-    public NodeInfo getInfo() throws MdsException {
+    public final NodeInfo getInfo() throws MdsException {
         try{
             this.info = this.database.getInfo(this.nid);
         }catch(final Exception exc){
@@ -377,7 +379,7 @@ public class Node{
         return this.sons;
     }
 
-    public String[] getTags() {
+    public final String[] getTags() {
         try{
             return this.database.getTags(this.nid);
         }catch(final MdsException e){}catch(final Exception e){
@@ -386,7 +388,40 @@ public class Node{
         return new String[0];
     }
 
-    public DefaultMutableTreeNode getTreeNode() {
+    public final String getToolTipText() {
+        /*if(false){
+            final String tags[] = this.node.getTags();
+            if(tags == null || tags.length == 0) return null;
+            final String text;
+            if(tags.length > 32) text = String.join("<br>", Arrays.copyOfRange(tags, 0, 32)) + "<br>...";
+            else text = String.join("<br>", tags);
+            return new StringBuilder("<html>").append(text).append("</html>").toString();
+        }else*/{
+            final long now = System.nanoTime();
+            if(this.ToolTipText == null || now > this.ToolTipLife){
+                String text, info;
+                try{
+                    info = this.getInfo().toString();
+                    if(this.getUsage() == NodeInfo.USAGE_STRUCTURE || this.getUsage() == NodeInfo.USAGE_SUBTREE) text = null;
+                    else{
+                        final Descriptor data = this.getData();
+                        if(data == null) text = null;
+                        else text = data.toStringX().replace("<", "&lt;").replace(">", "&gt;").replace("\t", "&nbsp&nbsp&nbsp&nbsp ").replace("\n", "<br>");
+                    }
+                }catch(final MdsException e){
+                    return e.toString();
+                }
+                if(text == null) return info;
+                final StringBuilder sb = new StringBuilder().append(info.substring(0, info.length() - 7)).append("<hr><table");
+                if(text.length() > 80) sb.append(" width=\"320\"");
+                this.ToolTipText = sb.append(">").append(text).append("</table></html>").toString();
+            }
+            this.ToolTipLife = now + 30000000000l;
+            return this.ToolTipText;
+        }
+    }
+
+    public final DefaultMutableTreeNode getTreeNode() {
         return this.treenode;
     }
 
@@ -410,7 +445,7 @@ public class Node{
         return this.info.isCompressSegments();
     }
 
-    public boolean isDefault() {
+    public final boolean isDefault() {
         Nid curr_nid = null;
         try{
             curr_nid = this.database.getDefault();
@@ -445,7 +480,7 @@ public class Node{
         return this.info.isNoWriteShot();
     }
 
-    public boolean isOn() {
+    public final boolean isOn() {
         if(this.needsOnCheck){
             this.needsOnCheck = false;
             try{
@@ -489,17 +524,17 @@ public class Node{
         return this.info.isWriteOnce();
     }
 
-    private ImageIcon loadIcon(final String gifname) {
+    private final ImageIcon loadIcon(final String gifname) {
         final String base = System.getProperty("icon_base");
         if(base == null) return new ImageIcon(this.getClass().getClassLoader().getResource(gifname));
         return new ImageIcon(base + "/" + gifname);
     }
 
-    boolean move(final Node newParent) {
+    final boolean move(final Node newParent) {
         return this.changePath(newParent, this.getName());
     }
 
-    public void paste() {
+    public final void paste() {
         if(this.tree.isEditable()){
             jTraverserFacade.stdout((Node.cut ? "moved: " : "copied: ") + Node.copied + " from " + Node.copied.parent + " to " + this);
             if(Node.copied != null && Node.copied != this){
@@ -510,7 +545,7 @@ public class Node{
         }else jTraverserFacade.stdout("Cannot paste " + Node.copied + ". Tree not in edit mode.");
     }
 
-    public boolean rename(final String newName) {
+    public final boolean rename(final String newName) {
         return this.changePath(this.parent, newName);
     }
 
@@ -519,19 +554,19 @@ public class Node{
         return ref_nid;
     }
 
-    public void setAllOnUnchecked() {
+    public final void setAllOnUnchecked() {
         Node currNode = this;
         while(currNode.parent != null)
             currNode = currNode.parent;
         currNode.setOnUnchecked();
     }
 
-    public void setData(final Descriptor data) throws MdsException {
+    public final void setData(final Descriptor data) throws MdsException {
         this.data = data;
         this.database.putData(this.nid, data);
     }
 
-    public void setDefault() throws MdsException {
+    public final void setDefault() throws MdsException {
         this.database.setDefault(this.nid);
     }
 
@@ -540,9 +575,9 @@ public class Node{
         this.info.setFlags(this.database.getFlags(this.nid));
     }
 
-    public void setInfo(final NodeInfo info) throws MdsException {}
+    public final void setInfo(final NodeInfo info) throws MdsException {}
 
-    void setOnUnchecked() {
+    final void setOnUnchecked() {
         this.needsOnCheck = true;
         for(final Node son : this.sons)
             son.setOnUnchecked();
@@ -568,7 +603,7 @@ public class Node{
         return this.treenode = treenode;
     }
 
-    public void setupDevice() {
+    public final void setupDevice() {
         Conglom conglom = null;
         try{
             conglom = (Conglom)this.database.getData(this.nid);
@@ -608,7 +643,7 @@ public class Node{
         JOptionPane.showMessageDialog(null, "Missing model in descriptor", "Error in device setup 3", JOptionPane.WARNING_MESSAGE);
     }
 
-    public int startDelete() {
+    public final int startDelete() {
         final Nid[] nids = {this.nid};
         try{
             return this.database.startDelete(nids).length;
@@ -618,7 +653,7 @@ public class Node{
         return -1;
     }
 
-    public void toggle() throws MdsException {
+    public final void toggle() throws MdsException {
         if(this.database.isOn(this.nid)) this.database.setOn(this.nid, false);
         else this.database.setOn(this.nid, true);
         this.setOnUnchecked();
@@ -629,7 +664,7 @@ public class Node{
         return this.getName();
     }
 
-    public void turnOff() {
+    public final void turnOff() {
         try{
             this.database.setOn(this.nid, false);
         }catch(final Exception exc){
@@ -638,7 +673,7 @@ public class Node{
         this.setOnUnchecked();
     }
 
-    public void turnOn() {
+    public final void turnOn() {
         try{
             this.database.setOn(this.nid, true);
         }catch(final Exception exc){
@@ -647,11 +682,11 @@ public class Node{
         this.setOnUnchecked();
     }
 
-    public void updateData() throws MdsException {
+    public final void updateData() throws MdsException {
         this.data = this.database.getData(this.nid);
     }
 
-    public void updateInfo() throws MdsException {
+    public final void updateInfo() throws MdsException {
         this.info = this.database.getInfo(this.nid);
     }
 }
