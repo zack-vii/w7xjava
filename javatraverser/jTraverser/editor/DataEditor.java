@@ -86,7 +86,7 @@ public class DataEditor extends JPanel implements ActionListener, Editor{
                     help = ((Param)this.data).getHelp();
                     validation = ((Param)this.data).getValidation();
                 }else data = this.data;
-                this.param_edit = new ParameterEditor(new ExprEditor(data, false, 3, 20), new ExprEditor(help, true, 7, 20), new ExprEditor(validation, false, 1, 20));
+                this.param_edit = new ParameterEditor(new ExprEditor(data, false, 7, 20), new ExprEditor(help, true, 3, 20), new ExprEditor(validation, false, 1, 20));
                 this.panel.add(this.param_edit);
                 break;
             case 3:
