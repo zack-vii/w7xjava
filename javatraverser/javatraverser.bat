@@ -121,6 +121,7 @@ SET LOCAL_SRC=^
   local\localDatabase.java
 
 SET MDSIP_SRC=^
+  mds\data\descriptor\ARRAY.java ^
   mds\data\descriptor\DTYPE.java ^
   mds\data\descriptor\Descriptor.java ^
   mds\data\descriptor\Descriptor_A.java ^
@@ -267,7 +268,7 @@ POPD
 :cleanup
 ECHO cleaning up
 PUSHD %JARDIR%
-DEL /Q local\* 2>NUL
+rem DEL /Q local\* 2>NUL
 DEL /Q mds\data\array\* 2>NUL
 DEL /Q mds\data\* 2>NUL
 DEL /Q mds\* 2>NUL
