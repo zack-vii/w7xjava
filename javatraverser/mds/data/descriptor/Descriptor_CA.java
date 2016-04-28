@@ -35,6 +35,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         private int                bit;
         private final Descriptor_A out_dsc;
 
+        @SuppressWarnings("unused")
         private DECOMPRESS(){
             this.out_dsc = null;
         }
@@ -48,7 +49,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         private final void MdsUnpk(final int nbits, int nitems, final ByteBuffer pack_in, final IntBuffer items_in) {
             final IntBuffer items = ((IntBuffer)items_in.position(0)).duplicate();
             final ByteBuffer pack = (ByteBuffer)pack_in.duplicate().order(ByteOrder.LITTLE_ENDIAN).position((this.bit >> 5) * Integer.BYTES);
-            if(DEBUG.D) System.err.print(String.format("MdsUnpk(%db, %d, [..%d..], %d) -> ", nbits, nitems, pack.getInt(pack.position()), this.bit));
+            if(DEBUG.D) System.err.print(String.format("MdsUnpk(%d, %d, [..%d..], %d) -> ", nbits, nitems, pack.getInt(pack.position()), this.bit));
             if(nbits == 0){// zero fill
                 if(DEBUG.D) System.err.println("zero fill");
                 for(int i = 0; i < nitems; i++)
@@ -133,7 +134,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
             int j = 0;
             final ByteBuffer bx = out_dsc.getBuffer();
             int ye, xe, yn, xn, xhead;
-            IntBuffer e = null, n = null;
+            final IntBuffer n = DECOMPRESS.diff, e = DECOMPRESS.exce;
             int old, buf = 0, mark = 0;
             if(dtype == DTYPE.T) step = Byte.BYTES;
             else if((items_dsc.length & (Integer.BYTES - 1)) == 0) step = Integer.BYTES;
@@ -160,15 +161,15 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
                 if(xe != 0){
                     this.bit -= yn * (xhead - j);
                     this.MdsUnpk((byte)ye, xe, bpack, DECOMPRESS.exce);
-                    e = IntBuffer.wrap(DECOMPRESS.exce.array());
                     mark = -1 << (-yn - 1);
+                    e.position(0);
                 }
                 /***********************************
                  * Summation. Old=0 here, is new start.
                  * Sign and field extend.
                  * Note, signed and unsigned are same.
                  ***********************************/
-                n = IntBuffer.wrap(DECOMPRESS.diff.array());
+                n.position(0);
                 old = 0;
                 for(; j-- > 0;){
                     buf = n.get();
@@ -196,44 +197,8 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     }
 
     public static final void main(final String[] args) throws MdsException {// TODO: main
-        final int B, N, O, in[];
-        B = -32;
-        N = 21;
-        O = 20;
-        in = new int[]{899678208, -1139049730, 1315681596, -1624937732, 416762240, 1340090610, 1800965510, -1853679114, -1244120538, -2121679186, 846132936, 91851221, 1587136599, 1834328738, 1322935144, -613827866, 1031234471, -115043105, -1016166686, -1201589539, 1440117021, 706237};
-        // in = new int[]{-410126848, -17314054, 1086456847, 612484628, 10}; B= 32; N = 21; O = 0;
-        // in = new int[]{-2560, -2049, -1793, -1537, -1281, -1025, -769, -513, -257, -1, 255, 256, 512, 768, 1024, 1280, 1536, 1792, 2048, 2304, 2560}; B= 32; N = 21; O = 8;
-        // in = new int[]{-320, -257, -225, -193, -161, -129, -97, -65, -33, -1, 31, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320}; B= 32; N = 21; O = 5;
-        final ByteBuffer in_b = ByteBuffer.allocate(1024).order(ByteOrder.LITTLE_ENDIAN);
-        for(final int i : in)
-            in_b.putInt(i);
-        in_b.position(0);
-        for(final int i : in)
-            System.out.print(i + " , ");
-        System.out.println();
-        System.out.flush();
-        final IntBuffer out_b = IntBuffer.allocate(N);
-        final DECOMPRESS D = new DECOMPRESS();
-        D.bit = O;
-        D.MdsUnpk(B, N, in_b, out_b);
-        System.out.flush();
-        for(final int i : out_b.array())
-            System.out.print(i + " , ");// DECOMPRESS.Y_OF_INT(i) + "," + +DECOMPRESS.X_OF_INT(i)
-        System.out.println();
-        System.out.flush();
-        // System.exit(0);
-        final int size = 31;
-        int full, max, mask;
-        full = 1 << size;
-        max = 1 << (size - 1);
-        mask = full - 1;
-        DEBUG.printByteArray(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(2.01010f).array(), 4, 1, 1, 1);
-        System.out.println(ByteBuffer.wrap(new byte[]{105, 109, -75, 105,}).order(ByteOrder.LITTLE_ENDIAN).getFloat());
-        System.out.println(String.format("%x , %x , %x", full, mask, max));
-        System.out.println(String.format("%x , %x , %x", 0x12345678, 0x12345678 << 4, max));
-        // System.out.println(String.format("%x , %x", DECOMPRESS.X_OF_INT(0xffffffff), DECOMPRESS.Y_OF_INT(0xffffffff)));
         final Database db = new Database(null, "TEST", 1l, Database.NORMAL);
-        final Descriptor rec = db.getData(new Nid(14));// 8,9
+        final Descriptor rec = db.getData(new Nid(18));// 8,9
         System.out.println(rec.decompile());
         System.exit(0);
     }
