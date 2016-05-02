@@ -50,7 +50,7 @@ public class ExprEditor extends JPanel implements Editor{
                             if(data == null) eval = "no data";
                             else eval = data.toString();
                         }catch(final MdsException de){
-                            eval = de.toString();
+                            eval = de.getMessage();
                         }
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(eval), null);
                         JOptionPane.showMessageDialog(ExprEditor.this, "<html><body><p style='width: 360px;'>" + eval + "</p></body></html>", "Evaluated Data", JOptionPane.PLAIN_MESSAGE);
