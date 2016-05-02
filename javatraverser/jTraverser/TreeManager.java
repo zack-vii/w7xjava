@@ -33,6 +33,7 @@ import jTraverser.dialogs.ModifyTags;
 import jTraverser.dialogs.TreeDialog;
 import jTraverser.dialogs.TreeOpenDialog;
 import jTraverser.editor.NodeEditor;
+import jTraverser.tools.DecompileTree;
 import mds.MdsException;
 
 @SuppressWarnings("serial")
@@ -166,15 +167,15 @@ public class TreeManager extends JScrollPane{
         /*private final class compile implements ActionListener{
         @Override
         public void actionPerformed(final ActionEvent e) {
-            TreeManager.this.compile();
+            FileMenu.this.treeman.compile();
         }
-        }
+        }*/
         private final class decompile implements ActionListener{
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            Tree.this.decompile();
-        }
-        };*/
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                new DecompileTree().decompile(FileMenu.this.treeman.getCurrentDatabase(), FileMenu.this.treeman.frame, true);
+            }
+        };
         private final class open implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -199,16 +200,17 @@ public class TreeManager extends JScrollPane{
             menu.add(this.addMenuItem("Open", new open()));
             menu.add(this.addMenuItem("Write", new write()));
             menu.add(this.addMenuItem("Close", new close()));
-            /*menu.add(this.addMenuItem("Export",new decompile()));
-            menu.add(this.addMenuItem("Import",new compile()));*/
+            menu.add(this.addMenuItem("Export", new decompile()));
+            /* menu.add(this.addMenuItem("Import",new compile()));*/
             menu.add(this.addMenuItem("Quit", new quit()));
         }
 
         @Override
         public final void checkSupport() {
             final boolean noopen = this.treeman.getCurrentTree() == null;
-            this.items.get(2).setEnabled(!noopen);
             this.items.get(1).setEnabled(noopen ? false : this.treeman.getCurrentTree().isEditable());
+            this.items.get(2).setEnabled(!noopen);
+            this.items.get(3).setEnabled(!noopen);
         }
     }
     public static class Menu{
