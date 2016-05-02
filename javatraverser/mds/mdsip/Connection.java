@@ -307,6 +307,7 @@ public class Connection{
     public final synchronized Message getAnswer() throws MdsException {
         final Message message = this.receiveThread.GetMessage();
         if(message == null) throw new MdsException("Null response from server", 0);
+        if((message.status & 1) == 0 && message.status != 0 && message.dtype == DTYPE.T) throw new MdsException(message.asString(), message.status);
         return message;
     }
 
