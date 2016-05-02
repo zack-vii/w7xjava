@@ -99,7 +99,7 @@ public final class jTraverserFacade extends JFrame{
         jmenu.addMenuListener(new MenuChecker(jmenu, new TreeManager.EditMenu(this.treeman, jmenu)));
         this.jmenus.add(jmenu);
         jmenu.setEnabled(false);
-        jmenu = new JMenu("Customize");
+        jmenu = new JMenu("Extras");
         menu_bar.add(jmenu);
         jmenu.add(item = new JMenuItem("Show DataBase"));
         item.addActionListener(new ActionListener(){
