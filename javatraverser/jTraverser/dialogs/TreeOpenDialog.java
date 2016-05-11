@@ -192,7 +192,7 @@ public class TreeOpenDialog extends JDialog{
     }
 
     void ok() {
-        final String provider = this.provider.getText(), exp = this.open_expt.getText(), shot_str = this.open_shot.getText();
+        final String provider = this.provider.getText().trim(), exp = this.open_expt.getText().trim(), shot_str = this.open_shot.getText().trim();
         if(exp == null || exp.length() == 0){
             JOptionPane.showMessageDialog(this, "Missing experiment name", "Error opening tree", JOptionPane.WARNING_MESSAGE);
             return;
