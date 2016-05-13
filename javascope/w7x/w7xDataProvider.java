@@ -80,6 +80,7 @@ public final class w7xDataProvider implements DataProvider{
                 this.upto = timing[1];
                 this.TI = signalaccess.getTimeInterval(this.from, this.upto);
                 SimpleFrameData.this.updateLists();
+                if(SimpleFrameData.this.frameQueue == null) return;
                 this.updateWorker = new UpdateWorker();
                 w7xDataProvider.threads.add(this.updateWorker);
                 this.updateWorker.start();
@@ -172,7 +173,7 @@ public final class w7xDataProvider implements DataProvider{
                     this.wait();
                 }catch(final InterruptedException e){
                     return null;
-                };
+                }
                 return this.sig_y.get(idx);
             }
             final TimeInterval ti = this.todoList.get(idx);
@@ -187,6 +188,7 @@ public final class w7xDataProvider implements DataProvider{
                 try{
                     if(this.todoList == null){
                         this.todoList = sr_y.availableIntervals(this.TI);
+                        if(this.todoList.isEmpty()) return false;
                         this.frameQueue = new PriorityQueue<Integer>(SimpleFrameData.this.todoList.size());
                         this.sig_y = new ArrayList<Signal>(this.todoList.size());
                         for(int i = 0; i < this.todoList.size(); i++){
