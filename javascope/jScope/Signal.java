@@ -441,7 +441,7 @@ public final class Signal implements WaveDataListener{
     /**
      * Constructs a zero Signal with 2 points.
      */
-    private Signal(){
+    public Signal(){
         this.error = this.asym_error = false;
         this.data = new XYWaveData(new double[]{0., 1.}, new float[]{0, 0});
         this.setAxis();

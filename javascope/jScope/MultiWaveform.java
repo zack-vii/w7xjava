@@ -801,6 +801,7 @@ public class MultiWaveform extends Waveform{
     }
 
     private void setLimits(final int mode) {
+        if(this.waveform_signal == null) return;
         boolean anyLongX = false;
         for(int i = 1; i < this.signals.size(); i++){
             if(this.signals.elementAt(i) == null) continue;
@@ -1033,7 +1034,7 @@ public class MultiWaveform extends Waveform{
                 if(this.signals.elementAt(i) != null) break;
             if(i == this.signals.size()) return;
         }else i = this.curr_point_sig_idx;
-        this.waveform_signal = new Signal(this.signals.elementAt(i));
+        this.waveform_signal = this.signals.size() > i ? new Signal(this.signals.elementAt(i)) : new Signal();
         // Check if any of the elements of signals vector refers to absolute time.
         // In this case set minimum and maximum X value of reference waveform_signal to its limits
         this.setLimits(Signal.AT_CREATION);
