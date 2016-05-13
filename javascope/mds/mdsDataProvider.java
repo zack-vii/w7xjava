@@ -6,8 +6,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -58,10 +61,10 @@ public class mdsDataProvider implements DataProvider{
             if(DEBUG.D) System.out.println(this.actSegments + " : form " + this.startSegment + " upto " + this.endSegment);
             // Get Frame Dimension and frames per segment
             final Signal.Segment seg = sig.getSegment(0);
-            if(seg.shape.length != 3) throw new IOException("Invalid number of segment dimensions: " + seg.shape.length);
+            if(seg.shape.length != 3 && (seg.shape.length != 4 || seg.shape[2] != 3)) throw new IOException("Invalid number of segment dimensions: " + Arrays.toString(seg.shape));
             this.dim = new Dimension(seg.shape[0], seg.shape[1]);
             this.framesPerSegment = seg.dim.length;
-            this.bytesPerPixel = sig.dataSize;
+            this.bytesPerPixel = seg.shape.length == 4 ? Integer.BYTES : sig.dataSize;
             this.mode = sig.frameType;
             // Get Frame times
             try{
@@ -140,9 +143,15 @@ public class mdsDataProvider implements DataProvider{
             public final int[]   shape;
 
             public Segment(final String node, final int idx) throws IOException{
-                if(Signal.this.isframe) this.dat = mdsDataProvider.this.getByteArray("_seg=GetSegment(" + node + "," + idx + ")");
-                else this.dat = mdsDataProvider.this.GetRealArray("_seg=GetSegment(" + node + "," + idx + ")");
-                this.shape = mdsDataProvider.this.GetIntegerArray("SHAPE(_seg)");
+                final String expr = new StringBuilder(255).append("SHAPE(_seg=GetSegment(").append(node).append(',').append(idx).append("))").toString();
+                int[] shape = mdsDataProvider.this.GetIntegerArray(expr);
+                if(Signal.this.isframe){
+                    if(shape.length == 4 && shape[2] == 3){
+                        this.dat = this.getRGB("_seg", shape);
+                        shape = new int[]{shape[0], shape[1], shape[3]};
+                    }else this.dat = mdsDataProvider.this.getByteArray("_seg");
+                }else this.dat = mdsDataProvider.this.GetRealArray("_seg");
+                this.shape = shape;
                 this.dim = mdsDataProvider.this.GetFloatArray("DIM_OF(_seg)");
                 this.idx = idx;
                 this.node = node;
@@ -151,6 +160,23 @@ public class mdsDataProvider implements DataProvider{
             @SuppressWarnings("unused")
             public final boolean equals(final String node, final int idx) {
                 return this.idx == idx && this.node.equals(node);
+            }
+
+            private ByteArray getRGB(final String expr, final int[] shape) throws IOException {
+                final int[] ibuf = mdsDataProvider.this.GetIntArray(expr);
+                final int imlen = shape[0] * shape[1];
+                final ByteBuffer bb = ByteBuffer.allocate(Integer.BYTES * imlen * shape[3]);
+                final IntBuffer r = IntBuffer.wrap(ibuf);
+                final IntBuffer g = IntBuffer.wrap(ibuf);
+                final IntBuffer b = IntBuffer.wrap(ibuf);
+                for(int ti = 0; ti < shape[3]; ti++){
+                    r.position(imlen * (ti * 3 + 0));
+                    g.position(imlen * (ti * 3 + 1));
+                    b.position(imlen * (ti * 3 + 2));
+                    for(int ip = 0; ip < imlen; ip++)
+                        bb.putInt(((r.get() & 0xFF) << 16) | ((g.get() & 0xFF) << 8) | (b.get() & 0xFF));
+                }
+                return new ByteArray(bb.array(), Descriptor.DTYPE_LONG);
             }
         }
         public final Object   dat, dim;
@@ -1350,11 +1376,17 @@ public class mdsDataProvider implements DataProvider{
                 for(int i = 0; i < desc.float_data.length; i++)
                     out_data[i] = (int)(desc.float_data[i] + 0.5);
                 return out_data;
+            case Descriptor.DTYPE_SHORT:
+            case Descriptor.DTYPE_USHORT:
+                out_data = new int[desc.short_data.length];
+                for(int i = 0; i < desc.short_data.length; i++)
+                    out_data[i] = desc.short_data[i];
+                return out_data;
             case Descriptor.DTYPE_BYTE:
             case Descriptor.DTYPE_UBYTE:
                 out_data = new int[desc.byte_data.length];
                 for(int i = 0; i < desc.byte_data.length; i++)
-                    out_data[i] = (int)(desc.byte_data[i] + 0.5);
+                    out_data[i] = desc.byte_data[i];
                 return out_data;
             case Descriptor.DTYPE_CSTRING:
                 if((desc.status & 1) == 0) this.error = desc.error;
