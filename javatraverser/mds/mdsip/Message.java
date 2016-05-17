@@ -250,6 +250,14 @@ public final class Message extends Object{
         if(Message.msgid == 0) Message.msgid = 1;
     }
 
+    @Override
+    public final String toString() {
+        try{
+            return Descriptor.readMessage(this).toString();
+        }catch(final IOException e){}
+        return DTYPE.getName(this.dtype) + "(" + this.length + "Bytes)";
+    }
+
     protected final void useCompression(final boolean use_cmp) {
         this.status = (use_cmp ? Message.SUPPORTS_COMPRESSION | 5 : 0);
     }
