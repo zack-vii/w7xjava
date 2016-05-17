@@ -235,8 +235,8 @@ SET CLASSPATH=-classpath ".;.\mds\mdsip\MindTerm.jar;..\java\classes\jScope.jar"
 SET JAVAC="%JDK_HOME%\bin\javac.exe" ||rem -Xlint -deprecation
 SET JCFLAGS= -O -source 1.6 -target 1.6 -g:none||rem -Xlint -deprecation
 SET JAR="%JDK_HOME%\bin\jar.exe"
-SET DBMANIFEST=%CD%\devicebeans\MANIFEST.mf
-SET JTMANIFEST=%CD%\jTraverser\MANIFEST.mf 
+SET DBMANIFEST=devicebeans\MANIFEST.mf
+SET JTMANIFEST=jTraverser\MANIFEST.mf
 SET JARDIR=..\java\classes
 MKDIR %JARDIR% 2>NUL
 SET DEVICE_CLS=%DEVICE_SRC:.java=*.class%
@@ -255,6 +255,9 @@ MKDIR %JARDIR%\devicebeans 2>NUL
 MKDIR %JARDIR%\jTraverser 2>NUL
 COPY /Y devicebeans\*.gif %JARDIR%\devicebeans >NUL
 COPY /Y jTraverser\*.gif %JARDIR%\jTraverser >NUL
+COPY /Y %DBMANIFEST% %JARDIR%\%DBMANIFEST% >NUL
+COPY /Y %JTMANIFEST% %JARDIR%\%JTMANIFEST% >NUL
+ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>%JARDIR%\%JTMANIFEST%
 
 ECHO creating jar packages
 PUSHD %JARDIR%

@@ -7,8 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -41,8 +44,26 @@ public final class jTraverserFacade extends JFrame{
             if(this.jmenu.isEnabled()) this.menu.checkSupport();
         }
     }
-    static JLabel               status      = new JLabel("jTaverser started");
+    private static final JLabel status;
     private static final String titlenotree = "jTraverser - no tree open";
+
+    static{
+        String builddate = "unknown";
+        try{
+            final Class clazz = jTraverserFacade.class;
+            final String className = clazz.getSimpleName() + ".class";
+            final String classPath = clazz.getResource(className).toString();
+            if(classPath.startsWith("jar")){
+                final String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+                final Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+                final Attributes attr = manifest.getMainAttributes();
+                builddate = attr.getValue("Built-Date").substring(0, 10);
+            }
+        }catch(final Exception e){
+            e.printStackTrace();
+        }
+        status = new JLabel(new StringBuilder(64).append("jTaverser started (Build-Date ").append(builddate).append(")").toString());
+    }
 
     public static void stderr(final String line, final Exception exc) {
         jTraverserFacade.status.setForeground(Color.RED);
