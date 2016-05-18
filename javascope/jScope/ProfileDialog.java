@@ -1,22 +1,29 @@
 package jScope;
 
+import java.awt.Component;
+import java.awt.Window;
 /* $Id$ */
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
 public final class ProfileDialog extends JDialog implements WaveformListener{
-    private static final String     TITLE[]        = {"X profile", "Y profile", "Pixel time profile"};
+    private static final String TITLE[] = {"X profile", "Y profile", "Pixel time profile"};
+
+    private static final Window getWindow(Component parent) {
+        while(!(parent instanceof Window))
+            parent = parent.getParent();
+        return (Window)parent;
+    }
     private final WaveformContainer profile_container;
     private final int               row[]          = {2};
     private final Waveform          source_profile;
     private Waveform                w_profile_line = null;
     private final Waveform          wave[]         = new Waveform[2];
 
-    ProfileDialog(final JFrame parent, final Waveform source_profile, final boolean reversed){
-        super(parent, "Profile Dialog");
+    ProfileDialog(final Component parent, final Waveform source_profile, final boolean reversed){
+        super(ProfileDialog.getWindow(parent), "Profile Dialog");
         this.source_profile = source_profile;
         source_profile.addWaveformListener(this);
         this.profile_container = new WaveformContainer(this.row, false);

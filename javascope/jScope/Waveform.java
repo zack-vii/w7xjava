@@ -1886,7 +1886,7 @@ public class Waveform extends JComponent implements SignalListener{
 
     public final void ShowProfileDialog() {
         if(this.profDialog == null){
-            this.profDialog = new ProfileDialog(null, this, this.reversed);
+            this.profDialog = new ProfileDialog(this, this, this.reversed);
         }else if(this.profDialog.isVisible()) this.profDialog.dispose();
         this.profDialog.pack();
         this.profDialog.setSize(200, 250);

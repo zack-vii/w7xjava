@@ -68,7 +68,7 @@ public class WavePopup extends JPopupMenu implements ItemListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
                 final Object[] options = {"Yes", "No"};
-                final int opt = JOptionPane.showOptionDialog(null, "Are you sure you want to remove this wave panel?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                final int opt = JOptionPane.showOptionDialog(WavePopup.this.parent, "Are you sure you want to remove this wave panel?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
                 if(opt == JOptionPane.YES_OPTION) ((WaveformManager)WavePopup.this.parent).removePanel(WavePopup.this.wave);
             }
         });

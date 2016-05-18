@@ -1,10 +1,11 @@
 package jScope;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -57,6 +58,12 @@ final public class ColorMapDialog extends JDialog{
             this.repaint();
         }
     }
+
+    private static Window getWindow(Component parent) {
+        while(!(parent instanceof Window))
+            parent = parent.getParent();
+        return (Window)parent;
+    }
     JCheckBox                            bitClip;
     JPanel                               bitOptionPanel, colorMapPanel;
     JComboBox                            cmComboBox;
@@ -73,15 +80,8 @@ final public class ColorMapDialog extends JDialog{
     Waveform                             wave             = null;
 
     @SuppressWarnings("unchecked")
-    /*
-      ColorMapDialog(Frame f, Waveform wave)
-      {
-      //  this(f, wave.getColorMap());
-          this.wave = wave;
-      }
-     */
-    ColorMapDialog(final Frame f, String colorPaletteFile){
-        super(f, "Color Palette");
+    ColorMapDialog(final Component parent, String colorPaletteFile){
+        super(ColorMapDialog.getWindow(parent), "Color Palette");
         if(colorPaletteFile == null) colorPaletteFile = System.getProperty("user.home") + File.separator + "jScope" + File.separator + "colors1.tbl";
         this.readColorPalette(colorPaletteFile);
         this.getContentPane().setLayout(new GridLayout(3, 1));

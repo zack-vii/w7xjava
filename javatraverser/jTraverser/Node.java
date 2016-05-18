@@ -222,7 +222,7 @@ public class Node{
         try{
             this.database.doAction(this.nid);
         }catch(final Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error executing message", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this.tree, e.getMessage(), "Error executing message", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -640,7 +640,7 @@ public class Node{
                 }
             }
         }
-        JOptionPane.showMessageDialog(null, "Missing model in descriptor", "Error in device setup 3", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(this.tree, "Missing model in descriptor", "Error in device setup 3", JOptionPane.WARNING_MESSAGE);
     }
 
     public final int startDelete() {

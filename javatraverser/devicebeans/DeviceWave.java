@@ -149,7 +149,7 @@ public class DeviceWave extends DeviceComponent{
     @Override
     public Component add(final Component c) {
         if(!this.initializing){
-            JOptionPane.showMessageDialog(null, "You cannot add a component to a Device Wave. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You cannot add a component to a Device Wave. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         return super.add(c);

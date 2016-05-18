@@ -164,7 +164,7 @@ public class DeviceChannel extends DeviceComponent{
     }
 
     public Container getContainer() {
-        // JOptionPane.showMessageDialog(null, "GET CONTAINER", "", JOptionPane.INFORMATION_MESSAGE);
+        // JOptionPane.showMessageDialog(this, "GET CONTAINER", "", JOptionPane.INFORMATION_MESSAGE);
         return this.componentsPanel;
     }
 

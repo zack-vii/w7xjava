@@ -102,7 +102,7 @@ public class DeviceChoiceCustomizer extends DeviceCustomizer implements Customiz
         else if(choiceFloatValues != null) try{
             this.mode.select(2);
         }catch(final Exception exc){
-            JOptionPane.showMessageDialog(null, "" + exc, "" + this.mode, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "" + exc, "" + this.mode, JOptionPane.WARNING_MESSAGE);
         }
         else this.mode.select(0);
         this.mode.addItemListener(new ItemListener(){

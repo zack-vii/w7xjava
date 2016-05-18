@@ -41,7 +41,7 @@ public class DeviceWaveParameters extends DeviceParameters{
             currXField.configure(currXNid.getValue());
             currYField.configure(currYNid.getValue());
         }catch(final Exception exc){
-            JOptionPane.showMessageDialog(null, "Error in DeviceWaveParameters.addParam: " + exc);
+            JOptionPane.showMessageDialog(this, "Error in DeviceWaveParameters.addParam: " + exc);
         }
     }
 

@@ -1028,13 +1028,13 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         if(this.shot.getText() == null || this.shot.getText().trim().length() == 0) def_shot = false;
         if(def_exp ^ def_shot){
             if(!def_shot){
-                JOptionPane.showMessageDialog(null, "Experiment defined but undefined shot", "alert", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Experiment defined but undefined shot", "alert", JOptionPane.ERROR_MESSAGE);
                 error = 1;
             }
         }
         this.updateDataSetup();
         if(this.updateWI() != 0){
-            JOptionPane.showMessageDialog(null, "Nothing to evaluate", "alert", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Nothing to evaluate", "alert", JOptionPane.ERROR_MESSAGE);
             error = 1;
         }
         return error;
@@ -1522,7 +1522,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         try{
             this.signalList.updateList();
         }catch(final Throwable e){
-            JOptionPane.showMessageDialog(null, e.getMessage(), "alert", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.getMessage(), "alert", JOptionPane.ERROR_MESSAGE);
         }
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }

@@ -43,7 +43,7 @@ public class DeviceChoice extends DeviceComponent{
     @Override
     public Component add(final Component c) {
         if(!this.initializing){
-            JOptionPane.showMessageDialog(null, "You cannot add a component to a Device Choice. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You cannot add a component to a Device Choice. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         return super.add(c);
@@ -52,7 +52,7 @@ public class DeviceChoice extends DeviceComponent{
     @Override
     public Component add(final Component c, final int intex) {
         if(!this.initializing){
-            JOptionPane.showMessageDialog(null, "You cannot add a component to a Device Choice. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You cannot add a component to a Device Choice. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         return super.add(c);
@@ -61,7 +61,7 @@ public class DeviceChoice extends DeviceComponent{
     @Override
     public Component add(final String name, final Component c) {
         if(!this.initializing){
-            JOptionPane.showMessageDialog(null, "You cannot add a component to a Device Choice. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You cannot add a component to a Device Choice. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         return super.add(c);

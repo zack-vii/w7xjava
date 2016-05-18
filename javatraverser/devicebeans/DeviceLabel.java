@@ -52,7 +52,7 @@ public class DeviceLabel extends DeviceComponent{
     @Override
     public Component add(final Component c) {
         if(!this.initializing){
-            JOptionPane.showMessageDialog(null, "You cannot add a component to a Device Label. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You cannot add a component to a Device Label. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         return super.add(c);
@@ -61,7 +61,7 @@ public class DeviceLabel extends DeviceComponent{
     @Override
     public Component add(final Component c, final int intex) {
         if(!this.initializing){
-            JOptionPane.showMessageDialog(null, "You cannot add a component to a Device Label. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You cannot add a component to a Device Label. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         return super.add(c);
@@ -70,7 +70,7 @@ public class DeviceLabel extends DeviceComponent{
     @Override
     public Component add(final String name, final Component c) {
         if(!this.initializing){
-            JOptionPane.showMessageDialog(null, "You cannot add a component to a Device Label. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You cannot add a component to a Device Label. Please remove the component.", "Error adding Device field", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         return super.add(c);
@@ -161,8 +161,8 @@ public class DeviceLabel extends DeviceComponent{
     else
       return Tree.dataFromExpr(dataString);
       }
-    
-    
+
+
       protected boolean getState()
       {
     if (!showState)
@@ -170,7 +170,7 @@ public class DeviceLabel extends DeviceComponent{
     else
       return checkB.isSelected();
       }
-    
+
       public void setEnabled(boolean state)
       {
     if (!editable && state)
@@ -207,7 +207,7 @@ public class DeviceLabel extends DeviceComponent{
       {
     this.editable = editable;
       }
-    
+
       public boolean getEditable()
       {
     return editable;
@@ -245,14 +245,14 @@ public class DeviceLabel extends DeviceComponent{
         // initialField = data.toString();
         /*
            Container parent = getParent();
-        
+
            if (parent.getLayout() == null)
            {
              isGridBag = false;
            }
            else
              isGridBag = true;
-        
+
            GridBagConstraints gc = null;
            if (isGridBag)
            {
@@ -306,7 +306,7 @@ public class DeviceLabel extends DeviceComponent{
         reportingChange = false;
               }
             });
-        
+
             textF.setEnabled(editable);
             textF.setEditable(editable);
             if (preferredWidth > 0)

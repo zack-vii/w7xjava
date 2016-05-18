@@ -485,13 +485,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         jScopeFacade.startApplication(args);
     }
 
-    private static int saveWarning() {
-        final Object[] options = {"Save", "Don't Save", "Cancel"};
-        final int val = JOptionPane.showOptionDialog(null, "Save change to the configuration file before closing ?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-        return val;
-    }
-
-    static public void ShowMessage(final Component parentComponent, final Object message, final String title, final int messageType) {
+    public static void ShowMessage(final Component parentComponent, final Object message, final String title, final int messageType) {
         jScopeFacade.T_parentComponent = parentComponent;
         jScopeFacade.T_message = message;
         jScopeFacade.T_title = title;
@@ -713,7 +707,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         if(ob == this.exit_i){
             if(jScopeFacade.num_scope > 1){
                 final Object[] options = {"Close this", "Close all", "Cancel"};
-                final int opt = JOptionPane.showOptionDialog(null, "Close all open scopes?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                final int opt = JOptionPane.showOptionDialog(this, "Close all open scopes?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 switch(opt){
                     case JOptionPane.YES_OPTION:
                         this.closeScope();
@@ -809,7 +803,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
 
     public void closeScope() {
         if(this.IsChange()){
-            switch(jScopeFacade.saveWarning()){
+            switch(this.saveWarning()){
                 case JOptionPane.YES_OPTION:
                     if(this.config_file == null) this.SaveAs();
                     else this.SaveConfiguration(this.config_file);
@@ -1259,7 +1253,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                     public void run() {
                         this.setName("Print Dialog Thread");
                         final PrintService svc = PrintServiceLookup.lookupDefaultPrintService();
-                        jScopeFacade.this.printerSelection = ServiceUI.printDialog(null, 100, 100, jScopeFacade.this.printersServices, svc, null, jScopeFacade.this.attrs);
+                        jScopeFacade.this.printerSelection = ServiceUI.printDialog(jScopeFacade.this.getGraphicsConfiguration(), 100, 100, jScopeFacade.this.printersServices, svc, null, jScopeFacade.this.attrs);
                         if(jScopeFacade.this.printerSelection != null){
                             System.out.println(jScopeFacade.this.printerSelection.getName() + " |||| " + jScopeFacade.this.printerSelection.getSupportedDocFlavors() + " |||| " + jScopeFacade.this.printerSelection.hashCode());
                             jScopeFacade.this.prnJob = jScopeFacade.this.printerSelection.createPrintJob();
@@ -1684,7 +1678,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
 
     private void LoadConfigurationFrom() {
         if(this.IsChange()){
-            switch(jScopeFacade.saveWarning()){
+            switch(this.saveWarning()){
                 case JOptionPane.YES_OPTION:
                     if(this.config_file == null){
                         this.SaveAs();
@@ -1769,10 +1763,10 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             this.SetStatusLabel("End print operation");
         }catch(final PrinterException er){
             System.out.println(er);
-            JOptionPane.showMessageDialog(null, "Error on print operation", "alert PrintAllWaves", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error on print operation", "alert PrintAllWaves", JOptionPane.ERROR_MESSAGE);
         }catch(final PrintException er){
             System.out.println(er);
-            JOptionPane.showMessageDialog(null, "Error on print operation", "alert PrintAllWaves", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error on print operation", "alert PrintAllWaves", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -1912,7 +1906,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                 final String txtsig_file = file.getAbsolutePath();
                 if(file.exists()){
                     final Object[] options = {"Yes", "No"};
-                    final int val = JOptionPane.showOptionDialog(null, txtsig_file + " already exists.\nDo you want to replace it?", "Save as", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                    final int val = JOptionPane.showOptionDialog(this, txtsig_file + " already exists.\nDo you want to replace it?", "Save as", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                     if(val == JOptionPane.YES_OPTION) done = true;
                 }else done = true;
             }else done = true;
@@ -1953,6 +1947,12 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             JOptionPane.showMessageDialog(this, e, "alert", JOptionPane.ERROR_MESSAGE);
         }
         ftmp.delete();
+    }
+
+    private int saveWarning() {
+        final Object[] options = {"Save", "Don't Save", "Cancel"};
+        final int val = JOptionPane.showOptionDialog(this, "Save change to the configuration file before closing ?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        return val;
     }
 
     public void SetApplicationFonts(final Font font) {
@@ -2018,7 +2018,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             this.setDataServerLabel();
             return true;
         }catch(final Exception e){
-            JOptionPane.showMessageDialog(null, e.toString(), "alert SetDataServer", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.toString(), "alert SetDataServer", JOptionPane.ERROR_MESSAGE);
             this.setDataServerLabel();
         }
         return false;
@@ -2112,7 +2112,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             this.UpdateColors();
             if(!is_changed) this.RepaintAllWaves();
         }catch(final IOException e){
-            JOptionPane.showMessageDialog(null, e.toString(), "alert UpdateDefaultValues", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.toString(), "alert UpdateDefaultValues", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -2419,7 +2419,7 @@ class ServerDialog extends JDialog implements ActionListener{
             this.data_provider_list.addItem(dsi.class_name);
         }
         // if (!found && dsi.class_name == null)
-        if(dsi.class_name == null) JOptionPane.showMessageDialog(null, "Undefine data server class for " + dsi.name, "alert addServerIp", JOptionPane.ERROR_MESSAGE);
+        if(dsi.class_name == null) JOptionPane.showMessageDialog(this, "Undefine data server class for " + dsi.name, "alert addServerIp", JOptionPane.ERROR_MESSAGE);
         // if (!found)
         {
             this.list_model.addElement(dsi);
@@ -2433,10 +2433,10 @@ class ServerDialog extends JDialog implements ActionListener{
         23-05-2005
         Ovverride configuration file server definitions
         with property server definition with the same name
-        
+
         else
         {
-        
+
             if (found_dsi != null)
             {
                 dsi.user = found_dsi.user;
@@ -2647,7 +2647,7 @@ class WindowDialog extends JDialog implements ActionListener{
                 this.setVisible(false);
             }
         }catch(final IOException ev){
-            JOptionPane.showMessageDialog(null, ev.getMessage(), "alert actionPerformed", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ev.getMessage(), "alert actionPerformed", JOptionPane.ERROR_MESSAGE);
         }
     }
 

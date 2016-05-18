@@ -45,7 +45,7 @@ public abstract class DeviceMultiComponent extends DeviceComponent{
             this.nidData = this.subtree.resolve(new Path(this.baseName));
             this.subtree.setDefault(prevDefNid);
         }catch(final Exception exc){
-            JOptionPane.showMessageDialog(null, "Cannot resolve base nid: " + this.baseName);
+            JOptionPane.showMessageDialog(this, "Cannot resolve base nid: " + this.baseName);
             return;
         }
         this.baseNidNum = baseNid;

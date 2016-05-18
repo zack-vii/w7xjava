@@ -47,7 +47,8 @@ public final class jScopeWaveContainer extends WaveformContainer{
             this.setName("Update Thread");
             while(true){
                 try{
-                    if(!this.pending) this.wait();
+                    while(!this.pending)
+                        this.wait(3);
                     this.pending = false;
                     wce = new WaveContainerEvent(this, WaveContainerEvent.START_UPDATE, "Start Update");
                     jScopeWaveContainer.this.dispatchWaveContainerEvent(wce);
@@ -751,7 +752,7 @@ public final class jScopeWaveContainer extends WaveformContainer{
                 txtsig_file = file.getAbsolutePath();
                 if(file.exists()){
                     final Object[] options = {"Yes", "No"};
-                    final int val = JOptionPane.showOptionDialog(null, txtsig_file + " already exists.\nDo you want to replace it?", "Save as", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                    final int val = JOptionPane.showOptionDialog(this, txtsig_file + " already exists.\nDo you want to replace it?", "Save as", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                     if(val == JOptionPane.YES_OPTION) break;
                 }else break;
             }else break;
@@ -996,7 +997,7 @@ public final class jScopeWaveContainer extends WaveformContainer{
             String msg;
             if(this.GetBrowseUrl() == null) msg = "Signals browser not yet implemented on this data server";
             else msg = "jScope is unable to locate the signal server page at " + this.GetBrowseUrl() + "\nModify browse_url property for this data server in jScope.properties file.";
-            JOptionPane.showMessageDialog(null, msg, "alert", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, msg, "alert", JOptionPane.ERROR_MESSAGE);
         }
     }
 

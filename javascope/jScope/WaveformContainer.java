@@ -647,7 +647,7 @@ public class WaveformContainer extends RowColumnContainer implements WaveformMan
                 txtsig_file = file.getAbsolutePath();
                 if(file.exists()){
                     final Object[] options = {"Yes", "No"};
-                    final int val = JOptionPane.showOptionDialog(null, txtsig_file + " already exists.\nDo you want to replace it?", "Save as", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                    final int val = JOptionPane.showOptionDialog(this, txtsig_file + " already exists.\nDo you want to replace it?", "Save as", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                     if(val == JOptionPane.YES_OPTION) done = true;
                 }else done = true;
             }else done = true;

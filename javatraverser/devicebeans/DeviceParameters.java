@@ -102,7 +102,7 @@ public class DeviceParameters extends DeviceMultiComponent{
             parName = this.subtree.evaluate(currNid).toString();
             this.subtree.setDefault(prevDefNid);
         }catch(final Exception exc){
-            JOptionPane.showMessageDialog(null, "Error getting Component Name in DeviceParameters: " + exc);
+            JOptionPane.showMessageDialog(this, "Error getting Component Name in DeviceParameters: " + exc);
             parName = "";
         }
         return parName;
@@ -124,7 +124,7 @@ public class DeviceParameters extends DeviceMultiComponent{
             this.subtree.setDefault(prevDefNid);
             return currNid;
         }catch(final Exception exc){
-            JOptionPane.showMessageDialog(null, "Error getting Component Nid in DeviceParameters: " + exc);
+            JOptionPane.showMessageDialog(this, "Error getting Component Nid in DeviceParameters: " + exc);
             return null;
         }
     }
@@ -140,7 +140,7 @@ public class DeviceParameters extends DeviceMultiComponent{
             this.subtree.setDefault(prevDefNid);
             return numComponents;
         }catch(final Exception exc){
-            JOptionPane.showMessageDialog(null, "Error getting Num Components in DeviceParameters: " + exc);
+            JOptionPane.showMessageDialog(this, "Error getting Num Components in DeviceParameters: " + exc);
             return 0;
         }
     }
