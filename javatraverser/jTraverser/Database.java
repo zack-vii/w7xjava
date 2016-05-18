@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JOptionPane;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
@@ -165,17 +164,9 @@ public final class Database{
 
     /* Low level MDS database management routines, will be  masked by the Node class*/
     private final void _open() throws MdsException {
-        int status = 0;
-        if(this.isEditable()){
-            status = Database.mds.getInteger(String.format("TreeShr->TreeOpenEdit(ref('%s'),val(%d))", this.expt, this.shot));
-            if((status & 1) == 0){
-                final int n = JOptionPane.showConfirmDialog(null, "Tree " + this.expt + " cannot be opened in edit mode. Create new instead?", "Editing Tree ", JOptionPane.YES_NO_OPTION);
-                if(n == JOptionPane.YES_OPTION) this._open_new();
-                this.handleStatus(status);
-                return;
-            }
-        }
-        if((status & 1) == 0) status = Database.mds.getInteger(String.format("TreeShr->TreeOpen(ref('%s'),val(%d),val(%d))", this.expt, this.shot, this.isReadonly() ? 1 : 0));
+        final int status;
+        if(this.isEditable()) status = Database.mds.getInteger(String.format("TreeShr->TreeOpenEdit(ref('%s'),val(%d))", this.expt, this.shot));
+        else status = Database.mds.getInteger(String.format("TreeShr->TreeOpen(ref('%s'),val(%d),val(%d))", this.expt, this.shot, this.isReadonly() ? 1 : 0));
         this.handleStatus(status);
         this.is_open = true;
         Database.updateCurrent();
@@ -298,7 +289,7 @@ public final class Database{
     public NodeInfo getInfo(final Nid nid) throws MdsException {
         this._checkContext();
         final int[] I = Database.mds.getIntegerArray(String.format("_ans=%d;LONG([GETNCI(_ans,'CLASS'),GETNCI(_ans,'DTYPE'),GETNCI(_ans,'USAGE'),GETNCI(_ans,'GET_FLAGS'),GETNCI(_ans,'OWNER_ID'),GETNCI(_ans,'LENGTH'),IF_ERROR(SHAPE(GETNCI(GETNCI(_ans,'CONGLOMERATE_NID'),'NID_NUMBER'))[0],0),GETNCI(_ans,'CONGLOMERATE_ELT')])", nid.getValue()));
-        final String date = Database.mds.getString(String.format("DATE_TIME(GETNCI(%d,'TIME_INSERTED'))", nid.getValue())).trim();
+        final String date = Database.mds.getString(String.format("DATE_TIME(GETNCI(%d,'TIME_INSERTED'))", nid.getValue())).substring(0, 23).trim(); // TODO: only to compensate issue in DATA_TIME build-in
         final String node_name = Database.mds.getString(String.format("GETNCI(%d,'NODE_NAME')", nid.getValue()));
         final String fullpath = Database.mds.getString(String.format("GETNCI(%d,'FULLPATH')", nid.getValue()));
         final String minpath = Database.mds.getString(String.format("GETNCI(%d,'MINPATH')", nid.getValue()));
@@ -478,7 +469,7 @@ public final class Database{
         this.saveContext();
         return success;
     }
-    
+
     private final boolean saveContext() throws MdsException {
         this.saveslot = 0;
         System.out.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));

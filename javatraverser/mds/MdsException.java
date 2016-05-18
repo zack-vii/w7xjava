@@ -4,6 +4,8 @@ import java.io.IOException;
 
 @SuppressWarnings("serial")
 public final class MdsException extends IOException{
+    public static final int TREE_E_FOPENW = 265392146;
+
     private static final String parseMessage(final String message) {
         final String[] parts = message.split(":", 2);
         return parts[parts.length - 1];

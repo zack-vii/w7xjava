@@ -101,7 +101,16 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     public Tree(final TreeManager treeman, final String provider, final String expt, final long shot, final int mode) throws MdsException{
         super();
         this.treeman = treeman;
-        this.database = new Database(provider, expt, shot, mode);
+        Database database;
+        try{
+            database = new Database(provider, expt, shot, mode);
+        }catch(final MdsException me){
+            if(mode != Database.EDITABLE || me.getStatus() != MdsException.TREE_E_FOPENW) throw me;
+            final int n = JOptionPane.showConfirmDialog(this, "Tree " + expt + " cannot be opened in edit mode. Create new instead?", "Editing Tree ", JOptionPane.YES_NO_OPTION);
+            if(n != JOptionPane.YES_OPTION) throw me;
+            database = new Database(provider, expt, shot, Database.NEW);
+        }
+        this.database = database;
         final DefaultTreeModel model = (DefaultTreeModel)this.getModel();
         final Node top_node = new Node(this);
         top_node.setTreeNode(this.top = new DefaultMutableTreeNode(top_node));
