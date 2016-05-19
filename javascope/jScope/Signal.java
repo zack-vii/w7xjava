@@ -368,76 +368,6 @@ public final class Signal implements WaveDataListener{
     private String                                 zlabel;
     private float                                  zY2D[];
 
-    /*
-    private Signal(final double _x[], final float _y[], final int _n_points){
-        this.error = this.asym_error = false;
-        this.data = new XYWaveData(_x, _y, _n_points);
-        this.setAxis();
-        this.saved_xmin = this.curr_xmin = this.xmin;
-        this.saved_xmax = this.curr_xmax = this.xmax;
-        this.saved_ymin = this.ymin;
-        this.saved_ymax = this.ymax;
-        this.checkIncreasingX();
-    }
-    // Constructs and initializes a Signal from the specified parameters.
-    private Signal(final float _x[], final float _y[], final int _n_points){
-        this.error = this.asym_error = false;
-        this.data = new XYWaveData(_x, _y, _n_points);
-        this.setAxis();
-        this.xLimitsInitialized = true;
-        this.saved_xmin = this.curr_xmin = this.xmin;
-        this.saved_xmax = this.curr_xmax = this.xmax;
-        this.saved_ymin = this.ymin;
-        this.saved_ymax = this.ymax;
-        this.checkIncreasingX();
-    }
-
-    // Constructs a Signal with x and y array and name.
-    private Signal(final float _x[], final float _y[], final String name){
-        this(_x, _y);
-        this.setName(new String(name));
-    }
-    private Signal(final long _x[], final float _y[], final int _n_points){
-        this.error = this.asym_error = false;
-        this.data = new XYWaveData(_x, _y);
-        this.setAxis();
-        this.saved_xmin = this.curr_xmin = this.xmin;
-        this.saved_xmax = this.curr_xmax = this.xmax;
-        this.saved_ymin = this.ymin;
-        this.saved_ymax = this.ymax;
-        this.checkIncreasingX();
-    }
-    // Constructs a Signal equal to argument Signal within a defined two-dimensional region
-    private Signal(final Signal s, final double start_x, final double end_x, final double start_y, final double end_y){
-        this.xLimitsInitialized = true;
-        this.data = s.data;
-        this.nans = s.nans;
-        this.n_nans = s.n_nans;
-        this.error = s.error;
-        if(this.error) this.upError = s.upError;
-        this.asym_error = s.asym_error;
-        if(this.asym_error) this.lowError = s.lowError;
-        this.increasing_x = s.increasing_x;
-        this.saved_ymax = s.saved_ymax;
-        this.ymax = end_y;
-        this.saved_ymin = s.saved_ymin;
-        this.ymin = start_y;
-        this.saved_xmin = this.curr_xmin = s.saved_xmin;
-        this.xmin = start_x;
-        this.saved_xmax = this.curr_xmax = s.saved_xmax;
-        this.xmax = end_x;
-        if(this.xmax <= this.xmin) this.saved_xmax = this.curr_xmax = this.xmax = this.xmin + 1E-6;
-        this.marker = s.marker;
-        this.marker_step = s.marker_step;
-        this.color_idx = s.color_idx;
-        this.color = s.color;
-        this.interpolate = s.interpolate;
-        this.name = s.name;
-    }
-    private Signal(final WaveData data, final double xmin, final double xmax){
-        this(data, null, xmin, xmax);
-    }
-     */
     /**
      * Constructs a zero Signal with 2 points.
      */
@@ -544,7 +474,7 @@ public final class Signal implements WaveDataListener{
         this.contourLevels = s.contourLevels;
         this.contourSignals = s.contourSignals;
         this.contourLevelValues = s.contourLevelValues;
-        this.data = s.data; // WaveData is stateless!!
+        this.data = s.data; // WaveData is state less!!
         this.data.addWaveDataListener(this);
         this.resolutionManager = new ResolutionManager(s.resolutionManager);
         this.xLimitsInitialized = s.xLimitsInitialized;
