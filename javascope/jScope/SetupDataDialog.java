@@ -1009,9 +1009,9 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
             this.main_scope.wave_panel.Refresh(this.wave, "Update ");
         }catch(final Throwable e){
             this.main_scope.SetStatusLabel("Error during apply: " + e);
+        }finally{
             this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
-        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
 
     private void cancelOperation() {
@@ -1523,8 +1523,9 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
             this.signalList.updateList();
         }catch(final Throwable e){
             JOptionPane.showMessageDialog(this, e.getMessage(), "alert", JOptionPane.ERROR_MESSAGE);
+        }finally{
+            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
-        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
 
     private void updateGlobalWI() {
