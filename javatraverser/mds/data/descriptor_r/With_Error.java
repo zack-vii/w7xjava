@@ -24,4 +24,24 @@ public final class With_Error extends Descriptor_R{
     public final Descriptor getOpaqueType() {
         return this.dscptrs[1];
     }
+
+    @Override
+    public final double[] toDouble() {
+        return this.getData().toDouble();
+    }
+
+    @Override
+    public final float[] toFloat() {
+        return this.getData().toFloat();
+    }
+
+    @Override
+    public final int[] toInt() {
+        return this.getData().toInt();
+    }
+
+    @Override
+    public final long[] toLong() {
+        return this.getData().toLong();
+    }
 }

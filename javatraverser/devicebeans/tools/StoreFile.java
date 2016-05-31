@@ -7,7 +7,7 @@ package devicebeans.tools;
 // 3) shot
 // 4) Node name
 import java.io.RandomAccessFile;
-import jTraverser.Database;
+import mds.Database;
 import mds.data.descriptor_a.Int8Array;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;

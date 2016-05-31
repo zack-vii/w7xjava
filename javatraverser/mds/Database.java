@@ -1,10 +1,11 @@
-package jTraverser;
+package mds;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import mds.MdsException;
+import jTraverser.NodeInfo;
+import jTraverser.jTraverserFacade;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;

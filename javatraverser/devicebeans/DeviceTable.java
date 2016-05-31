@@ -26,7 +26,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
-import jTraverser.Database;
+import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 

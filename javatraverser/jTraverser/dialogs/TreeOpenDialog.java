@@ -21,8 +21,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-import jTraverser.Database;
 import jTraverser.TreeManager;
+import mds.Database;
 
 @SuppressWarnings("serial")
 public class TreeOpenDialog extends JDialog{

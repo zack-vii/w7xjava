@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import jTraverser.TreeManager.Menu;
+import mds.Database;
 
 @SuppressWarnings("serial")
 public final class jTraverserFacade extends JFrame{

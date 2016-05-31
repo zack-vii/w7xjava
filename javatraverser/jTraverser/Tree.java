@@ -26,6 +26,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;

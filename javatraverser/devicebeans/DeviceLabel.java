@@ -7,7 +7,7 @@ import java.awt.FontMetrics;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import jTraverser.Database;
+import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;

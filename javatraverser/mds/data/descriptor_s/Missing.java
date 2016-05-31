@@ -6,7 +6,7 @@ import mds.data.descriptor.Descriptor_S;
 
 public final class Missing extends Descriptor_S{
     public Missing(){
-        super(DTYPE.MISSING, (byte[])null);
+        super(DTYPE.MISSING, new byte[0]);
     }
 
     public Missing(final ByteBuffer b){
@@ -20,6 +20,26 @@ public final class Missing extends Descriptor_S{
 
     @Override
     protected Object getValue(final ByteBuffer b) {
+        return null;
+    }
+
+    @Override
+    public double[] toDouble() {
+        return null;
+    }
+
+    @Override
+    public float[] toFloat() {
+        return null;
+    }
+
+    @Override
+    public int[] toInt() {
+        return null;
+    }
+
+    @Override
+    public long[] toLong() {
         return null;
     }
 }

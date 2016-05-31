@@ -230,7 +230,7 @@ public final class Function extends Descriptor_R<Short>{
     }
 
     private static final String add(final short opcode, final Arguments args) {
-        return args.join(" + ", 0);
+        return new StringBuilder().append('(').append(args.join(" + ", 0)).append(')').toString();
     }
 
     private static final String concat(final short opcode, final Arguments args) {
@@ -238,11 +238,11 @@ public final class Function extends Descriptor_R<Short>{
     }
 
     private static final String devide(final short opcode, final Arguments args) {
-        return args.join(" / ", 0);
+        return new StringBuilder().append('(').append(args.join(" / ", 0)).append(')').toString();
     }
 
     private static String eq(final short opcode, final Arguments args) {
-        return args.join(" == ", 0);
+        return new StringBuilder().append('(').append(args.join(" == ", 0)).append(')').toString();
     }
 
     private static String equals(final short opcode, final Arguments args) {
@@ -279,11 +279,11 @@ public final class Function extends Descriptor_R<Short>{
     }
 
     private static final String multiply(final short opcode, final Arguments args) {
-        return args.join(" * ", 0);
+        return new StringBuilder().append('(').append(args.join(" * ", 0)).append(')').toString();
     }
 
     private static final String ne(final short opcode, final Arguments args) {
-        return args.join(" != ", 0);
+        return new StringBuilder().append('(').append(args.join(" != ", 0)).append(')').toString();
     }
 
     private static final String not(final short opcode, final Arguments args) {
@@ -308,7 +308,7 @@ public final class Function extends Descriptor_R<Short>{
     }
 
     private static final String subtract(final short opcode, final Arguments args) {
-        return args.join(" - ", 0);
+        return new StringBuilder().append('(').append(args.join(" - ", 0)).append(')').toString();
     }
 
     private static final String vector(final short opcode, final Arguments args) {
@@ -373,6 +373,26 @@ public final class Function extends Descriptor_R<Short>{
             default:
                 return 0;
         }
+    }
+
+    @Override
+    public double[] toDouble() {
+        return this.evaluate().toDouble();
+    }
+
+    @Override
+    public float[] toFloat() {
+        return this.evaluate().toFloat();
+    }
+
+    @Override
+    public int[] toInt() {
+        return this.evaluate().toInt();
+    }
+
+    @Override
+    public long[] toLong() {
+        return this.evaluate().toLong();
     }
 
     @Override

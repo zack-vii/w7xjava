@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
-import jTraverser.Database;
+import mds.Database;
 import mds.data.descriptor.Descriptor;
 
 public abstract class NodeDataPropertyEditor implements PropertyEditor{

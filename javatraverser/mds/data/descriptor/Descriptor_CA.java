@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import debug.DEBUG;
-import jTraverser.Database;
+import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor_s.Nid;
 import mds.mdsip.Message;
@@ -214,13 +214,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     @Override
     public final String decompile() {
         if(this.payload == null) return new StringBuffer(64).append("ZERO(").append(this.arsize / this.length).append(", 0").append(DTYPE.getSuffix(this.dtype)).append(')').toString();
-        if(this.decmprs != null) return this.decmprs.decompile();
-        try{
-            return (this.decmprs = new DECOMPRESS(this).out_dsc).decompile();
-        }catch(final MdsException e){
-            e.printStackTrace();
-            return this.payload.decompile();
-        }
+        return this.resolve().decompile();
     }
 
     @Override
@@ -228,24 +222,38 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         return b.slice().order(b.order());
     }
 
+    private Descriptor resolve() {
+        if(this.decmprs != null) return this.decmprs;
+        try{
+            return(this.decmprs = new DECOMPRESS(this).out_dsc);
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return this.payload;
+        }
+    }
+
     @Override
     public double[] toDouble() {
-        return this.payload == null ? null : this.payload.toDouble();
+        if(this.payload == null) return null;
+        return this.resolve().toDouble();
     }
 
     @Override
     public float[] toFloat() {
-        return this.payload == null ? null : this.payload.toFloat();
+        if(this.payload == null) return null;
+        return this.resolve().toFloat();
     }
 
     @Override
     public int[] toInt() {
-        return this.payload == null ? null : this.payload.toInt();
+        if(this.payload == null) return null;
+        return this.resolve().toInt();
     }
 
     @Override
     public long[] toLong() {
-        return this.payload == null ? null : this.payload.toLong();
+        if(this.payload == null) return null;
+        return this.resolve().toLong();
     }
 
     @Override
@@ -256,12 +264,6 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     @Override
     public final String toString() {
         if(this.payload == null) return new StringBuffer(64).append("ZERO(").append(this.arsize / this.length).append(", 0").append(DTYPE.getSuffix(this.dtype)).append(')').toString();
-        if(this.decmprs != null) return this.decmprs.toString();
-        try{
-            return (this.decmprs = new DECOMPRESS(this).out_dsc).toString();
-        }catch(final MdsException e){
-            e.printStackTrace();
-            return this.payload.toString();
-        }
+        return this.resolve().toString();
     }
 }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -28,12 +29,14 @@ import jTraverser.dialogs.Dialogs;
 import jTraverser.dialogs.DisplayData;
 import jTraverser.dialogs.DisplayNci;
 import jTraverser.dialogs.DisplayTags;
+import jTraverser.dialogs.GraphPanel;
 import jTraverser.dialogs.ModifyData;
 import jTraverser.dialogs.ModifyTags;
 import jTraverser.dialogs.TreeDialog;
 import jTraverser.dialogs.TreeOpenDialog;
 import jTraverser.editor.NodeEditor;
 import jTraverser.tools.DecompileTree;
+import mds.Database;
 import mds.MdsException;
 
 @SuppressWarnings("serial")
@@ -68,6 +71,18 @@ public class TreeManager extends JScrollPane{
         }
     }
     public static class DisplayMenu extends Menu{
+        public final class DisplaySignal implements ActionListener{
+            @Override
+            public void actionPerformed(final ActionEvent ae) {
+                try{
+                    final JDialog dlg = new JDialog(DisplayMenu.this.treeman.frame, DisplayMenu.this.treeman.getCurrentNode().getFullPath());
+                    dlg.setLocation(DisplayMenu.this.treeman.frame.getLocation());
+                    dlg.getContentPane().add(GraphPanel.plotDescriptor(DisplayMenu.this.treeman.getCurrentDatabase().evaluate("DATA(" + DisplayMenu.this.treeman.getCurrentNode().getFullPath() + ")")));
+                    dlg.pack();
+                    dlg.setVisible(true);
+                }catch(final MdsException e){}
+            }
+        }
         public final class modifyFlags implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -81,6 +96,7 @@ public class TreeManager extends JScrollPane{
             menu.add(this.addMenuItem("Display Nci", new Menu.NodeEditorAL(DisplayNci.class)));
             menu.add(this.addMenuItem("Display Flags", new modifyFlags()));
             menu.add(this.addMenuItem("Display Tags", new Menu.NodeEditorAL(DisplayTags.class)));
+            menu.add(this.addMenuItem("Display Signal", new DisplaySignal()));
         }
 
         @Override
@@ -90,7 +106,8 @@ public class TreeManager extends JScrollPane{
             if(node != null){
                 final int usage = node.getUsage();
                 final boolean enable = !(usage == NodeInfo.USAGE_STRUCTURE || usage == NodeInfo.USAGE_SUBTREE);
-                mask = new boolean[]{enable, true, true, enable};
+                final boolean enable2 = (usage == NodeInfo.USAGE_SIGNAL);
+                mask = new boolean[]{enable, true, true, enable, enable2};
             }
             for(int i = 0; i < mask.length; i++)
                 this.items.get(i).setEnabled(mask[i]);

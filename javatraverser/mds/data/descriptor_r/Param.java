@@ -37,4 +37,24 @@ public final class Param extends Descriptor_R{
     public final Descriptor getValidation() {
         return this.dscptrs[2];
     }
+
+    @Override
+    public final double[] toDouble() {
+        return this.getData().toDouble();
+    }
+
+    @Override
+    public final float[] toFloat() {
+        return this.getData().toFloat();
+    }
+
+    @Override
+    public final int[] toInt() {
+        return this.getData().toInt();
+    }
+
+    @Override
+    public final long[] toLong() {
+        return this.getData().toLong();
+    }
 }

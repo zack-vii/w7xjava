@@ -1,7 +1,7 @@
 package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
-import jTraverser.Database;
+import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 
@@ -23,6 +23,26 @@ public final class Nid extends Int32{
 
     public Nid(final Nid nid, final int relative){
         this(nid.getValue() + relative);
+    }
+
+    @Override
+    public double[] toDouble() {
+        return this.evaluate().toDouble();
+    }
+
+    @Override
+    public float[] toFloat() {
+        return this.evaluate().toFloat();
+    }
+
+    @Override
+    public int[] toInt() {
+        return this.evaluate().toInt();
+    }
+
+    @Override
+    public long[] toLong() {
+        return this.evaluate().toLong();
     }
 
     @Override

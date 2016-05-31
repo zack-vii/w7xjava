@@ -74,7 +74,6 @@ SET DEVICE_SRC=^
 SET TRAV_SRC=^
   jTraverser\DataChangeEvent.java ^
   jTraverser\DataChangeListener.java ^
-  jTraverser\Database.java ^
   jTraverser\Node.java ^
   jTraverser\NodeInfo.java ^
   jTraverser\Tree.java ^
@@ -87,6 +86,7 @@ SET TRAV_SRC=^
   jTraverser\dialogs\DisplayNci.java ^
   jTraverser\dialogs\DisplayTags.java ^
   jTraverser\dialogs\Flags.java ^
+  jTraverser\dialogs\GraphPanel.java ^
   jTraverser\dialogs\ModifyData.java ^
   jTraverser\dialogs\ModifyTags.java ^
   jTraverser\dialogs\Rename.java ^
@@ -195,6 +195,7 @@ SET MDSIP_SRC=^
   mds\data\descriptor_s\Uint32.java ^
   mds\data\descriptor_s\Uint64.java ^
   mds\data\descriptor_s\Uint8.java ^
+  mds\Database.java ^
   mds\MdsException.java ^
   mds\mdsip\Connection.java ^
   mds\mdsip\ConnectionEvent.java ^

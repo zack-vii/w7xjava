@@ -3,8 +3,10 @@ package mds.data.descriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor_s.CString;
+import mds.data.descriptor_s.Missing;
 import mds.mdsip.Connection;
 import mds.mdsip.Message;
 
@@ -20,7 +22,13 @@ public abstract class Descriptor<T>{
     private static final ByteBuffer Buffer(final byte[] buf, final boolean swap_little) {
         return Descriptor.Buffer(buf, swap_little ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
     }
-
+    public final Descriptor evaluate() {
+        try{
+            return Database.tdiEvaluate(this);
+        }catch(final MdsException e){
+            return new Missing();
+        }
+    }
     private static final ByteBuffer Buffer(final byte[] buf, final ByteOrder bo) {
         return ByteBuffer.wrap(buf).asReadOnlyBuffer().order(bo);
     }
