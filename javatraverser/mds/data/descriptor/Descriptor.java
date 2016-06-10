@@ -22,13 +22,7 @@ public abstract class Descriptor<T>{
     private static final ByteBuffer Buffer(final byte[] buf, final boolean swap_little) {
         return Descriptor.Buffer(buf, swap_little ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
     }
-    public final Descriptor evaluate() {
-        try{
-            return Database.tdiEvaluate(this);
-        }catch(final MdsException e){
-            return new Missing();
-        }
-    }
+
     private static final ByteBuffer Buffer(final byte[] buf, final ByteOrder bo) {
         return ByteBuffer.wrap(buf).asReadOnlyBuffer().order(bo);
     }
@@ -182,6 +176,10 @@ public abstract class Descriptor<T>{
         return String.format("<Descriptor(%d,%d,%d,%d)>", this.length & 0xFFFF, this.dtype & 0xFF, this.dclass & 0xFF, this.pointer & 0xFFFFFFFFl);
     }
 
+    public StringBuilder decompile(final int prec, final StringBuilder pout) throws MdsException {
+        return pout.append(this.decompile());
+    }
+
     public String decompileX() {
         return this.decompile();
     }
@@ -192,9 +190,21 @@ public abstract class Descriptor<T>{
         return false;
     }
 
+    public final Descriptor evaluate() {
+        try{
+            return Database.tdiEvaluate(this);
+        }catch(final MdsException e){
+            return new Missing();
+        }
+    }
+
     protected ByteBuffer getBuffer() {
         final ByteBuffer b = ((ByteBuffer)this.b.duplicate().position(this.pointer)).slice().order(this.b.order());
         return b;
+    }
+
+    public final Descriptor getDescriptor() throws MdsException {
+        return Descriptor.deserialize(this.getBuffer());
     }
 
     protected String getDName() {

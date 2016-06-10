@@ -4,9 +4,8 @@ import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor.Descriptor_R;
 
-public final class Dispatch extends Descriptor_R<Byte>{
+public final class Dispatch extends BUILD<Byte>{
     public static final byte SCHED_ASYNC = 1;
     public static final byte SCHED_COND  = 3;
     public static final byte SCHED_NONE  = 0;

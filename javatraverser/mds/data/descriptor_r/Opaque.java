@@ -3,9 +3,8 @@ package mds.data.descriptor_r;
 import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor.Descriptor_R;
 
-public final class Opaque extends Descriptor_R{
+public final class Opaque extends BUILD{
     public Opaque(final ByteBuffer b) throws MdsException{
         super(b);
     }

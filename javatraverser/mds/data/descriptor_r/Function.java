@@ -2,10 +2,12 @@ package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
+import mds.data.descriptor.OPC;
 import mds.data.descriptor_s.CString;
 
 @SuppressWarnings("serial")
@@ -29,96 +31,75 @@ public final class Function extends Descriptor_R<Short>{
             return String.join(delimiter, args);
         }
     }
-    public static final String[] OPC = new String[]{"$", "$A0", "$ALPHA", "$AMU", "$C", //
-    "$CAL", "$DEGREE", "$EV", "$FALSE", "$FARADAY", //
-    "$G", "$GAS", "$H", "$HBAR", "$I", "$K", "$ME", //
-    "$MISSING", "$MP", "$N0", "$NA", "$P0", "$PI", //
-    "$QE", "$RE", "$ROPRAND", "$RYDBERG", "$T0", //
-    "$TORR", "$TRUE", "$VALUE", "ABORT", "ABS", "ABS1", //
-    "ABSSQ", "ACHAR", "ACOS", "ACOSD", "ADD", "ADJUSTL", //
-    "ADJUSTR", "AIMAG", "AINT", "ALL", "ALLOCATED", //
-    "AND", "AND_NOT", "ANINT", "ANY", "ARG", "ARGD", //
-    "ARG_OF", "ARRAY", "ASIN", "ASIND", "AS_IS", "ATAN", //
-    "ATAN2", "ATAN2D", "ATAND", "ATANH", "AXIS_OF", //
-    "BACKSPACE", "IBCLR", "BEGIN_OF", "IBITS", "BREAK", //
-    "BSEARCH", "IBSET", "BTEST", "BUILD_ACTION", //
-    "BUILD_CONDITION", "BUILD_CONGLOM", "BUILD_DEPENDENC", //
-    "BUILD_DIM", "BUILD_DISPATCH", "BUILD_EVENT", //
-    "BUILD_FUNCTION", "BUILD_METHOD", "BUILD_PARAM", //
-    "BUILD_PATH", "BUILD_PROCEDURE", "BUILD_PROGRAM", //
-    "BUILD_RANGE", "BUILD_ROUTINE", "BUILD_SIGNAL", //
-    "BUILD_SLOPE", "BUILD_WINDOW", "BUILD_WITH_UNIT", //
-    "BUILTIN_OPCODE", "BYTE", "BYTE_UNSIGNED", "CASE", //
-    "CEILING", "CHAR", "CLASS", "FCLOSE", "CMPLX", //
-    "COMMA", "COMPILE", "COMPLETION_OF", "CONCAT", //
-    "CONDITIONAL", "CONJG", "CONTINUE", "CONVOLVE", //
-    "COS", "COSD", "COSH", "COUNT", "CSHIFT", "CVT", //
-    "DATA", "DATE_AND_TIME", "DATE_TIME", "DBLE", //
-    "DEALLOCATE", "DEBUG", "DECODE", "DECOMPILE", //
-    "DECOMPRESS", "DEFAULT", "DERIVATIVE", "DESCR", //
-    "DIAGONAL", "DIGITS", "DIM", "DIM_OF", "DISPATCH_OF", //
-    "DIVIDE", "LBOUND", "DO", "DOT_PRODUCT", "DPROD", //
-    "DSCPTR", "SHAPE", "SIZE", "KIND", "UBOUND", "D_COMPLEX", //
-    "D_FLOAT", "RANGE", "PRECISION", "ELBOUND", "ELSE", //
-    "ELSEWHERE", "ENCODE", "ENDFILE", "END_OF", "EOSHIFT", //
-    "EPSILON", "EQ", "EQUALS", "EQUALS_FIRST", "EQV", "ESHAPE", //
-    "ESIZE", "EUBOUND", "EVALUATE", "EXECUTE", "EXP", "EXPONENT", //
-    "EXT_FUNCTION", "FFT", "FIRSTLOC", "FIT", "FIX_ROPRAND", //
-    "FLOAT", "FLOOR", "FOR", "FRACTION", "FUN", "F_COMPLEX", //
-    "F_FLOAT", "GE", "GETNCI", "GOTO", "GT", "G_COMPLEX", //
-    "G_FLOAT", "HELP_OF", "HUGE", "H_COMPLEX", "H_FLOAT", //
-    "IACHAR", "IAND", "IAND_NOT", "ICHAR", "IDENT_OF", "IF", //
-    "IF_ERROR", "IMAGE_OF", "IN", "INAND", "INAND_NOT", //
-    "INDEX", "INOR", "INOR_NOT", "INOT", "INOUT", "INQUIRE", //
-    "INT", "INTEGRAL", "INTERPOL", "INTERSECT", "INT_UNSIGNED", //
-    "INVERSE", "IOR", "IOR_NOT", "IS_IN", "IEOR", "IEOR_NOT", //
-    "LABEL", "LAMINATE", "LANGUAGE_OF", "LASTLOC", "LE", "LEN", //
-    "LEN_TRIM", "LGE", "LGT", "LLE", "LLT", "LOG", "LOG10", "LOG2", //
-    "LOGICAL", "LONG", "LONG_UNSIGNED", "LT", "MATMUL", "MAT_ROT", //
-    "MAT_ROT_INT", "MAX", "MAXEXPONENT", "MAXLOC", "MAXVAL", "MEAN", //
-    "MEDIAN", "MERGE", "METHOD_OF", "MIN", "MINEXPONENT", "MINLOC", //
-    "MINVAL", "MOD", "MODEL_OF", "MULTIPLY", "NAME_OF", "NAND", //
-    "NAND_NOT", "NDESC", "NE", "NEAREST", "NEQV", "NINT", "NOR", //
-    "NOR_NOT", "NOT", "OBJECT_OF", "OCTAWORD", "OCTAWORD_UNSIGNED", //
-    "ON_ERROR", "OPCODE_BUILTIN", "OPCODE_STRING", "FOPEN", "OPTIONAL", //
-    "OR", "OR_NOT", "OUT", "PACK", "PHASE_OF", "POST_DEC", "POST_INC", //
-    "POWER", "PRESENT", "PRE_DEC", "PRE_INC", "PRIVATE", "PROCEDURE_OF", //
-    "PRODUCT", "PROGRAM_OF", "PROJECT", "PROMOTE", "PUBLIC", "QUADWORD", //
-    "QUADWORD_UNSIGNED", "QUALIFIERS_OF", "RADIX", "RAMP", "RANDOM", //
-    "RANDOM_SEED", "DTYPE_RANGE", "RANK", "RAW_OF", "READ", "REAL", //
-    "REBIN", "REF", "REPEAT", "REPLICATE", "RESHAPE", "RETURN", "REWIND", //
-    "RMS", "ROUTINE_OF", "RRSPACING", "SCALE", "SCAN", "FSEEK", //
-    "SET_EXPONENT", "SET_RANGE", "ISHFT", "ISHFTC", "SHIFT_LEFT", //
-    "SHIFT_RIGHT", "SIGN", "SIGNED", "SIN", "SIND", "SINH", "SIZEOF", //
-    "SLOPE_OF", "SMOOTH", "SOLVE", "SORTVAL", "SPACING", "SPAWN", "SPREAD", //
-    "SQRT", "SQUARE", "STATEMENT", "STD_DEV", "STRING", "STRING_OPCODE", //
-    "SUBSCRIPT", "SUBTRACT", "SUM", "SWITCH", "SYSTEM_CLOCK", "TAN", //
-    "TAND", "TANH", "TASK_OF", "TEXT", "TIME_OUT_OF", "TINY", "TRANSFER", //
-    "TRANSPOSE_", "TRIM", "UNARY_MINUS", "UNARY_PLUS", "UNION", "UNITS", //
-    "UNITS_OF", "UNPACK", "UNSIGNED", "VAL", "VALIDATION_OF", "VALUE_OF", //
-    "VAR", "VECTOR", "VERIFY", "WAIT", "WHEN_OF", "WHERE", "WHILE", //
-    "WINDOW_OF", "WORD", "WORD_UNSIGNED", "WRITE", "ZERO", "$2PI", "$NARG", //
-    "ELEMENT", "RC_DROOP", "RESET_PRIVATE", "RESET_PUBLIC", "SHOW_PRIVATE", //
-    "SHOW_PUBLIC", "SHOW_VM", "TRANSLATE", "TRANSPOSE_MUL", "UPCASE", //
-    "USING", "VALIDATION", "$DEFAULT", "$EXPT", "$SHOT", "GETDBI", "CULL", //
-    "EXTEND", "I_TO_X", "X_TO_I", "MAP", "COMPILE_DEPENDENCY", //
-    "DECOMPILE_DEPENDENCY", "BUILD_CALL", "ERRORLOGS_OF", "PERFORMANCE_OF", //
-    "XD", "CONDITION_OF", "SORT", "$THIS", "DATA_WITH_UNITS", "$ATM", //
-    "$EPSILON0", "$GN", "$MU0", "EXTRACT", "FINITE", "BIT_SIZE", "MODULO", //
-    "SELECTED_INT_KIND", "SELECTED_REAL_KIND", "DSQL", "ISQL", "FTELL", //
-    "MAKE_ACTION", "MAKE_CONDITION", "MAKE_CONGLOM", "MAKE_DEPENDENCY", //
-    "MAKE_DIM", "MAKE_DISPATCH", "MAKE_FUNCTION", "MAKE_METHOD", "MAKE_PARAM", //
-    "MAKE_PROCEDURE", "MAKE_PROGRAM", "MAKE_RANGE", "MAKE_ROUTINE", //
-    "MAKE_SIGNAL", "MAKE_WINDOW", "MAKE_WITH_UNITS", "MAKE_CALL", "CLASS_OF", //
-    "DSCPTR_OF", "KIND_OF", "NDESC_OF", "ACCUMULATE", "MAKE_SLOPE", "REM", //
-    "COMPLETION_MESSAGE_OF", "INTERRUPT_OF", "$SHOTNAME", "BUILD_WITH_ERROR", //
-    "ERROR_OF", "MAKE_WITH_ERROR", "DO_TASK", "ISQL_SET", "FS_FLOAT", //
-    "FS_COMPLEX", "FT_FLOAT", "FT_COMPLEX", "BUILD_OPAQUE", "MAKE_OPAQUE"};
+    public static final class op_rec{
+        public final short  opcode;
+        public final byte   prec, lorr;
+        public final String symbol;
+
+        public op_rec(final String symbol, final short opcode, final byte prec, final byte lorr){
+            this.symbol = symbol;
+            this.opcode = opcode;
+            this.prec = prec;
+            this.lorr = lorr;
+        }
+    }
+    private static final op_rec[] binary    = new op_rec[31], unary = new op_rec[8];
+    private static final String   newline   = "\r\n\t\t\t\t\t\t\t";
+    private static final byte     P_ARG     = 88;
+    private static final byte     P_STMT    = 96;
+    private static final byte     P_SUBS    = 0;
+    private static int            TdiIndent = 1;
+
+    static{
+        Function.binary[0] = new op_rec(", ", OPC.OpcComma, (byte)92, (byte)-1);
+        Function.binary[1] = new op_rec(" = ", OPC.OpcEquals, (byte)84, (byte)1);
+        Function.binary[2] = new op_rec(null, OPC.OpcEqualsFirst, (byte)84, (byte)1);
+        Function.binary[3] = new op_rec(" : ", OPC.OpcDtypeRange, (byte)80, (byte)0);
+        Function.binary[4] = new op_rec(" ? ", OPC.OpcConditional, (byte)72, (byte)1);
+        Function.binary[5] = new op_rec(" @ ", OPC.OpcPromote, (byte)68, (byte)1);
+        Function.binary[6] = new op_rec(" Eqv ", OPC.OpcEqv, (byte)64, (byte)-1);
+        Function.binary[7] = new op_rec(" Neqv ", OPC.OpcNeqv, (byte)64, (byte)-1);
+        Function.binary[8] = new op_rec(" || ", OPC.OpcOr, (byte)60, (byte)-1);
+        Function.binary[9] = new op_rec(" Or_Not ", OPC.OpcOrNot, (byte)60, (byte)-1);
+        Function.binary[10] = new op_rec(" Nor ", OPC.OpcNor, (byte)60, (byte)-1);
+        Function.binary[11] = new op_rec(" Nor_Not ", OPC.OpcNorNot, (byte)60, (byte)-1);
+        Function.binary[12] = new op_rec(" && ", OPC.OpcAnd, (byte)52, (byte)-1);
+        Function.binary[13] = new op_rec(" And_Not ", OPC.OpcAndNot, (byte)52, (byte)-1);
+        Function.binary[14] = new op_rec(" Nand ", OPC.OpcNand, (byte)52, (byte)-1);
+        Function.binary[15] = new op_rec(" Nand_Not ", OPC.OpcNandNot, (byte)52, (byte)-1);
+        Function.binary[16] = new op_rec(" == ", OPC.OpcEq, (byte)48, (byte)-1);
+        Function.binary[17] = new op_rec(" <> ", OPC.OpcNe, (byte)48, (byte)-1);
+        Function.binary[18] = new op_rec(" >= ", OPC.OpcGe, (byte)44, (byte)-1);
+        Function.binary[19] = new op_rec(" > ", OPC.OpcGt, (byte)44, (byte)-1);
+        Function.binary[20] = new op_rec(" <= ", OPC.OpcLe, (byte)44, (byte)-1);
+        Function.binary[21] = new op_rec(" < ", OPC.OpcLt, (byte)44, (byte)-1);
+        Function.binary[22] = new op_rec(" Is_In ", OPC.OpcIsIn, (byte)40, (byte)-1);
+        Function.binary[23] = new op_rec(" // ", OPC.OpcConcat, (byte)32, (byte)-1);
+        Function.binary[24] = new op_rec(" << ", OPC.OpcShiftLeft, (byte)28, (byte)-1);
+        Function.binary[25] = new op_rec(" >> ", OPC.OpcShiftRight, (byte)28, (byte)-1);
+        Function.binary[26] = new op_rec(" + ", OPC.OpcAdd, (byte)24, (byte)-1);
+        Function.binary[27] = new op_rec(" - ", OPC.OpcSubtract, (byte)24, (byte)-1);
+        Function.binary[28] = new op_rec(" * ", OPC.OpcMultiply, (byte)20, (byte)-1);
+        Function.binary[29] = new op_rec(" / ", OPC.OpcDivide, (byte)20, (byte)-1);
+        Function.binary[30] = new op_rec(" ^ ", OPC.OpcPower, (byte)16, (byte)1);
+        Function.unary[0] = new op_rec("~", OPC.OpcInot, (byte)8, (byte)1);
+        Function.unary[1] = new op_rec("!", OPC.OpcNot, (byte)8, (byte)1);
+        Function.unary[2] = new op_rec("--", OPC.OpcPreDec, (byte)8, (byte)1);
+        Function.unary[3] = new op_rec("++", OPC.OpcPreInc, (byte)8, (byte)1);
+        Function.unary[4] = new op_rec("-", OPC.OpcUnaryMinus, (byte)8, (byte)1);
+        Function.unary[5] = new op_rec("+", OPC.OpcUnaryPlus, (byte)8, (byte)1);
+        Function.unary[6] = new op_rec("--", OPC.OpcPostDec, (byte)4, (byte)-1);
+        Function.unary[7] = new op_rec("++", OPC.OpcPostInc, (byte)4, (byte)-1);
+    }
 
     private static final String _default(final short opcode, final Arguments args) {
-        final String fun = Function.OPC[opcode];
+        final String fun = OPC.Names[opcode];
         if(args.isEmpty() && fun.startsWith("$")) return fun;
         return String.format("%s(%s)", fun, args.join(", ", 0));
+    }
+
+    public static final Function $2PI() {
+        return new Function((short)377, (byte)0);
     }
 
     public static final Function $A0() {
@@ -233,24 +214,56 @@ public final class Function extends Descriptor_R<Short>{
         return new StringBuilder().append('(').append(args.join(" + ", 0)).append(')').toString();
     }
 
+    private static final void addCompoundStatement(final int nstmt, final Descriptor[] pin, final int offset, final StringBuilder pout) throws MdsException {
+        pout.append('{');
+        if(nstmt > 0){
+            Function.addIndent(1, pout);
+            Function.addMultiStatement(nstmt, pin, offset, pout);
+            Function.Deindent(pout);
+            Function.addIndent(-1, pout);
+        }
+        pout.append('}');
+    }
+
+    private final static void addIndent(final int step, final StringBuilder pout) {
+        final int len = (((Function.TdiIndent += step) < 8 ? Function.TdiIndent : 8) + 1);
+        pout.append(Function.newline.substring(0, len));
+    }
+
+    private static final void addMultiStatement(final int nstmt, final Descriptor[] pin, final int offset, final StringBuilder pout) throws MdsException {
+        if(nstmt == 0){
+            pout.append(';');
+            Function.addIndent(0, pout);
+        }else for(int j = 0; j < nstmt; j++)
+            Function.addOneStatement(pin[j + offset], pout);
+    }
+
+    private static final void addOneStatement(final Descriptor pin, final StringBuilder pout) throws MdsException {
+        if(pin != null) pin.decompile(Function.P_STMT, pout);
+        Function.Deindent(pout);
+        switch(pout.substring(pout.length() - 1).charAt(0)){
+            default:
+                pout.append(';');
+                break;
+            case ';':
+            case '}':
+                break;
+        }
+        Function.addIndent(0, pout);
+    }
+
     private static final String concat(final short opcode, final Arguments args) {
         return args.join(" // ", 0);
     }
 
-    private static final String devide(final short opcode, final Arguments args) {
-        return new StringBuilder().append('(').append(args.join(" / ", 0)).append(')').toString();
-    }
-
-    private static String eq(final short opcode, final Arguments args) {
-        return new StringBuilder().append('(').append(args.join(" == ", 0)).append(')').toString();
-    }
-
-    private static String equals(final short opcode, final Arguments args) {
-        return args.join(" = ", 0);
-    }
-
-    private static String equals_first(final short opcode, final Arguments args) {
-        return Function._default(opcode, args);
+    private final static void Deindent(final StringBuilder pout) {
+        int fin = pout.length() - 1;
+        while(fin >= 0){
+            final char t = pout.substring(pout.length() - 1).charAt(0);
+            if(!(t == '\t' || t == '\r' || t == '\n')) break;
+            --fin;
+        }
+        pout.setLength(fin + 1);
     }
 
     private static final String ext_function(final short opcode, final Arguments args) {
@@ -258,61 +271,17 @@ public final class Function extends Descriptor_R<Short>{
         return String.format("%s(%s)", args.get(1).getValue(), args.join(", ", 2));
     }
 
-    private static String ge(final short opcode, final Arguments args) {
-        return args.join(" >= ", 0);
-    }
-
-    private static String gt(final short opcode, final Arguments args) {
-        return args.join(" > ", 0);
-    }
-
     private static final String if_errorX(final short opcode, final Arguments args) {
-        return String.format("%s(\r\n\t%s\n)", Function.OPC[opcode], args.join(",\r\n\t", 0));
+        return String.format("%s(\r\n\t%s\n)", OPC.Names[opcode], args.join(",\r\n\t", 0));
     }
 
-    private static String le(final short opcode, final Arguments args) {
-        return args.join(" <= ", 0);
-    }
-
-    private static String lt(final short opcode, final Arguments args) {
-        return args.join(" < ", 0);
-    }
-
-    private static final String multiply(final short opcode, final Arguments args) {
-        return new StringBuilder().append('(').append(args.join(" * ", 0)).append(')').toString();
-    }
-
-    private static final String ne(final short opcode, final Arguments args) {
-        return new StringBuilder().append('(').append(args.join(" != ", 0)).append(')').toString();
-    }
-
-    private static final String not(final short opcode, final Arguments args) {
-        if(args.size() == 1) return "!" + Descriptor.decompile(args.get(0));
-        return Function._default(opcode, args);
-    }
-
-    private static final String power(final short opcode, final Arguments args) {
-        return args.join(" ^ ", 0);
-    }
-
-    private static String shift_left(final short opcode, final Arguments args) {
-        return args.join(" << ", 0);
-    }
-
-    private static String shift_right(final short opcode, final Arguments args) {
-        return args.join(" >> ", 0);
+    public static final void main(final String[] args) throws MdsException {// TODO:main
+        final Database db = new Database(null, "test", -1, Database.READONLY);
+        System.out.println(db.compile("sqrt((1+5)*6)/3").decompile());
     }
 
     private static final String statementX(final short opcode, final Arguments args) {
         return args.join(";\r\n", 0) + ";\r\n";
-    }
-
-    private static final String subtract(final short opcode, final Arguments args) {
-        return new StringBuilder().append('(').append(args.join(" - ", 0)).append(')').toString();
-    }
-
-    private static final String vector(final short opcode, final Arguments args) {
-        return String.format("[%s]", args.join(",", 0));
     }
 
     public Function(final ByteBuffer b) throws MdsException{
@@ -329,9 +298,284 @@ public final class Function extends Descriptor_R<Short>{
         System.arraycopy(args, 0, this.dscptrs, 0, args.length);
     }
 
+    private void addArguments(final int first, final String left, final String right, final StringBuilder pout) throws MdsException {
+        int j;
+        final int last = this.ndesc - 1;
+        if(left != null) pout.append(left);
+        for(j = first; j <= last; j++){
+            this.dscptrs[j].decompile(Function.P_ARG, pout);
+            if(j < last) pout.append(", ");
+        }
+        if(right != null) pout.append(right);
+    }
+
     @Override
     public final String decompile() {
-        return this.toString(true);
+        try{
+            return this.decompile(Function.P_STMT, new StringBuilder(1024)).toString();
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return "1";
+        }
+    }
+
+    @Override
+    public final StringBuilder decompile(final int prec, final StringBuilder pout) throws MdsException {
+        int narg = this.ndesc;
+        op_rec pop = null;
+        int lorr;
+        int newone;
+        Descriptor_R r_ptr = null;
+        Descriptor ptr = null;
+        final short opcode = this.getValue();
+        switch(opcode){
+            default:{ /*intrinsic(arg, ...) */
+                pout.append(this.getName());
+                this.addArguments(0, "(", ")", pout);
+                break;
+            }
+            case OPC.OpcFun:{ /*fun ident(arg, ...) stmt */
+                if(prec < Function.P_STMT) pout.append('(');
+                pout.append("Fun ");
+                ptr = this.dscptrs[0];
+                if(ptr.dtype == DTYPE.T) pout.append(ptr.toString());
+                else ptr.decompile(Function.P_SUBS, pout);
+                this.addArguments(2, " (", ") ", pout);
+                Function.addCompoundStatement(1, this.dscptrs, 1, pout);
+                if(prec < Function.P_STMT) pout.append(')');
+                break;
+            }
+            case OPC.OpcIn: /*input argument */
+            case OPC.OpcInOut: /*input and output argument */
+            case OPC.OpcOptional: /*optional argument */
+            case OPC.OpcOut: /*output argument */
+            case OPC.OpcPrivate: /*private ident */
+            case OPC.OpcPublic:{ /*public ident */
+                pout.append(this.getDscptrs(0).toString());
+                pout.append(" ");
+                if(r_ptr.dtype == DTYPE.T) pout.append(r_ptr.toString());
+                else r_ptr.decompile(Function.P_SUBS, pout);
+                break;
+            }
+            case OPC.OpcExtFunction:{ /*_label(arg, ...)*/
+                if(this.dscptrs[0] != null || this.dscptrs[1] == null || this.dscptrs[1].dtype != DTYPE.T) throw new MdsException("OpcExtFunction:cannot", 0);
+                pout.append(this.dscptrs[1].toString());
+                this.addArguments(2, "(", ")", pout);
+                break;
+            }
+            case OPC.OpcSubscript:{ /*postfix[subscript, ...] */
+                this.dscptrs[0].decompile(Function.P_SUBS, pout);
+                this.addArguments(1, "[", "]", pout);
+                break;
+            }
+            case OPC.OpcVector:{ /*[elem, ...] */
+                this.addArguments(0, "[", "]", pout);
+                break;
+            }
+                /****************
+                 * Unary operations.
+                 ****************/
+            case OPC.OpcInot:
+            case OPC.OpcNot:
+            case OPC.OpcPreDec:
+            case OPC.OpcPreInc:
+            case OPC.OpcUnaryMinus:
+            case OPC.OpcUnaryPlus:
+            case OPC.OpcPostDec:
+            case OPC.OpcPostInc:{
+                for(final op_rec element : Function.unary)
+                    if(element.opcode == opcode){
+                        pop = element;
+                        break;
+                    }
+                newone = pop.prec;
+                lorr = pop.lorr;
+                if(lorr > 0) pout.append(pop.symbol);
+                if(prec <= newone) pout.append("(");
+                this.dscptrs[0].decompile(newone + lorr, pout);
+                if(prec <= newone) pout.append(")");
+                if(lorr < 0) pout.append(pop.symbol);
+                break;
+                /***********************
+                 * Binary/n-ary operations.
+                 ***********************/
+            }
+            case OPC.OpcEqualsFirst:{
+                ptr = this.dscptrs[0];
+                while(r_ptr != null && r_ptr.dtype == DTYPE.DSC)
+                    ptr = ptr.getDescriptor();
+                newone = ((Function)ptr).getValue();
+                narg = ((Function)ptr).ndesc;
+                throw new MdsException("OpcEqualsFirst:first", 0);
+            }
+            case OPC.OpcPower:
+            case OPC.OpcDivide:
+            case OPC.OpcMultiply:
+            case OPC.OpcAdd:
+            case OPC.OpcSubtract:
+            case OPC.OpcShiftLeft:
+            case OPC.OpcShiftRight:
+            case OPC.OpcConcat:
+            case OPC.OpcIsIn:
+            case OPC.OpcGe:
+            case OPC.OpcGt:
+            case OPC.OpcLe:
+            case OPC.OpcLt:
+            case OPC.OpcEq:
+            case OPC.OpcNe:
+            case OPC.OpcAnd:
+            case OPC.OpcNand:
+            case OPC.OpcOr:
+            case OPC.OpcNor:
+            case OPC.OpcEqv:
+            case OPC.OpcNeqv:
+            case OPC.OpcPromote:
+            case OPC.OpcEquals:
+            case OPC.OpcDtypeRange:
+            case OPC.OpcComma:
+            case OPC.OpcConditional:{
+                r_ptr = this;
+                newone = opcode;
+                // first
+                for(final op_rec element : Function.binary)
+                    if(element.opcode == opcode){
+                        pop = element;
+                        break;
+                    }
+                newone = pop.prec;
+                lorr = pop.lorr;
+                if(opcode == OPC.OpcEqualsFirst){
+                    newone = Function.binary[2].prec;
+                    lorr = Function.binary[2].lorr;
+                }
+                if(prec <= newone) pout.append('(');
+                if(opcode == OPC.OpcConditional){
+                    r_ptr.dscptrs[2].decompile(newone - lorr, pout);
+                    pout.append(pop.symbol);
+                    r_ptr.dscptrs[0].decompile(newone, pout);
+                    pout.append(" : ");
+                    r_ptr.dscptrs[1].decompile(newone + lorr, pout);
+                }else{
+                    r_ptr.dscptrs[0].decompile(newone - lorr, pout);
+                    for(int m = 1; m < narg; m++){
+                        pout.append(pop.symbol);
+                        if(this != r_ptr) pout.append("= ");
+                        r_ptr.dscptrs[m].decompile(newone + lorr, pout);
+                    }
+                }
+                if(prec <= newone) pout.append(")");
+                break;
+                /*****************************************
+                 * C-language constructs followed by newline.
+                 * Plus WHERE.
+                 *****************************************/
+            }
+            case OPC.OpcBreak: /*break; */
+            case OPC.OpcContinue:{ /*continue; */
+                if(prec < Function.P_STMT) pout.append("(");
+                pout.append(this.dscptrs[0].toString());
+                Function.addOneStatement(null, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcCase:{ /*case (xxx) stmt ... */
+                if(prec < Function.P_STMT) pout.append("(");
+                pout.append("Case (");
+                this.dscptrs[0].decompile(Function.P_STMT, pout);
+                pout.append(") ");
+                Function.addMultiStatement(narg - 1, this.dscptrs, 1, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcDefault:{ /*case default stmt ... */
+                pout.append("(");
+                pout.append("Case Default ");
+                Function.addMultiStatement(narg, this.dscptrs, 0, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcDo:{ /*do {stmt} while (exp); Note argument order is (exp,stmt,...) */
+                if(prec < Function.P_STMT) pout.append("(");
+                pout.append("DO {");
+                Function.addMultiStatement(narg - 1, this.dscptrs, 1, pout);
+                pout.append("} While ");
+                this.dscptrs[0].decompile(Function.P_STMT, pout);
+                Function.addMultiStatement(0, null, 0, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcFor:{ /*for (init;test;step) stmt */
+                if(prec < Function.P_STMT) pout.append("(");
+                pout.append("For (");
+                this.dscptrs[0].decompile(Function.P_STMT, pout);
+                pout.append("; ");
+                this.dscptrs[1].decompile(Function.P_STMT, pout);
+                pout.append("; ");
+                this.dscptrs[2].decompile(Function.P_STMT, pout);
+                pout.append(") ");
+                Function.addCompoundStatement(narg - 3, this.dscptrs, 3, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcGoto:{ /*goto xxx; */
+                if(prec < Function.P_STMT) pout.append("(");
+                pout.append("GoTo ");
+                pout.append(this.dscptrs[0].toString());
+                Function.addOneStatement(null, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcIf: /*if (exp) stmt else stmt */
+            case OPC.OpcWhere:{ /*where (exp) stmt elsewhere stmt */
+                if(prec < Function.P_STMT) pout.append("(");
+                pout.append((opcode == OPC.OpcIf) ? "If (" : "Where (");
+                this.dscptrs[0].decompile(Function.P_STMT, pout);
+                pout.append(") ");
+                Function.addCompoundStatement(1, this.dscptrs, 1, pout);
+                if(narg >= 3){
+                    pout.append((opcode == OPC.OpcIf) ? " Else " : " ElseWhere ");
+                    Function.addCompoundStatement(1, this.dscptrs, 2, pout);
+                }
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcLabel:{ /*xxx : stmt ... */
+                if(prec < Function.P_STMT) pout.append("(");
+                pout.append("Label ");
+                pout.append(this.dscptrs[0].toString());
+                pout.append(" : ");
+                Function.addMultiStatement(narg - 1, this.dscptrs, 1, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcReturn:{ /*return (optional-exp); */
+                if(prec < Function.P_STMT) pout.append("(");
+                pout.append("Return (");
+                if(this.ndesc > 0) this.dscptrs[0].decompile(Function.P_STMT, pout);
+                else pout.append("*");
+                pout.append(")");
+                Function.addOneStatement(null, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcStatement:{ /*{stmt ...} */
+                if(prec < Function.P_STMT) pout.append("(");
+                Function.addMultiStatement(narg, this.dscptrs, 0, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+            case OPC.OpcSwitch: /*switch (exp) stmt */
+            case OPC.OpcWhile:{ /*while (exp) stmt */
+                if(prec < Function.P_STMT) pout.append("(");
+                pout.append((opcode == OPC.OpcSwitch) ? "Switch (" : "While (");
+                this.dscptrs[0].decompile(Function.P_STMT, pout);
+                pout.append(") ");
+                Function.addCompoundStatement(narg - 1, this.dscptrs, 1, pout);
+                if(prec < Function.P_STMT) pout.append(")");
+                break;
+            }
+        }
+        return pout;
     }
 
     @Override
@@ -345,7 +589,7 @@ public final class Function extends Descriptor_R<Short>{
             case (331):
                 return Function.statementX(opcode, args);
             default:
-                return this.toString();
+                return this.decompile();
         }
     }
 
@@ -355,6 +599,10 @@ public final class Function extends Descriptor_R<Short>{
 
     public final Descriptor[] getArguments() {
         return this.dscptrs;
+    }
+
+    private final String getName() {
+        return OPC.Names[this.getValue()];
     }
 
     public final short getOpCode() {
@@ -403,48 +651,6 @@ public final class Function extends Descriptor_R<Short>{
     private final String toString(final boolean preview) {
         final short opcode = this.getOpCode();
         if(opcode == 0) return super.toString();
-        final Arguments args = new Arguments(this.dscptrs, 0, preview);
-        switch(opcode){
-            case (38):
-                return Function.add(opcode, args);
-            case (101):
-                return Function.concat(opcode, args);
-            case (129):
-                return Function.devide(opcode, args);
-            case (151):
-                return Function.eq(opcode, args);
-            case (152):
-                return Function.equals(opcode, args);
-            case (153):
-                return Function.equals_first(opcode, args);
-            case (162):
-                return Function.ext_function(opcode, args);
-            case (174):
-                return Function.ge(opcode, args);
-            case (177):
-                return Function.gt(opcode, args);
-            case (216):
-                return Function.le(opcode, args);
-            case (229):
-                return Function.lt(opcode, args);
-            case (247):
-                return Function.multiply(opcode, args);
-            case (252):
-                return Function.ne(opcode, args);
-            case (258):
-                return Function.not(opcode, args);
-            case (274):
-                return Function.power(opcode, args);
-            case (314):
-                return Function.shift_left(opcode, args);
-            case (315):
-                return Function.shift_right(opcode, args);
-            case (336):
-                return Function.subtract(opcode, args);
-            case (361):
-                return Function.vector(opcode, args);
-            default:
-                return Function._default(opcode, args);
-        }
+        return this.decompile();
     }
 }
