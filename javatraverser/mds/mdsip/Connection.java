@@ -214,7 +214,7 @@ public class Connection{
     }
 
     public Descriptor compile(final String expr) throws MdsException {
-        return this.mdsValue(String.format("AS_IS((%s))", expr), Descriptor.class);
+        return this.mdsValue(String.format("COMPILE('%s')", expr), Descriptor.class);
     }
 
     public synchronized boolean connectToMds(final boolean use_compression) {
@@ -399,6 +399,8 @@ public class Connection{
             this.pending_count++;
             message.Send(this.dos);
             return this.getAnswer();
+        }catch(final MdsException exc){
+            throw exc;
         }catch(final IOException exc){
             throw new MdsException(String.format("Could not get IO for %s: %s", this.provider, exc.getMessage()), 0);
         }
