@@ -123,6 +123,7 @@ SET LOCAL_SRC=^
 SET MDSIP_SRC=^
   mds\data\descriptor\ARRAY.java ^
   mds\data\descriptor\DTYPE.java ^
+  mds\data\descriptor\OPC.java ^
   mds\data\descriptor\Descriptor.java ^
   mds\data\descriptor\Descriptor_A.java ^
   mds\data\descriptor\Descriptor_APD.java ^
@@ -152,6 +153,7 @@ SET MDSIP_SRC=^
   mds\data\descriptor_a\Uint32Array.java ^
   mds\data\descriptor_a\Uint64Array.java ^
   mds\data\descriptor_a\Uint8Array.java ^
+  mds\data\descriptor_r\BUILD.java ^
   mds\data\descriptor_r\Action.java ^
   mds\data\descriptor_r\Call.java ^
   mds\data\descriptor_r\Condition.java ^
