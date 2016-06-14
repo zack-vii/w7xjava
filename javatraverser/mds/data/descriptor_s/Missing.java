@@ -5,6 +5,8 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor_S;
 
 public final class Missing extends Descriptor_S{
+    public static final Missing NEW = new Missing();
+
     public Missing(){
         super(DTYPE.MISSING, new byte[0]);
     }
@@ -16,6 +18,11 @@ public final class Missing extends Descriptor_S{
     @Override
     public final String decompile() {
         return "*";
+    }
+
+    @Override
+    public final StringBuilder decompile(final int prec, final StringBuilder pout) {
+        return pout.append('*');
     }
 
     @Override
