@@ -260,7 +260,7 @@ public final class Function extends Descriptor_R<Short>{
         System.out.println(db.compile("public _R").decompile());
         System.out.println(db.compile("_r=sqrt((1+5)*6)/(3-1)").decompile());
         System.out.println(db.compile("for(_i=1;_i<5;_i++) write(*,text(_i))").decompile());
-        System.out.println(db.compile("TreeShr->TreeCtx(1+3,5/2)").decompile());
+        System.out.println(db.compile("TreeShr->TreeCtx($SHOT,(5/2)^2)").decompile());
         System.out.println(db.compile("[cmplx(1.e2,3.e4)]").decompile());
         System.exit(0);
     }
@@ -305,8 +305,9 @@ public final class Function extends Descriptor_R<Short>{
         if(DEBUG.D) System.out.println(OPC.Names[opcode]);
         switch(opcode){
             default:{ /*intrinsic(arg, ...) */
-                pout.append(this.getName());
-                this.addArguments(0, "(", ")", pout);
+                final String name = this.getName();
+                pout.append(name);
+                if(name.charAt(0) != '$') this.addArguments(0, "(", ")", pout);
                 break;
             }
             case OPC.OpcFun:{ /*fun ident(arg, ...) stmt */
