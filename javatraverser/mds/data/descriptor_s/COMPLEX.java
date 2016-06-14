@@ -35,12 +35,12 @@ public abstract class COMPLEX<T extends Number>extends NUMBER<Complex<T>>{
         }
     }
 
-    public static final <T extends Number> String decompile(final Complex<T> value, final byte dtype, final boolean preview) {
+    public static final <T extends Number> StringBuilder decompile(final StringBuilder pout, final Complex<T> value, final byte dtype, final boolean preview) {
         final byte realdtype = (byte)(dtype - 2);
-        final StringBuilder sb = new StringBuilder(48).append("Cmplx(");
-        sb.append(FLOAT.decompile(value.real, realdtype, preview)).append(',');
-        sb.append(FLOAT.decompile(value.imag, realdtype, preview)).append(')');
-        return sb.toString();
+        pout.append("Cmplx(");
+        pout.append(FLOAT.decompile(value.real, realdtype, preview)).append(',');
+        pout.append(FLOAT.decompile(value.imag, realdtype, preview)).append(')');
+        return pout;
     }
 
     protected COMPLEX(final byte dtype, final Complex<T> value){
@@ -56,8 +56,8 @@ public abstract class COMPLEX<T extends Number>extends NUMBER<Complex<T>>{
     }
 
     @Override
-    public final String decompile() {
-        return COMPLEX.decompile(this.getValue(), this.dtype, false);
+    public final StringBuilder decompile(final int prec, final StringBuilder pout) {
+        return COMPLEX.decompile(pout, this.getValue(), this.dtype, false);
     }
 
     public final T getImag() {
@@ -70,6 +70,6 @@ public abstract class COMPLEX<T extends Number>extends NUMBER<Complex<T>>{
 
     @Override
     public final String toString() {
-        return COMPLEX.decompile(this.getValue(), this.dtype, true);
+        return COMPLEX.decompile(new StringBuilder(32), this.getValue(), this.dtype, true).toString();
     }
 }

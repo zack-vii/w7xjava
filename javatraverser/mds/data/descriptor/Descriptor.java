@@ -18,6 +18,9 @@ public abstract class Descriptor<T>{
     public static final int     _typB    = 2;
     public static final short   BYTES    = 8;
     public static final boolean isatomic = false;
+    protected static final byte P_ARG    = 88;
+    protected static final byte P_STMT   = 96;
+    protected static final byte P_SUBS   = 0;
 
     private static final ByteBuffer Buffer(final byte[] buf, final boolean swap_little) {
         return Descriptor.Buffer(buf, swap_little ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
@@ -173,15 +176,29 @@ public abstract class Descriptor<T>{
     }
 
     public String decompile() {
-        return String.format("<Descriptor(%d,%d,%d,%d)>", this.length & 0xFFFF, this.dtype & 0xFF, this.dclass & 0xFF, this.pointer & 0xFFFFFFFFl);
+        try{
+            return this.decompile(Descriptor.P_STMT, new StringBuilder(1024)).toString();
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return e.toString();
+        }
     }
 
     public StringBuilder decompile(final int prec, final StringBuilder pout) throws MdsException {
-        return pout.append(this.decompile());
+        pout.append("<Descriptor(");
+        pout.append(this.length & 0xFFFF).append(',');
+        pout.append(this.dtype & 0xFF).append(',');
+        pout.append(this.dclass & 0xFF).append(',');
+        pout.append(this.pointer & 0xFFFFFFFFl);
+        return pout.append(")>");
     }
 
     public String decompileX() {
         return this.decompile();
+    }
+
+    public StringBuilder decompileX(final int prec, final StringBuilder pout) throws MdsException {
+        return this.decompile(prec, pout);
     }
 
     @Override

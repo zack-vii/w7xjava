@@ -17,8 +17,13 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     }
 
     @Override
-    protected final String decompileT(final Descriptor t) {
-        return Descriptor.decompile(t);
+    protected final StringBuilder decompileT(final StringBuilder pout, final Descriptor t) {
+        try{
+            return t == null ? pout.append("*") : t.decompile(Descriptor.P_STMT, pout);
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return pout.append("/***").append(e).append("***/");
+        }
     }
 
     @Override

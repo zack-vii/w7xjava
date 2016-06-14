@@ -98,8 +98,8 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     }
 
     @Override
-    public String decompile() {
-        return this.toString();
+    public StringBuilder decompile(final int prec, final StringBuilder pout) {
+        return pout.append(this.getValue());
     }
 
     public boolean equals(final Descriptor_S dsca) {

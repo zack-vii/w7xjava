@@ -106,6 +106,21 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
         }
     }
 
+    protected void addArguments(final int first, final String left, final String sep, final String right, final StringBuilder pout) throws MdsException {
+        int j;
+        final int last = this.ndesc - 1;
+        if(left != null) pout.append(left);
+        for(j = first; j <= last; j++){
+            this.dscptrs[j].decompile(Descriptor_R.P_ARG, pout);
+            if(j < last) pout.append(sep);
+        }
+        if(right != null) pout.append(right);
+    }
+
+    protected void addArguments(final int first, final String left, final String right, final StringBuilder pout) throws MdsException {
+        this.addArguments(first, left, ", ", right, pout);
+    }
+
     public final Descriptor getDscptrs(final int idx) {
         return this.dscptrs.length <= idx ? Missing.NEW : this.dscptrs[idx];
     }

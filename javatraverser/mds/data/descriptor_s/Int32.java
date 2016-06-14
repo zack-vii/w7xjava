@@ -17,8 +17,8 @@ public class Int32 extends NUMBER<Integer>{
     }
 
     @Override
-    public final String decompile() {
-        return this.toString();
+    public final StringBuilder decompile(final int prec, final StringBuilder pout) {
+        return pout.append(this);
     }
 
     @Override

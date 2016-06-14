@@ -25,12 +25,13 @@ import mds.mdsip.Message;
 /** Array Descriptor (4) **/
 public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     private final class AStringBuilder{
-        private int                 i  = 0;
-        private final StringBuilder sb = new StringBuilder(0xFFFF);
+        private int                 i = 0;
+        private final StringBuilder pout;
         private final int[]         shape;
         private final T[]           t;
 
-        public AStringBuilder(final int[] shape, final T[] t){
+        public AStringBuilder(final StringBuilder pout, final int[] shape, final T[] t){
+            this.pout = pout;
             this.shape = shape;
             this.t = t;
             this.level(this.shape.length);
@@ -38,24 +39,24 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
 
         private final void level(final int l) {
             if(l == 0){
-                this.sb.append(Descriptor_A.this.decompileT(this.t[this.i++]));
+                Descriptor_A.this.decompileT(this.pout, this.t[this.i++]);
                 return;
             }
-            this.sb.append("[");
+            this.pout.append("[");
             int j = 0;
             final int len = this.shape[l - 1];
             for(; j < len && this.i < 1000; j++){
-                if(j > 0) this.sb.append(", ");
+                if(j > 0) this.pout.append(", ");
                 this.level(l - 1);
             }
             j = len - j;
-            if(j > 0 || this.i >= 1000) this.sb.append(",...(").append(len).append(')');
-            this.sb.append(']');
+            if(j > 0 || this.i >= 1000) this.pout.append(",...(").append(len).append(')');
+            this.pout.append(']');
         }
 
         @Override
         public final String toString() {
-            return this.sb.toString();
+            return this.pout.toString();
         }
     }
     public static final byte CLASS = 4;
@@ -142,16 +143,19 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     }
 
     @Override
-    public String decompile() {
-        final StringBuilder pout = new StringBuilder(1024);
+    public StringBuilder decompile(final int prec, final StringBuilder pout) {
         if(this.format()) pout.append(this.getDName()).append('(');
-        pout.append(new AStringBuilder(pout, this.dims, this.getValue()).toString());
+        new AStringBuilder(pout, this.dims, this.getValue());
         if(this.format()) pout.append(')');
-        return pout.toString();
+        return pout;
+    }
+
+    protected StringBuilder decompileT(final StringBuilder pout, final T t) {
+        return pout.append(this.TtoString(t));
     }
 
     protected String decompileT(final T t) {
-        return this.TtoString(t);
+        return this.decompileT(new StringBuilder(32), t).toString();
     }
 
     @SuppressWarnings("static-method")

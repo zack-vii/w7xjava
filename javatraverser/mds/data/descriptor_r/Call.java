@@ -4,9 +4,8 @@ import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor.Descriptor_R;
 
-public final class Call extends Descriptor_R<Short>{
+public final class Call extends BUILD<Short>{
     public Call(final ByteBuffer b) throws MdsException{
         super(b);
     }
@@ -21,6 +20,14 @@ public final class Call extends Descriptor_R<Short>{
         this(dtype, image, routine, (byte)(args == null ? 0 : args.length));
         if(args == null) return;
         System.arraycopy(args, 0, this.dscptrs, 2, args.length);
+    }
+
+    @Override
+    public final StringBuilder decompile(final int prec, final StringBuilder pout) throws MdsException {
+        if(this.getImage().dtype != DTYPE.T || this.getRoutine().dtype != DTYPE.T) return super.decompile(prec, pout);
+        pout.append(this.getImage()).append("->").append(this.getRoutine());
+        this.addArguments(2, "(", ")", pout);
+        return pout;
     }
 
     public final Descriptor getArguments(final int idx) {

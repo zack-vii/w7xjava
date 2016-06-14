@@ -42,8 +42,8 @@ public abstract class FLOAT<T extends Number>extends NUMBER<T>{
     }
 
     @Override
-    public final String decompile() {
-        return FLOAT.decompile(this.getValue(), this.dtype, false);
+    public final StringBuilder decompile(final int prec, final StringBuilder pout) {
+        return pout.append(FLOAT.decompile(this.getValue(), this.dtype, false));
     }
 
     @Override

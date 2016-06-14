@@ -14,23 +14,21 @@ public abstract class BUILD<T extends Number>extends Descriptor_R<T>{
     }
 
     @Override
-    public final String decompile() {
-        return this.decompile(", ", "", ", ", ")");
+    public StringBuilder decompile(final int prec, final StringBuilder pout) throws MdsException {
+        return this.decompile(prec, pout, ", ", "", ", ", ")");
     }
 
-    public final String decompile(final String s1, final String s2, final String s3, final String s4) {
-        final String[] args = new String[this.ndesc];
-        for(int i = 0; i < this.ndesc; i++)
-            args[i] = this.dscptrs[i] == null ? "*" : this.dscptrs[i].decompile();
+    public final StringBuilder decompile(final int prec, final StringBuilder pout, final String s1, final String s2, final String s3, final String s4) throws MdsException {
         final T val = this.getValue();
-        final StringBuilder sb = new StringBuilder(256).append("Build_").append(this.getClass().getSimpleName()).append('(');
-        if(val != null) sb.append(val.toString()).append(s1);
-        return sb.append(s2).append(String.join(s3, args)).append(s4).toString();
+        pout.append("Build_").append(this.getClass().getSimpleName()).append("(");
+        if(val != null) pout.append(val.toString()).append(s1);
+        this.addArguments(0, s2, s3, s4, pout);
+        return pout;
     }
 
     @Override
-    public final String decompileX() {
-        return this.decompile(",", "\n\t", ",\n\t", "\n)");
+    public StringBuilder decompileX(final int prec, final StringBuilder pout) throws MdsException {
+        return this.decompile(prec, pout, ",", "\n\t", ",\n\t", "\n)");
     }
 
     @Override

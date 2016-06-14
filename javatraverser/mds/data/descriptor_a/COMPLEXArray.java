@@ -10,8 +10,8 @@ public abstract class COMPLEXArray<T extends Number>extends NUMBERArray<Complex<
     }
 
     @Override
-    public final String decompileT(final Complex<T> val) {
-        return COMPLEX.decompile(val, this.dtype, false);
+    protected final StringBuilder decompileT(final StringBuilder pout, final Complex<T> t) {
+        return COMPLEX.decompile(pout, t, this.dtype, false);
     }
 
     @Override
