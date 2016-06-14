@@ -138,7 +138,7 @@ MDSIP_SRC= \
   mds/data/descriptor_r/Call.java \
   mds/data/descriptor_r/Condition.java \
   mds/data/descriptor_r/Conglom.java \
-  mds/data/descriptor_r/Dependenc.java \
+  mds/data/descriptor_r/Dependency.java \
   mds/data/descriptor_r/Dim.java \
   mds/data/descriptor_r/Dispatch.java \
   mds/data/descriptor_r/Function.java \
