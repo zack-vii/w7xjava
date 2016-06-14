@@ -150,7 +150,7 @@ public class Connection{
         }
     }
 
-    public static void main(final String[] args) throws Exception {// TODO
+    public static void main(final String[] args) throws Exception {// TODO:main
         final Connection mds = new Connection("localhost");
         mds.connectToMds(false);
         final Descriptor d = mds.mdsValue("[[[1.0],[2.0]],[[3.0],[4.0]]]");// BYTE([1,2,3,4,5,6,7,8,9,0])
@@ -214,7 +214,9 @@ public class Connection{
     }
 
     public Descriptor compile(final String expr) throws MdsException {
-        return this.mdsValue(String.format("COMPILE('%s')", expr), Descriptor.class);
+        final Vector<Descriptor> args = new Vector<Descriptor>(1);
+        args.add(new CString(expr));
+        return this.mdsValue("COMPILE($)", args, Descriptor.class);
     }
 
     public synchronized boolean connectToMds(final boolean use_compression) {
