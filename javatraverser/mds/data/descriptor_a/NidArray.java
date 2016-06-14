@@ -8,8 +8,8 @@ public final class NidArray extends NUMBERArray<Integer>{
     }
 
     @Override
-    public final String format(final String in) {
-        return in;
+    protected final boolean format() {
+        return false;
     }
 
     @Override

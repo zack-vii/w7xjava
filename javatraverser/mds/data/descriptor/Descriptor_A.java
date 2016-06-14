@@ -143,15 +143,20 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
 
     @Override
     public String decompile() {
-        return this.format(new AStringBuilder(this.dims, this.getValue()).toString());
+        final StringBuilder pout = new StringBuilder(1024);
+        if(this.format()) pout.append(this.getDName()).append('(');
+        pout.append(new AStringBuilder(pout, this.dims, this.getValue()).toString());
+        if(this.format()) pout.append(')');
+        return pout.toString();
     }
 
     protected String decompileT(final T t) {
         return this.TtoString(t);
     }
 
-    public String format(final String in) {
-        return new StringBuilder(in.length() + 32).append(this.getDName()).append('(').append(in).append(')').toString();
+    @SuppressWarnings("static-method")
+    protected boolean format() {
+        return true;
     }
 
     @Override
@@ -251,7 +256,11 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
                 dimstr[i] = Integer.toString(this.dims[i]);
             size = String.join(",", dimstr);
         }
-        return this.format(new StringBuilder(64).append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/))").toString());
+        final StringBuilder pout = new StringBuilder(64);
+        if(this.format()) pout.append(this.getDName()).append('(');
+        pout.append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/))");
+        if(this.format()) pout.append(')');
+        return pout.toString();
     }
 
     public String toString(final int idx) {

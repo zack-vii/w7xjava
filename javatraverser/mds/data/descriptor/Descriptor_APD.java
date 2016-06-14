@@ -22,8 +22,8 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     }
 
     @Override
-    public final String format(final String in) {
-        return in;
+    protected final boolean format() {
+        return false;
     }
 
     @Override

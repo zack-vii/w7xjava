@@ -22,8 +22,8 @@ public abstract class FLOATArray<T extends Number>extends NUMBERArray<T>{
     }
 
     @Override
-    public final String format(final String in) {
-        return in;
+    protected final boolean format() {
+        return false;
     }
 
     @Override

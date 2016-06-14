@@ -15,8 +15,8 @@ public abstract class COMPLEXArray<T extends Number>extends NUMBERArray<Complex<
     }
 
     @Override
-    public final String format(final String in) {
-        return in;
+    protected final boolean format() {
+        return false;
     }
 
     public final T getImag(final int idx) {
