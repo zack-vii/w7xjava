@@ -162,6 +162,7 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
 
     @Override
     public String toString() {
-        return this.getValue().toString();
+        final T val = this.getValue();
+        return val == null ? "*" : val.toString();
     }
 }
