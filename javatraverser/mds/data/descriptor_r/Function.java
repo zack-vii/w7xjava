@@ -335,7 +335,11 @@ public final class Function extends Descriptor_R<Short>{
                 break;
             }
             case OPC.OpcExtFunction:{ /*_label(arg, ...)*/
-                if(this.dscptrs[0] != null || this.dscptrs[1] == null || this.dscptrs[1].dtype != DTYPE.T) throw new MdsException("OpcExtFunction:cannot", 0);
+                if(this.dscptrs[0] != null || this.dscptrs[1] == null || this.dscptrs[1].dtype != DTYPE.T){
+                    pout.append(this.getName());
+                    this.addArguments(0, "(", ")", pout);
+                    break;
+                }
                 pout.append(this.dscptrs[1].toString());
                 this.addArguments(2, "(", ")", pout);
                 break;
