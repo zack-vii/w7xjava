@@ -26,6 +26,15 @@ public final class Nid extends Int32{
     }
 
     @Override
+    public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        try{
+            return pout.append(Database.getMinPath(this.getValue()));
+        }catch(final MdsException e){
+            return pout.append('(').append(this.getValue()).append(')');
+        }
+    }
+
+    @Override
     public double[] toDouble() {
         return this.evaluate().toDouble();
     }
@@ -43,14 +52,5 @@ public final class Nid extends Int32{
     @Override
     public long[] toLong() {
         return this.evaluate().toLong();
-    }
-
-    @Override
-    public final String toString() {
-        try{
-            return Database.getMinPath(this.getValue());
-        }catch(final MdsException e){
-            return String.format("(%d)", this.getValue());
-        }
     }
 }

@@ -18,12 +18,7 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
 
     @Override
     protected final StringBuilder decompileT(final StringBuilder pout, final Descriptor t) {
-        try{
-            return t == null ? pout.append("*") : t.decompile(Descriptor.P_STMT, pout);
-        }catch(final MdsException e){
-            e.printStackTrace();
-            return pout.append("/***").append(e).append("***/");
-        }
+        return t == null ? pout.append("*") : t.decompile(Descriptor.P_STMT, pout, Descriptor.DECO_NRM);
     }
 
     @Override
@@ -70,16 +65,6 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     @Override
     public final long toLong(final Descriptor t) {
         return t.toLong()[0];
-    }
-
-    @Override
-    public final String toString() {
-        final String[] elements = new String[this.arsize / this.length];
-        for(int i = 0; i < elements.length; i++){
-            final Descriptor desc = this.getValue(i);
-            elements[i] = desc == null ? "*" : desc.toString();
-        }
-        return new StringBuilder(256).append('[').append(String.join(", ", elements)).append(']').toString();
     }
 
     @Override

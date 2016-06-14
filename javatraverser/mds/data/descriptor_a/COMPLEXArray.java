@@ -1,6 +1,7 @@
 package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
+import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.COMPLEX;
 import mds.data.descriptor_s.COMPLEX.Complex;
 
@@ -11,7 +12,7 @@ public abstract class COMPLEXArray<T extends Number>extends NUMBERArray<Complex<
 
     @Override
     protected final StringBuilder decompileT(final StringBuilder pout, final Complex<T> t) {
-        return COMPLEX.decompile(pout, t, this.dtype, false);
+        return COMPLEX.decompile(pout, t, this.dtype, Descriptor.DECO_NRM);
     }
 
     @Override

@@ -212,9 +212,9 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     }
 
     @Override
-    public final String decompile() {
-        if(this.payload == null) return new StringBuffer(64).append("ZERO(").append(this.arsize / this.length).append(", 0").append(DTYPE.getSuffix(this.dtype)).append(')').toString();
-        return this.resolve().decompile();
+    public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        if(this.payload == null) return this.substitute(pout);
+        return this.resolve().decompile(prec, pout, mode);
     }
 
     @Override
@@ -230,6 +230,10 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
             e.printStackTrace();
             return this.payload;
         }
+    }
+
+    private final StringBuilder substitute(final StringBuilder pout) {
+        return pout.append("ZERO(").append(this.arsize / this.length).append(", 0").append(DTYPE.getSuffix(this.dtype)).append(')');
     }
 
     @Override
@@ -259,11 +263,5 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     @Override
     public Message toMessage(final byte descr_idx, final byte n_args) {
         return this.payload == null ? null : this.payload.toMessage(descr_idx, n_args);// TODO: null
-    }
-
-    @Override
-    public final String toString() {
-        if(this.payload == null) return new StringBuffer(64).append("ZERO(").append(this.arsize / this.length).append(", 0").append(DTYPE.getSuffix(this.dtype)).append(')').toString();
-        return this.resolve().toString();
     }
 }

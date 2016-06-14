@@ -2,6 +2,7 @@ package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_S;
 
 public final class CString extends Descriptor_S<String>{
@@ -30,8 +31,8 @@ public final class CString extends Descriptor_S<String>{
     }
 
     @Override
-    public String decompile() {
-        return CString.decompile(this.getValue());
+    public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        return pout.append(((mode & Descriptor.DECO_STR) == 0) ? CString.decompile(this.getValue()) : this.getValue());
     }
 
     @Override

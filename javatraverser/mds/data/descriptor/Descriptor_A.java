@@ -143,9 +143,21 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     }
 
     @Override
-    public StringBuilder decompile(final int prec, final StringBuilder pout) {
+    public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        if(pout.capacity() < 4096) pout.ensureCapacity(4096);
         if(this.format()) pout.append(this.getDName()).append('(');
-        new AStringBuilder(pout, this.dims, this.getValue());
+        if((mode & Descriptor.DECO_STR) != 0){
+            String size;
+            if(this.dimct == 0 || ((this.dims != null) && (this.dims.length == 0))) size = "0";
+            else if(this.dims == null) size = Integer.toString(this.arsize / this.length);
+            else{
+                final String[] dimstr = new String[this.dims.length];
+                for(int i = 0; i < dimstr.length; i++)
+                    dimstr[i] = Integer.toString(this.dims[i]);
+                size = String.join(",", dimstr);
+            }
+            pout.append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/))");
+        }else new AStringBuilder(pout, this.dims, this.getValue());
         if(this.format()) pout.append(')');
         return pout;
     }
@@ -247,24 +259,6 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         this.getBuffer().get(body);
         final boolean little = this.b.order() != ByteOrder.BIG_ENDIAN;
         return new Message(descr_idx, this.dtype, n_args, this.dims, body, little);
-    }
-
-    @Override
-    public String toString() {
-        String size;
-        if(this.dimct == 0 || ((this.dims != null) && (this.dims.length == 0))) size = "0";
-        else if(this.dims == null) size = Integer.toString(this.arsize / this.length);
-        else{
-            final String[] dimstr = new String[this.dims.length];
-            for(int i = 0; i < dimstr.length; i++)
-                dimstr[i] = Integer.toString(this.dims[i]);
-            size = String.join(",", dimstr);
-        }
-        final StringBuilder pout = new StringBuilder(64);
-        if(this.format()) pout.append(this.getDName()).append('(');
-        pout.append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/))");
-        if(this.format()) pout.append(')');
-        return pout.toString();
     }
 
     public String toString(final int idx) {

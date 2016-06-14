@@ -106,19 +106,23 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
         }
     }
 
-    protected void addArguments(final int first, final String left, final String sep, final String right, final StringBuilder pout) throws MdsException {
+    protected void addArguments(final int first, final String left, final String right, final StringBuilder pout, final int mode) {
         int j;
+        final boolean indent = (mode & Descriptor.DECO_X) > 0;
+        final String sep = indent ? ",\n\t" : ", ";
         final int last = this.ndesc - 1;
-        if(left != null) pout.append(left);
+        if(left != null){
+            pout.append(left);
+            if(indent) pout.append("\n\t");
+        }
         for(j = first; j <= last; j++){
-            this.dscptrs[j].decompile(Descriptor_R.P_ARG, pout);
+            this.dscptrs[j].decompile(Descriptor_R.P_ARG, pout, (mode & ~Descriptor.DECO_X));
             if(j < last) pout.append(sep);
         }
-        if(right != null) pout.append(right);
-    }
-
-    protected void addArguments(final int first, final String left, final String right, final StringBuilder pout) throws MdsException {
-        this.addArguments(first, left, ", ", right, pout);
+        if(right != null){
+            if(indent) pout.append("\n");
+            pout.append(right);
+        }
     }
 
     public final Descriptor getDscptrs(final int idx) {

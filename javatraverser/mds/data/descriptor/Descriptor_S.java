@@ -98,8 +98,9 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     }
 
     @Override
-    public StringBuilder decompile(final int prec, final StringBuilder pout) {
-        return pout.append(this.getValue());
+    public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        final T val = this.getValue();
+        return pout.append(val == null ? "*" : val);
     }
 
     public boolean equals(final Descriptor_S dsca) {
@@ -158,11 +159,5 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
         this.getBuffer().get(body);
         final boolean little = this.b.order() != ByteOrder.BIG_ENDIAN;
         return new Message(descr_idx, this.dtype, n_args, null, body, little);
-    }
-
-    @Override
-    public String toString() {
-        final T val = this.getValue();
-        return val == null ? "*" : val.toString();
     }
 }

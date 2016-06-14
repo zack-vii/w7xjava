@@ -1,6 +1,7 @@
 package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
+import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.FLOAT;
 
 public abstract class FLOATArray<T extends Number>extends NUMBERArray<T>{
@@ -18,7 +19,7 @@ public abstract class FLOATArray<T extends Number>extends NUMBERArray<T>{
 
     @Override
     public final String decompileT(final T value) {
-        return FLOAT.decompile(value, this.dtype, false);
+        return FLOAT.decompile(value, this.dtype, Descriptor.DECO_NRM);
     }
 
     @Override
@@ -33,6 +34,6 @@ public abstract class FLOATArray<T extends Number>extends NUMBERArray<T>{
 
     @Override
     public final String TtoString(final T value) {
-        return FLOAT.decompile(value, this.dtype, true);
+        return FLOAT.decompile(value, this.dtype, Descriptor.DECO_STR);
     }
 }

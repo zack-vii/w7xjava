@@ -108,8 +108,8 @@ public final class Call extends BUILD<Short>{
     }
 
     @Override
-    public final StringBuilder decompile(final int prec, final StringBuilder pout) throws MdsException {
-        if(this.getImage().dtype != DTYPE.T || this.getRoutine().dtype != DTYPE.T) return super.decompile(prec, pout);
+    public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        if(this.getImage().dtype != DTYPE.T || this.getRoutine().dtype != DTYPE.T) return super.decompile(prec, pout, mode);
         pout.append(this.getImage()).append("->").append(this.getRoutine());
         if(this.length > 0){
             pout.append(':');
@@ -119,7 +119,7 @@ public final class Call extends BUILD<Short>{
             else if(this.dtype == DTYPE.PATH) pout.append("Path");
             else pout.append("%Unknown%");
         }
-        this.addArguments(2, "(", ")", pout);
+        this.addArguments(2, "(", ")", pout, mode);
         return pout;
     }
 

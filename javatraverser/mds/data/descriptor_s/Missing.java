@@ -16,12 +16,7 @@ public final class Missing extends Descriptor_S{
     }
 
     @Override
-    public final String decompile() {
-        return "*";
-    }
-
-    @Override
-    public final StringBuilder decompile(final int prec, final StringBuilder pout) {
+    public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         return pout.append('*');
     }
 

@@ -19,9 +19,9 @@ public final class Range extends Descriptor_R{
     }
 
     @Override
-    public final StringBuilder decompile(final int prec, final StringBuilder pout) throws MdsException {
+    public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         pout.append(DTYPE.getName(DTYPE.RANGE));
-        this.addArguments(0, "(", ")", pout);
+        this.addArguments(0, "(", ")", pout, mode);
         return pout;
     }
 

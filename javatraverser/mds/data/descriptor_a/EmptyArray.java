@@ -14,8 +14,8 @@ public final class EmptyArray extends Descriptor_A{
     }
 
     @Override
-    public final String decompile() {
-        return "[]";
+    public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        return pout.append("[]");
     }
 
     @Override
