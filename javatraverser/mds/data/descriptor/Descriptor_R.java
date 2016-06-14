@@ -22,6 +22,7 @@ import mds.data.descriptor_r.Slope;
 import mds.data.descriptor_r.Window;
 import mds.data.descriptor_r.With_Error;
 import mds.data.descriptor_r.With_Units;
+import mds.data.descriptor_s.Missing;
 import mds.mdsip.Message;
 
 /** Fixed-Length (static) Descriptor (-62 : 194) **/
@@ -96,15 +97,17 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
             pos[i] = b.getInt();
         int end = b.limit();
         for(int i = this.ndesc; i-- > 0;){
-            if(pos[i] == 0) continue;
-            b.position(pos[i]).limit(end);
-            this.dscptrs[i] = Descriptor.deserialize(b);
-            end = pos[i];
+            if(pos[i] == 0) this.dscptrs[i] = Missing.NEW;
+            else{
+                b.position(pos[i]).limit(end);
+                this.dscptrs[i] = Descriptor.deserialize(b);
+                end = pos[i];
+            }
         }
     }
 
     public final Descriptor getDscptrs(final int idx) {
-        return this.dscptrs.length <= idx ? null : this.dscptrs[idx];
+        return this.dscptrs.length <= idx ? Missing.NEW : this.dscptrs[idx];
     }
 
     @Override

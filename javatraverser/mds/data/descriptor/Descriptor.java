@@ -37,7 +37,7 @@ public abstract class Descriptor<T>{
     }
 
     public static Descriptor deserialize(final ByteBuffer bi) throws MdsException {
-        if(!bi.hasRemaining()) return null;
+        if(!bi.hasRemaining()) return Missing.NEW;
         final ByteBuffer b = bi.slice().order(bi.order());
         switch(b.get(Descriptor._clsB)){
             case Descriptor_A.CLASS:
