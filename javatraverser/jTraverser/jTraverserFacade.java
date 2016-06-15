@@ -136,22 +136,6 @@ public final class jTraverserFacade extends JFrame{
                 }
             }
         });
-        final JMenuItem smenu;
-        jmenu.add(smenu = new JMenu("Display Mode"));
-        smenu.add(item = new JMenuItem("Outline"));
-        item.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                jTraverserFacade.this.treeman.getCurrentTree().setAngled(false);
-            }
-        });
-        smenu.add(item = new JMenuItem("Tree"));
-        item.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                jTraverserFacade.this.treeman.getCurrentTree().setAngled(true);
-            }
-        });
         this.getContentPane().add(this.treeman);
         this.getContentPane().add(jTraverserFacade.status, BorderLayout.PAGE_END);
         this.addWindowListener(new WindowAdapter(){

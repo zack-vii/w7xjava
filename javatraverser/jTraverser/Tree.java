@@ -94,7 +94,6 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     private JTextField             add_device_type, add_device_name;
     private Node                   curr_node;
     private final Database         database;
-    boolean                        is_angled_style;
     private String                 lastName;
     private DefaultMutableTreeNode top;
     public final TreeManager       treeman;
@@ -151,7 +150,6 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
                 Tree.this.treeman.reportChange();
             }
         });
-        if(this.is_angled_style) this.putClientProperty("JTree.lineStyle", "Angled");
         this.setEditable(this.database.isEditable());
         this.setCellRenderer(new MDSCellRenderer());
         this.addTreeSelectionListener(this);
@@ -432,13 +430,6 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
             JOptionPane.showMessageDialog(this, "" + exc, "Error copying subtree", JOptionPane.WARNING_MESSAGE);
         }
         this.setCurrentNode(savedTreeNode);
-    }
-
-    public final void setAngled(final boolean is_angled) {
-        this.is_angled_style = is_angled;
-        if(this.is_angled_style) this.putClientProperty("JTree.lineStyle", "Angled");
-        else this.putClientProperty("JTree.lineStyle", "None");
-        this.treeDidChange();
     }
 
     public final void setCurrentNode(final DefaultMutableTreeNode treenode) {
