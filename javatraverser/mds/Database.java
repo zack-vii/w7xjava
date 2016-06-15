@@ -136,7 +136,7 @@ public final class Database{
     }
 
     public Database(final String provider, final String expt, final long shot, final int mode) throws MdsException{
-        this.provider = (provider == null || provider.length() == 0) ? "localhost" : provider;
+        this.provider = Database.mds.setProvider(provider);
         this.expt = expt.toUpperCase();
         this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
         if(mode == Database.NEW){
@@ -157,7 +157,7 @@ public final class Database{
     private final boolean _connect() throws MdsException {
         if(!this.provider.equals(Database.mds.getProvider())) Database.mds.setProvider(this.provider);
         else if(Database.mds.connected) return false;
-        Database.mds.connectToMds(false);
+        // Database.mds.connectToMds(false);
         if(!Database.mds.connected) throw new MdsException(Database.mds.error, 0);
         Database.updateCurrent();
         return true;
@@ -470,7 +470,7 @@ public final class Database{
         this.saveContext();
         return success;
     }
-
+    
     private final boolean saveContext() throws MdsException {
         this.saveslot = 0;
         System.out.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));

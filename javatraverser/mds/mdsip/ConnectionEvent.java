@@ -18,7 +18,7 @@ import jScope.DataProvider;
 public class ConnectionEvent extends AWTEvent{
     public static final int LOST_CONNECTION = AWTEvent.RESERVED_ID_MAX + 1;
     /**
-     * Number ofbytes transferred so far.
+     * Number of bytes transferred so far.
      */
     int                     current_size;
     /**
