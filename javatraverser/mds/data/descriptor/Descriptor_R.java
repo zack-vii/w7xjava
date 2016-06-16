@@ -6,7 +6,7 @@ import mds.data.descriptor_r.Action;
 import mds.data.descriptor_r.Call;
 import mds.data.descriptor_r.Condition;
 import mds.data.descriptor_r.Conglom;
-import mds.data.descriptor_r.Dependenc;
+import mds.data.descriptor_r.Dependency;
 import mds.data.descriptor_r.Dim;
 import mds.data.descriptor_r.Dispatch;
 import mds.data.descriptor_r.Function;
@@ -22,6 +22,7 @@ import mds.data.descriptor_r.Slope;
 import mds.data.descriptor_r.Window;
 import mds.data.descriptor_r.With_Error;
 import mds.data.descriptor_r.With_Units;
+import mds.data.descriptor_s.Missing;
 import mds.mdsip.Message;
 
 /** Fixed-Length (static) Descriptor (-62 : 194) **/
@@ -66,8 +67,8 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
                 return new With_Units(b);
             case DTYPE.CONDITION:
                 return new Condition(b);
-            case DTYPE.DEPENDENC:
-                return new Dependenc(b);
+            case DTYPE.DEPENDENCY:
+                return new Dependency(b);
             case DTYPE.PROCEDURE:
                 return new Procedure(b);
             case DTYPE.PROGRAM:
@@ -96,35 +97,36 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
             pos[i] = b.getInt();
         int end = b.limit();
         for(int i = this.ndesc; i-- > 0;){
-            if(pos[i] == 0) continue;
-            b.position(pos[i]).limit(end);
-            this.dscptrs[i] = Descriptor.deserialize(b);
-            end = pos[i];
+            if(pos[i] == 0) this.dscptrs[i] = Missing.NEW;
+            else{
+                b.position(pos[i]).limit(end);
+                this.dscptrs[i] = Descriptor.deserialize(b);
+                end = pos[i];
+            }
         }
     }
 
-    @Override
-    public String decompile() {
-        return this.decompile(", ", "", ", ", ")", true);
-    }
-
-    public final String decompile(final String s1, final String s2, final String s3, final String s4, final boolean deco) {
-        final String[] args = new String[this.ndesc];
-        for(int i = 0; i < this.ndesc; i++)
-            args[i] = this.dscptrs[i] == null ? "*" : (deco ? this.dscptrs[i].decompile() : this.dscptrs[i].toString());
-        final T val = this.getValue();
-        final StringBuilder sb = new StringBuilder(256).append("Build_").append(this.getClass().getSimpleName()).append('(');
-        if(val != null) sb.append(val.toString()).append(s1);
-        return sb.append(s2).append(String.join(s3, args)).append(s4).toString();
-    }
-
-    @Override
-    public String decompileX() {
-        return this.decompile(",", "\n\t", ",\n\t", "\n)", true);
+    protected void addArguments(final int first, final String left, final String right, final StringBuilder pout, final int mode) {
+        int j;
+        final boolean indent = (mode & Descriptor.DECO_X) > 0;
+        final String sep = indent ? ",\n\t" : ", ";
+        final int last = this.ndesc - 1;
+        if(left != null){
+            pout.append(left);
+            if(indent) pout.append("\n\t");
+        }
+        for(j = first; j <= last; j++){
+            this.dscptrs[j].decompile(Descriptor_R.P_ARG, pout, (mode & ~Descriptor.DECO_X));
+            if(j < last) pout.append(sep);
+        }
+        if(right != null){
+            if(indent) pout.append("\n");
+            pout.append(right);
+        }
     }
 
     public final Descriptor getDscptrs(final int idx) {
-        return this.dscptrs.length <= idx ? null : this.dscptrs[idx];
+        return this.dscptrs.length <= idx ? Missing.NEW : this.dscptrs[idx];
     }
 
     @Override
@@ -162,15 +164,5 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
         if(val != null) sb.append(val.toString()).append(',');
         final byte[] body = sb.append(String.join(",", args)).append(')').toString().getBytes();
         return new Message(descr_idx, this.dtype, n_args, null, body);
-    }
-
-    @Override
-    public String toString() {
-        return this.decompile(", ", "", ", ", ")", false);
-    }
-
-    @Override
-    public String toStringX() {
-        return this.decompile(",", "\n\t", ",\n\t", "\n)", false);
     }
 }

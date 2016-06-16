@@ -4,11 +4,10 @@ import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor.Descriptor_R;
 
 /** depreciated **/
 @Deprecated
-public final class Condition extends Descriptor_R<Byte>{
+public final class Condition extends BUILD<Byte>{
     public static final byte DEPENDENCY_AND   = 10;
     public static final byte DEPENDENCY_OR    = 11;
     public static final byte IGNORE_STATUS    = 9;

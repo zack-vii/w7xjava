@@ -12,23 +12,24 @@ import mds.mdsip.Message;
 
 /** DSC (24) **/
 public abstract class Descriptor<T>{
-    public static final int     _clsB    = 3;
-    public static final int     _lenS    = 0;
-    public static final int     _ptrI    = 4;
-    public static final int     _typB    = 2;
-    public static final short   BYTES    = 8;
-    public static final boolean isatomic = false;
+    protected static final int  _clsB     = 3;
+    protected static final int  _lenS     = 0;
+    protected static final int  _ptrI     = 4;
+    protected static final int  _typB     = 2;
+    public static final short   BYTES     = 8;
+    protected static final int  DECO_NRM  = 0;
+    protected static final int  DECO_STR  = 1;
+    protected static final int  DECO_STRX = Descriptor.DECO_X | Descriptor.DECO_STR;
+    protected static final int  DECO_X    = 2;
+    public static final boolean isatomic  = false;
+    protected static final byte P_ARG     = 88;
+    protected static final byte P_STMT    = 96;
+    protected static final byte P_SUBS    = 0;
 
     private static final ByteBuffer Buffer(final byte[] buf, final boolean swap_little) {
         return Descriptor.Buffer(buf, swap_little ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
     }
-    public final Descriptor evaluate() {
-        try{
-            return Database.tdiEvaluate(this);
-        }catch(final MdsException e){
-            return new Missing();
-        }
-    }
+
     private static final ByteBuffer Buffer(final byte[] buf, final ByteOrder bo) {
         return ByteBuffer.wrap(buf).asReadOnlyBuffer().order(bo);
     }
@@ -43,7 +44,8 @@ public abstract class Descriptor<T>{
     }
 
     public static Descriptor deserialize(final ByteBuffer bi) throws MdsException {
-        if(!bi.hasRemaining()) return null;
+        if(bi.capacity() == 0) return null;
+        if(!bi.hasRemaining()) return Missing.NEW;
         final ByteBuffer b = bi.slice().order(bi.order());
         switch(b.get(Descriptor._clsB)){
             case Descriptor_A.CLASS:
@@ -178,12 +180,21 @@ public abstract class Descriptor<T>{
         this.b.put(value);
     }
 
-    public String decompile() {
-        return String.format("<Descriptor(%d,%d,%d,%d)>", this.length & 0xFFFF, this.dtype & 0xFF, this.dclass & 0xFF, this.pointer & 0xFFFFFFFFl);
+    public final String decompile() {
+        return this.decompile(Descriptor.P_STMT, new StringBuilder(1024), Descriptor.DECO_NRM).toString();
     }
 
-    public String decompileX() {
-        return this.decompile();
+    public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        pout.append("<Descriptor(");
+        pout.append(this.length & 0xFFFF).append(',');
+        pout.append(this.dtype & 0xFF).append(',');
+        pout.append(this.dclass & 0xFF).append(',');
+        pout.append(this.pointer & 0xFFFFFFFFl);
+        return pout.append(")>");
+    }
+
+    public final String decompileX() {
+        return this.decompile(Descriptor.P_STMT, new StringBuilder(1024), Descriptor.DECO_X).toString();
     }
 
     @Override
@@ -192,9 +203,21 @@ public abstract class Descriptor<T>{
         return false;
     }
 
+    public final Descriptor evaluate() {
+        try{
+            return Database.tdiEvaluate(this);
+        }catch(final MdsException e){
+            return new Missing();
+        }
+    }
+
     protected ByteBuffer getBuffer() {
         final ByteBuffer b = ((ByteBuffer)this.b.duplicate().position(this.pointer)).slice().order(this.b.order());
         return b;
+    }
+
+    public final Descriptor getDescriptor() throws MdsException {
+        return Descriptor.deserialize(this.getBuffer());
     }
 
     protected String getDName() {
@@ -223,11 +246,11 @@ public abstract class Descriptor<T>{
     public abstract Message toMessage(byte descr_idx, byte n_args);
 
     @Override
-    public String toString() {
-        return new StringBuilder(32).append("DSC(").append(Descriptor.getDClassName(this.dclass)).append(',').append(Descriptor.getDTypeName(this.dtype)).append(')').toString();
+    public final String toString() {
+        return this.decompile(Descriptor.P_STMT, new StringBuilder(1024), Descriptor.DECO_STR).toString();
     }
 
-    public String toStringX() {
-        return this.toString();
+    public final String toStringX() {
+        return this.decompile(Descriptor.P_STMT, new StringBuilder(1024), Descriptor.DECO_STRX).toString();
     }
 }

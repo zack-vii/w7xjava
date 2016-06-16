@@ -99,8 +99,8 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
     }
 
     @Override
-    public String decompileT(final T t) {
-        return t.toString();// new StringBuilder(32).append(this.TtoString(t)).append(this.getSuffix()).toString();
+    protected StringBuilder decompileT(final StringBuilder pout, final T t) {
+        return pout.append(t);// new StringBuilder(32).append(this.TtoString(t)).append(this.getSuffix()).toString();
     }
 
     protected final String getSuffix() {

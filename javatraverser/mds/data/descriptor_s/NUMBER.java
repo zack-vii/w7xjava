@@ -83,8 +83,8 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     }
 
     @Override
-    public String decompile() {
-        return new StringBuilder(32).append(this.toString()).append(this.getSuffix()).toString();
+    public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        return pout.append(this.toString()).append(this.getSuffix());
     }
 
     protected String getSuffix() {

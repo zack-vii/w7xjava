@@ -25,12 +25,13 @@ import mds.mdsip.Message;
 /** Array Descriptor (4) **/
 public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     private final class AStringBuilder{
-        private int                 i  = 0;
-        private final StringBuilder sb = new StringBuilder(0xFFFF);
+        private int                 i = 0;
+        private final StringBuilder pout;
         private final int[]         shape;
         private final T[]           t;
 
-        public AStringBuilder(final int[] shape, final T[] t){
+        public AStringBuilder(final StringBuilder pout, final int[] shape, final T[] t){
+            this.pout = pout;
             this.shape = shape;
             this.t = t;
             this.level(this.shape.length);
@@ -38,24 +39,24 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
 
         private final void level(final int l) {
             if(l == 0){
-                this.sb.append(Descriptor_A.this.decompileT(this.t[this.i++]));
+                Descriptor_A.this.decompileT(this.pout, this.t[this.i++]);
                 return;
             }
-            this.sb.append("[");
+            this.pout.append("[");
             int j = 0;
             final int len = this.shape[l - 1];
             for(; j < len && this.i < 1000; j++){
-                if(j > 0) this.sb.append(", ");
+                if(j > 0) this.pout.append(", ");
                 this.level(l - 1);
             }
             j = len - j;
-            if(j > 0 || this.i >= 1000) this.sb.append(",...(").append(len).append(')');
-            this.sb.append(']');
+            if(j > 0 || this.i >= 1000) this.pout.append(",...(").append(len).append(')');
+            this.pout.append(']');
         }
 
         @Override
         public final String toString() {
-            return this.sb.toString();
+            return this.pout.toString();
         }
     }
     public static final byte CLASS = 4;
@@ -142,16 +143,36 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     }
 
     @Override
-    public String decompile() {
-        return this.format(new AStringBuilder(this.dims, this.getValue()).toString());
+    public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        if(pout.capacity() < 4096) pout.ensureCapacity(4096);
+        if(this.format()) pout.append(this.getDName()).append('(');
+        if((mode & Descriptor.DECO_STR) != 0){
+            String size;
+            if(this.dimct == 0 || ((this.dims != null) && (this.dims.length == 0))) size = "0";
+            else if(this.dims == null) size = Integer.toString(this.arsize / this.length);
+            else{
+                final String[] dimstr = new String[this.dims.length];
+                for(int i = 0; i < dimstr.length; i++)
+                    dimstr[i] = Integer.toString(this.dims[i]);
+                size = String.join(",", dimstr);
+            }
+            pout.append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/))");
+        }else new AStringBuilder(pout, this.dims, this.getValue());
+        if(this.format()) pout.append(')');
+        return pout;
+    }
+
+    protected StringBuilder decompileT(final StringBuilder pout, final T t) {
+        return pout.append(this.TtoString(t));
     }
 
     protected String decompileT(final T t) {
-        return this.TtoString(t);
+        return this.decompileT(new StringBuilder(32), t).toString();
     }
 
-    public String format(final String in) {
-        return new StringBuilder(in.length() + 32).append(this.getDName()).append('(').append(in).append(')').toString();
+    @SuppressWarnings("static-method")
+    protected boolean format() {
+        return true;
     }
 
     @Override
@@ -238,20 +259,6 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         this.getBuffer().get(body);
         final boolean little = this.b.order() != ByteOrder.BIG_ENDIAN;
         return new Message(descr_idx, this.dtype, n_args, this.dims, body, little);
-    }
-
-    @Override
-    public String toString() {
-        String size;
-        if(this.dimct == 0 || ((this.dims != null) && (this.dims.length == 0))) size = "0";
-        else if(this.dims == null) size = Integer.toString(this.arsize / this.length);
-        else{
-            final String[] dimstr = new String[this.dims.length];
-            for(int i = 0; i < dimstr.length; i++)
-                dimstr[i] = Integer.toString(this.dims[i]);
-            size = String.join(",", dimstr);
-        }
-        return this.format(new StringBuilder(64).append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/))").toString());
     }
 
     public String toString(final int idx) {

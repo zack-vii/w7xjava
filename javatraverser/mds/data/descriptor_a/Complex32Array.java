@@ -17,7 +17,7 @@ public final class Complex32Array extends COMPLEXArray<Float>{
 
     @Override
     protected final Complex<Float> getElement(final ByteBuffer b) {
-        return new Complex<Float>(b.getFloat(), b.getFloat());
+        return new ComplexFloat(b.getFloat(), b.getFloat());
     }
 
     @Override

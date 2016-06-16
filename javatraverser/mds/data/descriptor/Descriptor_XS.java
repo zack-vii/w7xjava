@@ -31,13 +31,8 @@ public class Descriptor_XS extends Descriptor<Descriptor>{
     }
 
     @Override
-    public String decompile() {
-        return this.payload.decompile();
-    }
-
-    @Override
-    public String decompileX() {
-        return this.payload.decompileX();
+    public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        return this.payload.decompile(prec, pout, mode);
     }
 
     @Override

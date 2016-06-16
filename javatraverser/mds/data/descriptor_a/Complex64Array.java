@@ -17,7 +17,7 @@ public final class Complex64Array extends COMPLEXArray<Double>{
 
     @Override
     protected final Complex<Double> getElement(final ByteBuffer b) {
-        return new Complex<Double>(b.getDouble(), b.getDouble());
+        return new ComplexDouble(b.getDouble(), b.getDouble());
     }
 
     @Override

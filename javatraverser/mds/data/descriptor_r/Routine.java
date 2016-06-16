@@ -4,9 +4,8 @@ import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor.Descriptor_R;
 
-public final class Routine extends Descriptor_R{
+public final class Routine extends BUILD{
     public Routine(final ByteBuffer b) throws MdsException{
         super(b);
     }

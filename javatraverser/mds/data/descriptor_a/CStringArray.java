@@ -64,12 +64,6 @@ public final class CStringArray extends Descriptor_A<String>{
     }
 
     @Override
-    public final String toString() {
-        if(this.arsize < 256) return this.decompile();
-        return super.toString();
-    }
-
-    @Override
     protected final String TtoString(final String t) {
         return t.toString();
     }

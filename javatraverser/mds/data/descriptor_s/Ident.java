@@ -9,8 +9,8 @@ public final class Ident extends Descriptor_S<String>{
     }
 
     @Override
-    public final String decompile() {
-        return this.getValue();
+    public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+        return pout.append(this.getValue());
     }
 
     @Override

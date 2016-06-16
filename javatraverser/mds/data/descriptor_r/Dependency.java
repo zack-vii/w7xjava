@@ -3,12 +3,11 @@ package mds.data.descriptor_r;
 import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor.Descriptor_R;
 
 /** depreciated **/
 @Deprecated
-public final class Dependenc extends Descriptor_R<Byte>{
-    public Dependenc(final ByteBuffer b) throws MdsException{
+public final class Dependency extends BUILD<Byte>{
+    public Dependency(final ByteBuffer b) throws MdsException{
         super(b);
     }
 

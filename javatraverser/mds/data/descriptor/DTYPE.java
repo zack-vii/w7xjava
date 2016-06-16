@@ -11,7 +11,7 @@ public final class DTYPE{
     public static final byte      CONGLOM    = -56;            // 200
     public static final byte      D          = 11;             // VMS
     public static final byte      DC         = 13;             // VMS
-    public static final byte      DEPENDENC  = -48;            // 208
+    public static final byte      DEPENDENCY = -48;            // 208
     public static final byte      DICTIONARY = -40;            // 216
     public static final byte      DIMENSION  = -60;            // 196
     public static final byte      DISPATCH   = -53;            // 203
@@ -94,7 +94,7 @@ public final class DTYPE{
         DTYPE._name[Byte.toUnsignedInt(DTYPE.CALL)] = "CALL";
         DTYPE._name[Byte.toUnsignedInt(DTYPE.CONDITION)] = "CONDITION";
         DTYPE._name[Byte.toUnsignedInt(DTYPE.CONGLOM)] = "CONGLOM";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.DEPENDENC)] = "DEPENDENC";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.DEPENDENCY)] = "DEPENDENCY";
         DTYPE._name[Byte.toUnsignedInt(DTYPE.DIMENSION)] = "DIM";
         DTYPE._name[Byte.toUnsignedInt(DTYPE.DISPATCH)] = "DISPATCH";
         DTYPE._name[Byte.toUnsignedInt(DTYPE.FUNCTION)] = "FUNCTION";
