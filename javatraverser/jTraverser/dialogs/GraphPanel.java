@@ -26,7 +26,6 @@ public class GraphPanel extends JPanel{
 
     public static void main(final String[] args) throws MdsException {// TODO
         final Connection con = new Connection("mds-data-1");
-        con.connectToMds(false);
         System.out.println(con.mdsValue("GetMsg(TreeOpen('QSS',160310007))"));
         final Descriptor sig = con.mdsValue("DATA.FILTERSCOPE:T16_C_II");
         final JFrame frame = new JFrame("DrawGraph");

@@ -131,9 +131,7 @@ public abstract class Descriptor<T>{
     }
 
     public static void main(final String[] a) throws IOException {// TODO: main
-        final Connection m = new Connection();
-        m.setProvider("localhost");
-        m.connectToMds(false);
+        final Connection m = new Connection("localhost");
         if(m.error != null) throw new MdsException(m.error);
         final String tree = "test";
         final int shot = -1;

@@ -9,8 +9,6 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -39,47 +37,45 @@ public class Connection{
         }
     }
     private final class MdsConnect extends Thread{
-        private boolean     abort = false;
-        private IOException error;
+        private boolean abort = false;
+        private boolean tried = false;
 
         public MdsConnect(){
             super(Connection.this.getName("MdsConnect"));
         }
 
+        /*
         public final void abort() {
             this.abort = true;
-            try{
-                this.wait();
-            }catch(final InterruptedException e){
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         }
-
-        public final IOException getError() {
-            return this.error;
-        }
-
+        */
         @Override
         synchronized public final void run() {
             try{
                 while(!this.abort)
                     try{
+                        this.setTried(false);
                         Connection.this.connectToMdsIp(Connection.this.use_compression);
-                        Connection.this.dispatchConnectionEvent(new ConnectionEvent(this, "connected"));
+                        this.setTried(true);
                         this.wait();
                     }catch(final ConnectException e){
-                        Thread.sleep(5000);
+                        this.setTried(true);
+                        Thread.sleep(3000);
                     }
             }catch(final InterruptedException e){
                 this.abort = true;
             }catch(final IOException e){
-                this.error = e;
+                Connection.this.error = e.getMessage();
             }
         }
 
+        synchronized private void setTried(final boolean tried) {
+            this.tried = tried;
+            if(tried) Connection.this.notifyTried();
+        }
+
         synchronized public void update() {
-            this.notify();
+            this.notifyAll();
         }
     }
     private final class MRT extends Thread // mds Receive Thread
@@ -92,7 +88,7 @@ public class Connection{
         }
 
         public synchronized Message GetMessage() {
-            // System.out.println("Get Message");
+            if(DEBUG.D) System.out.println("GetMessage()");
             long time;
             if(DEBUG.D) time = System.nanoTime();
             while(!this.killed && this.message == null)
@@ -137,7 +133,7 @@ public class Connection{
                     (new Thread(){
                         @Override
                         public void run() {
-                            final ConnectionEvent ce = new ConnectionEvent(Connection.this, ConnectionEvent.LOST_CONNECTION, "Lost connection from : " + Connection.this.host);
+                            final ConnectionEvent ce = new ConnectionEvent(Connection.this, ConnectionEvent.LOST_CONNECTION, "Lost connection from : " + Connection.this.provider.host);
                             Connection.this.dispatchConnectionEvent(ce);
                         }
                     }).start();
@@ -184,11 +180,47 @@ public class Connection{
             this.eventName = name;
         }
     }// end PMET class
-    private static final String DEFAULT_HOST   = "localhost";
-    public static final int     DEFAULT_PORT   = 8000;
-    public static final String  DEFAULT_USER   = "JAVA_USER";
-    public static final int     LOGIN_OK       = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
-    static final int            MAX_NUM_EVENTS = 256;
+    public final static class Provider{
+        public static final String DEFAULT_HOST = "localhost";
+        public static final int    DEFAULT_PORT = 8000;
+        public static final String DEFAULT_USER = "JAVA_USER";
+        public final String        host;
+        public final int           port;
+        public final String        user         = System.getProperty("user.name");
+
+        public Provider(final String provider){
+            if(provider == null || provider.length() == 0){
+                // this.user = Provider.DEFAULT_USER;
+                this.host = Provider.DEFAULT_HOST;
+                this.port = Provider.DEFAULT_PORT;
+            }else{
+                final int at = provider.indexOf("@");
+                final int cn = provider.indexOf(":");
+                // this.user = at < 0 ? Provider.DEFAULT_USER : provider.substring(0, at);
+                this.host = cn < 0 ? provider.substring(at + 1) : provider.substring(at + 1, cn);
+                this.port = cn < 0 ? Provider.DEFAULT_PORT : Short.parseShort(provider.substring(cn + 1));
+            }
+        }
+
+        @Override
+        public final boolean equals(final Object obj) {
+            if(obj == null || !(obj instanceof Provider)) return false;
+            final Provider provider = (Provider)obj;
+            return this.host.toString().equals(provider.host.toString()) && this.port == provider.port;
+        }
+
+        @Override
+        public final int hashCode() {
+            return this.host.hashCode() + this.port;
+        }
+
+        @Override
+        public final String toString() {
+            return new StringBuilder(this.user.length() + this.host.length() + 7).append(this.user).append('@').append(this.host).append(':').append(this.port).toString();
+        }
+    }
+    public static final int LOGIN_OK       = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
+    static final int        MAX_NUM_EVENTS = 256;
 
     private static <D extends Descriptor> Descriptor bufferToClass(final ByteBuffer b, final Class<D> cls) throws MdsException {
         if(cls == null || cls == Descriptor.class) return Descriptor.deserialize(b);
@@ -201,20 +233,20 @@ public class Connection{
     }
 
     public static void main(final String[] args) throws Exception {// TODO:main
-        final Connection mds = new Connection("localhost");
         final ConnectionListener cl = new ConnectionListener(){
             @Override
             public void processConnectionEvent(final ConnectionEvent e) {
                 System.out.println(e.getInfo());
                 if(e.getInfo().equals("connected")) try{
-                    System.out.println(mds.mdsValue("[[[1.0],[2.0]],[[3.0],[4.0]]]"));
+                    System.out.println(((Connection)e.getSource()).mdsValue("[[[1.0],[2.0]],[[3.0],[4.0]]]"));
                 }catch(final MdsException e1){
                     e1.printStackTrace();
                 }// BYTE([1,2,3,4,5,6,7,8,9,0])
             }
         };
-        mds.addConnectionListener(cl);
-        // final Descriptor d = mds.mdsValue("[[[1.0],[2.0]],[[3.0],[4.0]]]");// BYTE([1,2,3,4,5,6,7,8,9,0])
+        final Connection mds = new Connection("localhost", cl);
+        final Descriptor d = mds.mdsValue("[[[1.1],[2.1]],[[3.1],[4.1]]]");// BYTE([1,2,3,4,5,6,7,8,9,0])
+        System.out.println(d);
     }
     public boolean                          connected;
     transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
@@ -225,27 +257,35 @@ public class Connection{
     transient Vector<EventItem>             event_list          = new Vector<EventItem>();
     transient Hashtable<Integer, EventItem> hashEventId         = new Hashtable<Integer, EventItem>();
     transient Hashtable<String, EventItem>  hashEventName       = new Hashtable<String, EventItem>();
-    protected String                        host;
     private final MdsConnect                mdsConnect;
     int                                     pending_count       = 0;
-    protected int                           port;
+    protected final Provider                provider;
     MRT                                     receiveThread;
     protected Socket                        sock;
     private boolean                         use_compression     = false;
-    protected final String                  user                = System.getProperty("user.name");;
 
-    public Connection(){
-        this(null);
+    public Connection(final Provider provider){
+        this(provider, null);
     }
 
-    public Connection(final String provider){
+    public Connection(final Provider provider, final ConnectionListener cl){
+        this.addConnectionListener(cl);
         this.connected = false;
         this.sock = null;
         this.dis = null;
         this.dos = null;
-        this.setProvider(provider);
+        this.provider = provider;
         this.mdsConnect = new MdsConnect();
         this.mdsConnect.start();
+        this.waitTried();
+    }
+
+    public Connection(final String provider){
+        this(new Provider(provider));
+    }
+
+    public Connection(final String provider, final ConnectionListener cl){
+        this(new Provider(provider), cl);
     }
 
     public final synchronized void addConnectionListener(final ConnectionListener l) {
@@ -274,26 +314,10 @@ public class Connection{
         return this.mdsValue("COMPILE($)", args, Descriptor.class);
     }
 
-    public synchronized boolean connectToMds(final boolean use_compression) {
-        try{
-            this.connectToMdsIp(use_compression);
-            return true;
-        }catch(final NumberFormatException e){
-            this.error = "Data host syntax error " + this.host + " (host:port)";
-        }catch(final UnknownHostException e){
-            this.error = "Data host: " + this.host + " port " + this.port + " unknown";
-        }catch(final SocketTimeoutException e){
-            this.error = "Connection timeout: " + this.host + " does not respond.";
-        }catch(final IOException e){
-            this.error = "Could not get IO for " + this.host + " " + e;
-        }
-        return false;
-    }
-
     private final void connectToMdsIp(final boolean use_compression) throws IOException {
         this.use_compression = use_compression;
         this.connectToServer();
-        final Message message = new Message(this.user);
+        final Message message = new Message(this.provider.user);
         message.useCompression(use_compression);
         message.Send(this.dos);
         this.sock.setSoTimeout(3000);
@@ -302,10 +326,11 @@ public class Connection{
         this.receiveThread = new MRT();
         this.receiveThread.start();
         this.connected = true;
+        Connection.this.dispatchConnectionEvent(new ConnectionEvent(this, "connected"));
     }
 
-    private void connectToServer() throws IOException {
-        this.sock = new Socket(this.host, this.port);
+    private final void connectToServer() throws IOException {
+        this.sock = new Socket(this.provider.host, this.provider.port);
         System.out.println(this.sock.toString());
         this.sock.setTcpNoDelay(true);
         this.dis = new BufferedInputStream(this.sock.getInputStream());
@@ -322,7 +347,7 @@ public class Connection{
             this.dos = null;
             this.dis = null;
         }catch(final IOException e){
-            this.error.concat("Could not get IO for " + this.host + e);
+            this.error.concat("Could not get IO for " + this.provider.host + e);
             return 0;
         }
         return 1;
@@ -390,7 +415,7 @@ public class Connection{
     }
 
     public final String getHost() {
-        return this.host;
+        return this.provider.host;
     }
 
     public final int getInteger(final String in) throws MdsException {
@@ -410,7 +435,7 @@ public class Connection{
     }
 
     private final String getName(final String classname) {
-        if(this.sock == null) return new StringBuilder(128).append(classname).append('(').append(this.user).append('@').append(this.host).append(':').append(this.port).append(')').toString();
+        if(this.sock == null) return new StringBuilder(128).append(classname).append('(').append(this.provider.user).append('@').append(this.provider.host).append(':').append(this.provider.port).append(')').toString();
         return new StringBuilder(128).append(classname).append('(').append(this.sock.getInetAddress()).append(", ").append(this.sock.getPort()).append(", ").append(this.sock.getLocalPort()).append(')').toString();
     }
 
@@ -421,11 +446,11 @@ public class Connection{
     }
 
     public final int getPort() {
-        return this.port;
+        return this.provider.port;
     }
 
     public final String getProvider() {
-        return new StringBuilder(128).append(this.user).append('@').append(this.host).append(':').append(this.port).toString();
+        return this.provider.toString();
     }
 
     public final String getString(final String in) throws MdsException {
@@ -435,11 +460,12 @@ public class Connection{
     }
 
     public final String getUser() {
-        return this.user;
+        return this.provider.user;
     }
 
     public final synchronized Message mdsIO(final String expr, final boolean serialize) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\"," + serialize + ")");
+        if(!this.connected) throw new MdsException("Not connected");
         try{
             final Message message;
             if(serialize) message = new Message(String.format("COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((%s)),xd(_ans)),_ans)", expr));
@@ -450,12 +476,13 @@ public class Connection{
         }catch(final MdsException exc){
             throw exc;
         }catch(final IOException exc){
-            throw new MdsException(String.format("Could not get IO for %s: %s", this.host, exc.getMessage()), 0);
+            throw new MdsException(String.format("Could not get IO for %s: %s", this.provider.host, exc.getMessage()), 0);
         }
     }
 
     public final synchronized Message mdsIO(final String expr, Vector<Descriptor> args, final boolean serialize) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
+        if(!this.connected) throw new MdsException("Not connected");
         if(args == null) args = new Vector<Descriptor>();
         final StringBuffer cmd = new StringBuffer(expr);
         final int n_args = args.size();
@@ -481,7 +508,7 @@ public class Connection{
             }
             this.pending_count++;
             msg = this.getAnswer();
-            if(msg == null) throw new MdsException("Could not get IO for " + this.host, 0);
+            if(msg == null) throw new MdsException("Could not get IO for " + this.provider.host, 0);
         }catch(final IOException e){
             throw new MdsException("Connection.mdsValue", e);
         }
@@ -495,7 +522,7 @@ public class Connection{
             this.sendArg((byte)0, DTYPE.T, (byte)2, null, Message.EVENTCANREQUEST.getBytes());
             this.sendArg((byte)1, DTYPE.T, (byte)2, null, new byte[]{(byte)eventid});
         }catch(final IOException e){
-            this.error = new String("Could not get IO for " + this.host + e);
+            this.error = new String("Could not get IO for " + this.provider.host + e);
         }
     }
 
@@ -507,7 +534,7 @@ public class Connection{
             this.sendArg((byte)1, DTYPE.T, (byte)3, null, event.getBytes());
             this.sendArg((byte)2, DTYPE.BU, (byte)3, null, new byte[]{(byte)(eventid)});
         }catch(final IOException e){
-            this.error = new String("Could not get IO for " + this.host + e);
+            this.error = new String("Could not get IO for " + this.provider.host + e);
         }
     }
 
@@ -529,6 +556,10 @@ public class Connection{
         return Connection.bufferToClass(b, cls);
     }
 
+    synchronized private void notifyTried() {
+        this.notifyAll();
+    }
+
     public final void QuitFromMds() {
         try{
             if(this.connection_listener.size() > 0) this.connection_listener.removeAllElements();
@@ -536,7 +567,7 @@ public class Connection{
             this.dis.close();
             this.connected = false;
         }catch(final IOException e){
-            this.error.concat("Could not get IO for " + this.host + e);
+            this.error.concat("Could not get IO for " + this.provider.host + e);
         }
     }
 
@@ -569,30 +600,15 @@ public class Connection{
         }
     }
 
-    public final void setHost(final String host) {
-        this.host = (host == null || host.length() == 0) ? Connection.DEFAULT_HOST : host;
+    @Override
+    public final String toString() {
+        final String provider = this.provider.toString();
+        return new StringBuilder(provider.length() + 12).append("Connection(").append(provider).append(")").toString();
     }
 
-    public final void setPort(final int port) {
-        this.port = port == 0 ? Connection.DEFAULT_PORT : port;
-    }
-
-    public String setProvider(final String provider) {
-        if(provider == null){
-            this.setUser(null);
-            this.setHost(null);
-            this.setPort(0);
-        }else{
-            final int at = provider.indexOf("@");
-            final int cn = provider.indexOf(":");
-            this.setUser(at < 0 ? null : provider.substring(0, at));
-            this.setHost(cn < 0 ? provider.substring(at + 1) : provider.substring(at + 1, cn));
-            this.setPort(cn < 0 ? 0 : Short.parseShort(provider.substring(cn + 1)));
-        }
-        return this.getProvider();
-    }
-
-    public final void setUser(final String user) {
-        // this.user = (user == null || user.length() == 0) ? Connection.DEFAULT_USER : user;
+    synchronized private void waitTried() {
+        if(!this.mdsConnect.tried) try{
+            this.wait();
+        }catch(final InterruptedException e){}
     }
 }

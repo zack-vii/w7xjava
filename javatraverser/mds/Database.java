@@ -13,22 +13,19 @@ import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
 public final class Database{
-    private static String     cexpt    = null;
-    private static long       cshot    = 0;
-    public static final int   EDITABLE = 2;
-    private static Connection mds      = new Connection();
-    public static final int   NEW      = 3;
-    public static final int   NORMAL   = 1;
-    public static final int   READONLY = 0;
-    public static final int   REALTIME = 4;
-
-    static{
-        Database.mds.setUser(System.getProperty("user.name"));
-    }
+    private static String                                     cexpt       = null;
+    private static final Map<Connection.Provider, Connection> connections = new HashMap<Connection.Provider, Connection>(16);
+    private static long                                       cshot       = 0;
+    public static final int                                   EDITABLE    = 2;
+    private static Connection                                 mds;
+    public static final int                                   NEW         = 3;
+    public static final int                                   NORMAL      = 1;
+    public static final int                                   READONLY    = 0;
+    public static final int                                   REALTIME    = 4;
 
     private static final String extractProvider(final String expt) {
         final String[] parts = System.getenv(String.format("%s_path", expt.toLowerCase())).split("::", 2);
-        return (parts.length > 1) ? parts[0] : "localhost";
+        return (parts.length > 1) ? parts[0] : Connection.Provider.DEFAULT_HOST;
     }
 
     public static final String getCurrentProvider() {
@@ -67,6 +64,16 @@ public final class Database{
 
     public static final int getTreeCtx() throws MdsException {
         return Database.mds.getInteger("TreeShr->TreeCtx()");
+    }
+
+    public static final void main(final String[] args) {// TODO:main
+    }
+
+    private static final Connection setupConnection(final String provider_in) {
+        final Connection.Provider provider = new Connection.Provider(provider_in);
+        if(Database.connections.containsKey(provider)) return Database.mds = Database.connections.get(provider);
+        Database.connections.put(provider, Database.mds = new Connection(provider));
+        return Database.mds;
     }
 
     private static final void stderr(final String line, final Exception exc) {
@@ -121,11 +128,11 @@ public final class Database{
             Database.cexpt = null;
         }
     }
-    private final String expt;
-    private boolean      is_open = false;
-    private final int    mode;
-    private final String provider;
-    private final long   shot;
+    private final Connection con;
+    private final String     expt;
+    private boolean          is_open = false;
+    private final int        mode;
+    private final long       shot;
 
     public Database(final String expt, final long shot) throws MdsException{
         this(Database.extractProvider(expt), expt, shot, 0);
@@ -136,7 +143,7 @@ public final class Database{
     }
 
     public Database(final String provider, final String expt, final long shot, final int mode) throws MdsException{
-        this.provider = Database.mds.setProvider(provider);
+        this.con = Database.setupConnection(provider);
         this.expt = expt.toUpperCase();
         this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
         if(mode == Database.NEW){
@@ -154,13 +161,10 @@ public final class Database{
         this._open();
     }
 
-    private final boolean _connect() throws MdsException {
-        if(!this.provider.equals(Database.mds.getProvider())) Database.mds.setProvider(this.provider);
-        else if(Database.mds.connected) return false;
-        // Database.mds.connectToMds(false);
-        if(!Database.mds.connected) throw new MdsException(Database.mds.error, 0);
+    private final void _connect() throws MdsException {
+        if(Database.mds != this.con) Database.mds = this.con;
+        if(!Database.mds.connected) throw new MdsException("Not connected");
         Database.updateCurrent();
-        return true;
     }
 
     /* Low level MDS database management routines, will be  masked by the Node class*/
@@ -325,7 +329,7 @@ public final class Database{
     }
 
     public final String getProvider() {
-        return this.provider;
+        return this.con.getProvider();
     }
 
     public final Descriptor getRecord(final Nid nid) throws MdsException {// _ans=*,TreeShr->TreeGetRecord(val(%d),xd(_ans)),_ans
@@ -470,7 +474,6 @@ public final class Database{
         this.saveContext();
         return success;
     }
-    
     private final boolean saveContext() throws MdsException {
         this.saveslot = 0;
         System.out.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));
@@ -542,7 +545,7 @@ public final class Database{
     public final String toString() {
         final StringBuilder sb = new StringBuilder("jTraverser - Tree: ").append(this.expt);
         sb.append(" Shot: ").append(this.shot);
-        if(this.provider != null) sb.append(" @ ").append(this.getProvider());
+        if(this.con != null) sb.append(" @ ").append(this.con.getProvider());
         if(this.mode == Database.EDITABLE) sb.append(" (edit) ");
         else if(this.mode == Database.READONLY) sb.append(" (readonly) ");
         return sb.toString();
