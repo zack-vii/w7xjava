@@ -349,7 +349,9 @@ public class Connection{
     }
 
     public final Descriptor evaluate(final Descriptor desc) throws MdsException {
-        return this.evaluate(desc.toString());// TODO: use Vector for args
+        final Vector<Descriptor> args = new Vector<Descriptor>(1);
+        args.add(desc);
+        return this.mdsValue("EVALUATE($)", args);
     }
 
     public final Descriptor evaluate(final String expr) throws MdsException {
