@@ -138,6 +138,9 @@ public final class Frames extends Canvas{
         }
 
         public final Dimension getFrameDimension() {
+            if(this.frameDim == null) try{
+                this.frameDim = this.fd.GetFrameDimension();
+            }catch(final Exception e){}
             return this.frameDim;
         }
 
