@@ -279,7 +279,7 @@ public final class Database{
 
     public Nid getDefault() throws MdsException {
         this._checkContext();
-        return (Nid)Database.mds.mdsValue("GetDefaultNid()", Nid.class);
+        return new Nid(Database.mds.getInteger("COMMA(_ans=-1L,TreeShr->TreeGetDefaultNid(ref(_ans)),_ans)"));
     }
 
     public int getFlags(final Nid nid) throws MdsException {

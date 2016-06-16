@@ -447,14 +447,7 @@ public class Node{
     }
 
     public final boolean isDefault() {
-        Nid curr_nid = null;
-        try{
-            curr_nid = this.database.getDefault();
-        }catch(final Exception exc){
-            jTraverserFacade.stderr("Error getting default", exc);
-            return false;
-        }
-        return curr_nid.equals(this.nid);
+        return this.tree.getDefault() == this.nid.getValue();
     }
 
     public final boolean isDoNotCompress() {
@@ -569,6 +562,7 @@ public class Node{
 
     public final void setDefault() throws MdsException {
         this.database.setDefault(this.nid);
+        this.tree.updateDefault();
     }
 
     public final void setFlag(final byte idx) throws MdsException {

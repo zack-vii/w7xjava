@@ -94,6 +94,7 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     private JTextField             add_device_type, add_device_name;
     private Node                   curr_node;
     private final Database         database;
+    private int                    default_nid = 0;
     private String                 lastName;
     private DefaultMutableTreeNode top;
     public final TreeManager       treeman;
@@ -375,6 +376,10 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
         return this.database;
     }
 
+    public final int getDefault() {
+        return this.default_nid;
+    }
+
     public final String getExpt() {
         return this.database.getName();
     }
@@ -453,6 +458,10 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     @Override
     public final String toString() {
         return this.getDatabase().toString();
+    }
+
+    public final void updateDefault() throws MdsException {
+        if(this.database != null) this.default_nid = this.database.getDefault().getValue();
     }
 
     @Override
