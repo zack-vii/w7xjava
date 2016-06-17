@@ -79,6 +79,7 @@ public class Node{
     public final Nid               nid;
     private Node                   parent;
     private Node[]                 sons;
+    private int                    ToolTipDefault;
     private long                   ToolTipLife  = 0;
     private String                 ToolTipText  = null;
     public final Tree              tree;
@@ -399,8 +400,9 @@ public class Node{
             return new StringBuilder("<html>").append(text).append("</html>").toString();
         }else*/{
             final long now = System.nanoTime();
-            if(this.ToolTipText == null || now > this.ToolTipLife){
+            if(this.ToolTipText == null || now > this.ToolTipLife || this.ToolTipDefault != this.tree.getDefault()){
                 String text, info;
+                final int defaultnid = this.tree.getDefault();
                 try{
                     info = this.getInfo().toString();
                     if(this.getUsage() == NodeInfo.USAGE_STRUCTURE || this.getUsage() == NodeInfo.USAGE_SUBTREE) text = null;
@@ -416,8 +418,9 @@ public class Node{
                 final StringBuilder sb = new StringBuilder().append(info.substring(0, info.length() - 7)).append("<hr><table");
                 if(text.length() > 80) sb.append(" width=\"320\"");
                 this.ToolTipText = sb.append(">").append(text).append("</table></html>").toString();
+                this.ToolTipLife = now + 30000000000l;
+                this.ToolTipDefault = defaultnid;
             }
-            this.ToolTipLife = now + 30000000000l;
             return this.ToolTipText;
         }
     }

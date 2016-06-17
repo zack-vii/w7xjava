@@ -38,10 +38,6 @@ public class NodeInfo implements Serializable{
     public static final byte USAGE_WINDOW        = 9;
     public static final int  VERSION             = 1 << 4;
     public static final int  WRITE_ONCE          = 1 << 7;
-    /*
-    public static final NodeInfo getNodeInfo(final int nid, final byte dclass, final byte dtype, final byte usage, final int flags, final int owner, final int length, final int conglomerate_nids, final int conglomerate_elt, final String date_inserted, final String name, final String fullpath, final String minpath, final String path) {
-        return new NodeInfo(nid, dclass, dtype, usage, flags, owner, length, conglomerate_nids, conglomerate_elt, date_inserted, name, fullpath, minpath, path);
-    }*/
     private final String     date_inserted, name, fullpath, minpath, path;
     private final byte       dtype, dclass, usage;
     private int              flags;
