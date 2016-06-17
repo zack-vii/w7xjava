@@ -13,6 +13,20 @@ import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
 public final class Database{
+    @SuppressWarnings("serial")
+    public static class TagList extends HashMap<String, Nid>{
+        public TagList(final int cap){
+            super(cap);
+        }
+
+        @Override
+        public final String toString() {
+            final StringBuilder str = new StringBuilder(this.size() * 64);
+            for(final Entry<String, Nid> entry : this.entrySet())
+                str.append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
+            return str.toString();
+        }
+    }
     private static String                                     cexpt       = null;
     private static final Map<Connection.Provider, Connection> connections = new HashMap<Connection.Provider, Connection>(16);
     private static long                                       cshot       = 0;
@@ -120,8 +134,8 @@ public final class Database{
 
     private static final void updateCurrent() throws MdsException {
         try{
-            Database.cshot = Database.mds.getInteger("$SHOT");
-            if(Database.cshot < -1) Database.cshot &= 0xFFFFFFFFl;
+            Database.cshot = Database.mds.getLong("$SHOT");
+            // if(Database.cshot < -1) Database.cshot &= 0xFFFFFFFFl;
             Database.cexpt = Database.mds.getString("$EXPT").trim();
         }catch(final MdsException de){
             Database.cshot = 0;
@@ -133,6 +147,13 @@ public final class Database{
     private boolean          is_open = false;
     private final int        mode;
     private final long       shot;
+
+    public Database(final String provider) throws MdsException{
+        this.con = Database.setupConnection(provider);
+        this.expt = null;
+        this.shot = 0;
+        this.mode = 0;
+    }
 
     public Database(final String expt, final long shot) throws MdsException{
         this(Database.extractProvider(expt), expt, shot, 0);
@@ -351,7 +372,7 @@ public final class Database{
     }
 
     public final String[] getTags(final Nid nid) throws MdsException {
-        if(nid.getValue() != 0) return this.getTags(nid, "***", 255);
+        if(nid != null) return this.getTags(nid, "***", 255);
         final Map<String, Nid> taglist = this.getTagsWild("***", 255);
         final String[] str = new String[taglist.size()];
         final String[] key = taglist.keySet().toArray(str);
@@ -371,14 +392,14 @@ public final class Database{
         return strs;
     }
 
-    public final Map<String, Nid> getTagsWild(final String search, final int max) throws MdsException {
+    public final TagList getTagsWild(final String search, final int max) throws MdsException {
         this._checkContext();
         final String str = Database.mds.getString(String.format("_c=0Q;_ans='';_tag='';_n=0;_nids='[';_i=0;WHILE(AND(TreeShr->TreeFindTagWildDsc(ref('%s'),ref(_n),ref(_c),xd(_tag)),_i<%d)) STATEMENT(_i++,_ans=_ans//','//_tag,_nids=_nids//TEXT(_n)//',');_ans", search, max));
         if(str == null) return null;
         if(str.charAt(0) == '%') throw new MdsException(str, 0);
         final String[] tags = str.substring(1).split(",");
         final Nid[] nids = Nid.getArrayOfNids(Database.mds.getIntegerArray("_ans=COMPILE(_nids//'*]');_nids=*;_ans"));
-        final Map<String, Nid> taglist = new HashMap<String, Nid>(nids.length);
+        final TagList taglist = new TagList(nids.length);
         for(int i = 0; i < nids.length & i < tags.length; i++)
             taglist.put(tags[i], nids[i]);
         return taglist;
@@ -543,11 +564,12 @@ public final class Database{
 
     @Override
     public final String toString() {
-        final StringBuilder sb = new StringBuilder("jTraverser - Tree: ").append(this.expt);
-        sb.append(" Shot: ").append(this.shot);
-        if(this.con != null) sb.append(" @ ").append(this.con.getProvider());
-        if(this.mode == Database.EDITABLE) sb.append(" (edit) ");
-        else if(this.mode == Database.READONLY) sb.append(" (readonly) ");
+        final StringBuilder sb = new StringBuilder("Tree(\"").append(this.expt);
+        sb.append("\", ").append(this.shot == -1 ? "model" : this.shot);
+        if(this.mode == Database.EDITABLE) sb.append(", edit");
+        else if(this.mode == Database.READONLY) sb.append(", readonly");
+        sb.append(')');
+        if(this.con != null) sb.append(" on ").append(this.con.getProvider());
         return sb.toString();
     }
 

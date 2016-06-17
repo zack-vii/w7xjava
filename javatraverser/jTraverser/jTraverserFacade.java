@@ -46,7 +46,7 @@ public final class jTraverserFacade extends JFrame{
         }
     }
     private static final JLabel status;
-    private static final String titlenotree = "jTraverser - no tree open";
+    private static final String TitleNoTree = "jTraverser - no tree open";
 
     static{
         String builddate = "unknown";
@@ -129,8 +129,22 @@ public final class jTraverserFacade extends JFrame{
             public void actionPerformed(final ActionEvent e) {
                 try{
                     JOptionPane.showMessageDialog(jTraverserFacade.this, Database.getDatabase(), //
-                    new StringBuilder(32).append("Current tree database (").append(Database.getCurrentProvider()).append("): ").toString(), //
-                    JOptionPane.INFORMATION_MESSAGE);
+                    Database.getCurrentProvider(), //
+                    JOptionPane.PLAIN_MESSAGE);
+                }catch(final Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+        });
+        jmenu.add(item = new JMenuItem("Show Tags"));
+        item.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                try{
+                    JOptionPane.showMessageDialog(jTraverserFacade.this, //
+                    jTraverserFacade.this.treeman.getCurrentDatabase().getTagsWild("***", 255).toString(), //
+                    jTraverserFacade.this.treeman.getCurrentDatabase().toString(), //
+                    JOptionPane.PLAIN_MESSAGE);
                 }catch(final Exception ex){
                     ex.printStackTrace();
                 }
@@ -160,12 +174,12 @@ public final class jTraverserFacade extends JFrame{
 
     void reportChange(final Tree tree) {
         if(tree != null){
-            this.setTitle(String.format("jTraverser - %s: ", tree.toString()));
+            this.setTitle(new StringBuilder(256).append("jTraverser - ").append(tree).toString());
             this.jmenus.get(1).setEnabled(true);
             this.jmenus.get(2).setEnabled(!tree.isReadOnly());
             this.jmenus.get(3).setEnabled(tree.isEditable());
         }else{
-            this.setTitle(jTraverserFacade.titlenotree);
+            this.setTitle(jTraverserFacade.TitleNoTree);
             for(final JMenu jm : this.jmenus.subList(1, 4))
                 jm.setEnabled(false);
         }
