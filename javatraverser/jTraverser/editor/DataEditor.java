@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import jTraverser.dialogs.TreeDialog;
@@ -17,7 +16,8 @@ import mds.data.descriptor_s.CString;
 
 @SuppressWarnings("serial")
 public class DataEditor extends JPanel implements ActionListener, Editor{
-    public static final void main(final String[] args) {// TODO
+    /*
+    public static final void main(final String[] args) {// TODO:main
         final JFrame f = new JFrame();
         final DataEditor ed = new DataEditor(new CString("HELLO_WORLD"), null);
         ed.setEditable(true);
@@ -25,6 +25,7 @@ public class DataEditor extends JPanel implements ActionListener, Editor{
         f.pack();
         f.setVisible(true);
     }
+    */
     JComboBox         combo;
     Descriptor        data;
     TreeDialog        dialog;

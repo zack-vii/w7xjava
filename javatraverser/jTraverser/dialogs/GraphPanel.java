@@ -15,9 +15,7 @@ import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import mds.MdsException;
 import mds.data.descriptor.Descriptor;
-import mds.mdsip.Connection;
 
 /**
  * @author Rodrigo
@@ -26,7 +24,8 @@ import mds.mdsip.Connection;
 public class GraphPanel extends JPanel{
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
 
-    public static void main(final String[] args) throws MdsException {// TODO
+    /*
+    public static void main(final String[] args) throws MdsException {// TODO:main
         final Connection con = new Connection("mds-data-1");
         final String tree = "QSS";
         final int shot = 160310007;
@@ -35,7 +34,7 @@ public class GraphPanel extends JPanel{
         final Descriptor sig = con.mdsValue(path);
         GraphPanel.newPlot(sig, null, tree, shot, path).setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
     }
-
+    */
     public static final JFrame newPlot(final Descriptor sig, final Component parent, final String title) {
         final JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);

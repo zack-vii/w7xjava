@@ -77,8 +77,8 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     public static final String decompile(final Descriptor data) {
         return data.toString();
     }
-
-    public static final void main(final String[] args) throws Exception {
+    /*
+    public static final void main(final String[] args) throws Exception {//TODO:main
         final String def_server = System.getProperty("server");
         final String def_tree = System.getProperty("tree");
         if(def_tree != null){
@@ -89,6 +89,7 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
             new Tree(null, def_server, def_tree, shot, 0);
         }
     }
+    */
     // Temporary, to overcome Java's bugs on inner classes
     private JDialog                add_device_dialog;
     private JTextField             add_device_type, add_device_name;

@@ -80,9 +80,10 @@ public final class Database{
         return Database.mds.getInteger("TreeShr->TreeCtx()");
     }
 
+    /*
     public static final void main(final String[] args) {// TODO:main
     }
-
+    */
     private static final Connection setupConnection(final String provider_in) {
         final Connection.Provider provider = new Connection.Provider(provider_in);
         if(Database.connections.containsKey(provider)) return Database.mds = Database.connections.get(provider);

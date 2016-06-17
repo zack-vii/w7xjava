@@ -373,11 +373,12 @@ public final class asciiDataProvider implements DataProvider{
         return null;
     }
 
-    public static void main(final String args[]) {
+    /*
+    public static void main(final String args[]) {//TODO:main
         final asciiDataProvider p = new asciiDataProvider();
         p.GetWaveData("c:\\test.txt");
     }
-
+    */
     public static boolean SupportsCompression() {
         return false;
     }

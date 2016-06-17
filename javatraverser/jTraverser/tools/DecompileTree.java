@@ -25,7 +25,7 @@ import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
 
 public class DecompileTree{
-    public static final void main(final String args[]) {// TODO
+    public static final void main(final String args[]) {
         if(args.length < 1){
             System.out.println("Usage: java DecompileTree <provider> <treeName> [<shot>]");
             System.exit(0);

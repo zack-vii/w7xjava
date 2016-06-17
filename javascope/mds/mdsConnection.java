@@ -135,11 +135,11 @@ public class mdsConnection{
             this.eventName = name;
         }
     }// end PMET class
-    public static final int    DEFAULT_PORT   = 8000;
-    public static final String DEFAULT_USER   = "JAVA_USER";
-    static final int           MAX_NUM_EVENTS = 256;
-
-    public static void main(final String[] args) throws IOException {// TODO
+    public static final int                 DEFAULT_PORT        = 8000;
+    public static final String              DEFAULT_USER        = "JAVA_USER";
+    static final int                        MAX_NUM_EVENTS      = 256;
+    /*
+    public static void main(final String[] args) throws IOException {// TODO:main
         final mdsConnection mds = new mdsConnection("localhost");
         mds.ConnectToMds(false);
         Descriptor d = mds.mdsValue("_ans=[['" + String.join("____", new String[256]) + "','i','4']];MdsShr->MdsSerializeDscOut(xd(_ans),xd(_ans));_ans");
@@ -150,6 +150,7 @@ public class mdsConnection{
         d = mds2.mdsValue("_ans=[['" + String.join("____", new String[256]) + "','i','4']];MdsShr->MdsSerializeDscOut(xd(_ans),xd(_ans));_ans");
         DEBUG.printByteArray(d.byte_data, 1, d.byte_data.length, 1, 1);
     }
+    */
     public boolean                          connected;
     transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
     protected InputStream                   dis;

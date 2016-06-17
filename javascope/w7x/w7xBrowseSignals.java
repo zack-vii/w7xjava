@@ -3,7 +3,6 @@ package w7x;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -204,8 +203,8 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
             return ((SignalAddress)this.getUserObject()).tail();
         }
     }
-
-    public static void main(final String[] args) {
+    /*
+    public static void main(final String[] args) {//TODO:main
         EventQueue.invokeLater(new Runnable(){
             @Override
             public void run() {
@@ -218,6 +217,7 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
             }
         });
     }
+    */
     private final JPanel                contentPane;
     private final DateTimePicker        from, upto;
     public boolean                      is_image = false;

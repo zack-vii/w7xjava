@@ -952,12 +952,12 @@ public class mdsDataProvider implements DataProvider{
         return javaTime;
     }
 
+    /*
     @SuppressWarnings("all")
-    public static final void main(final String[] args) {
+    public static final void main(final String[] args) {//TODO:main
         final mdsDataProvider dp = new mdsDataProvider(args[0]);
         try{
             dp.CheckOpen("W7X", 0);
-            /* user code */
             System.out.println(dp.GetString("TCL('DIR',_out);_out"));
             final mdsDataProvider.Signal signal = dp.GetSignal("sqrt(QSS.HARDWARE.ARRAY:TUBE01)", null, false);
             System.out.println(signal);
@@ -969,7 +969,7 @@ public class mdsDataProvider implements DataProvider{
             e.printStackTrace();
         }
     }
-
+    */
     protected static final boolean NotYetNumber(final String in) {
         if(DEBUG.M) System.out.println("mdsDataProvider.NotYetNumber(\"" + in + "\")");
         try{

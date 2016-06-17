@@ -19,14 +19,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import jTraverser.TreeManager;
 import mds.Database;
 
 @SuppressWarnings("serial")
 public class TreeOpenDialog extends JDialog{
-    public static void main(final String[] args) {// TODO
+    /*
+    public static void main(final String[] args) {// TODO:main
         try{
             final TreeOpenDialog dialog = new TreeOpenDialog(null, null);
             dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -35,6 +35,7 @@ public class TreeOpenDialog extends JDialog{
             e.printStackTrace();
         }
     }
+    */
     private final JRadioButton open_readonly, open_edit, open_normal;
     private final JTextField   provider, open_shot, open_expt;
     private final TreeManager  treeman;

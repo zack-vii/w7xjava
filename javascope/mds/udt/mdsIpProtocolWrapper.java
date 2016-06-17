@@ -73,12 +73,13 @@ final public class mdsIpProtocolWrapper{
             javax.swing.JOptionPane.showMessageDialog(null, "Can't load data provider class LocalDataProvider : " + e, "Alert LocalDataProvider", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    public static void main(final String args[]) {
+    /*
+    public static void main(final String args[]) {//TODO:main
         final mdsIpProtocolWrapper mpw = new mdsIpProtocolWrapper("tcp");
         final int idx = mpw.connectTomds("tcp://ra22.igi.cnr.it:8100");
         System.out.println("Connected: " + idx);
     }
+    */
     int connectionIdx = -1;
 
     public mdsIpProtocolWrapper(final String url){

@@ -18,9 +18,11 @@ import jTraverser.jTraverserFacade;
 
 @SuppressWarnings("serial")
 public final class Flags extends JDialog{
-    public static final void main(final String[] args) {// TODO
+    /*
+    public static final void main(final String[] args) {// TODO:main
         new Flags(null, null).open();
     }
+    */
     private final JButton     close_b;
     private final JCheckBox[] flag;
     private final boolean[]   settable_flag = new boolean[]{true, false, true, true, false, false, true, true, false, true, true, true, true, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false};;

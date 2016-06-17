@@ -1,13 +1,11 @@
 package mds.data.descriptor;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Missing;
-import mds.mdsip.Connection;
 import mds.mdsip.Message;
 
 /** DSC (24) **/
@@ -130,7 +128,8 @@ public abstract class Descriptor<T>{
         return "DTYPE_" + (dtype & 0xFF);
     }
 
-    public static void main(final String[] a) throws IOException {// TODO: main
+    /*
+    public static void main(final String[] a) throws IOException {//TODO:main
         final Connection m = new Connection("localhost");
         if(m.error != null) throw new MdsException(m.error);
         final String tree = "test";
@@ -141,7 +140,7 @@ public abstract class Descriptor<T>{
         System.out.println(D);
         System.exit(0);
     }
-
+    */
     public static Descriptor readMessage(final Message msg) throws MdsException {
         if(msg.header.get(Message._typB) == DTYPE.T) return new CString(msg.body.array());
         return Descriptor_A.readMessage(msg);

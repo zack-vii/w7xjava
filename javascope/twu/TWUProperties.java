@@ -22,7 +22,8 @@ public class TWUProperties{
         return "http:" + in;
     }
 
-    public static void main(final String a[]) {
+    /*
+    public static void main(final String a[]) {//TODO:main
         TWUProperties twup;
         System.out.println();
         System.out.println(TWUProperties.revision());
@@ -41,7 +42,7 @@ public class TWUProperties{
         System.out.println(twup.summary());
         System.out.println();
     }
-
+    */
     public static String revision() {
         return "$Id$";
     }

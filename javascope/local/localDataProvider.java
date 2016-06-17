@@ -572,16 +572,16 @@ public final class localDataProvider implements DataProvider{
         return new RealArray(localDataProvider.NativeGetDoubleArray(in));
     }
 
-    public static final void main(final String[] args) {
+    /*
+    public static final void main(final String[] args) {//TODO:main
         final localDataProvider dp = new localDataProvider();
         try{
-            /* user code */
             System.out.println(dp.GetString("TCL('DIR',_out);_out"));
         }catch(final Exception e){
             System.err.println(e);
         }
     }
-
+    */
     private static native String NativeErrorString();
 
     private static native byte[] NativeGetAllFrames(String nodeName, int startIdx, int endIdx);

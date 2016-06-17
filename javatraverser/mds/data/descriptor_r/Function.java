@@ -2,7 +2,6 @@ package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
 import debug.DEBUG;
-import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
@@ -228,7 +227,8 @@ public final class Function extends Descriptor_R<Short>{
         pout.setLength(fin + 1);
     }
 
-    public static final void main(final String[] args) throws MdsException {// TODO:main
+    /*
+    public static final void main(final String[] args) throws MdsException {//TODO:main
         final Database db = new Database(null, "test", -1, Database.READONLY);
         System.out.println(db.compile("public fun myfun(in _R, out _out) STATEMENT(_out = _R+1,return(_out))").decompile());
         System.out.println(db.compile("out _R").decompile());
@@ -242,7 +242,7 @@ public final class Function extends Descriptor_R<Short>{
         System.out.println(db.compile("TreeOpen('test',1)").decompile());
         System.exit(0);
     }
-
+    */
     public Function(final ByteBuffer b) throws MdsException{
         super(b);
     }

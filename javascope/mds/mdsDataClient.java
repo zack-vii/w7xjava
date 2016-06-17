@@ -4,7 +4,8 @@ package mds;
 import java.util.Vector;
 
 final public class mdsDataClient extends mdsConnection{
-    public static void main(final String arg[]) {
+    /*
+    public static void main(final String arg[]) {//TODO:main
         mdsDataClient mdc = null;
         try{
             mdc = new mdsDataClient("10.44.4.11");
@@ -25,6 +26,7 @@ final public class mdsDataClient extends mdsConnection{
             if(mdc != null) mdc.close();
         }
     }
+    */
     @SuppressWarnings("unused")
     private String experiment;
     @SuppressWarnings("unused")

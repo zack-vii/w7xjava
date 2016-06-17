@@ -231,7 +231,7 @@ public class Connection{
             throw new MdsException(cls.getSimpleName(), e);
         }
     }
-
+    /*
     public static void main(final String[] args) throws Exception {// TODO:main
         final ConnectionListener cl = new ConnectionListener(){
             @Override
@@ -249,6 +249,7 @@ public class Connection{
         final Descriptor d = mds1.mdsValue("[[[1.1],[2.1]],[[3.1],[4.1]]]");// BYTE([1,2,3,4,5,6,7,8,9,0])
         System.out.println(d);
     }
+    */
     public boolean                          connected           = false;
     transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
     protected InputStream                   dis                 = null;

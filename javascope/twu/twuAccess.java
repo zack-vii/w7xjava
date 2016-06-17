@@ -9,7 +9,8 @@ import jScope.FrameData;
 import jScope.Signal;
 
 final public class twuAccess implements DataAccess{
-    public static void main(final String args[]) {
+    /*
+    public static void main(final String args[]) {//TODO:main
         final twuAccess access = new twuAccess();
         final String url = "twu://ipptwu.ipp.kfa-juelich.de/textor/all/86858/RT2/IVD/IBT2P-star";
         try{
@@ -20,6 +21,7 @@ final public class twuAccess implements DataAccess{
             System.out.println("Num. points: " + y.length);
         }catch(final IOException exc){}
     }
+    */
     String          experiment = null;
     String          ip_addr    = null;
     String          shot_str   = null;

@@ -145,8 +145,9 @@ public final class DTYPE{
     public static final String getSuffix(final byte dtype) {
         return DTYPE._suffix[Byte.toUnsignedInt(dtype)];
     }
-
-    public static void main(final String[] a) throws Exception {// TODO main
+    /*
+    public static void main(final String[] a) throws Exception {//TODO:main
         System.out.println(DTYPE.getName((byte)1));
     }
+    */
 }

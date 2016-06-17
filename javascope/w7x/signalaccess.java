@@ -236,7 +236,8 @@ public final class signalaccess{
         return signalaccess.getAccess(signalaccess.databaselist.get(0)) != null;
     }
 
-    public static void main(final String[] args) {
+    /*
+    public static void main(final String[] args) {//TODO:main
         final String path = "/ArchiveDB/codac/W7X/CoDaStationDesc.111/DataModuleDesc.250_DATASTREAM/0";// "/ArchiveDB/codac/W7X/CoDaStationDesc.14823/DataModuleDesc.14833_DATASTREAM/0/image/scaled";
         final String XP = "XP:20160310.7";// "XP:20160210.5";
         final TimeInterval TI = signalaccess.getTimeInterval(XP);
@@ -262,7 +263,7 @@ public final class signalaccess{
             e.printStackTrace();
         }
     }
-
+    */
     public static final signalaccess NewInstance(final String DataBase) {
         try{
             return new signalaccess(DataBase);
