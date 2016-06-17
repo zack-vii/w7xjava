@@ -15,34 +15,18 @@ SET /A ERROR=1
 GOTO:end
 
 :start
-SET DOCS=jScope.html jScope.jpg popup.jpg about_jscope.jpg ^
-CompositeWaveDisplay.html ^
-ConnectionEvent.html ConnectionListener.html ^
-DataProvider.html ^
-FrameData.html ^
-ReadMe.html data_popup.jpg data_setup.jpg frame_popup.jpg image_setup.jpg ^
-twu/TWU_image_message.html ^
-UpdateEvent.html UpdateEventListener.html ^
-WaveData.html WaveDisplay.html
+SET TOPDOCS=^
+  doc\jScope.html ^
+  doc\ReadMe.html
 
-SET TOPDOCS=jScope.html ^
-CompositeWaveDisplay.html ^
-ConnectionEvent.html ConnectionListener.html ^
-DataProvider.html ^
-FrameData.html ^
-ReadMe.html ^
-twu/TWU_image_message.html ^
-UpdateEvent.html UpdateEventListener.html ^
-WaveData.html WaveDisplay.html
+SET SUBDOCS=doc\img\jScope.jpg ^
+  doc\img\popup.jpg ^
+  doc\data_popup.jpg ^
+  doc\data_setup.jpg ^
+  doc\frame_popup.jpg ^
+  doc\image_setup.jpg
 
-SET SUBDOCS=jScope.html jScope.jpg popup.jpg ^
-CompositeWaveDisplay.html ^
-ConnectionEvent.html ConnectionListener.html ^
-DataProvider.html ^
-FrameData.html ^
-data_setup.jpg frame_popup.jpg image_setup.jpg ^
-UpdateEvent.html UpdateEventListener.html ^
-WaveData.html
+SET SUBDOCS=%TOPDOCS% %SUBDOCS%
 
 SET JET_SRC=^
   jet\ji\JiDataSource.java ^
@@ -178,6 +162,10 @@ SET WAVEDISPLAY_SRC=^
   jScope\tools\WaveDisplay.java ^
   jScope\tools\CompositeWaveDisplay.java
 
+SET JSCOPE_RES=^
+  jScope\AboutWindow.jpg ^
+  jScope\colors.tbl
+
 SET JSCOPE_SRC=^
   jScope.java ^
   %JET_SRC% ^
@@ -199,6 +187,7 @@ SET JAVAC="%JDK_HOME%\bin\javac.exe"
 SET JCFLAGS=-O -source 1.6 -target 1.6 -g:none||rem-Xlint -deprecation
 SET SRCDIR=%CD%
 SET JAR="%JDK_HOME%\bin\jar.exe"
+SET JSMANIFEST=jScope\MANIFEST.mf
 SET JARDIR=..\java\classes
 
 ECHO compiling *.java to *.class . . .
@@ -209,18 +198,21 @@ IF %ERROR% NEQ 0 GOTO:cleanup
 :gather
 ECHO gathering data
 COPY /Y jScope.properties %JARDIR%\>NUL
-COPY /Y colors1.tbl %JARDIR%\>NUL
 MKDIR  %JARDIR%\docs 2>NUL
 MKDIR  %JARDIR%\jars 2>NUL
 FOR %%F IN (%DOCS%) DO COPY /Y %%F /D %JARDIR%\docs>NUL
+FOR %%F IN (%JSCOPE_RES%) DO COPY /Y %%F /D %JARDIR%\jScope>NUL
 COPY %CD%\mds\MindTerm.jar %JARDIR%\mdsDataProvider.jar>NUL
 rem COPY %CD%\w7x\swingx.jar %JARDIR%>NUL || rem included in w7xDataProvider
 COPY %CD%\w7x\w7xDataProvider.jar %JARDIR%>NUL
+COPY /Y %JSMANIFEST% %JARDIR%\%JSMANIFEST% >NUL
+COPY /Y %JSMANIFEST% %JARDIR%\%JSMANIFEST% >NUL
+ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>%JARDIR%\%JSMANIFEST%
 
 :packjar
 ECHO creating jar packages
 PUSHD %JARDIR%
-%JAR% -cmf %SRCDIR%\jScope\MANIFEST.mf "jScope.jar" jScope.class colors1.tbl jScope.properties jScope docs
+%JAR% -cmf %JSMANIFEST% "jScope.jar" jScope.class jScope.properties jScope docs
 %JAR% -cmf %SRCDIR%\jet\MANIFEST.mf "jetDataProvider.jar" jet
 %JAR% -cmf %SRCDIR%\local\MANIFEST.mf "localDataProvider.jar" local
 %JAR% -umf %SRCDIR%\mds\MANIFEST.mf "mdsDataProvider.jar" mds

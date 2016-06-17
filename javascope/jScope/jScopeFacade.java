@@ -45,6 +45,8 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import javax.print.DocPrintJob;
 import javax.print.PrintException;
 import javax.print.PrintService;
@@ -374,9 +376,27 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
     private static Component       T_parentComponent;
     private static String          T_title;
     private static int             timeMode         = jScopeFacade.JAVA_TIME;
-    public static final String     VERSION          = "jScope (version 7.4.5)";
+    public static final String     VERSION;
     private static final long      VMS_BASE         = 0x7c95674beb4000L;
     static String                  windowsClassName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+
+    static{
+        String builddate = "unknown";
+        try{
+            final Class clazz = jScopeFacade.class;
+            final String className = clazz.getSimpleName() + ".class";
+            final String classPath = clazz.getResource(className).toString();
+            if(classPath.startsWith("jar")){
+                final String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+                final Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+                final Attributes attr = manifest.getMainAttributes();
+                builddate = attr.getValue("Built-Date").substring(0, 10);
+            }
+        }catch(final Exception e){
+            e.printStackTrace();
+        }
+        VERSION = new StringBuilder(64).append("Build-Date ").append(builddate).toString();
+    }
 
     public static boolean busy() {
         return jScopeFacade.instance.executing_update;

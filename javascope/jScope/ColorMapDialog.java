@@ -82,7 +82,7 @@ final public class ColorMapDialog extends JDialog{
     @SuppressWarnings("unchecked")
     ColorMapDialog(final Component parent, String colorPaletteFile){
         super(ColorMapDialog.getWindow(parent), "Color Palette");
-        if(colorPaletteFile == null) colorPaletteFile = System.getProperty("user.home") + File.separator + "jScope" + File.separator + "colors1.tbl";
+        if(colorPaletteFile == null) colorPaletteFile = System.getProperty("user.home") + "/jScope/colors.tbl";
         this.readColorPalette(colorPaletteFile);
         this.getContentPane().setLayout(new GridLayout(3, 1));
         final JPanel pan1 = new JPanel();
@@ -202,7 +202,7 @@ final public class ColorMapDialog extends JDialog{
                 final FileInputStream bin = new FileInputStream(new File(cmap));
                 dis = new DataInputStream(bin);
             }catch(final IOException exc){
-                final InputStream pis = this.getClass().getClassLoader().getResourceAsStream("colors1.tbl");
+                final InputStream pis = this.getClass().getClassLoader().getResourceAsStream("jScope/colors.tbl");
                 dis = new DataInputStream(pis);
             }
             final byte nColorTables = dis.readByte();

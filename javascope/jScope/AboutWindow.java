@@ -15,12 +15,14 @@ public class AboutWindow extends JLabel{
 
     public AboutWindow(){
         try{
-            final String icon_file = jScopeFacade.findFileInClassPath("about_jscope.jpg");
+            final String icon_file = jScopeFacade.findFileInClassPath("jScope/AboutWindow.jpg");
             if(icon_file != null) this.io = new ImageIcon(icon_file);
-            else this.io = new ImageIcon(this.getClass().getClassLoader().getResource("jScope/about_jscope.jpg"));
-            if(jScopeFacade.is_debug) System.out.println("about_jscope image path " + icon_file + this.io);
+            else this.io = new ImageIcon(this.getClass().getClassLoader().getResource("jScope/AboutWindow.jpg"));
+            if(jScopeFacade.is_debug) System.out.println("AboutWindow image path " + icon_file + this.io);
             this.setIcon(this.io);
-        }catch(final NullPointerException e){}
+        }catch(final NullPointerException e){
+            System.out.println(e);
+        }
     }
 
     @Override
@@ -37,8 +39,7 @@ public class AboutWindow extends JLabel{
         final int botton = 268 + 1;
         final int delta = 14;
         g.setColor(new Color(128, 128, 128));
-        g.drawRect(-1, -1, this.getWidth(), this.getHeight()); // makes a bevel border
-        // likeness
+        g.drawRect(-1, -1, this.getWidth(), this.getHeight()); // makes a bevel border likeness
         g.drawString(jScopeFacade.VERSION, start, botton - 3 * delta);
         g.drawString("http://www.igi.cnr.it", start, botton - 2 * delta);
         g.drawString("JVM used :" + AboutWindow.javaVersion, start, botton - delta);
