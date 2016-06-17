@@ -244,15 +244,16 @@ public class Connection{
                 }// BYTE([1,2,3,4,5,6,7,8,9,0])
             }
         };
-        final Connection mds = new Connection("localhost", cl);
-        final Descriptor d = mds.mdsValue("[[[1.1],[2.1]],[[3.1],[4.1]]]");// BYTE([1,2,3,4,5,6,7,8,9,0])
+        final Connection mds1 = new Connection("mds-data-1", true, cl);
+        final Connection mds2 = new Connection("localhost", cl);
+        final Descriptor d = mds1.mdsValue("[[[1.1],[2.1]],[[3.1],[4.1]]]");// BYTE([1,2,3,4,5,6,7,8,9,0])
         System.out.println(d);
     }
-    public boolean                          connected;
+    public boolean                          connected           = false;
     transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
-    protected InputStream                   dis;
-    protected DataOutputStream              dos;
-    public String                           error;
+    protected InputStream                   dis                 = null;
+    protected DataOutputStream              dos                 = null;
+    public String                           error               = null;
     transient boolean                       event_flags[]       = new boolean[Connection.MAX_NUM_EVENTS];
     transient Vector<EventItem>             event_list          = new Vector<EventItem>();
     transient Hashtable<Integer, EventItem> hashEventId         = new Hashtable<Integer, EventItem>();
@@ -260,28 +261,41 @@ public class Connection{
     private final MdsConnect                mdsConnect;
     int                                     pending_count       = 0;
     protected final Provider                provider;
-    MRT                                     receiveThread;
-    protected Socket                        sock;
+    MRT                                     receiveThread       = null;
+    protected Socket                        sock                = null;
     private boolean                         use_compression     = false;
 
     public Connection(final Provider provider){
-        this(provider, null);
+        this(provider, false, null);
     }
 
-    public Connection(final Provider provider, final ConnectionListener cl){
+    public Connection(final Provider provider, final boolean use_compression){
+        this(provider, use_compression, null);
+    }
+
+    public Connection(final Provider provider, final boolean use_compression, final ConnectionListener cl){
         this.addConnectionListener(cl);
-        this.connected = false;
-        this.sock = null;
-        this.dis = null;
-        this.dos = null;
+        this.use_compression = use_compression;
         this.provider = provider;
         this.mdsConnect = new MdsConnect();
         this.mdsConnect.start();
         this.waitTried();
     }
 
+    public Connection(final Provider provider, final ConnectionListener cl){
+        this(provider, false, cl);
+    }
+
     public Connection(final String provider){
         this(new Provider(provider));
+    }
+
+    public Connection(final String provider, final boolean use_compression){
+        this(new Provider(provider), use_compression);
+    }
+
+    public Connection(final String provider, final boolean use_compression, final ConnectionListener cl){
+        this(new Provider(provider), use_compression, cl);
     }
 
     public Connection(final String provider, final ConnectionListener cl){
