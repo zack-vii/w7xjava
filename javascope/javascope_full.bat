@@ -32,10 +32,14 @@ ECHO unpacking w7xDataProvider.jar
 %JAR% -xf ..\w7xDataProvider.jar
 DEL META-INF\MANIFEST.MF
 POPD
+COPY /Y %SRCDIR%\MANIFEST.MF .\MANIFEST.MF >NUL
+ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>MANIFEST.MF
+
 ECHO packing jScopeFull.jar
-%JAR% -cmf %SRCDIR%\MANIFEST.mf jScopeFull.jar -C full .
+%JAR% -cmf MANIFEST.MF jScopeFull.jar -C full .
 ECHO cleaning up
 RMDIR /S /Q full 2>nul
+DEL MANIFEST.MF
 POPD
 :jscope
 ECHO start jScopeFull?
