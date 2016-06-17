@@ -750,7 +750,6 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         if(ob == this.open_i){
             jScopeFacade.num_scope++;
             final Rectangle r = this.getBounds();
-            // jScope new_scope = new jScope(r.x+5, r.y+40);
             final jScopeFacade new_scope = this.buildNewScope(r.x + 5, r.y + 40);
             new_scope.wave_panel.SetCopySource(this.wave_panel.GetCopySource());
             new_scope.startScope(null);
@@ -833,10 +832,6 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                     break;
             }
         }
-        // else
-        // {
-        // exitScope();
-        // }
         this.exitScope();
     }
 
@@ -1170,12 +1165,6 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         this.attrs.add(new MediaPrintableArea(5, 5, MediaSize.ISO.A4.getX(Size2DSyntax.MM) - 5, MediaSize.ISO.A4.getY(Size2DSyntax.MM) - 5, MediaPrintableArea.MM));
         this.attrs.add(res);
         if(this.printerSelection != null) this.prnJob = this.printerSelection.createPrintJob();
-        this.help_dialog = new jScopeBrowseUrl(this);
-        try{
-            final String path = "docs/jScope.html";
-            final URL url = this.getClass().getClassLoader().getResource(path);
-            this.help_dialog.connectToBrowser(url);
-        }catch(final Exception e){}
         this.setBounds(spos_x, spos_y, 750, 550);
         this.InitProperties();
         this.GetPropertiesValue();
@@ -1519,7 +1508,18 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         about_i.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                JOptionPane.showMessageDialog(jScopeFacade.this, "The jScope tutorial is available at www.mdsplus.org in \"Documentation/The MDSplus tutorial\" section", "", JOptionPane.INFORMATION_MESSAGE);
+                if(jScopeFacade.this.help_dialog == null){
+                    jScopeFacade.this.help_dialog = new jScopeBrowseUrl(jScopeFacade.this);
+                    try{
+                        final String path = "docs/jScope.html";
+                        final URL url = this.getClass().getClassLoader().getResource(path);
+                        jScopeFacade.this.help_dialog.connectToBrowser(url);
+                    }catch(final Exception exc){
+                        JOptionPane.showMessageDialog(jScopeFacade.this, "The jScope tutorial is available at www.mdsplus.org in \"Documentation/The MDSplus tutorial\" section", "", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                }
+                jScopeFacade.this.help_dialog.setVisible(true);
             }
         });
         this.setup_dialog = new SetupDataDialog(this, "Setup");
