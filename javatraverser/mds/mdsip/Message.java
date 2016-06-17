@@ -43,7 +43,7 @@ public final class Message extends Object{
         return(arr[idx] == 0 && arr[idx + 1] == 0 && arr[idx + 2] == -128 && arr[idx + 3] == 0);
     }
 
-    private static final synchronized byte[] readBuf(int bytes_to_read, final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
+    private static final byte[] readBuf(int bytes_to_read, final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
         final byte[] buf = new byte[bytes_to_read];
         int read_bytes = 0, curr_offset = 0;
         final boolean send = (bytes_to_read > 2000);
@@ -57,7 +57,7 @@ public final class Message extends Object{
         return buf;
     }
 
-    protected static final synchronized byte[] ReadCompressedBuf(final InputStream dis, final int msglen, final Vector<ConnectionListener> listeners) throws IOException {
+    protected static final byte[] ReadCompressedBuf(final InputStream dis, final int msglen, final Vector<ConnectionListener> listeners) throws IOException {
         final int bytes_to_read = msglen - Message.HEADER_SIZE;
         final InflaterInputStream zis = new InflaterInputStream(dis);
         final byte[] buf = Message.readBuf(bytes_to_read, zis, listeners);
@@ -66,7 +66,7 @@ public final class Message extends Object{
         return buf;
     }
 
-    public final synchronized static Message Receive(final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
+    public final static Message Receive(final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
         final ByteBuffer header = ByteBuffer.wrap(Message.readBuf(Message.HEADER_SIZE, dis, null));
         final byte c_type = header.get(Message._clntB);
         if((c_type & Message.BIG_ENDIAN_MASK) == 0) header.order(ByteOrder.LITTLE_ENDIAN);
@@ -232,7 +232,7 @@ public final class Message extends Object{
         return((this.client_type & Message.BIG_ENDIAN_MASK) != 0);
     }
 
-    public final synchronized void Send(final DataOutputStream dos) throws IOException {
+    public final void Send(final DataOutputStream dos) throws IOException {
         dos.writeInt(this.msglen);
         dos.writeInt(this.status);
         dos.writeShort(this.length);
