@@ -197,7 +197,7 @@ public class Connection{
                 final int at = provider.indexOf("@");
                 final int cn = provider.indexOf(":");
                 // this.user = at < 0 ? Provider.DEFAULT_USER : provider.substring(0, at);
-                this.host = cn < 0 ? provider.substring(at + 1) : provider.substring(at + 1, cn);
+                this.host = (cn < 0 ? provider.substring(at + 1) : provider.substring(at + 1, cn)).toLowerCase();
                 this.port = cn < 0 ? Provider.DEFAULT_PORT : Short.parseShort(provider.substring(cn + 1));
             }
         }
@@ -206,7 +206,7 @@ public class Connection{
         public final boolean equals(final Object obj) {
             if(obj == null || !(obj instanceof Provider)) return false;
             final Provider provider = (Provider)obj;
-            return this.host.toString().equals(provider.host.toString()) && this.port == provider.port;
+            return this.host.equals(provider.host) && this.port == provider.port;
         }
 
         @Override
