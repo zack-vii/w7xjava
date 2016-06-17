@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -38,6 +37,7 @@ import jTraverser.editor.NodeEditor;
 import jTraverser.tools.DecompileTree;
 import mds.Database;
 import mds.MdsException;
+import mds.data.descriptor.Descriptor;
 
 @SuppressWarnings("serial")
 public class TreeManager extends JScrollPane{
@@ -89,15 +89,30 @@ public class TreeManager extends JScrollPane{
                 DisplayMenu.this.treeman.dialogs.flags.open();
             }
         }
+        public final class setDefault implements ActionListener{
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final Node currnode = DisplayMenu.this.treeman.getCurrentNode();
+                if(currnode == null) return;
+                try{
+                    currnode.setDefault();
+                }catch(final Exception exc){
+                    jTraverserFacade.stderr("Error setting default", exc);
+                }
+                DisplayMenu.this.treeman.reportChange();
+            }
+        }
 
         public DisplayMenu(final TreeManager treeman, final JComponent menu){
             super(treeman);
+            menu.add(this.addMenuItem("Set Default", new DisplayMenu.setDefault()));
+            if(menu instanceof JPopupMenu) ((JPopupMenu)menu).addSeparator();
             menu.add(this.addMenuItem("Display Data", new Menu.NodeEditorAL(DisplayData.class)));
             menu.add(this.addMenuItem("Display Nci", new Menu.NodeEditorAL(DisplayNci.class)));
             menu.add(this.addMenuItem("Display Flags", new modifyFlags()));
             menu.add(this.addMenuItem("Display Tags", new Menu.NodeEditorAL(DisplayTags.class)));
             menu.add(this.addMenuItem("Display Signal", new DisplaySignal()));
-        }
+        };
 
         @Override
         public final void checkSupport() {
@@ -107,7 +122,7 @@ public class TreeManager extends JScrollPane{
                 final int usage = node.getUsage();
                 final boolean enable = !(usage == NodeInfo.USAGE_STRUCTURE || usage == NodeInfo.USAGE_SUBTREE);
                 final boolean enable2 = (usage == NodeInfo.USAGE_SIGNAL);
-                mask = new boolean[]{enable, true, true, enable, enable2};
+                mask = new boolean[]{true, enable, true, true, enable, enable2};
             }
             for(int i = 0; i < mask.length; i++)
                 this.items.get(i).setEnabled(mask[i]);
@@ -311,19 +326,6 @@ public class TreeManager extends JScrollPane{
                 ModifyMenu.this.treeman.dialogs.flags.open();
             }
         }
-        public final class setDefault implements ActionListener{
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final Node currnode = ModifyMenu.this.treeman.getCurrentNode();
-                if(currnode == null) return;
-                try{
-                    currnode.setDefault();
-                }catch(final Exception exc){
-                    jTraverserFacade.stderr("Error setting default", exc);
-                }
-                ModifyMenu.this.treeman.reportChange();
-            }
-        };
         public final class setupDevice implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -357,7 +359,6 @@ public class TreeManager extends JScrollPane{
             menu.add(this.addMenuItem("Modify Flags", new modifyFlags()));
             menu.add(this.addMenuItem("Turn On", new turnOn()));
             menu.add(this.addMenuItem("Turn Off", new turnOff()));
-            menu.add(this.addMenuItem("Set Default", new setDefault()));
             menu.add(this.addMenuItem("Setup Device", new setupDevice()));
             menu.add(this.addMenuItem("Do Action", new doAction()));
         }
@@ -371,7 +372,7 @@ public class TreeManager extends JScrollPane{
                 final boolean isst = usage == NodeInfo.USAGE_STRUCTURE || usage == NodeInfo.USAGE_SUBTREE;
                 final boolean isact = usage == NodeInfo.USAGE_ACTION || usage == NodeInfo.USAGE_TASK;
                 final boolean isdev = usage == NodeInfo.USAGE_DEVICE;
-                mask = new boolean[]{!isst, true, true, true, true, isdev, isact};
+                mask = new boolean[]{!isst, true, true, true, isdev, isact};
             }
             for(int i = 0; i < mask.length; i++)
                 this.items.get(i).setEnabled(mask[i]);
