@@ -2,6 +2,7 @@ package jTraverser.dialogs;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -11,6 +12,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import mds.MdsException;
@@ -26,14 +28,27 @@ public class GraphPanel extends JPanel{
 
     public static void main(final String[] args) throws MdsException {// TODO
         final Connection con = new Connection("mds-data-1");
-        System.out.println(con.mdsValue("GetMsg(TreeOpen('QSS',160310007))"));
-        final Descriptor sig = con.mdsValue("DATA.FILTERSCOPE:T16_C_II");
-        final JFrame frame = new JFrame("DrawGraph");
+        final String tree = "QSS";
+        final int shot = 160310007;
+        System.out.println(con.mdsValue(String.format("GetMsg(TreeOpen('%s',%d))", tree, shot)));
+        final String path = "DATA.FILTERSCOPE:T16_C_II";
+        final Descriptor sig = con.mdsValue(path);
+        GraphPanel.newPlot(sig, null, tree, shot, path).setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+    }
+
+    public static final JFrame newPlot(final Descriptor sig, final Component parent, final String title) {
+        final JFrame frame = new JFrame(title);
+        frame.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(parent);
         frame.getContentPane().add(GraphPanel.plotDescriptor(sig));
         frame.pack();
-        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        return frame;
+    }
+
+    public static final JFrame newPlot(final Descriptor sig, final Component parent, final String tree, final long shot, final String expr) {
+        final String title = new StringBuilder(expr.length() + tree.length() + 10).append(expr).append(" @ Tree(").append(tree).append(',').append(shot).append(')').toString();
+        return GraphPanel.newPlot(sig, parent, title);
     }
 
     public static final GraphPanel plotDescriptor(final Descriptor sig) {

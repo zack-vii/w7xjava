@@ -75,11 +75,8 @@ public class TreeManager extends JScrollPane{
             @Override
             public void actionPerformed(final ActionEvent ae) {
                 try{
-                    final JDialog dlg = new JDialog(DisplayMenu.this.treeman.frame, DisplayMenu.this.treeman.getCurrentNode().getFullPath());
-                    dlg.setLocation(DisplayMenu.this.treeman.frame.getLocation());
-                    dlg.getContentPane().add(GraphPanel.plotDescriptor(DisplayMenu.this.treeman.getCurrentDatabase().evaluate("DATA(" + DisplayMenu.this.treeman.getCurrentNode().getFullPath() + ")")));
-                    dlg.pack();
-                    dlg.setVisible(true);
+                    final Descriptor sig = DisplayMenu.this.treeman.getCurrentDatabase().evaluate(DisplayMenu.this.treeman.getCurrentNode().getFullPath());
+                    GraphPanel.newPlot(sig, DisplayMenu.this.treeman, DisplayMenu.this.treeman.getCurrentDatabase().getName(), DisplayMenu.this.treeman.getCurrentDatabase().getShot(), DisplayMenu.this.treeman.getCurrentNode().getFullPath());
                 }catch(final MdsException e){}
             }
         }
