@@ -420,7 +420,7 @@ public final class Database{
     }
 
     public final Nid[] getWild(final int usage_mask) throws MdsException {
-        final Nid[] nids = Nid.getArrayOfNids(Database.mds.getIntegerArray(String.format("COMMA(_n=0,_ans='[',_c=0Q,_i=0,WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref('***'),ref(_n),ref(_c),val(%d)),1)==1) _ans=_ans//TEXT(_n)//',',_ans=COMPILE(_ans//'*]'))", 1 << usage_mask)));
+        final Nid[] nids = Nid.getArrayOfNids(Database.mds.getIntegerArray(String.format("_n=0;_ans='[';_c=0Q;WHILE(IAND(TreeShr->TreeFindNodeWild(ref('***'),ref(_n),ref(_c),val(%d)),1)==1) _ans=_ans//TEXT(_n)//',';_ans=COMPILE(_ans//'*]')", 1 << usage_mask)));
         if(nids == null) this.handleStatus(Database.mds.getInteger("_s"));
         return nids;
     }
