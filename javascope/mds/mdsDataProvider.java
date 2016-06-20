@@ -1512,7 +1512,7 @@ public class mdsDataProvider implements DataProvider{
         return this.GetLongArray(in);
     }
 
-    private Signal GetSignal(final String in_y, final String in_x, final boolean isframes) {
+    public Signal GetSignal(final String in_y, final String in_x, final boolean isframes) {
         return new Signal(in_y, in_x, isframes);
     }
 
