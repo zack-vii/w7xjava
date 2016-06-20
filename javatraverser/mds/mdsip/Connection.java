@@ -37,25 +37,25 @@ public class Connection{
         }
     }
     private final class MdsConnect extends Thread{
-        private boolean abort = false;
+        private boolean close = false;
         private boolean tried = false;
 
         public MdsConnect(){
             super(Connection.this.getName("MdsConnect"));
         }
 
-        /*
-        public final void abort() {
-            this.abort = true;
+        public synchronized final void close() {
+            this.close = true;
+            this.notify();
         }
-        */
+
         @Override
         synchronized public final void run() {
             try{
-                while(!this.abort)
+                while(!this.close)
                     try{
                         this.setTried(false);
-                        Connection.this.connectToMdsIp(Connection.this.use_compression);
+                        Connection.this.connectToMds(Connection.this.use_compression);
                         this.setTried(true);
                         this.wait();
                     }catch(final ConnectException e){
@@ -63,7 +63,7 @@ public class Connection{
                         Thread.sleep(3000);
                     }
             }catch(final InterruptedException e){
-                this.abort = true;
+                this.close = true;
             }catch(final IOException e){
                 Connection.this.error = e.getMessage();
             }
@@ -129,7 +129,7 @@ public class Connection{
                 if(Connection.this.connected){
                     this.message = null;
                     Connection.this.connected = false;
-                    Connection.this.mdsConnect.update();
+                    Connection.this.connectThread.update();
                     (new Thread(){
                         @Override
                         public void run() {
@@ -244,7 +244,7 @@ public class Connection{
                 }// BYTE([1,2,3,4,5,6,7,8,9,0])
             }
         };
-        final Connection mds1 = new Connection("mds-data-1", true, cl);
+        final Connection mds1 = new Connection("localhost", true, cl);
         final Connection mds2 = new Connection("localhost", cl);
         final Descriptor d = mds1.mdsValue("[[[1.1],[2.1]],[[3.1],[4.1]]]");// BYTE([1,2,3,4,5,6,7,8,9,0])
         System.out.println(d);
@@ -252,6 +252,7 @@ public class Connection{
     */
     public boolean                          connected           = false;
     transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
+    private final MdsConnect                connectThread;
     protected InputStream                   dis                 = null;
     protected DataOutputStream              dos                 = null;
     public String                           error               = null;
@@ -259,10 +260,9 @@ public class Connection{
     transient Vector<EventItem>             event_list          = new Vector<EventItem>();
     transient Hashtable<Integer, EventItem> hashEventId         = new Hashtable<Integer, EventItem>();
     transient Hashtable<String, EventItem>  hashEventName       = new Hashtable<String, EventItem>();
-    private final MdsConnect                mdsConnect;
     int                                     pending_count       = 0;
     protected final Provider                provider;
-    MRT                                     receiveThread       = null;
+    private MRT                             receiveThread       = null;
     protected Socket                        sock                = null;
     private boolean                         use_compression     = false;
 
@@ -278,8 +278,8 @@ public class Connection{
         this.addConnectionListener(cl);
         this.use_compression = use_compression;
         this.provider = provider;
-        this.mdsConnect = new MdsConnect();
-        this.mdsConnect.start();
+        this.connectThread = new MdsConnect();
+        this.connectThread.start();
         this.waitTried();
     }
 
@@ -329,7 +329,7 @@ public class Connection{
         return this.mdsValue("COMPILE($)", args, Descriptor.class);
     }
 
-    private final void connectToMdsIp(final boolean use_compression) throws IOException {
+    private final void connectToMds(final boolean use_compression) throws IOException {
         this.use_compression = use_compression;
         this.connectToServer();
         final Message message = new Message(this.provider.user);
@@ -396,6 +396,16 @@ public class Connection{
 
     public final Descriptor evaluate(final String expr) throws MdsException {
         return this.mdsValue(String.format("EVALUATE((%s))", expr), Descriptor.class);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try{
+            this.disconnectFromMds();
+            this.connectThread.close();
+        }finally{
+            super.finalize();
+        }
     }
 
     public final synchronized Message getAnswer() throws MdsException {
@@ -622,7 +632,7 @@ public class Connection{
     }
 
     synchronized private void waitTried() {
-        if(!this.mdsConnect.tried) try{
+        if(!this.connectThread.tried) try{
             this.wait();
         }catch(final InterruptedException e){}
     }

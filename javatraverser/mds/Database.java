@@ -291,6 +291,15 @@ public final class Database{
         this.handleStatus(status);
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try{
+            this.close();
+        }finally{
+            super.finalize();
+        }
+    }
+
     public long getCurrentShot() throws MdsException {
         return this.getCurrentShot(this.expt);
     }
