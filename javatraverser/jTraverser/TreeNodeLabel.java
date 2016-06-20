@@ -8,12 +8,12 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 @SuppressWarnings("serial")
-public class TreeNode extends JLabel{
+public class TreeNodeLabel extends JLabel{
     static Font plain_f, bold_f;
 
     static{
-        TreeNode.plain_f = new Font("Serif", Font.PLAIN, 12);
-        TreeNode.bold_f = new Font("Serif", Font.BOLD, 12);
+        TreeNodeLabel.plain_f = new Font("Serif", Font.PLAIN, 12);
+        TreeNodeLabel.bold_f = new Font("Serif", Font.BOLD, 12);
     }
     final Color CExclude  = new Color(128, 128, 128);
     final Color CInclude  = new Color(0, 0, 0);
@@ -29,8 +29,8 @@ public class TreeNode extends JLabel{
     final Color CWriteO   = new Color(96, 64, 0);
     final Node  node;
 
-    public TreeNode(final Node node, final String name, final Icon icon, final boolean isSelected){
-        super((node.isDefault() ? "(" + node.getName() + ")" : node.getName()), icon, SwingConstants.LEFT);
+    public TreeNodeLabel(final Node node, final String name, final Icon icon, final boolean isSelected){
+        super((node.isDefault() ? new StringBuilder(node.getName().length() + 2).append('(').append(node).append(')').toString() : node.toString()), icon, SwingConstants.LEFT);
         this.node = node;
         if(node.getUsage() == NodeInfo.USAGE_SUBTREE) this.setForeground(node.isIncludeInPulse() ? this.CInclude : this.CExclude);
         else{
@@ -40,7 +40,7 @@ public class TreeNode extends JLabel{
             else if(node.isSetup()) this.setForeground(node.tree.isModel() ? (node.isWriteOnce() ? this.CMSetupO : this.CMSetup) : (node.isWriteOnce() ? this.CSSetupO : this.CSSetup));
             else this.setForeground(node.isWriteOnce() ? this.CNormO : this.CNorm);
         }
-        this.setFont(node.isOn() ? TreeNode.bold_f : TreeNode.plain_f);
+        this.setFont(node.isOn() ? TreeNodeLabel.bold_f : TreeNodeLabel.plain_f);
         this.setBorder(BorderFactory.createLineBorder(isSelected ? Color.black : Color.white, 1));
     }
 

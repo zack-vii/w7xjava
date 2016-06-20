@@ -83,7 +83,7 @@ public class Node{
     private long                   ToolTipLife  = 0;
     private String                 ToolTipText  = null;
     public final Tree              tree;
-    private JLabel                 tree_label;
+    private JLabel                 label;
     private DefaultMutableTreeNode treenode;
 
     public Node(final Database database, final Tree tree, final Node parent, final boolean is_member, final Nid nid){
@@ -340,8 +340,8 @@ public class Node{
                 icon = this.loadIcon("jTraverser/compound.gif");
                 break;
         }
-        this.tree_label = new TreeNode(this, this.getName(), icon, isSelected);
-        return this.tree_label;
+        this.label = new TreeNodeLabel(this, this.getName(), icon, isSelected);
+        return this.label;
     }
 
     public final NodeInfo getInfo() throws MdsException {
@@ -587,7 +587,7 @@ public class Node{
         this.database.setSubtree(this.nid);
         try{
             this.info = this.database.getInfo(this.nid);
-            this.tree_label = null;
+            this.label = null;
         }catch(final Exception exc){
             jTraverserFacade.stderr("Error getting info", exc);
         }

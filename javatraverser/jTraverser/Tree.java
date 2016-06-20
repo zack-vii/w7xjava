@@ -90,7 +90,6 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
         }
     }
     */
-    // Temporary, to overcome Java's bugs on inner classes
     private JDialog                add_device_dialog;
     private JTextField             add_device_type, add_device_name;
     private Node                   curr_node;
@@ -462,7 +461,8 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     }
 
     public final void updateDefault() throws MdsException {
-        if(this.database != null) this.default_nid = this.database.getDefault().getValue();
+        if(this.database == null) return;
+        this.default_nid = this.database.getDefault().getValue();
     }
 
     @Override

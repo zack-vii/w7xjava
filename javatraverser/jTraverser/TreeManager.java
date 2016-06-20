@@ -473,7 +473,10 @@ public class TreeManager extends JScrollPane{
     }
 
     public final void reportChange() {
-        if(this.getCurrentTree() != null) this.getCurrentTree().treeDidChange();
+        if(this.getCurrentTree() != null){
+            this.getCurrentTree().treeDidChange();
+            this.getCurrentTree().updateUI();
+        }
         this.dialogs.update();
     }
 
