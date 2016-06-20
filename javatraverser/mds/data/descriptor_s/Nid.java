@@ -34,6 +34,14 @@ public final class Nid extends Int32{
         }
     }
 
+    public final String getFullPath() {
+        try{
+            return Database.getFullPath(this.getValue());
+        }catch(final MdsException e){
+            return null;
+        }
+    }
+
     @Override
     public double[] toDouble() {
         return this.evaluate().toDouble();

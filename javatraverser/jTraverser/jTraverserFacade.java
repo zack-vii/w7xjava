@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import jTraverser.TreeManager.Menu;
+import jTraverser.dialogs.SubTrees;
 import mds.Database;
 
 @SuppressWarnings("serial")
@@ -134,6 +135,13 @@ public final class jTraverserFacade extends JFrame{
                 }catch(final Exception ex){
                     ex.printStackTrace();
                 }
+            }
+        });
+        jmenu.add(item = new JMenuItem("Show SubTrees"));
+        item.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                new SubTrees(jTraverserFacade.this.treeman, jTraverserFacade.this);
             }
         });
         jmenu.add(item = new JMenuItem("Show Tags"));

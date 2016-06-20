@@ -305,6 +305,12 @@ public class TreeManager extends JScrollPane{
                     new TreeManager.EditMenu(TreeManager.this, pop).checkSupport();
                 }
                 pop.show((Component)e.getSource(), e.getX(), e.getY());
+            }else if((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && (e.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK)) != 0){
+                if(currnode.isSubTree()) try{
+                    currnode.toggleFlags(NodeInfo.INCLUDE_IN_PULSE);
+                }catch(final MdsException e1){
+                    jTraverserFacade.stderr("INCLUDE_IN_PULSE", e1);
+                }
             }
             tree.treeDidChange();
             TreeManager.this.dialogs.update();

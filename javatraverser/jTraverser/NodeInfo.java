@@ -180,6 +180,10 @@ public class NodeInfo implements Serializable{
         return (this.flags & NodeInfo.STATE) != 0;
     }
 
+    public final boolean isSubTree() {
+        return (this.usage & NodeInfo.USAGE_SUBTREE) != 0;
+    }
+
     public final boolean isVersion() {
         return (this.flags & NodeInfo.VERSION) != 0;
     }

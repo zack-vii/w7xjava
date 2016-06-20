@@ -78,7 +78,7 @@ SET TRAV_SRC=^
   jTraverser\NodeInfo.java ^
   jTraverser\Tree.java ^
   jTraverser\TreeManager.java ^
-  jTraverser\TreeNode.java ^
+  jTraverser\TreeNodeLabel.java ^
   jTraverser\dialogs\AddNode.java ^
   jTraverser\dialogs\DialogSet.java ^
   jTraverser\dialogs\Dialogs.java ^
@@ -90,6 +90,7 @@ SET TRAV_SRC=^
   jTraverser\dialogs\ModifyData.java ^
   jTraverser\dialogs\ModifyTags.java ^
   jTraverser\dialogs\Rename.java ^
+  jTraverser\dialogs\SubTrees.java ^
   jTraverser\dialogs\TreeDialog.java ^
   jTraverser\dialogs\TreeOpenDialog.java ^
   jTraverser\editor\ActionEditor.java ^

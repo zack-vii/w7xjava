@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.Enumeration;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -30,6 +32,7 @@ import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
+import mds.data.descriptor_s.Nid;
 
 @SuppressWarnings("serial")
 public class Tree extends JTree implements TreeSelectionListener, DataChangeListener{
@@ -362,6 +365,31 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
         return new Point(this.treeman.getLocation().x + 32, this.treeman.getLocation().y + 32);
     }
 
+    public final DefaultMutableTreeNode findNid(final Nid nid) {
+        return this.findPath(nid.getFullPath());
+    }
+
+    public final DefaultMutableTreeNode findPath(final String path) {
+        final String[] treepath = path.split("::", 2);
+        return this.findPath(treepath[treepath.length - 1].split("[\\.:]"));
+    }
+
+    public final DefaultMutableTreeNode findPath(String[] path) {
+        if(path[0].equalsIgnoreCase("TOP")) path = Arrays.copyOfRange(path, 1, path.length);
+        return this.findSubPath(path, this.top);
+    }
+
+    private final DefaultMutableTreeNode findSubPath(final String[] path, final DefaultMutableTreeNode root) {
+        if(path == null || path.length == 0) return root;
+        final Enumeration children = root.children();
+        while(children.hasMoreElements()){
+            final DefaultMutableTreeNode child = (DefaultMutableTreeNode)children.nextElement();
+            final Node node = (Node)child.getUserObject();
+            if(node.getName().equalsIgnoreCase(path[0])) return this.findSubPath(Arrays.copyOfRange(path, 1, path.length), child);
+        }
+        return null;
+    }
+
     public final Node getCurrentNode() {
         return this.curr_node;
     }
@@ -390,6 +418,15 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
 
     public final long getShot() {
         return this.database.getShot();
+    }
+
+    public final Nid[] getSubTrees() {
+        try{
+            return this.database.getWild(NodeInfo.USAGE_SUBTREE);
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public final boolean isModel() {
@@ -468,9 +505,9 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     @Override
     public void valueChanged(final TreeSelectionEvent e) {
         final DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode)e.getPath().getLastPathComponent();
+        final Node currnode = Node.getNode(tree_node);
+        this.setCurrentNode(currnode);
         if(tree_node.isLeaf()){
-            final Node currnode = Node.getNode(tree_node);
-            this.setCurrentNode(currnode);
             Node sons[], members[];
             DefaultMutableTreeNode last_node = null;
             try{

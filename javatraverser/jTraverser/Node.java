@@ -1,11 +1,12 @@
 package jTraverser;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -83,7 +84,7 @@ public class Node{
     private long                   ToolTipLife  = 0;
     private String                 ToolTipText  = null;
     public final Tree              tree;
-    private JLabel                 label;
+    private TreeNodeLabel          label;
     private DefaultMutableTreeNode treenode;
 
     public Node(final Database database, final Tree tree, final Node parent, final boolean is_member, final Nid nid){
@@ -187,7 +188,11 @@ public class Node{
     }
 
     public final void clearFlag(final byte idx) throws MdsException {
-        this.database.clearFlags(this.nid, 1 << idx);
+        this.clearFlags(1 << idx);
+    }
+
+    public final void clearFlags(final int flags) throws MdsException {
+        this.database.clearFlags(this.nid, flags);
         this.info.setFlags(this.database.getFlags(this.nid));
     }
 
@@ -298,9 +303,9 @@ public class Node{
         return this.info.getFullPath();
     }
 
-    public final JLabel getIcon(final boolean isSelected) {
+    public final Component getIcon(final boolean isSelected) {
         if(this.info == null) return null;
-        ImageIcon icon = null;
+        Icon icon = null;
         switch(this.getUsage()){
             case NodeInfo.USAGE_NONE:
                 icon = this.loadIcon("jTraverser/structure.gif");
@@ -333,12 +338,11 @@ public class Node{
             case NodeInfo.USAGE_SIGNAL:
                 icon = this.loadIcon("jTraverser/signal.gif");
                 break;
-            case NodeInfo.USAGE_SUBTREE:
-                icon = this.loadIcon("jTraverser/subtree.gif");
-                break;
             case NodeInfo.USAGE_COMPOUND_DATA:
                 icon = this.loadIcon("jTraverser/compound.gif");
                 break;
+            case NodeInfo.USAGE_SUBTREE:
+                icon = this.loadIcon("jTraverser/subtree.gif");
         }
         this.label = new TreeNodeLabel(this, this.getName(), icon, isSelected);
         return this.label;
@@ -513,6 +517,10 @@ public class Node{
         return this.info.isState();
     }
 
+    public final boolean isSubTree() {
+        return this.info.isSubTree();
+    }
+
     public final boolean isVersion() {
         return this.info.isVersion();
     }
@@ -569,7 +577,11 @@ public class Node{
     }
 
     public final void setFlag(final byte idx) throws MdsException {
-        this.database.setFlags(this.nid, 1 << idx);
+        this.setFlags(1 << idx);
+    }
+
+    public final void setFlags(final int flags) throws MdsException {
+        this.database.setFlags(this.nid, flags);
         this.info.setFlags(this.database.getFlags(this.nid));
     }
 
@@ -652,9 +664,16 @@ public class Node{
     }
 
     public final void toggle() throws MdsException {
-        if(this.database.isOn(this.nid)) this.database.setOn(this.nid, false);
-        else this.database.setOn(this.nid, true);
+        this.database.setOn(this.nid, !this.database.isOn(this.nid));
         this.setOnUnchecked();
+    }
+
+    public final void toggleFlags(final int flags) throws MdsException {
+        final int isflags = this.database.getFlags(this.nid);
+        final int clear = isflags & flags, set = (~isflags) & flags;
+        if(set != 0) this.database.setFlags(this.nid, set);
+        if(clear != 0) this.database.clearFlags(this.nid, clear);
+        this.info.setFlags(this.database.getFlags(this.nid));
     }
 
     @Override
