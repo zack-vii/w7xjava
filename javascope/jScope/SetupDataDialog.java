@@ -535,6 +535,13 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
             SetupDataDialog.this.signal_label.setText("");
             SetupDataDialog.this.x_expr.setText("");
             SetupDataDialog.this.y_expr.setText("");
+            SetupDataDialog.this.x_max.setText("");
+            SetupDataDialog.this.x_min.setText("");
+            SetupDataDialog.this.y_max.setText("");
+            SetupDataDialog.this.y_min.setText("");
+            SetupDataDialog.this.keep_ratio_b.setSelected(false);
+            SetupDataDialog.this.horizontal_flip_b.setSelected(false);
+            SetupDataDialog.this.vertical_flip_b.setSelected(false);
             this.mode1D.setSelectedIndex(0);
             this.mode2D.setSelectedIndex(0);
             this.marker.setSelectedIndex(0);
@@ -629,7 +636,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
             final int id = this.getSignalSelect() + 1;
             this.sig_list.setSelectedIndex(id);
             this.sig_list.ensureIndexIsVisible(id);
-            if(sig >= 0) if(this.getSignalSelect() < this.signals.size()) this.putSignalSetup(this.signals.elementAt(this.getSignalSelect()));
+            if(sig >= 0 && this.getSignalSelect() < this.signals.size()) this.putSignalSetup(this.signals.elementAt(this.getSignalSelect()));
             else this.resetSignalSetup();
             this.setOptionState(this.getSignalSelect() >= 0);
         }
@@ -1565,16 +1572,16 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         this.wi.vertical_flip = this.vertical_flip_b.isSelected();
         if(!this.wi.getModified()){
             /*
-                            if(wi.is_image)
-                            {
-                                if( wave.frames != null )
-                                {
-                                    wave.frames.setHorizontalFlip(wi.horizontal_flip);
-                                    wave.frames.setVerticalFlip(wi.vertical_flip);
-                                }
-                                return 0;
-                            }
-             */
+            if(wi.is_image)
+            {
+                if( wave.frames != null )
+                {
+                    wave.frames.setHorizontalFlip(wi.horizontal_flip);
+                    wave.frames.setVerticalFlip(wi.vertical_flip);
+                }
+                return 0;
+            }
+            */
             for(int i = 0; i < this.wave.wi.num_waves; i++){
                 this.wave.wi.markers[i] = s[i].marker;
                 this.wave.wi.markers_step[i] = s[i].marker_step;
