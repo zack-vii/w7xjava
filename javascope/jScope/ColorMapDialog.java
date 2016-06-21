@@ -67,18 +67,16 @@ final public class ColorMapDialog extends JDialog{
         return (Window)parent;
     }
     private final JCheckBox              useRGB, bitClip;
-    private final JPanel                 bitOptionPanel;
+    private final JPanel                 bitOptionPanel, jpbo;
     private final JComboBox              cmComboBox;
     private final Vector<ActionListener> colorMapListener = new Vector<ActionListener>();
     private ColorProfile                 colorProfile;
     private byte                         colorTables[];
     private final ColorPalette           cp;
-    private boolean                      isBitImage       = false;
-    private boolean                      is32BitImage     = false;
+    private boolean                      isBitImage       = false, is32BitImage = false;
     private String                       nameColorTables[];
     private final JButton                ok, cancel;
     private final JSlider                shiftSlider;
-    // WaveformEditor weR, weG, weB;
     private Waveform                     wave             = null;
 
     @SuppressWarnings("unchecked")
@@ -87,9 +85,10 @@ final public class ColorMapDialog extends JDialog{
         if(colorPaletteFile == null) colorPaletteFile = System.getProperty("user.home") + "/jScope/colors.tbl";
         this.readColorPalette(colorPaletteFile);
         this.getContentPane().setLayout(new BorderLayout());
-        JPanel jp = new JPanel(new GridLayout(3, 1));
-        jp.add(this.useRGB = new JCheckBox("RGB color"));
+        JPanel jp = new JPanel(new BorderLayout());
         this.add(jp, BorderLayout.NORTH);
+        jp.add(this.useRGB = new JCheckBox("RGB color"), BorderLayout.CENTER);
+        jp.add(jp = new JPanel(new GridLayout(2, 1)), BorderLayout.SOUTH);
         jp.add(this.cmComboBox = new JComboBox());
         final int r[] = new int[256];
         final int g[] = new int[256];
@@ -114,21 +113,18 @@ final public class ColorMapDialog extends JDialog{
         if(this.colorProfile == null) this.colorProfile = new ColorProfile(new ColorMap());
         jp.add(this.cp = new ColorPalette(this.colorProfile.colorMap.colors));
         this.add(this.bitOptionPanel = new JPanel(new BorderLayout()), BorderLayout.CENTER);
-        final JPanel jpbo = new JPanel(new BorderLayout());
-        this.bitOptionPanel.add(jpbo, BorderLayout.CENTER);
+        this.jpbo = new JPanel(new BorderLayout());
+        this.bitOptionPanel.add(this.jpbo, BorderLayout.CENTER);
         this.useRGB.addItemListener(new ItemListener(){
             @Override
             public void itemStateChanged(final ItemEvent e) {
-                jpbo.setEnabled(!ColorMapDialog.this.useRGB.isSelected());
-                ColorMapDialog.this.cmComboBox.setEnabled(!ColorMapDialog.this.useRGB.isSelected());
-                ColorMapDialog.this.shiftSlider.setEnabled(!ColorMapDialog.this.useRGB.isSelected());
-                ColorMapDialog.this.bitClip.setEnabled(!ColorMapDialog.this.useRGB.isSelected());
+                ColorMapDialog.this.updateMode();
                 ColorMapDialog.this.repaint();
                 ColorMapDialog.this.wave.setFrameRGB(ColorMapDialog.this.useRGB.isSelected());
             }
         });
-        jpbo.setBorder(BorderFactory.createTitledBorder("Bit Option"));
-        jpbo.add(this.shiftSlider = new JSlider(0, 0, 0), BorderLayout.CENTER);
+        this.jpbo.setBorder(BorderFactory.createTitledBorder("Bit Option"));
+        this.jpbo.add(this.shiftSlider = new JSlider(0, 0, 0), BorderLayout.CENTER);
         this.shiftSlider.setToolTipText("Number of significant bits");
         this.shiftSlider.setMajorTickSpacing(8);
         this.shiftSlider.setMinorTickSpacing(1);
@@ -145,7 +141,7 @@ final public class ColorMapDialog extends JDialog{
                 }
             }
         });
-        jpbo.add(this.bitClip = new JCheckBox("Bit Clip"), BorderLayout.EAST);
+        this.jpbo.add(this.bitClip = new JCheckBox("Bit Clip"), BorderLayout.EAST);
         this.bitClip.addItemListener(new ItemListener(){
             @Override
             public void itemStateChanged(final ItemEvent e) {
@@ -242,10 +238,7 @@ final public class ColorMapDialog extends JDialog{
         this.colorProfile = new ColorProfile(wave.getColorProfile());
         this.cmComboBox.setSelectedItem(this.colorProfile.colorMap);
         if(wave.frames != null && wave.frames.getFrameType() < 5){
-            if(!this.isBitImage){
-                this.bitOptionPanel.setVisible(true);
-                this.pack();
-            }
+            this.bitOptionPanel.setVisible(true);
             this.isBitImage = true;
             this.is32BitImage = wave.frames.getFrameType() == FrameData.BITMAP_IMAGE_32;
             this.useRGB.setVisible(this.is32BitImage);
@@ -259,11 +252,19 @@ final public class ColorMapDialog extends JDialog{
             }
             this.shiftSlider.setLabelTable(labelTable);
         }else{
-            if(!this.isBitImage){
-                this.bitOptionPanel.setVisible(false);
-                this.pack();
-            }
+            this.bitOptionPanel.setVisible(false);
+            this.useRGB.setVisible(false);
             this.isBitImage = this.is32BitImage = false;
         }
+        this.updateMode();
+        this.pack();
+    }
+
+    private final void updateMode() {
+        final boolean state = !(ColorMapDialog.this.is32BitImage && ColorMapDialog.this.useRGB.isSelected());
+        this.jpbo.setEnabled(state);
+        this.cmComboBox.setEnabled(state);
+        this.shiftSlider.setEnabled(state);
+        this.bitClip.setEnabled(state);
     }
 }

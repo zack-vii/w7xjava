@@ -230,18 +230,14 @@ public final class jScopeWaveInterface extends WaveInterface{
 
     public jScopeWaveInterface(final Waveform wave, final DataProvider dp, final jScopeDefaultValues def_vals, final boolean enable_cache){
         super(dp);
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface(" + wave + ", " + dp + ", " + def_vals + ", " + enable_cache + ")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface(" + wave + ", " + dp + ", " + def_vals + ", " + enable_cache + ")");
         this.setDefaultsValues(def_vals);
         this.EnableCache(enable_cache);
         this.wave = wave;
     }
 
     public void AddEvent(final UpdateEventListener w) throws IOException {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.AddEvent(" + w + ")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.AddEvent(" + w + ")");
         final int bit = jScopeWaveInterface.B_event;
         final boolean def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
         final String new_event = this.GetDefaultValue(bit, def_flag);
@@ -251,9 +247,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public void AddEvent(final UpdateEventListener w, final String event) throws IOException {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.AddEvent(" + w + ", \"" + event + "\")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.AddEvent(" + w + ", \"" + event + "\")");
         if(this.in_upd_event != null && this.in_upd_event.length() != 0){
             if(event == null || event.length() == 0){
                 this.dp.RemoveUpdateEventListener(w, this.in_upd_event);
@@ -272,9 +266,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public void CreateVector() {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.CreateVector()");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.CreateVector()");
         this.in_label = new String[this.num_waves];
         this.shots = new long[this.num_waves];
         this.in_y = new String[this.num_waves];
@@ -300,9 +292,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     @Override
     public void Erase() {
         super.Erase();
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.Erase()");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.Erase()");
         this.in_def_node = null;
         this.in_upd_event = null;
         this.last_upd_event = null;
@@ -323,6 +313,7 @@ public final class jScopeWaveInterface extends WaveInterface{
         this.defaults = 0xffffffff;
         this.default_is_update = false;
         this.previous_shot = "";
+        this.colorProfile = null;
         this.cin_upd_limits = true;
     }
 
@@ -377,7 +368,7 @@ public final class jScopeWaveInterface extends WaveInterface{
             prop = pr.getProperty(prompt + ".bitClip");
             this.colorProfile.bitClip = jScopeWaveInterface.getBoolean(prop, false);
             prop = pr.getProperty(prompt + ".useRGB");
-            this.colorProfile.useRGB = jScopeWaveInterface.getBoolean(prop, true);
+            this.colorProfile.useRGB = jScopeWaveInterface.getBoolean(prop, false);
             this.cexperiment = pr.getProperty(prompt + ".experiment");
             this.cin_shot = pr.getProperty(prompt + ".shot");
             prop = pr.getProperty(prompt + ".x");
@@ -522,9 +513,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public String GetDefaultValue(final int i, final boolean def_flag) {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.GetDefaultValue(" + i + ", " + def_flag + ")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.GetDefaultValue(" + i + ", " + def_flag + ")");
         String out = null;
         switch(i){
             case jScopeWaveInterface.B_title:
@@ -571,9 +560,7 @@ public final class jScopeWaveInterface extends WaveInterface{
 
     public String getErrorString() // boolean brief_error)
     {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.getErrorString()");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.getErrorString()");
         String full_error = null;
         if(this.w_error == null || this.w_error.length == 0) return null;
         if(!this.is_image){
@@ -616,9 +603,7 @@ public final class jScopeWaveInterface extends WaveInterface{
      * 2 main scope defined shot
      */
     public int GetShotIdx() {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.GetShotIdx()");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.GetShotIdx()");
         final String main_shot_str = ((jScopeWaveContainer)(this.wave.getParent())).getMainShotStr();
         if(this.UseDefaultShot()){
             if(main_shot_str != null && main_shot_str.length() != 0) return 2;
@@ -628,9 +613,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public String GetUsedShot() {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.GetUsedShot()");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.GetUsedShot()");
         String out = null;
         switch(this.GetShotIdx()){
             case 0:
@@ -647,9 +630,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public void mapColorIndex(final int colorMap[]) {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.mapColorIndex(" + colorMap + ")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.mapColorIndex(" + colorMap + ")");
         if(colorMap == null) return;
         try{
             for(int i = 0; i < this.colors_idx.length; i++){
@@ -677,9 +658,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public void RemoveEvent(final UpdateEventListener w) throws IOException {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.RemoveEvent(" + w + ")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.RemoveEvent(" + w + ")");
         if(this.in_upd_event != null){
             this.dp.RemoveUpdateEventListener(w, this.in_upd_event);
             this.in_upd_event = null;
@@ -687,26 +666,20 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public void RemoveEvent(final UpdateEventListener w, final String event) throws IOException {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.RemoveEvent(" + w + ", \"" + event + "\")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.RemoveEvent(" + w + ", \"" + event + "\")");
         this.dp.RemoveUpdateEventListener(w, event);
     }
 
     @Override
     public void SetDataProvider(final DataProvider _dp) {
         super.SetDataProvider(_dp);
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.SetDataProvider(" + _dp + ")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.SetDataProvider(" + _dp + ")");
         this.default_is_update = false;
         this.previous_shot = "";
     }
 
     public void setDefaultsValues(final jScopeDefaultValues def_vals) {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.setDefaultsValues(" + def_vals + ")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.setDefaultsValues(" + def_vals + ")");
         this.def_vals = def_vals;
         this.default_is_update = false;
         this.def_vals.setIsEvaluated(false);
@@ -724,9 +697,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public void ToFile(final PrintWriter out, final String prompt) throws IOException {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.ToFile(" + out + ", \"" + prompt + "\")");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.ToFile(" + out + ", \"" + prompt + "\")");
         int exp, exp_n, sht, sht_n, cnum_shot, eval_shot = 1;
         cnum_shot = this.num_shot;
         /*
@@ -814,9 +785,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public String Update() throws IOException {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.Update()");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.Update()");
         final int mode = this.wave.GetMode();
         try{
             this.wave.SetMode(Waveform.MODE_WAIT);
@@ -829,7 +798,6 @@ public final class jScopeWaveInterface extends WaveInterface{
                     String def = in_def_node;
                     if (in_def_node.indexOf("\\") == 0)
                         def = "\\\\\\" + in_def_node;
-
                     dp.SetEnvironment("__default_node = " + def);
                 }
                  */
@@ -845,9 +813,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public void UpdateDefault() {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.UpdateDefault()");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.UpdateDefault()");
         boolean def_flag;
         int bit;
         if(this.default_is_update) return;
@@ -901,18 +867,14 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public void UpdateShot() throws IOException {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.UpdateShot()");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.UpdateShot()");
         long curr_shots[] = null;
         final String main_shot_str = ((jScopeWaveContainer)(this.wave.getParent())).getMainShotStr();
         final String c_shot_str = jScopeWaveInterface.containMainShot(this.GetUsedShot(), main_shot_str);
         /* 12-2-2009
                 if( !getModified() && in_shot != null && c_shot_str != null)
                 {
-
                     setModified( !in_shot.equals( c_shot_str ) );
-
                     if(! getModified() )
                         return;
                 }
@@ -955,9 +917,7 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     public boolean UseDefaultShot() {
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.UseDefaultShot()");
-        }
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.UseDefaultShot()");
         return((this.defaults & (1 << jScopeWaveInterface.B_shot)) != 0);
     }
 }
