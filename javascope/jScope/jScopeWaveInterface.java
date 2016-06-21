@@ -376,6 +376,8 @@ public final class jScopeWaveInterface extends WaveInterface{
             this.colorProfile.bitShift = jScopeWaveInterface.getInteger(prop, 0);
             prop = pr.getProperty(prompt + ".bitClip");
             this.colorProfile.bitClip = jScopeWaveInterface.getBoolean(prop, false);
+            prop = pr.getProperty(prompt + ".useRGB");
+            this.colorProfile.useRGB = jScopeWaveInterface.getBoolean(prop, true);
             this.cexperiment = pr.getProperty(prompt + ".experiment");
             this.cin_shot = pr.getProperty(prompt + ".shot");
             prop = pr.getProperty(prompt + ".x");
@@ -756,9 +758,12 @@ public final class jScopeWaveInterface extends WaveInterface{
             WaveInterface.WriteLine(out, prompt + "vertical_flip: ", "" + this.vertical_flip);
         }
         if(this.colorProfile != null){
-            WaveInterface.WriteLine(out, prompt + "palette: ", "" + this.colorProfile.colorMap.name);
-            WaveInterface.WriteLine(out, prompt + "bitShift: ", "" + this.colorProfile.bitShift);
-            WaveInterface.WriteLine(out, prompt + "bitClip: ", "" + this.colorProfile.bitClip);
+            if(this.colorProfile.useRGB) WaveInterface.WriteLine(out, prompt + "useRGB: ", "" + this.colorProfile.useRGB);
+            else{
+                WaveInterface.WriteLine(out, prompt + "palette: ", "" + this.colorProfile.colorMap.name);
+                WaveInterface.WriteLine(out, prompt + "bitShift: ", "" + this.colorProfile.bitShift);
+                WaveInterface.WriteLine(out, prompt + "bitClip: ", "" + this.colorProfile.bitClip);
+            }
         }
         WaveInterface.WriteLine(out, prompt + "experiment: ", this.cexperiment);
         WaveInterface.WriteLine(out, prompt + "event: ", this.cin_upd_event);

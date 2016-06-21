@@ -1414,6 +1414,13 @@ public class Waveform extends JComponent implements SignalListener{
         this.repaint();
     }
 
+    public final void setFrameRGB(final boolean useRGB) {
+        if(this.frames == null) return;
+        this.frames.setRGB(useRGB);
+        this.not_drawn = true;
+        this.repaint();
+    }
+
     public final void SetFrames(final Frames frames) {
         this.frames = frames;
     }

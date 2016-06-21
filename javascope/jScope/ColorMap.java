@@ -135,17 +135,27 @@ final public class ColorMap{
     public static final class ColorProfile{
         public boolean  bitClip;
         public int      bitShift;
+        public boolean  useRGB;
         public ColorMap colorMap;
 
         public ColorProfile(){
-            this(new ColorMap(), 0, false);
+            this(false);
+        }
+
+        public ColorProfile(final boolean useRGB){
+            this(new ColorMap(), 0, false, useRGB);
         }
 
         public ColorProfile(final ColorMap colorMap){
-            this(colorMap, 0, false);
+            this(colorMap, 0, false, false);
         }
 
         public ColorProfile(final ColorMap colorMap, final int bitShift, final boolean bitClip){
+            this(colorMap, bitShift, bitClip, false);
+        }
+
+        public ColorProfile(final ColorMap colorMap, final int bitShift, final boolean bitClip, final boolean useRGB){
+            this.useRGB = useRGB;
             this.colorMap = colorMap;
             this.bitShift = bitShift;
             this.bitClip = bitClip;
@@ -155,6 +165,7 @@ final public class ColorMap{
             this.colorMap = cp.colorMap;
             this.bitShift = cp.bitShift;
             this.bitClip = cp.bitClip;
+            this.useRGB = cp.useRGB;
         }
     }
 

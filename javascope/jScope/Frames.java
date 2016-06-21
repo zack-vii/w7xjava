@@ -17,7 +17,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
-import java.awt.image.DataBufferUShort;
 import java.awt.image.DirectColorModel;
 import java.awt.image.PixelGrabber;
 import java.awt.image.Raster;
@@ -92,25 +91,59 @@ public final class Frames extends Canvas{
             this.tracker = new MediaTracker(frames);
         }
 
-        private final void doBitShift(final BufferedImage bi, final byte[] buffer) throws Exception {
-            if(this.frameType != FrameData.BITMAP_IMAGE_16){ return; }
+        private final void doBitShift(final BufferedImage bi, final byte[] buffer) {
             if(DEBUG.M) System.out.println("Frames.FrameCache.doBitShift(" + bi + "," + buffer + "[" + buffer.length + "])");
-            final ByteArrayInputStream b = new ByteArrayInputStream(buffer);
-            final DataInputStream din = new DataInputStream(b);
-            final WritableRaster wr = bi.getRaster();
-            final DataBuffer db = wr.getDataBuffer();
-            final int nPixels = db.getSize();
-            if(nPixels != this.frameDim.width * this.frameDim.height) throw new Exception("INTERNAL ERRROR: Inconsistend frame dimension when getting frame");
-            int val;
-            final int rot32 = (-this.colorProfile.bitShift) % 32;
-            for(int j = 0; j < nPixels; j++){
-                val = Integer.rotateRight(din.readShort(), rot32) & 0xFFFF;
-                if(this.colorProfile.bitClip) db.setElem(j, val > 255 ? 255 : val);
-                else db.setElem(j, (val & 0xFF));
+            if(this.frameType > (this.colorProfile.useRGB ? 2 : 4)) return;// not integer
+            try{
+                final ByteArrayInputStream b = new ByteArrayInputStream(buffer);
+                final DataInputStream din = new DataInputStream(b);
+                final WritableRaster wr = bi.getRaster();
+                final DataBuffer db = wr.getDataBuffer();
+                final int nPixels = db.getSize();
+                if(nPixels != this.frameDim.width * this.frameDim.height) throw new Exception("INTERNAL ERRROR: Inconsistend frame dimension when getting frame");
+                final int bitshift = this.colorProfile.bitShift < 0 ? this.colorProfile.bitShift + this.pixelSize : this.colorProfile.bitShift;
+                final boolean bitclip = this.colorProfile.bitClip && this.colorProfile.bitShift < this.pixelSize;
+                switch(this.frameType){
+                    default:
+                        return;
+                    case FrameData.BITMAP_IMAGE_8:{
+                        final int rot32 = (bitshift + 24) % 32;
+                        final int mask = ((int)(1l << (bitclip ? bitshift : this.pixelSize)) - 1);
+                        for(int j = 0; j < nPixels; j++){
+                            final int val = din.readByte() & 0xFF;
+                            if(this.colorProfile.bitClip && val > mask) db.setElem(j, 0xFF);
+                            else db.setElem(j, Integer.rotateRight(val & mask, rot32) & 0xFF);
+                        }
+                        return;
+                    }
+                    case FrameData.BITMAP_IMAGE_16:{
+                        final int rot32 = (bitshift + 24) % 32;
+                        final int mask = ((int)(1l << (bitclip ? bitshift : this.pixelSize)) - 1);
+                        for(int j = 0; j < nPixels; j++){
+                            final int val = din.readShort() & 0xFFFF;
+                            if(this.colorProfile.bitClip && val > mask) db.setElem(j, 0xFF);
+                            else db.setElem(j, Integer.rotateRight(val & mask, rot32) & 0xFF);
+                        }
+                        return;
+                    }
+                    case FrameData.BITMAP_IMAGE_32:{
+                        final int rot64 = (bitshift + 56) % 64;
+                        final long mask = (1l << (bitclip ? bitshift : this.pixelSize)) - 1;
+                        for(int j = 0; j < nPixels; j++){
+                            final long val = din.readInt();
+                            if(this.colorProfile.bitClip && val > mask) db.setElem(j, 0xFF);
+                            else db.setElem(j, (int)(Long.rotateRight(val & mask, rot64) & 0xFF));
+                        }
+                        return;
+                    }
+                }
+            }catch(final Exception exc){
+                System.err.println(exc);
+                return;
             }
         }
 
-        private final void doBitShift(final BufferedImage bi, final FrameDescriptor fDesc) throws Exception {
+        private final void doBitShift(final BufferedImage bi, final FrameDescriptor fDesc) {
             this.doBitShift(bi, fDesc.buffer);
         }
 
@@ -130,6 +163,7 @@ public final class Frames extends Canvas{
             if(fDesc != null) return fDesc;
             try{
                 this.loadFrame(idx);
+                this.updateCount++;
                 return this.recentFrames.get(new Integer(idx));
             }catch(final Exception exc){
                 System.err.println("# >> Error Loading frame at " + idx + ": " + exc);
@@ -156,16 +190,22 @@ public final class Frames extends Canvas{
             return fDesc.updatedImage;
             // Otherwise it is necessary to update it
             Image img;
-            if(this.frameType == FrameData.BITMAP_IMAGE_32) img = fDesc.image;
-            else{
-                final ColorModel colorModel = this.colorProfile.colorMap.getIndexColorModel(this.pixelSize < 32 ? this.pixelSize : 16);
+            if(this.frameType == FrameData.BITMAP_IMAGE_32 && this.colorProfile.useRGB){
+                final int n_pix = this.frameDim.width * this.frameDim.height;
+                final int buf_out[] = new int[n_pix];
+                final ByteArrayInputStream b = new ByteArrayInputStream(fDesc.buffer);
+                final DataInputStream din = new DataInputStream(b);
+                for(int j = 0; j < n_pix; j++)
+                    buf_out[j] = 0xFF000000 | din.readInt();
+                if(DEBUG.A) DEBUG.printIntArray(buf_out, 1, this.frameDim.width, this.frameDim.height, 1);
+                final ColorModel colorModel = new DirectColorModel(32, 0xff0000, 0xff00, 0xff, 0xff000000);
+                final DataBuffer db = new DataBufferInt(buf_out, buf_out.length);
+                final WritableRaster raster = Raster.createPackedRaster(db, this.frameDim.width, this.frameDim.height, this.frameDim.width, new int[]{0xff0000, 0xff00, 0xff, 0xff000000}, null);
+                img = new BufferedImage(colorModel, raster, false, null);
+            }else{
+                final ColorModel colorModel = this.colorProfile.colorMap.getIndexColorModel(8);
                 img = new BufferedImage(colorModel, ((BufferedImage)fDesc.image).getRaster(), false, null);
-            }
-            try{
                 this.doBitShift((BufferedImage)img, fDesc);
-            }catch(final Exception exc){
-                System.err.println(exc);
-                return null;
             }
             img = FrameCache.createCompatibleImage((BufferedImage)img);
             this.tracker = new MediaTracker(this.frames);
@@ -269,46 +309,31 @@ public final class Frames extends Canvas{
             DataBuffer db;
             WritableRaster raster;
             switch(this.frameType){
-                case FrameData.BITMAP_IMAGE_8:{
-                    if(DEBUG.M) System.out.println("Frames.FrameData.BITMAP_IMAGE_8");
-                    this.pixelSize = 8;
-                    this.bytesPerPixel = 1;
-                    // FlipFrame(buf, frameDim, 1);
-                    final ColorModel colorModel = this.colorProfile.colorMap.getIndexColorModel(8);
-                    db = new DataBufferByte(buf, buf.length);
-                    raster = Raster.createInterleavedRaster(db, this.frameDim.width, this.frameDim.height, this.frameDim.width, 1, new int[]{0}, null);
-                    img = new BufferedImage(colorModel, raster, false, null);
-                    break;
-                }
-                case FrameData.BITMAP_IMAGE_16:{
-                    if(DEBUG.M) System.out.println("Frames.FrameData.BITMAP_IMAGE_16");
-                    this.pixelSize = 16;
-                    this.bytesPerPixel = 2;
-                    final ColorModel colorModel = this.colorProfile.colorMap.getIndexColorModel(16);
-                    raster = Raster.createInterleavedRaster(DataBuffer.TYPE_USHORT, this.frameDim.width, this.frameDim.height, this.frameDim.width, 1, new int[]{0}, null);
-                    img = new BufferedImage(colorModel, raster, false, null);
-                    try{
-                        this.doBitShift(img, buf);
-                    }catch(final Exception exc){
-                        System.err.println(exc);
-                    }
-                    break;
-                }
+                case FrameData.BITMAP_IMAGE_8:
+                case FrameData.BITMAP_IMAGE_16:
                 case FrameData.BITMAP_IMAGE_32:{
-                    if(DEBUG.M) System.out.println("Frames.FrameData.BITMAP_IMAGE_32");
-                    this.pixelSize = 32;
-                    this.bytesPerPixel = 4;
-                    final int n_pix = this.frameDim.width * this.frameDim.height;
-                    final int buf_out[] = new int[n_pix];
-                    final ByteArrayInputStream b = new ByteArrayInputStream(buf);
-                    final DataInputStream din = new DataInputStream(b);
-                    for(int j = 0; j < n_pix; j++){
-                        buf_out[j] = 0xFF000000 | din.readInt();
+                    switch(this.frameType){
+                        case FrameData.BITMAP_IMAGE_8:{
+                            if(DEBUG.M) System.out.println("Frames.FrameData.BITMAP_IMAGE_8");
+                            this.pixelSize = 8;
+                            this.bytesPerPixel = 1;
+                            break;
+                        }
+                        case FrameData.BITMAP_IMAGE_16:{
+                            if(DEBUG.M) System.out.println("Frames.FrameData.BITMAP_IMAGE_16");
+                            this.pixelSize = 16;
+                            this.bytesPerPixel = 2;
+                            break;
+                        }
+                        case FrameData.BITMAP_IMAGE_32:{
+                            if(DEBUG.M) System.out.println("Frames.FrameData.BITMAP_IMAGE_32");
+                            this.pixelSize = 32;
+                            this.bytesPerPixel = 4;
+                            break;
+                        }
                     }
-                    if(DEBUG.A) DEBUG.printIntArray(buf_out, 1, this.frameDim.width, this.frameDim.height, 1);
-                    final ColorModel colorModel = new DirectColorModel(32, 0xff0000, 0xff00, 0xff, 0xff000000);
-                    db = new DataBufferInt(buf_out, buf.length);
-                    raster = Raster.createPackedRaster(db, this.frameDim.width, this.frameDim.height, this.frameDim.width, new int[]{0xff0000, 0xff00, 0xff, 0xff000000}, null);
+                    final ColorModel colorModel = this.colorProfile.colorMap.getIndexColorModel(8);
+                    raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, this.frameDim.width, this.frameDim.height, this.frameDim.width, 1, new int[]{0}, null);
                     img = new BufferedImage(colorModel, raster, false, null);
                     break;
                 }
@@ -327,12 +352,12 @@ public final class Frames extends Canvas{
                         if(buf_out[j] > max) max = buf_out[j];
                         if(buf_out[j] < min) min = buf_out[j];
                     }
-                    final short buf_out1[] = new short[n_pix];
+                    final byte buf_out1[] = new byte[n_pix];
                     for(int j = 0; j < n_pix; j++){
-                        buf_out1[j] = (short)(255 * (buf_out[j] - min) / (max - min));
+                        buf_out1[j] = (byte)(255 * (buf_out[j] - min) / (max - min));
                     }
-                    final ColorModel colorModel = this.colorProfile.colorMap.getIndexColorModel(16);
-                    db = new DataBufferUShort(buf_out1, buf.length);
+                    final ColorModel colorModel = this.colorProfile.colorMap.getIndexColorModel(8);
+                    db = new DataBufferByte(buf_out1, buf.length);
                     raster = Raster.createInterleavedRaster(db, this.frameDim.width, this.frameDim.height, this.frameDim.width, 1, new int[]{0}, null);
                     img = new BufferedImage(colorModel, raster, false, null);
                     break;
@@ -392,6 +417,13 @@ public final class Frames extends Canvas{
             }catch(final Exception exc){
                 this.numFrames = 0;
             }
+        }
+
+        public final void setRGB(final boolean useRGB) {
+            if(DEBUG.M) System.out.println("Frames.FrameCache.setRGB(" + useRGB + ")");
+            if(this.colorProfile.useRGB == useRGB) return;
+            this.colorProfile.useRGB = useRGB;
+            this.updateCount++;
         }
     } // End class FrameCache
 
@@ -977,6 +1009,10 @@ public final class Frames extends Canvas{
         final Point mp = this.getFramePoint(new Point(x_pixel, y_pixel), d);
         this.x_measure_pixel = mp.x;
         this.y_measure_pixel = mp.y;
+    }
+
+    public final void setRGB(final boolean useRGB) {
+        this.cache.setRGB(useRGB);
     }
 
     public final void setVerticalFlip(final boolean vertical_flip) {
