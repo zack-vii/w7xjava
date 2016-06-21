@@ -111,7 +111,7 @@ final public class ColorMapDialog extends JDialog{
         });
         this.colorProfile = new ColorProfile((ColorMap)this.cmComboBox.getSelectedItem());
         if(this.colorProfile == null) this.colorProfile = new ColorProfile(new ColorMap());
-        jp.add(this.cp = new ColorPalette(this.colorProfile.colorMap.colors));
+        jp.add(this.cp = new ColorPalette(this.colorProfile.colorMap.colors), 0);
         this.add(this.bitOptionPanel = new JPanel(new BorderLayout()), BorderLayout.CENTER);
         this.jpbo = new JPanel(new BorderLayout());
         this.bitOptionPanel.add(this.jpbo, BorderLayout.CENTER);
