@@ -337,40 +337,40 @@ public class mdsDataProvider implements DataProvider{
     class SimpleFrameData implements FrameData{
         byte              buf[];
         private Dimension dim             = null;
-        private int       end_idx         = -1;
         String            error;
         int               first_frame_idx = -1;
         int               mode            = -1;
         private int       n_frames        = 0;
         int               pixel_size;
-        private int       st_idx          = -1;
         double            time_max, time_min;
         private float[]   times           = null;
 
         public SimpleFrameData(final Signal sig, final double time_min, final double time_max) throws Exception{
             if(DEBUG.M) System.out.println("mdsDataProvider.SimpleFrameData(" + sig + ", " + time_min + ", " + time_max + ")");
-            int i;
             final float all_times[];
             this.time_min = time_min;
             this.time_max = time_max;
             if(!(sig.dat instanceof ByteArray)) throw(Exception)sig.dat;
-            if(!(sig.dim instanceof RealArray)) throw(Exception)sig.dim;
             this.buf = ((ByteArray)sig.dat).buf;
             this.mode = sig.frameType;
             this.pixel_size = sig.dataSize * 8;
             this.dim = new Dimension(sig.shape[0], sig.shape[1]);
-            all_times = ((RealArray)sig.dim).getFloatArray();
-            for(i = 0; i < all_times.length; i++){
-                if(all_times[i] > time_max) break;
-                if(this.st_idx == -1 && all_times[i] >= time_min) this.st_idx = i;
+            if(!(sig.dim instanceof RealArray)){
+                this.error = ((Exception)sig.dim).getMessage();
+                this.n_frames = sig.shape[sig.shape.length - 1];
+                this.times = new float[this.n_frames];
+                for(int i = 0; i < this.n_frames; i++)
+                    this.times[i] = i;
+            }else{
+                all_times = ((RealArray)sig.dim).getFloatArray();
+                int st_idx, end_idx;
+                for(st_idx = 0; st_idx < all_times.length && all_times[st_idx] < time_min; st_idx++);
+                for(end_idx = st_idx; end_idx < all_times.length && all_times[end_idx] <= time_max; end_idx++);
+                this.n_frames = end_idx - st_idx;
+                if(this.n_frames == 0) throw(new IOException("No frames found between " + time_min + " - " + time_max));
+                this.times = new float[this.n_frames];
+                System.arraycopy(all_times, st_idx, this.times, 0, this.n_frames);
             }
-            this.end_idx = i;
-            if(this.st_idx == -1) throw(new IOException("No frames found between " + time_min + " - " + time_max));
-            this.n_frames = this.end_idx - this.st_idx;
-            this.times = new float[this.n_frames];
-            int j = 0;
-            for(i = this.st_idx; i < this.end_idx; i++)
-                this.times[j++] = all_times[i];
         }
 
         @Override
@@ -1326,6 +1326,7 @@ public class mdsDataProvider implements DataProvider{
             return(new SimpleFrameData(sig, time_min, time_max));
         }catch(final Exception e){
             if(DEBUG.D) System.err.println("# mdsDataProvider.SimpleFrameData(" + in_y + "): " + e);
+            else System.err.println(e);
         }
         return null;
     }
