@@ -539,6 +539,8 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
             SetupDataDialog.this.x_min.setText("");
             SetupDataDialog.this.y_max.setText("");
             SetupDataDialog.this.y_min.setText("");
+            SetupDataDialog.this.x_log.setSelected(false);
+            SetupDataDialog.this.y_log.setSelected(false);
             SetupDataDialog.this.keep_ratio_b.setSelected(false);
             SetupDataDialog.this.horizontal_flip_b.setSelected(false);
             SetupDataDialog.this.vertical_flip_b.setSelected(false);
@@ -1374,6 +1376,8 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         this.upd_event.setEditable(!state);
         this.def_node_b.setSelected(state);
         this.def_node.setEditable(!state);
+        this.upd_limits_b.setSelected(state);
+        this.upd_limits.setEnabled(!state);
         this.PutDefaultValues();
     }
 
