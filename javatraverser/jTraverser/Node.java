@@ -20,9 +20,23 @@ import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
 
 public class Node{
-    static Node    copied;
-    static Node    copiedNode;
-    static boolean cut;
+    private static Node              copied;
+    private static boolean           cut;
+    private static final ImageIcon[] ICONS = new ImageIcon[]{                                     //
+                                                   Node.loadIcon("jtraverser/numeric.gif"),       // any
+                                                   Node.loadIcon("jtraverser/structure.gif"),     //
+                                                   Node.loadIcon("jtraverser/action.gif"),        //
+                                                   Node.loadIcon("jtraverser/device.gif"),        //
+                                                   Node.loadIcon("jtraverser/dispatch.gif"),      //
+                                                   Node.loadIcon("jtraverser/numeric.gif"),       //
+                                                   Node.loadIcon("jtraverser/signal.gif"),        //
+                                                   Node.loadIcon("jtraverser/task.gif"),          //
+                                                   Node.loadIcon("jtraverser/text.gif"),          //
+                                                   Node.loadIcon("jtraverser/window.gif"),        //
+                                                   Node.loadIcon("jtraverser/axis.gif"),          //
+                                                   Node.loadIcon("jtraverser/subtree.gif"),       //
+                                                   Node.loadIcon("jtraverser/compound.gif")       //
+                                             };
 
     public static void copySubtreeContent(final Node fromNode, final Node toNode) {
         try{
@@ -67,6 +81,12 @@ public class Node{
             if(j == usedNames.length) return newName;
         }
         return "XXXXXXX"; // Dummy name, hopefully will never reach this
+    }
+
+    private static final ImageIcon loadIcon(final String gifname) {
+        final String base = System.getProperty("icon_base");
+        if(base == null) return new ImageIcon(Node.class.getClassLoader().getResource(gifname));
+        return new ImageIcon(base + "/" + gifname);
     }
 
     public static void updateCell() {}
@@ -305,45 +325,8 @@ public class Node{
 
     public final Component getIcon(final boolean isSelected) {
         if(this.info == null) return null;
-        Icon icon = null;
-        switch(this.getUsage()){
-            case NodeInfo.USAGE_NONE:
-                icon = this.loadIcon("jtraverser/structure.gif");
-                break;
-            case NodeInfo.USAGE_ACTION:
-                icon = this.loadIcon("jtraverser/action.gif");
-                break;
-            case NodeInfo.USAGE_DEVICE:
-                icon = this.loadIcon("jtraverser/device.gif");
-                break;
-            case NodeInfo.USAGE_DISPATCH:
-                icon = this.loadIcon("jtraverser/dispatch.gif");
-                break;
-            case NodeInfo.USAGE_ANY:
-            case NodeInfo.USAGE_NUMERIC:
-                icon = this.loadIcon("jtraverser/numeric.gif");
-                break;
-            case NodeInfo.USAGE_TASK:
-                icon = this.loadIcon("jtraverser/task.gif");
-                break;
-            case NodeInfo.USAGE_TEXT:
-                icon = this.loadIcon("jtraverser/text.gif");
-                break;
-            case NodeInfo.USAGE_WINDOW:
-                icon = this.loadIcon("jtraverser/window.gif");
-                break;
-            case NodeInfo.USAGE_AXIS:
-                icon = this.loadIcon("jtraverser/axis.gif");
-                break;
-            case NodeInfo.USAGE_SIGNAL:
-                icon = this.loadIcon("jtraverser/signal.gif");
-                break;
-            case NodeInfo.USAGE_COMPOUND_DATA:
-                icon = this.loadIcon("jtraverser/compound.gif");
-                break;
-            case NodeInfo.USAGE_SUBTREE:
-                icon = this.loadIcon("jtraverser/subtree.gif");
-        }
+        final int usage = this.getUsage();
+        final Icon icon = usage <= Node.ICONS.length ? Node.ICONS[usage] : null;
         this.label = new TreeNodeLabel(this, this.getName(), icon, isSelected);
         return this.label;
     }
@@ -527,12 +510,6 @@ public class Node{
 
     public final boolean isWriteOnce() {
         return this.info.isWriteOnce();
-    }
-
-    private final ImageIcon loadIcon(final String gifname) {
-        final String base = System.getProperty("icon_base");
-        if(base == null) return new ImageIcon(this.getClass().getClassLoader().getResource(gifname));
-        return new ImageIcon(base + "/" + gifname);
     }
 
     final boolean move(final Node newParent) {
