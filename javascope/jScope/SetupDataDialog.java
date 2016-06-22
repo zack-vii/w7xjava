@@ -638,7 +638,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
             final int id = this.getSignalSelect() + 1;
             this.sig_list.setSelectedIndex(id);
             this.sig_list.ensureIndexIsVisible(id);
-            if(sig >= 0 && this.getSignalSelect() < this.signals.size()) this.putSignalSetup(this.signals.elementAt(this.getSignalSelect()));
+            if(sig >= 0) if(this.getSignalSelect() < this.signals.size()) this.putSignalSetup(this.signals.elementAt(this.getSignalSelect()));
             else this.resetSignalSetup();
             this.setOptionState(this.getSignalSelect() >= 0);
         }
