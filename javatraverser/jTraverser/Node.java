@@ -308,41 +308,41 @@ public class Node{
         Icon icon = null;
         switch(this.getUsage()){
             case NodeInfo.USAGE_NONE:
-                icon = this.loadIcon("jTraverser/structure.gif");
+                icon = this.loadIcon("jtraverser/structure.gif");
                 break;
             case NodeInfo.USAGE_ACTION:
-                icon = this.loadIcon("jTraverser/action.gif");
+                icon = this.loadIcon("jtraverser/action.gif");
                 break;
             case NodeInfo.USAGE_DEVICE:
-                icon = this.loadIcon("jTraverser/device.gif");
+                icon = this.loadIcon("jtraverser/device.gif");
                 break;
             case NodeInfo.USAGE_DISPATCH:
-                icon = this.loadIcon("jTraverser/dispatch.gif");
+                icon = this.loadIcon("jtraverser/dispatch.gif");
                 break;
             case NodeInfo.USAGE_ANY:
             case NodeInfo.USAGE_NUMERIC:
-                icon = this.loadIcon("jTraverser/numeric.gif");
+                icon = this.loadIcon("jtraverser/numeric.gif");
                 break;
             case NodeInfo.USAGE_TASK:
-                icon = this.loadIcon("jTraverser/task.gif");
+                icon = this.loadIcon("jtraverser/task.gif");
                 break;
             case NodeInfo.USAGE_TEXT:
-                icon = this.loadIcon("jTraverser/text.gif");
+                icon = this.loadIcon("jtraverser/text.gif");
                 break;
             case NodeInfo.USAGE_WINDOW:
-                icon = this.loadIcon("jTraverser/window.gif");
+                icon = this.loadIcon("jtraverser/window.gif");
                 break;
             case NodeInfo.USAGE_AXIS:
-                icon = this.loadIcon("jTraverser/axis.gif");
+                icon = this.loadIcon("jtraverser/axis.gif");
                 break;
             case NodeInfo.USAGE_SIGNAL:
-                icon = this.loadIcon("jTraverser/signal.gif");
+                icon = this.loadIcon("jtraverser/signal.gif");
                 break;
             case NodeInfo.USAGE_COMPOUND_DATA:
-                icon = this.loadIcon("jTraverser/compound.gif");
+                icon = this.loadIcon("jtraverser/compound.gif");
                 break;
             case NodeInfo.USAGE_SUBTREE:
-                icon = this.loadIcon("jTraverser/subtree.gif");
+                icon = this.loadIcon("jtraverser/subtree.gif");
         }
         this.label = new TreeNodeLabel(this, this.getName(), icon, isSelected);
         return this.label;
