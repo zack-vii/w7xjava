@@ -22,22 +22,22 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import jScope.Base64;
-import jScope.ConnectionEvent;
-import jScope.ConnectionListener;
-import jScope.DataProvider;
-import jScope.DataServerItem;
-import jScope.FrameData;
-import jScope.RandomAccessData;
-import jScope.UpdateEventListener;
-import jScope.WaveData;
-import jScope.WaveDataListener;
-import jScope.XYData;
 import jet.ji.JiDim;
 import jet.ji.JiNcSource;
 import jet.ji.JiVar;
+import jscope.Base64;
+import jscope.ConnectionEvent;
+import jscope.ConnectionListener;
+import jscope.DataProvider;
+import jscope.DataServerItem;
+import jscope.FrameData;
+import jscope.RandomAccessData;
+import jscope.UpdateEventListener;
+import jscope.WaveData;
+import jscope.WaveDataListener;
+import jscope.XYData;
 
-public final class jetDataProvider implements DataProvider{
+public final class JetDataProvider implements DataProvider{
     class SimpleWaveData implements WaveData{
         String in_x, in_y;
 
@@ -55,33 +55,33 @@ public final class jetDataProvider implements DataProvider{
 
         @Override
         public XYData getData(final double xmin, final double xmax, final int numPoints) throws Exception {
-            final double x[] = this.GetXDoubleData();
-            final float y[] = this.GetFloatData();
+            final double x[] = this.getXDoubleData();
+            final float y[] = this.getFloatData();
             return new XYData(x, y, Double.POSITIVE_INFINITY);
         }
 
         @Override
         public XYData getData(final int numPoints) throws Exception {
-            final double x[] = this.GetXDoubleData();
-            final float y[] = this.GetFloatData();
+            final double x[] = this.getXDoubleData();
+            final float y[] = this.getFloatData();
             return new XYData(x, y, Double.POSITIVE_INFINITY);
         }
 
         @Override
         public void getDataAsync(final double lowerBound, final double upperBound, final int numPoints) {}
 
-        public float[] GetFloatData() throws IOException {
-            return jetDataProvider.this.GetFloatArray(this.in_y, jetDataProvider.DATA);
+        public float[] getFloatData() throws IOException {
+            return JetDataProvider.this.getFloatArray(this.in_y, JetDataProvider.DATA);
         }
 
         @Override
         public int getNumDimension() throws IOException {
-            jetDataProvider.this.GetFloatArray(this.in_y, jetDataProvider.DATA);
-            return jetDataProvider.this.dimension;
+            JetDataProvider.this.getFloatArray(this.in_y, JetDataProvider.DATA);
+            return JetDataProvider.this.dimension;
         }
 
         @Override
-        public String GetTitle() throws IOException {
+        public String getTitle() throws IOException {
             return null;
         }
 
@@ -97,17 +97,17 @@ public final class jetDataProvider implements DataProvider{
             return null;
         }
 
-        public float[] GetXData() throws IOException {
-            if(this.in_x != null) return jetDataProvider.this.GetFloatArray(this.in_x, jetDataProvider.X);
-            return jetDataProvider.this.GetFloatArray(this.in_y, jetDataProvider.X);
+        public float[] getXData() throws IOException {
+            if(this.in_x != null) return JetDataProvider.this.getFloatArray(this.in_x, JetDataProvider.X);
+            return JetDataProvider.this.getFloatArray(this.in_y, JetDataProvider.X);
         }
 
-        public double[] GetXDoubleData() {
+        public double[] getXDoubleData() {
             return null;
         }
 
         @Override
-        public String GetXLabel() throws IOException {
+        public String getXLabel() throws IOException {
             return null;
         }
 
@@ -121,7 +121,7 @@ public final class jetDataProvider implements DataProvider{
             return null;
         }
 
-        public long[] GetXLongData() {
+        public long[] getXLongData() {
             return null;
         }
 
@@ -131,12 +131,12 @@ public final class jetDataProvider implements DataProvider{
             return null;
         }
 
-        public float[] GetYData() throws IOException {
-            return jetDataProvider.this.GetFloatArray(this.in_y, jetDataProvider.Y);
+        public float[] getYData() throws IOException {
+            return JetDataProvider.this.getFloatArray(this.in_y, JetDataProvider.Y);
         }
 
         @Override
-        public String GetYLabel() throws IOException {
+        public String getYLabel() throws IOException {
             return null;
         }
 
@@ -147,7 +147,7 @@ public final class jetDataProvider implements DataProvider{
         }
 
         @Override
-        public String GetZLabel() throws IOException {
+        public String getZLabel() throws IOException {
             return null;
         }
 
@@ -159,31 +159,7 @@ public final class jetDataProvider implements DataProvider{
         @Override
         public void setContinuousUpdate(final boolean continuopusUpdate) {}
     }
-    static final int DATA = 0, X = 1, Y = 2;
-
-    public static boolean DataPending() {
-        return false;
-    }
-
-    public static WaveData GetResampledWaveData(final String in, final double start, final double end, final int n_points) {
-        return null;
-    }
-
-    public static WaveData GetResampledWaveData(final String in_y, final String in_x, final double start, final double end, final int n_points) {
-        return null;
-    }
-
-    public static boolean SupportsCompression() {
-        return false;
-    }
-
-    public static boolean SupportsContinuous() {
-        return false;
-    }
-
-    public static boolean SupportsFastNetwork() {
-        return false;
-    }
+    static final int                         DATA                = 0, X = 1, Y = 2;
     BufferedInputStream                      br;
     byte[]                                   buffer;
     private final Vector<ConnectionListener> connection_listener = new Vector<ConnectionListener>();
@@ -206,11 +182,11 @@ public final class jetDataProvider implements DataProvider{
     JTextField                               user_text;
     String                                   username, passwd;
 
-    public jetDataProvider(){
+    public JetDataProvider(){
         this(null, null);
     }
 
-    jetDataProvider(final String username, final String passwd){
+    JetDataProvider(final String username, final String passwd){
         this.provider = "Jet Data";
         final String credentials = username + ":" + passwd;
         try{
@@ -224,13 +200,13 @@ public final class jetDataProvider implements DataProvider{
     }
 
     @Override
-    public void AddConnectionListener(final ConnectionListener l) {
+    public void addConnectionListener(final ConnectionListener l) {
         if(l == null){ return; }
         this.connection_listener.addElement(l);
     }
 
     @Override
-    public void AddUpdateEventListener(final UpdateEventListener l, final String event) {}
+    public void addUpdateEventListener(final UpdateEventListener l, final String event) {}
 
     public boolean CheckPasswd(final String encoded_credentials) {
         this.encoded_credentials = encoded_credentials;
@@ -270,7 +246,7 @@ public final class jetDataProvider implements DataProvider{
     @Override
     public final boolean checkProvider() {
         try{
-            this.GetShots("0");
+            this.getShots("0");
             return true;
         }catch(final IOException exc){}
         return false;
@@ -285,12 +261,12 @@ public final class jetDataProvider implements DataProvider{
     }
 
     @Override
-    public void Dispose() {}
+    public void dispose() {}
 
     public void enableAsyncUpdate(final boolean enable) {}
 
     @Override
-    public String ErrorString() {
+    public String errorString() {
         return this.error_string;
     }
 
@@ -301,15 +277,15 @@ public final class jetDataProvider implements DataProvider{
     }
 
     @Override
-    public float GetFloat(final String in) {
+    public float getFloat(final String in) {
         return Float.parseFloat(in);
     }
 
-    public float[] GetFloatArray(final String in, final int type) throws IOException {
+    public float[] getFloatArray(final String in, final int type) throws IOException {
         float out[] = null;
         this.error_string = null;
-        final boolean is_time = (type == jetDataProvider.X);
-        final boolean is_y = (type == jetDataProvider.Y);
+        final boolean is_time = (type == JetDataProvider.X);
+        final boolean is_y = (type == JetDataProvider.Y);
         String url_name;
         if(this.evaluate_url){
             url_name = in;
@@ -395,21 +371,21 @@ public final class jetDataProvider implements DataProvider{
     // public byte[] GetFrameAt(String in_frame, int frame_idx){return null;}
     // public byte[] GetAllFrames(String in_frame){return null;}
     @Override
-    public FrameData GetFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
-        throw(new IOException("Frames visualization on jetDataProvider not implemented"));
+    public FrameData getFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
+        throw(new IOException("Frames visualization on JetDataProvider not implemented"));
     }
 
     @Override
-    public final String GetLegendString(final String s) {
+    public final String getLegendString(final String s) {
         return s;
     }
 
-    public int GetLoginStatus() {
+    public int getLoginStatus() {
         return this.login_status;
     }
 
     @Override
-    public long[] GetShots(final String in) throws IOException {
+    public long[] getShots(final String in) throws IOException {
         this.error_string = null;
         long[] result;
         String curr_in = in.trim();
@@ -453,22 +429,22 @@ public final class jetDataProvider implements DataProvider{
     }
 
     @Override
-    public String GetString(final String in) {
+    public String getString(final String in) {
         return in;
     }
 
     @Override
-    public WaveData GetWaveData(final String in) {
+    public WaveData getWaveData(final String in) {
         return new SimpleWaveData(in);
     }
 
     @Override
-    public WaveData GetWaveData(final String in_y, final String in_x) {
+    public WaveData getWaveData(final String in_y, final String in_x) {
         return new SimpleWaveData(in_y, in_x);
     }
 
     @Override
-    public int InquireCredentials(final JFrame f, final DataServerItem server_item) {
+    public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
         final String user = server_item.user;
         this.login_status = DataProvider.LOGIN_OK;
         this.owner_f = f;
@@ -492,14 +468,14 @@ public final class jetDataProvider implements DataProvider{
         ok_b.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                jetDataProvider.this.username = jetDataProvider.this.user_text.getText();
-                jetDataProvider.this.passwd = new String(jetDataProvider.this.passwd_text.getPassword());
-                if(!jetDataProvider.this.CheckPasswd(jetDataProvider.this.username, jetDataProvider.this.passwd)){
-                    JOptionPane.showMessageDialog(jetDataProvider.this.inquiry_dialog, "Login ERROR : " + ((jetDataProvider.this.error_string != null) ? jetDataProvider.this.error_string : "no further information"), "alert", JOptionPane.ERROR_MESSAGE);
-                    jetDataProvider.this.login_status = DataProvider.LOGIN_ERROR;
+                JetDataProvider.this.username = JetDataProvider.this.user_text.getText();
+                JetDataProvider.this.passwd = new String(JetDataProvider.this.passwd_text.getPassword());
+                if(!JetDataProvider.this.CheckPasswd(JetDataProvider.this.username, JetDataProvider.this.passwd)){
+                    JOptionPane.showMessageDialog(JetDataProvider.this.inquiry_dialog, "Login ERROR : " + ((JetDataProvider.this.error_string != null) ? JetDataProvider.this.error_string : "no further information"), "alert", JOptionPane.ERROR_MESSAGE);
+                    JetDataProvider.this.login_status = DataProvider.LOGIN_ERROR;
                 }else{
-                    jetDataProvider.this.inquiry_dialog.setVisible(false);
-                    jetDataProvider.this.login_status = DataProvider.LOGIN_OK;
+                    JetDataProvider.this.inquiry_dialog.setVisible(false);
+                    JetDataProvider.this.login_status = DataProvider.LOGIN_OK;
                 }
             }
         });
@@ -508,8 +484,8 @@ public final class jetDataProvider implements DataProvider{
         clear_b.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                jetDataProvider.this.user_text.setText("");
-                jetDataProvider.this.passwd_text.setText("");
+                JetDataProvider.this.user_text.setText("");
+                JetDataProvider.this.passwd_text.setText("");
             }
         });
         p.add(clear_b);
@@ -517,8 +493,8 @@ public final class jetDataProvider implements DataProvider{
         cancel_b.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                jetDataProvider.this.login_status = DataProvider.LOGIN_CANCEL;
-                jetDataProvider.this.inquiry_dialog.setVisible(false);
+                JetDataProvider.this.login_status = DataProvider.LOGIN_CANCEL;
+                JetDataProvider.this.inquiry_dialog.setVisible(false);
             }
         });
         p.add(cancel_b);
@@ -541,23 +517,23 @@ public final class jetDataProvider implements DataProvider{
     }
 
     @Override
-    public void RemoveConnectionListener(final ConnectionListener l) {
+    public void removeConnectionListener(final ConnectionListener l) {
         if(l == null){ return; }
         this.connection_listener.removeElement(l);
     }
 
     @Override
-    public void RemoveUpdateEventListener(final UpdateEventListener l, final String event) {}
+    public void removeUpdateEventListener(final UpdateEventListener l, final String event) {}
 
     @Override
-    public void SetArgument(final String arg) {}
+    public void setArgument(final String arg) {}
 
-    public void SetCompression(final boolean state) {}
+    public void setCompression(final boolean state) {}
 
     public void setContinuousUpdate() {}
 
     @Override
-    public void SetEnvironment(final String s) {}
+    public void setEnvironment(final String s) {}
 
     public void setEvaluateUrl(final boolean state) {
         this.evaluate_url = state;
@@ -569,12 +545,12 @@ public final class jetDataProvider implements DataProvider{
     }
 
     @Override
-    public boolean SupportsTunneling() {
+    public boolean supportsTunneling() {
         return false;
     }
 
     @Override
-    public void Update(final String experiment, final long shot) {
+    public void update(final String experiment, final long shot) {
         this.experiment = experiment;
         this.shot = shot;
         this.error_string = null;

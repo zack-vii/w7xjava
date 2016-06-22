@@ -1,4 +1,4 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -8,9 +8,9 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import jTraverser.Node;
-import jTraverser.jTraverserFacade;
-import jTraverser.editor.NodeEditor;
+import jtraverser.Node;
+import jtraverser.jTraverserFacade;
+import jtraverser.editor.NodeEditor;
 
 @SuppressWarnings("serial")
 public class DisplayNci extends NodeEditor implements ActionListener{

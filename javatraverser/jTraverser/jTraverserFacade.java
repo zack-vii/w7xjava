@@ -1,4 +1,4 @@
-package jTraverser;
+package jtraverser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -20,8 +20,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import jTraverser.TreeManager.Menu;
-import jTraverser.dialogs.SubTrees;
+import jtraverser.TreeManager.Menu;
+import jtraverser.dialogs.SubTrees;
 import mds.Database;
 
 @SuppressWarnings("serial")

@@ -2,7 +2,7 @@ package jet.ji;
 
 /* $Id$ */
 import java.io.IOException;
-import jScope.RandomAccessData;
+import jscope.RandomAccessData;
 
 abstract class JiNcVarImp{
     public static void convertDoubles(final byte[] bytes, final double[] doubles) throws IOException {

@@ -1,7 +1,7 @@
 /*
  * To change this template, choose Tools | Templates and open the template in the editor.
  */
-package jScope;
+package jscope;
 
 /**
  * @author manduchi Defines the methods called by WaveData to report regions of increased resolution or new data available

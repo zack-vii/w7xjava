@@ -1,4 +1,4 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -12,9 +12,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import jTraverser.Node;
-import jTraverser.TreeManager;
-import jTraverser.jTraverserFacade;
+import jtraverser.Node;
+import jtraverser.TreeManager;
+import jtraverser.jTraverserFacade;
 
 @SuppressWarnings("serial")
 public final class Flags extends JDialog{

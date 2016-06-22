@@ -18,11 +18,11 @@ ECHO %%~nxa
 ECHO %%~nxa>%root%/signalaccessFull.txt
 )
 7z d %JARFILE% jars deps>NUL
-COPY /Y %JARFILE% %root%\w7x\w7xDataProvider.jar>NUL
+COPY /Y %JARFILE% %root%\w7x\W7XDataProvider.jar>NUL
 IF NOT EXIST %TMP%\swingx (
 7z x %root%\w7x\swingx.jar -o%TMP%\swingx org>NUL
 )
-7z a %root%/w7x/w7xDataProvider.jar -r %TMP%\swingx\org>NUL
+7z a %root%/w7x/W7XDataProvider.jar -r %TMP%\swingx\org>NUL
 7z a %JARFILE% %jhdir%\*.class>NUL
 MOVE /Y %JARFILE% %saFull%>NUL
 POPD

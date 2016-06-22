@@ -1,4 +1,4 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -17,9 +17,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import jTraverser.Node;
-import jTraverser.TreeManager;
-import jTraverser.jTraverserFacade;
+import jtraverser.Node;
+import jtraverser.TreeManager;
+import jtraverser.jTraverserFacade;
 
 @SuppressWarnings("serial")
 public final class ModifyTags extends JDialog{
@@ -69,7 +69,7 @@ public final class ModifyTags extends JDialog{
             public void actionPerformed(final ActionEvent e) {
                 int idx;
                 if((idx = ModifyTags.this.modify_tags_list.getSelectedIndex()) != -1){
-                    jTraverser.dialogs.ModifyTags.this.curr_taglist_model.removeElementAt(idx);
+                    jtraverser.dialogs.ModifyTags.this.curr_taglist_model.removeElementAt(idx);
                 }
             }
         });

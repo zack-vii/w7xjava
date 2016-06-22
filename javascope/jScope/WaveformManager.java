@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Component;
@@ -18,7 +18,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void AllSameScale(Waveform curr_w);
+    public void allSameScale(Waveform curr_w);
 
     /**
      * Set x scale factor of all waveform equals to argument waveform
@@ -28,7 +28,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void AllSameXScale(Waveform curr_w);
+    public void allSameXScale(Waveform curr_w);
 
     /**
      * Autoscale y axis and set x axis equals to argument waveform
@@ -38,7 +38,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void AllSameXScaleAutoY(Waveform curr_w);
+    public void allSameXScaleAutoY(Waveform curr_w);
 
     /**
      * Set y scale factor of all waveform equals to argument waveform
@@ -48,7 +48,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void AllSameYScale(Waveform curr_w);
+    public void allSameYScale(Waveform curr_w);
 
     /**
      * Autoscale operation on all waveforms
@@ -56,7 +56,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void AutoscaleAll();
+    public void autoscaleAll();
 
     /**
      * Autoscale operation on all images
@@ -64,7 +64,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void AutoscaleAllImages();
+    public void autoscaleAllImages();
 
     /**
      * Autoscale y axis on all waveform
@@ -72,7 +72,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void AutoscaleAllY();
+    public void autoscaleAllY();
 
     /**
      * Deselect waveform.
@@ -80,14 +80,14 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void Deselect();
+    public void deselect();
 
     /**
      * Get current waveform selected as copy source
      *
      * @return copy source waveform
      */
-    public Waveform GetCopySource();
+    public Waveform getCopySource();
 
     public Component getMaximizeComponent();
 
@@ -98,14 +98,14 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public Waveform GetSelected();
+    public Waveform getSelected();
 
     /**
      * Get the number of waveform in the container
      *
      * @return number of waveform in the container
      */
-    public int GetWaveformCount();
+    public int getWaveformCount();
 
     /**
      * Return row, column position on the panel
@@ -127,7 +127,7 @@ public interface WaveformManager{
      * @param source
      *            source waveform
      */
-    public void NotifyChange(Waveform dest, Waveform source);
+    public void notifyChange(Waveform dest, Waveform source);
 
     /**
      * Remove a waveform.
@@ -143,7 +143,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void ResetAllScales();
+    public void resetAllScales();
 
     /**
      * Select a waveform
@@ -153,7 +153,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void Select(Waveform w);
+    public void select(Waveform w);
 
     /**
      * Set copy source waveform
@@ -163,7 +163,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void SetCopySource(Waveform w);
+    public void setCopySource(Waveform w);
 
     /**
      * Enable or disable measure mode
@@ -173,7 +173,7 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void SetShowMeasure(boolean state);
+    public void setShowMeasure(boolean state);
 
     /**
      * Update crosshair position
@@ -185,5 +185,5 @@ public interface WaveformManager{
      * @see Waveform
      * @see MultiWaveform
      */
-    public void UpdatePoints(double curr_x, Waveform w);
+    public void updatePoints(double curr_x, Waveform w);
 }

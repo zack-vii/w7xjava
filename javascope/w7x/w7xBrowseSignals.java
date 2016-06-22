@@ -42,13 +42,13 @@ import org.jdesktop.swingx.JXDatePicker;
 import org.jdesktop.swingx.calendar.SingleDaySelectionModel;
 import de.mpg.ipp.codac.signalaccess.SignalAddress;
 import de.mpg.ipp.codac.w7xtime.TimeInterval;
-import jScope.Grid;
-import jScope.jScopeBrowseSignals;
-import jScope.jScopeFacade;
-import jScope.jScopeWaveContainer;
+import jscope.Grid;
+import jscope.jScopeBrowseSignals;
+import jscope.jScopeFacade;
+import jscope.jScopeWaveContainer;
 
 @SuppressWarnings("serial")
-public final class w7xBrowseSignals extends jScopeBrowseSignals{
+public final class W7XBrowseSignals extends jScopeBrowseSignals{
     static final class DateTimePicker extends JXDatePicker{
         public static final DateFormat  format     = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         private static final int[]      time       = new int[]{Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND};
@@ -138,11 +138,11 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
             formatter.setFormat(DateTimePicker.timeFormat);
         }
     }
-    public final class w7xDataBase extends w7xNode{
+    public final class W7XDataBase extends w7xNode{
         private final String      name;
-        public final signalaccess sa;
+        public final Signalaccess sa;
 
-        public w7xDataBase(final String name, final signalaccess sa){
+        public W7XDataBase(final String name, final Signalaccess sa){
             super(sa.getAddress(""));
             this.name = name;
             this.sa = sa;
@@ -162,18 +162,18 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
         }
 
         public void addSignal() {
-            if(w7xBrowseSignals.this.wave_panel == null) return;
+            if(W7XBrowseSignals.this.wave_panel == null) return;
             final TreeNode[] path = this.getPath();
             if(path == null || path.length < 2) return;
-            final String sig_path = "/" + ((w7xDataBase)path[1]).name + this.getSignalPath();
-            if(sig_path != null) w7xBrowseSignals.this.wave_panel.AddSignal(null, null, null, sig_path, false, w7xBrowseSignals.this.is_image);
+            final String sig_path = "/" + ((W7XDataBase)path[1]).name + this.getSignalPath();
+            if(sig_path != null) W7XBrowseSignals.this.wave_panel.addSignal(null, null, null, sig_path, false, W7XBrowseSignals.this.is_image);
         }
 
         public final List<SignalAddress> getChildren() {
             final TreeNode[] path = this.getPath();
             if(path == null || path.length < 2) return null;
-            final TimeInterval ti = TimeInterval.ALL.withStart(w7xBrowseSignals.this.from.getDate().getTime() * 1000000L).withEnd(w7xBrowseSignals.this.upto.getDate().getTime() * 1000000L);
-            return ((w7xDataBase)path[1]).sa.getList(this.getSignalPath(), ti);
+            final TimeInterval ti = TimeInterval.ALL.withStart(W7XBrowseSignals.this.from.getDate().getTime() * 1000000L).withEnd(W7XBrowseSignals.this.upto.getDate().getTime() * 1000000L);
+            return Signalaccess.getList(this.getSignalPath(), ti);
         }
 
         private String getSignalPath() {
@@ -209,7 +209,7 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
             @Override
             public void run() {
                 try{
-                    final w7xBrowseSignals frame = new w7xBrowseSignals();
+                    final W7XBrowseSignals frame = new W7XBrowseSignals();
                     frame.setVisible(true);
                 }catch(final Exception e){
                     e.printStackTrace();
@@ -230,7 +230,7 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
     /**
      * Create the frame.
      */
-    public w7xBrowseSignals(){
+    public W7XBrowseSignals(){
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.contentPane = new JPanel();
         this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -248,22 +248,22 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
         but.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                w7xDataProvider.setTiming(w7xBrowseSignals.this.from.getDate().getTime(), w7xBrowseSignals.this.upto.getDate().getTime());
-                jScopeFacade.instance.UpdateAllWaves();
+                W7XDataProvider.setTiming(W7XBrowseSignals.this.from.getDate().getTime(), W7XBrowseSignals.this.upto.getDate().getTime());
+                jScopeFacade.instance.updateAllWaves();
             }
         });
         jp.add(but = new JButton("clearTime"));
         but.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                w7xDataProvider.setTiming();
+                W7XDataProvider.setTiming();
             }
         });
         jp.add(cb = new JCheckBox("asImage"));
         cb.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                w7xBrowseSignals.this.is_image = cb.isSelected();
+                W7XBrowseSignals.this.is_image = cb.isSelected();
             }
         });
         ejp.add(ejp = new JPanel());
@@ -275,10 +275,10 @@ public final class w7xBrowseSignals extends jScopeBrowseSignals{
         final JTree tree = new JTree(this.top);
         this.contentPane.add(new JScrollPane(tree));
         tree.setRootVisible(true);
-        for(final String db : signalaccess.getDataBaseList()){
-            final signalaccess sa = signalaccess.getAccess(db);
+        for(final String db : Signalaccess.getDataBaseList()){
+            final Signalaccess sa = Signalaccess.getAccess(db);
             if(sa == null) break;
-            this.top.add(new w7xDataBase(db, sa));
+            this.top.add(new W7XDataBase(db, sa));
         }
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);

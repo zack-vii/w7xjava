@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Toolkit;
@@ -47,7 +47,7 @@ public abstract class jScopeBrowseSignals extends jScopeBrowseUrl{
             final String shot = (with_shot) ? this.getShot() : null;
             if(sig_path != null){
                 final boolean is_image = (this.mime_type != null && this.mime_type.indexOf("image") != -1);
-                this.wave_panel.AddSignal(this.getTree(), shot, "", sig_path, true, is_image);
+                this.wave_panel.addSignal(this.getTree(), shot, "", sig_path, true, is_image);
             }
         }
     }

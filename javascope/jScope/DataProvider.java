@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.io.IOException;
@@ -42,7 +42,7 @@ public interface DataProvider{
      * @see ConnectionListener
      * @see ConnectionEvent
      */
-    public void AddConnectionListener(ConnectionListener l);
+    public void addConnectionListener(ConnectionListener l);
 
     /**
      * Method AddUpdateEventListener is called by jScope when asynchronous update on event is
@@ -70,7 +70,7 @@ public interface DataProvider{
      * @see UpdateEventListener
      * @see UpdateEvent
      */
-    public void AddUpdateEventListener(UpdateEventListener l, String event) throws IOException;
+    public void addUpdateEventListener(UpdateEventListener l, String event) throws IOException;
 
     /**
      * Method checkProvider is called by jScope to verify the connection to the data provider.
@@ -85,7 +85,7 @@ public interface DataProvider{
      * method Dispose is guaranteed to be called at the time the DataProvider implementation is no more
      * used by jScope.
      */
-    public void Dispose();
+    public void dispose();
 
     /**
      * If an error is encountered in the evaluation of a signal (GetWaveData or
@@ -94,7 +94,7 @@ public interface DataProvider{
      *
      * @return A verbose description of the last error.
      */
-    public String ErrorString();
+    public String errorString();
 
     /**
      * retruns the default Browser to be used if none specified in the properties file
@@ -117,7 +117,7 @@ public interface DataProvider{
      * @return The evaluated value.
      * @exception java.io.IOException
      */
-    public float GetFloat(String in) throws IOException;
+    public float getFloat(String in) throws IOException;
 
     /**
      * GetFrameData is called by jScope to retrieve and display a frame sequence. The frame sequence
@@ -147,7 +147,7 @@ public interface DataProvider{
      * @exception java.io.IOException
      * @see FrameData
      */
-    public FrameData GetFrameData(String in_frame, String in_times, float start_time, float end_time) throws IOException;
+    public FrameData getFrameData(String in_frame, String in_times, float start_time, float end_time) throws IOException;
 
     /**
      * Format of the Legend entry.
@@ -156,13 +156,13 @@ public interface DataProvider{
      *            The previously registered ConnectionListener.
      * @see ConnectionListener
      */
-    public String GetLegendString(String s);
+    public String getLegendString(String s);
 
     /**
      * Evaluate the passed string to provide am array of shot numbers.
      * For MDSplus data provider it will carry out the execution of the corresponding expression
      */
-    public long[] GetShots(String in) throws IOException;
+    public long[] getShots(String in) throws IOException;
 
     /**
      * GetString is called by jScope to evaluate title, X label and Y label. These labels are defined
@@ -175,7 +175,7 @@ public interface DataProvider{
      * @return The evaluated label or title.
      * @exception java.io.IOException
      */
-    public String GetString(String in) throws IOException;
+    public String getString(String in) throws IOException;
 
     /**
      * Method GetWaveData is called by jScope when a waveform has to be evaluated and only the Y
@@ -200,7 +200,7 @@ public interface DataProvider{
      * @return The evaluated signal, embedded in a WaveData object, or null if an error is encountered.
      * @see WaveData
      */
-    public WaveData GetWaveData(String in);
+    public WaveData getWaveData(String in);
 
     /**
      * Method GetWaveData is called by jScope when a waveform has to be avaluated and both X and
@@ -215,7 +215,7 @@ public interface DataProvider{
      * @return The evaluated signal, embedded in a WaveData object, or null if an error is encountered.
      * @see WaveData
      */
-    public WaveData GetWaveData(String in_y, String in_x);
+    public WaveData getWaveData(String in_y, String in_x);
 
     /**
      * Some DataProvider implemenations, such as Jet RDA provider, may require additional information
@@ -236,7 +236,7 @@ public interface DataProvider{
      *            Local username as specified in the property file or in the Network->Edit server list... dialog
      * @return The status of the DataProvider specific validation process
      */
-    public int InquireCredentials(JFrame f, DataServerItem server_item);
+    public int inquireCredentials(JFrame f, DataServerItem server_item);
 
     /**
      * Method join is called by the WaveContainer to wait for all threated tasks to finish
@@ -251,7 +251,7 @@ public interface DataProvider{
      *            The previously registered ConnectionListener.
      * @see ConnectionListener
      */
-    public void RemoveConnectionListener(ConnectionListener l);
+    public void removeConnectionListener(ConnectionListener l);
 
     /**
      * Method RemoveUpdateEventListeneris called by jScope when the display of a waveform panel is
@@ -264,7 +264,7 @@ public interface DataProvider{
      * @exception java.io.IOException
      * @see UpdateEventListener
      */
-    public void RemoveUpdateEventListener(UpdateEventListener l, String event) throws IOException;
+    public void removeUpdateEventListener(UpdateEventListener l, String event) throws IOException;
 
     /**
      * As DataProvider implementations are instantiated by jScope by means of the
@@ -278,7 +278,7 @@ public interface DataProvider{
      *            The argument passed to the DataProvider implementation.
      * @exception java.io.IOException
      */
-    public void SetArgument(String arg) throws IOException;
+    public void setArgument(String arg) throws IOException;
 
     /**
      * Defines the environment for data retrieval.
@@ -295,9 +295,9 @@ public interface DataProvider{
      *            The variable definition expressed as <name value> pair.
      * @exception java.io.IOException
      */
-    public void SetEnvironment(String exp) throws IOException;
+    public void setEnvironment(String exp) throws IOException;
 
-    public boolean SupportsTunneling();
+    public boolean supportsTunneling();
 
     /**
      * Method Update is called by jScope to notify the experiment name and the shot number.
@@ -309,5 +309,5 @@ public interface DataProvider{
      * @param s
      *            The shot number.
      */
-    public void Update(String exp, long s);
+    public void update(String exp, long s);
 }

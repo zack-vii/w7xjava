@@ -4,12 +4,12 @@ package jet;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.swing.JFrame;
-import jScope.Array.RealArray;
-import jScope.DataProvider;
-import jScope.DataServerItem;
-import mds.mdsDataProvider;
+import jscope.DataProvider;
+import jscope.DataServerItem;
+import jscope.Array.RealArray;
+import mds.MdsDataProvider;
 
-public final class jetMdsDataProvider extends mdsDataProvider{
+public final class JetMdsDataProvider extends MdsDataProvider{
     public static boolean DataPending() {
         return false;
     }
@@ -26,13 +26,13 @@ public final class jetMdsDataProvider extends mdsDataProvider{
         return true;
     }
 
-    public jetMdsDataProvider(){
+    public JetMdsDataProvider(){
         super("mdsplus.jet.efda.org");
     }
 
     @Override
-    public synchronized int[] GetIntArray(final String in) throws IOException {
-        return super.GetIntArray(this.ParseExpression(in));
+    public synchronized int[] getIntArray(final String in) throws IOException {
+        return super.getIntArray(this.parseExpression(in));
     }
 
     /*
@@ -53,18 +53,18 @@ public final class jetMdsDataProvider extends mdsDataProvider{
         }
      */
     @Override
-    public synchronized RealArray GetRealArray(final String in) throws IOException {
-        return super.GetRealArray(this.ParseExpression(in));
+    public synchronized RealArray getRealArray(final String in) throws IOException {
+        return super.getRealArray(this.parseExpression(in));
     }
 
     @Override
-    public int InquireCredentials(final JFrame f, final DataServerItem server_item) {
+    public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
         return DataProvider.LOGIN_OK;
     }
 
     // Syntax: ppf/<signal> or jpf/<signal>
     // Ex: ppf/magn/ipla
-    protected String ParseExpression(final String in) {
+    protected String parseExpression(final String in) {
         this.error = null;
         final StringTokenizer st = new StringTokenizer(in, " /(){}[]*+,:;", true);
         String parsed = "", signal = "";
@@ -105,13 +105,10 @@ public final class jetMdsDataProvider extends mdsDataProvider{
     }
 
     @Override
-    public void SetArgument(final String arg) {}
+    public void setArgument(final String arg) {}
 
     @Override
-    public void SetCompression(final boolean state) {}
-
-    @Override
-    public synchronized void Update(final String exp, final long s) {
+    public synchronized void update(final String exp, final long s) {
         this.error = null;
         this.shot = s;
     }

@@ -1,4 +1,4 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -7,8 +7,8 @@ import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import jTraverser.Node;
-import jTraverser.editor.NodeEditor;
+import jtraverser.Node;
+import jtraverser.editor.NodeEditor;
 
 @SuppressWarnings("serial")
 public class DisplayTags extends NodeEditor implements ActionListener{

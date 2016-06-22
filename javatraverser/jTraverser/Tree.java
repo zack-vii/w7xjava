@@ -1,4 +1,4 @@
-package jTraverser;
+package jtraverser;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

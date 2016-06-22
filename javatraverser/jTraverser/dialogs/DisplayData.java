@@ -1,4 +1,4 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 @SuppressWarnings("serial")
 public class DisplayData extends ModifyData{

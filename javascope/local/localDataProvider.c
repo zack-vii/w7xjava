@@ -418,7 +418,7 @@ static void *MdsGetArray(char *in, int *out_dim, int type)
 }
 
 /* Implementation of the  methods for LocalProvider class in jScope */
-JNIEXPORT void JNICALL Java_local_localDataProvider_NativeUpdate(JNIEnv * env, jobject obj, jstring exp, jlong shot)
+JNIEXPORT void JNICALL Java_local_LocalDataProvider_nativeUpdate(JNIEnv * env, jobject obj, jstring exp, jlong shot)
 {
   const char *exp_char;
   error_message[0] = 0;
@@ -429,14 +429,14 @@ JNIEXPORT void JNICALL Java_local_localDataProvider_NativeUpdate(JNIEnv * env, j
   (*env)->ReleaseStringUTFChars(env, exp, exp_char);
 }
 
-JNIEXPORT jstring JNICALL Java_local_localDataProvider_NativeErrorString(JNIEnv * env, jobject obj)
+JNIEXPORT jstring JNICALL Java_local_LocalDataProvider_nativeErrorString(JNIEnv * env, jobject obj)
 {
   if (!error_message[0])
     return NULL;
   return (*env)->NewStringUTF(env, error_message);
 }
 
-JNIEXPORT jstring JNICALL Java_local_localDataProvider_NativeGetString(JNIEnv * env, jobject obj, jstring in)
+JNIEXPORT jstring JNICALL Java_local_LocalDataProvider_nativeGetString(JNIEnv * env, jobject obj, jstring in)
 {
   const char *in_char = (*env)->GetStringUTFChars(env, in, 0);
   char *out_char = MdsGetString((char *)in_char);
@@ -448,7 +448,7 @@ JNIEXPORT jstring JNICALL Java_local_localDataProvider_NativeGetString(JNIEnv * 
     return (*env)->NewStringUTF(env, out_char);
 }
 
-JNIEXPORT jfloatArray JNICALL Java_local_localDataProvider_NativeGetFloatArray(JNIEnv * env, jobject obj, jstring in)
+JNIEXPORT jfloatArray JNICALL Java_local_LocalDataProvider_nativeGetFloatArray(JNIEnv * env, jobject obj, jstring in)
 {
   jfloatArray jarr;
   const char *in_char = (*env)->GetStringUTFChars(env, in, 0);
@@ -466,7 +466,7 @@ JNIEXPORT jfloatArray JNICALL Java_local_localDataProvider_NativeGetFloatArray(J
   return jarr;
 }
 
-JNIEXPORT jdoubleArray JNICALL Java_local_localDataProvider_NativeGetDoubleArray(JNIEnv * env, jobject obj, jstring in)
+JNIEXPORT jdoubleArray JNICALL Java_local_LocalDataProvider_nativeGetDoubleArray(JNIEnv * env, jobject obj, jstring in)
 {
   jdoubleArray jarr;
   const char *in_char = (*env)->GetStringUTFChars(env, in, 0);
@@ -484,7 +484,7 @@ JNIEXPORT jdoubleArray JNICALL Java_local_localDataProvider_NativeGetDoubleArray
   return jarr;
 }
 
-JNIEXPORT jdoubleArray JNICALL Java_local_localDataProvider_NativeGetLongArray(JNIEnv * env, jobject obj, jstring in)
+JNIEXPORT jdoubleArray JNICALL Java_local_LocalDataProvider_nativeGetLongArray(JNIEnv * env, jobject obj, jstring in)
 {
   jlongArray jarr;
   const char *in_char = (*env)->GetStringUTFChars(env, in, 0);
@@ -502,7 +502,7 @@ JNIEXPORT jdoubleArray JNICALL Java_local_localDataProvider_NativeGetLongArray(J
   return jarr;
 }
 
-JNIEXPORT jintArray JNICALL Java_local_localDataProvider_NativeGetIntArray(JNIEnv * env, jobject obj, jstring in)
+JNIEXPORT jintArray JNICALL Java_local_LocalDataProvider_nativeGetIntArray(JNIEnv * env, jobject obj, jstring in)
 {
   jintArray jarr;
   const char *in_char;
@@ -523,7 +523,7 @@ JNIEXPORT jintArray JNICALL Java_local_localDataProvider_NativeGetIntArray(JNIEn
   return jarr;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_local_localDataProvider_NativeGetByteArray(JNIEnv * env, jobject obj, jstring in)
+JNIEXPORT jbyteArray JNICALL Java_local_LocalDataProvider_nativeGetByteArray(JNIEnv * env, jobject obj, jstring in)
 {
   jbyteArray jarr;
   //float zero = 0.;
@@ -543,7 +543,7 @@ JNIEXPORT jbyteArray JNICALL Java_local_localDataProvider_NativeGetByteArray(JNI
   return jarr;
 }
 
-JNIEXPORT jfloat JNICALL Java_local_localDataProvider_NativeGetFloat(JNIEnv * env, jobject obj, jstring in)
+JNIEXPORT jfloat JNICALL Java_local_LocalDataProvider_nativeGetFloat(JNIEnv * env, jobject obj, jstring in)
 {
   float ris;
   const char *in_char = (*env)->GetStringUTFChars(env, in, 0);
@@ -553,7 +553,7 @@ JNIEXPORT jfloat JNICALL Java_local_localDataProvider_NativeGetFloat(JNIEnv * en
   return ris;
 }
 
-JNIEXPORT void JNICALL Java_local_localDataProvider_NativeSetEnvironmentSpecific(JNIEnv * env, jobject obj, jstring in, jstring jdefNode)
+JNIEXPORT void JNICALL Java_local_LocalDataProvider_nativeSetEnvironmentSpecific(JNIEnv * env, jobject obj, jstring in, jstring jdefNode)
 {
   int status, nid;
   const char *in_char = (*env)->GetStringUTFChars(env, in, 0);
@@ -588,7 +588,7 @@ JNIEXPORT void JNICALL Java_local_localDataProvider_NativeSetEnvironmentSpecific
  * Method:    isSegmentedNode
  * Signature: (Ljava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_local_localDataProvider_NativeIsSegmentedNode
+JNIEXPORT jboolean JNICALL Java_local_LocalDataProvider_nativeIsSegmentedNode
     (JNIEnv * env, jclass cls, jstring jNodeName) {
   int status, nid, numSegments;
   const char *nodeName = (*env)->GetStringUTFChars(env, jNodeName, 0);
@@ -614,7 +614,7 @@ static int needSwap()
  * Method:    getSegment
  * Signature: (Ljava/lang/String;II)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_local_localDataProvider_NativeGetSegment
+JNIEXPORT jbyteArray JNICALL Java_local_LocalDataProvider_nativeGetSegment
     (JNIEnv * env, jclass cls, jstring jNodeName, jint segmentIdx, jint segmentOffset) {
   int status, nid, i, nSamples;
   //int numSegments;
@@ -692,7 +692,7 @@ JNIEXPORT jbyteArray JNICALL Java_local_localDataProvider_NativeGetSegment
  * Method:    getAllFrames
  * Signature: (Ljava/lang/String;II)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_local_localDataProvider_NativeGetAllFrames
+JNIEXPORT jbyteArray JNICALL Java_local_LocalDataProvider_nativeGetAllFrames
     (JNIEnv * env, jclass cls, jstring jNodeName, jint startIdx, jint endIdx) {
   EMPTYXD(xd);
   ARRAY_COEFF(char *, 3)*arrPtr;
@@ -766,7 +766,7 @@ JNIEXPORT jbyteArray JNICALL Java_local_localDataProvider_NativeGetAllFrames
  * Method:    getInfo
  * Signature: (Ljava/lang/String;)[I
  */
-JNIEXPORT jobject JNICALL Java_local_localDataProvider_NativeGetInfo
+JNIEXPORT jobject JNICALL Java_local_LocalDataProvider_nativeGetInfo
     (JNIEnv * env, jclass cls, jstring jNodeName, jboolean isSegmented) {
   const char *nodeName = (*env)->GetStringUTFChars(env, jNodeName, 0);
   EMPTYXD(xd);
@@ -929,7 +929,7 @@ static int isSingleFramePerSegment(int nid)
  * Method:    getSegmentTimes
  * Signature: (Ljava/lang/String;Ljava/lang/String;FF)[F
  */
-JNIEXPORT jfloatArray JNICALL Java_local_localDataProvider_NativeGetSegmentTimes
+JNIEXPORT jfloatArray JNICALL Java_local_LocalDataProvider_nativeGetSegmentTimes
     (JNIEnv * env, jclass cls, jstring jNodeName, jstring jTimeName, jfloat startTime, jfloat endTime) {
   const char *nodeName = (*env)->GetStringUTFChars(env, jNodeName, 0);
   EMPTYXD(startXd);
@@ -1021,7 +1021,7 @@ JNIEXPORT jfloatArray JNICALL Java_local_localDataProvider_NativeGetSegmentTimes
  * Method:    getAllTimes
  * Signature: (Ljava/lang/String;Ljava/lang/String;)[F
  */
-JNIEXPORT jfloatArray JNICALL Java_local_localDataProvider_NativeGetAllTimes
+JNIEXPORT jfloatArray JNICALL Java_local_LocalDataProvider_nativeGetAllTimes
     (JNIEnv * env, jclass cls, jstring jNodeName, jstring jTimeName) {
   EMPTYXD(xd);
   int status;
@@ -1058,7 +1058,7 @@ JNIEXPORT jfloatArray JNICALL Java_local_localDataProvider_NativeGetAllTimes
  * Method:    getSegmentIdxs
  * Signature: (Ljava/lang/String;FF)[I
  */
-JNIEXPORT jintArray JNICALL Java_local_localDataProvider_NativeGetSegmentIdxs
+JNIEXPORT jintArray JNICALL Java_local_LocalDataProvider_nativeGetSegmentIdxs
     (JNIEnv * env, jclass cls, jstring jNodeName, jfloat startTime, jfloat endTime) {
   const char *nodeName = (*env)->GetStringUTFChars(env, jNodeName, 0);
   int status, nid, nSegments, startIdx, endIdx, idx, currIdx;
@@ -1152,7 +1152,7 @@ static void handleEvent(void *nameIdx, int dim, char *buf)
   releaseJNIEnv();
 }
 
-JNIEXPORT jint JNICALL Java_local_localDataProvider_NativeRegisterEvent
+JNIEXPORT jint JNICALL Java_local_LocalDataProvider_nativeRegisterEvent
     (JNIEnv * env, jobject obj, jstring jevent, jint idx)
 {
   int evId, status;
@@ -1174,7 +1174,7 @@ JNIEXPORT jint JNICALL Java_local_localDataProvider_NativeRegisterEvent
   return evId;
 }
 
-JNIEXPORT void JNICALL Java_local_localDataProvider_NativeUnregisterEvent
+JNIEXPORT void JNICALL Java_local_LocalDataProvider_nativeUnregisterEvent
     (JNIEnv * env, jobject obj, jint evId) {
 
   MDSEventCan(evId);

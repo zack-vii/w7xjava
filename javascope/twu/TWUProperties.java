@@ -2,8 +2,8 @@ package twu;
 
 /* ------------------------------------------------------------------------ */
 /*
- * TWUProperties: Handling the Web-Umbrella Signal Properties. Copyright (c) 2002...2003, J.G.krom, Forschungszentrum Juelich GmbH. All rights reserved. This class handles the properties 'file' as used in the TEC Web-Umbrella. NOTE: The TWU* classes (with
- * TWU in three capitals) are written so that they can also be used in other java based applications and not only by jScope. Please keep the code of these separate of jScope specific elements. This class does not throw any exceptions; this should be left
+ * TwuProperties: Handling the Web-Umbrella Signal Properties. Copyright (c) 2002...2003, J.G.krom, Forschungszentrum Juelich GmbH. All rights reserved. This class handles the properties 'file' as used in the TEC Web-Umbrella. NOTE: The Twu* classes (with
+ * Twu in three capitals) are written so that they can also be used in other java based applications and not only by jScope. Please keep the code of these separate of jScope specific elements. This class does not throw any exceptions; this should be left
  * so. This is because it is also used in contexts where the handling of such exceptions is somewhat troublesome. (E.g. JVMs running implicitly by matlab.) Author: Jon Krom, Forschungszentrum Juelich, Institut fuer Plasmaphysik. $Id$
  * ------------------------------------------------------------------------ Derived from (matlab-) WUProperties.java Revision 1.6 2002/02/26 hrk/jgk I removed the automatic CVS log from this file; it can be read directly from the CVS repository with
  * "cvs log".
@@ -13,7 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
 
-public class TWUProperties{
+public class TwuProperties{
     // Allow, like many browsers do, URLs without protocol name (the
     // 'http:' bit). Assume in these cases that we want 'http:'
     // This allows. (at least in principle) other protocols.
@@ -24,12 +24,12 @@ public class TWUProperties{
 
     /*
     public static void main(final String a[]) {//TODO:main
-        TWUProperties twup;
+        TwuProperties twup;
         System.out.println();
-        System.out.println(TWUProperties.revision());
+        System.out.println(TwuProperties.revision());
         System.out.println();
         System.out.println("Web-Umbrella data from a webserver.");
-        twup = new TWUProperties(
+        twup = new TwuProperties(
                 // "//localhost/textor/all/91100/vuv/spred-a/H-I_@_102,550"); // Existing
                 // "//localhost/textor/all/91100/vuv/spred-a/H-I_@_102,551"); // Non-existing
                 // ""); // Non-existing
@@ -37,7 +37,7 @@ public class TWUProperties{
         System.out.println(twup);
         System.out.println(twup.summary());
         System.out.println();
-        twup = new TWUProperties("//localhost/textor/all/91100/vuv/spred-a/H-I_@_102,550"); // Existing
+        twup = new TwuProperties("//localhost/textor/all/91100/vuv/spred-a/H-I_@_102,550"); // Existing
         System.out.println(twup);
         System.out.println(twup.summary());
         System.out.println();
@@ -52,15 +52,15 @@ public class TWUProperties{
 
     /* -------------------------------------------------------------------- */
     // Constructors
-    public TWUProperties(final String SigURL){
+    public TwuProperties(final String SigURL){
         this(SigURL, null);
     }
 
-    public TWUProperties(final String SigURL, final String user_agent){
-        final String actual_user_agent = (user_agent != null) ? user_agent : "TWUProperties.java for jScope ($Revision$)";
+    public TwuProperties(final String SigURL, final String user_agent){
+        final String actual_user_agent = (user_agent != null) ? user_agent : "TwuProperties.java for jScope ($Revision$)";
         this.signalProps = new Properties();
         if(SigURL == null) return;
-        final String fullURL = TWUProperties.CompleteURL(SigURL);
+        final String fullURL = TwuProperties.CompleteURL(SigURL);
         try{
             this.signalURL = new URL(fullURL);
             final URLConnection con = this.signalURL.openConnection();
@@ -109,7 +109,7 @@ public class TWUProperties{
 
     public boolean equals(final String other_url) {
         try{
-            return TWUProperties.CompleteURL(other_url).equals(this.signalURL.toString());
+            return TwuProperties.CompleteURL(other_url).equals(this.signalURL.toString());
         }catch(final Exception e){
             return false;
         }

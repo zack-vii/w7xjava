@@ -12,7 +12,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import jTraverser.NodeInfo;
+import jtraverser.NodeInfo;
 import mds.Database;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;

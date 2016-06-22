@@ -1,12 +1,12 @@
 package twu;
 
 // -------------------------------------------------------------------------------------------------
-// TWUFetchOptions
+// TwuFetchOptions
 //
-// A support class for users of the TWUSignal class. This class handles the query options
-// used access segments of a TWU dataset.
+// A support class for users of the TwuSignal class. This class handles the query options
+// used access segments of a Twu dataset.
 //
-// The TWU* classes (with TWU in three capitals) are written so that they can also be used
+// The Twu* classes (with Twu in three capitals) are written so that they can also be used
 // in other java based applications and not only by jScope. Please keep the code of these
 // separate of jScope specific elements.
 //
@@ -17,19 +17,19 @@ package twu;
 //
 // For the modification history, see the CVS log.
 // -------------------------------------------------------------------------------------------------
-final public class TWUFetchOptions{
-    public static TWUFetchOptions NewCopy(final TWUFetchOptions opt) {
+final public class TwuFetchOptions{
+    public static TwuFetchOptions NewCopy(final TwuFetchOptions opt) {
         return opt.NewCopy();
     }
     private int start = 0;
     private int step  = 1;
     private int total = -1;
 
-    public TWUFetchOptions(){}
+    public TwuFetchOptions(){}
 
     // defaults to the options for retrieving
     // the full signal. (i.e. no subsampling.)
-    public TWUFetchOptions(final int sta, final int ste, final int tot){
+    public TwuFetchOptions(final int sta, final int ste, final int tot){
         this.start = sta;
         this.step = ste;
         this.total = tot;
@@ -57,7 +57,7 @@ final public class TWUFetchOptions{
         this.total = (realEnd - this.start) / this.step + 1;
     }
 
-    public boolean equalsForBulkData(final TWUFetchOptions opt) {
+    public boolean equalsForBulkData(final TwuFetchOptions opt) {
         // simple approach, assumes it's already been clipped
         // or at least it's incrementing (eg. step > 0, total >= 0).
         return(this.start == opt.start && this.step == opt.step && this.total == opt.total);
@@ -75,13 +75,13 @@ final public class TWUFetchOptions{
         return this.total;
     }
 
-    public TWUFetchOptions NewCopy() {
-        return new TWUFetchOptions(this.start, this.step, this.total);
+    public TwuFetchOptions NewCopy() {
+        return new TwuFetchOptions(this.start, this.step, this.total);
     }
 
     @Override
     public String toString() {
-        return "TWUFetchOptions(" + this.start + ", " + this.step + ", " + this.total + ")";
+        return "TwuFetchOptions(" + this.start + ", " + this.step + ", " + this.total + ")";
     }
 }
 // -------------------------------------------------------------------------------------------------

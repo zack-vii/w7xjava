@@ -2,7 +2,7 @@ package mds.mdsip;
 
 /* $Id$ */
 import java.awt.AWTEvent;
-import jScope.DataProvider;
+import jscope.DataProvider;
 
 /**
  * An UpdateEvent instance is passed to UpdateEventListener implementations as argument of processUpdateEvent in order to notify the receipt of an asynchronous event triggering the display of a waveform.

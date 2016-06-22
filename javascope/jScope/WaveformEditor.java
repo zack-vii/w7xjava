@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 import java.awt.Event;
 import java.awt.Graphics;
@@ -44,7 +44,7 @@ final public class WaveformEditor extends Waveform{
 
     public WaveformEditor(final float[] x, final float[] y, final float minY, final float maxY){
         super(new Signal(x, y, x.length, x[0], x[x.length - 1], minY, maxY));
-        this.SetMarker(1);
+        this.setMarker(1);
         this.currentX = x;
         this.currentY = y;
         this.minY = minY;
@@ -54,14 +54,6 @@ final public class WaveformEditor extends Waveform{
 
     public synchronized void addWaveformEditorListener(final WaveformEditorListener listener) {
         this.listeners.add(listener);
-    }
-
-    int convertXPix(final float x) {
-        return this.wm.XPixel(x, this.getWaveSize());
-    }
-
-    int convertYPix(final float y) {
-        return this.wm.YPixel(y, this.getWaveSize());
     }
 
     public synchronized void notifyUpdate(final float[] waveX, final float[] waveY, final int newIdx) {
@@ -94,10 +86,10 @@ final public class WaveformEditor extends Waveform{
                 int minDist = Integer.MAX_VALUE;
                 int prevIdx = -1;
                 for(int i = WaveformEditor.this.closestIdx = 0; i < WaveformEditor.this.currentX.length; i++){
-                    if(prevIdx == -1 && i < WaveformEditor.this.currentX.length - 1 && WaveformEditor.this.convertXPix(WaveformEditor.this.currentX[i + 1]) > currX) prevIdx = i;
+                    if(prevIdx == -1 && i < WaveformEditor.this.currentX.length - 1 && WaveformEditor.this.toXPixel(WaveformEditor.this.currentX[i + 1]) > currX) prevIdx = i;
                     // (float currDist = (float)Math.abs(currX - currentX[i]);
-                    final int currentXPix = WaveformEditor.this.convertXPix(WaveformEditor.this.currentX[i]);
-                    final int currentYPix = WaveformEditor.this.convertYPix(WaveformEditor.this.currentY[i]);
+                    final int currentXPix = WaveformEditor.this.toXPixel(WaveformEditor.this.currentX[i]);
+                    final int currentYPix = WaveformEditor.this.toYPixel(WaveformEditor.this.currentY[i]);
                     final int currDist = (currX - currentXPix) * (currX - currentXPix) + (currY - currentYPix) * (currY - currentYPix);
                     if(currDist < minDist){
                         minDist = currDist;
@@ -126,7 +118,7 @@ final public class WaveformEditor extends Waveform{
                             WaveformEditor.this.currentY = newCurrentY;
                         }
                     }else{
-                        final float newX = WaveformEditor.this.convertX(e.getX());
+                        final float newX = WaveformEditor.this.toXValue(e.getX());
                         final float[] newCurrentX = new float[WaveformEditor.this.currentX.length + 1];
                         final float[] newCurrentY = new float[WaveformEditor.this.currentY.length + 1];
                         int j;
@@ -147,7 +139,7 @@ final public class WaveformEditor extends Waveform{
                     }
                     final Signal newSig = new Signal(WaveformEditor.this.currentX, WaveformEditor.this.currentY, WaveformEditor.this.currentX.length, WaveformEditor.this.currentX[0], WaveformEditor.this.currentX[WaveformEditor.this.currentX.length - 1], WaveformEditor.this.minY, WaveformEditor.this.maxY);
                     newSig.setMarker(1);
-                    WaveformEditor.this.Update(newSig);
+                    WaveformEditor.this.update(newSig);
                     WaveformEditor.this.notifyUpdate(WaveformEditor.this.currentX, WaveformEditor.this.currentY, newIdx);
                 }
             }
@@ -166,8 +158,8 @@ final public class WaveformEditor extends Waveform{
                     float currX;
                     float currY;
                     try{
-                        currX = WaveformEditor.this.convertX(e.getX());
-                        currY = WaveformEditor.this.convertY(e.getY());
+                        currX = WaveformEditor.this.toXValue(e.getX());
+                        currY = WaveformEditor.this.toYValue(e.getY());
                     }catch(final Exception exc){
                         return;
                     }
@@ -181,7 +173,7 @@ final public class WaveformEditor extends Waveform{
                     WaveformEditor.this.currentY[WaveformEditor.this.closestIdx] = currY;
                     final Signal newSig = new Signal(WaveformEditor.this.currentX, WaveformEditor.this.currentY, WaveformEditor.this.currentX.length, WaveformEditor.this.currentX[0], WaveformEditor.this.currentX[WaveformEditor.this.currentX.length - 1], WaveformEditor.this.minY, WaveformEditor.this.maxY);
                     newSig.setMarker(1);
-                    WaveformEditor.this.Update(newSig);
+                    WaveformEditor.this.update(newSig);
                     WaveformEditor.this.notifyUpdate(WaveformEditor.this.currentX, WaveformEditor.this.currentY, -1);
                 }
             }
@@ -218,7 +210,7 @@ final public class WaveformEditor extends Waveform{
                         WaveformEditor.this.currentX[i] = WaveformEditor.copyX[i];
                         WaveformEditor.this.currentY[i] = WaveformEditor.copyY[i];
                     }
-                    WaveformEditor.this.Update(sig);
+                    WaveformEditor.this.update(sig);
                     WaveformEditor.this.notifyUpdate(WaveformEditor.this.currentX, WaveformEditor.this.currentY, WaveformEditor.this.currentX.length - 1);
                 }
             }
@@ -242,6 +234,14 @@ final public class WaveformEditor extends Waveform{
         }
         this.minY = minY;
         this.maxY = maxY;
-        this.Update(sig);
+        this.update(sig);
+    }
+
+    int toXPixel(final float x) {
+        return this.wm.toXPixel(x, this.getWaveSize());
+    }
+
+    int toYPixel(final float y) {
+        return this.wm.toYPixel(y, this.getWaveSize());
     }
 }

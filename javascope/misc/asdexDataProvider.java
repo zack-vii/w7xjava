@@ -4,15 +4,15 @@ package misc;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.swing.JFrame;
-import jScope.Array.RealArray;
-import jScope.DataProvider;
-import jScope.DataServerItem;
-import jScope.WaveData;
-import jScope.WaveDataListener;
-import jScope.XYData;
-import mds.mdsDataProvider;
+import jscope.DataProvider;
+import jscope.DataServerItem;
+import jscope.WaveData;
+import jscope.WaveDataListener;
+import jscope.XYData;
+import jscope.Array.RealArray;
+import mds.MdsDataProvider;
 
-public final class asdexDataProvider extends mdsDataProvider{
+public final class AsdexDataProvider extends MdsDataProvider{
     class SimpleWaveData implements WaveData{
         boolean   _jscope_set = false;
         RealArray currXData   = null;
@@ -53,19 +53,19 @@ public final class asdexDataProvider extends mdsDataProvider{
 
         private double[] encodeTimeBase(final String expr) {
             try{
-                // double t0 = GetFloat("dscptr(window_of(dim_of(" + expr + ")),2)");
-                final int startIdx[] = asdexDataProvider.this.GetIntArray("begin_of(window_of(dim_of(" + expr + ")))");
-                final int endIdx[] = asdexDataProvider.this.GetIntArray("end_of(window_of(dim_of(" + expr + ")))");
+                // double t0 = getFloat("dscptr(window_of(dim_of(" + expr + ")),2)");
+                final int startIdx[] = AsdexDataProvider.this.getIntArray("begin_of(window_of(dim_of(" + expr + ")))");
+                final int endIdx[] = AsdexDataProvider.this.getIntArray("end_of(window_of(dim_of(" + expr + ")))");
                 if(startIdx.length != 1 || endIdx.length != 1) return null;
                 final int numPoint = endIdx[0] - startIdx[0] + 1;
-                final double delta[] = asdexDataProvider.this.GetDoubleArray("slope_of(axis_of(dim_of(" + expr + ")))");
+                final double delta[] = AsdexDataProvider.this.getDoubleArray("slope_of(axis_of(dim_of(" + expr + ")))");
                 double curr;
-                final double firstTime[] = asdexDataProvider.this.GetDoubleArray("i_to_x(dim_of(" + expr + ")," + startIdx[0] + ")");
+                final double firstTime[] = AsdexDataProvider.this.getDoubleArray("i_to_x(dim_of(" + expr + ")," + startIdx[0] + ")");
                 double begin[];
                 double end[];
                 try{
-                    begin = asdexDataProvider.this.GetDoubleArray("begin_of(axis_of(dim_of(" + expr + ")))");
-                    end = asdexDataProvider.this.GetDoubleArray("end_of(axis_of(dim_of(" + expr + ")))");
+                    begin = AsdexDataProvider.this.getDoubleArray("begin_of(axis_of(dim_of(" + expr + ")))");
+                    end = AsdexDataProvider.this.getDoubleArray("end_of(axis_of(dim_of(" + expr + ")))");
                 }catch(final IOException e){
                     return null;
                 }
@@ -98,24 +98,24 @@ public final class asdexDataProvider extends mdsDataProvider{
 
         @Override
         public XYData getData(final double xmin, final double xmax, final int numPoints) throws Exception {
-            final double x[] = this.GetXDoubleData();
-            final float y[] = this.GetFloatData();
+            final double x[] = this.getXDoubleData();
+            final float y[] = this.getFloatData();
             return new XYData(x, y, Double.POSITIVE_INFINITY);
         }
 
         @Override
         public XYData getData(final int numPoints) throws Exception {
-            final double x[] = this.GetXDoubleData();
-            final float y[] = this.GetFloatData();
+            final double x[] = this.getXDoubleData();
+            final float y[] = this.getFloatData();
             return new XYData(x, y, Double.POSITIVE_INFINITY);
         }
 
         @Override
         public void getDataAsync(final double lowerBound, final double upperBound, final int numPoints) {}
 
-        public float[] GetFloatData() throws IOException {
+        public float[] getFloatData() throws IOException {
             String in_y;
-            in_y = asdexDataProvider.this.ParseExpression(this.in_y);
+            in_y = AsdexDataProvider.this.ParseExpression(this.in_y);
             // _jscope_set = true;
             final String in_y_expr = "_jscope_" + this.v_idx;
             String set_tdivar = "";
@@ -131,9 +131,9 @@ public final class asdexDataProvider extends mdsDataProvider{
                 set_tdivar = "_jscope_" + this.v_idx + " = (" + resampledExpr + "), ";
                 // String expr = set_tdivar + "fs_float("+resampledExpr+ ")";
                 final String expr = set_tdivar + "fs_float(_jscope_" + this.v_idx + ")";
-                return asdexDataProvider.this.GetFloatArray(expr);
+                return AsdexDataProvider.this.getFloatArray(expr);
             }
-            return asdexDataProvider.this.GetFloatArray(set_tdivar + "fs_float(" + in_y_expr + ")");
+            return AsdexDataProvider.this.getFloatArray(set_tdivar + "fs_float(" + in_y_expr + ")");
         }
 
         @Override
@@ -144,27 +144,27 @@ public final class asdexDataProvider extends mdsDataProvider{
                 this._jscope_set = true;
                 expr = "( _jscope_" + this.v_idx + " = (" + this.in_y + "), shape(_jscope_" + this.v_idx + "))";
             }
-            final int shape[] = asdexDataProvider.this.GetNumDimensions(expr);
-            if(asdexDataProvider.this.error != null){
+            final int shape[] = AsdexDataProvider.this.getNumDimensions(expr);
+            if(AsdexDataProvider.this.error != null){
                 this._jscope_set = false;
-                asdexDataProvider.this.error = null;
+                AsdexDataProvider.this.error = null;
                 return 1;
             }
             return shape.length;
         }
 
         @Override
-        public String GetTitle() throws IOException {
+        public String getTitle() throws IOException {
             String expr;
             if(this._jscope_set) expr = "help_of(_jscope_" + this.v_idx + ")";
             else{
                 this._jscope_set = true;
                 expr = "( _jscope_" + this.v_idx + " = (" + this.in_y + "), help_of(_jscope_" + this.v_idx + "))";
             }
-            final String out = asdexDataProvider.this.GetStringValue(expr);
+            final String out = AsdexDataProvider.this.getStringValue(expr);
             if(out == null) this._jscope_set = false;
             return out;
-            // return GetDefaultTitle(in_y);
+            // return getDefaultTitle(in_y);
         }
 
         @Override
@@ -179,18 +179,18 @@ public final class asdexDataProvider extends mdsDataProvider{
             return null;
         }
 
-        public float[] GetXData() {
+        public float[] getXData() {
             try{
-                if(this.currXData == null) this.currXData = this.GetXRealData();
+                if(this.currXData == null) this.currXData = this.getXRealData();
                 return this.currXData.getFloatArray();
             }catch(final Exception exc){
                 return null;
             }
         }
 
-        public double[] GetXDoubleData() {
+        public double[] getXDoubleData() {
             try{
-                if(this.currXData == null) this.currXData = this.GetXRealData();
+                if(this.currXData == null) this.currXData = this.getXRealData();
                 return this.currXData.getDoubleArray();
             }catch(final Exception exc){
                 return null;
@@ -198,7 +198,7 @@ public final class asdexDataProvider extends mdsDataProvider{
         }
 
         @Override
-        public String GetXLabel() throws IOException {
+        public String getXLabel() throws IOException {
             String out = null;
             if(this.in_x == null || this.in_x.length() == 0){
                 String expr;
@@ -207,13 +207,13 @@ public final class asdexDataProvider extends mdsDataProvider{
                     this._jscope_set = true;
                     expr = "( _jscope_" + this.v_idx + " = (" + this.in_y + "), Units(dim_of(_jscope_" + this.v_idx + ", 1)))";
                 }
-                out = asdexDataProvider.this.GetStringValue(expr);
-                // return GetDefaultXLabel(in_y);
+                out = AsdexDataProvider.this.getStringValue(expr);
+                // return getDefaultXLabel(in_y);
             }else{
                 /*
-                 * String expr; if(_jscope_set) expr = "Units(_jscope_"+v_idx+")"; else { _jscope_set = true; expr = "( _jscope_"+v_idx+" = ("+in_x+"), Units(_jscope_"+v_idx+")"; var_idx++; } return GetDefaultYLabel(expr);
+                 * String expr; if(_jscope_set) expr = "Units(_jscope_"+v_idx+")"; else { _jscope_set = true; expr = "( _jscope_"+v_idx+" = ("+in_x+"), Units(_jscope_"+v_idx+")"; var_idx++; } return getDefaultYLabel(expr);
                  */
-                out = asdexDataProvider.this.GetStringValue("Units(" + this.in_x + ")");
+                out = AsdexDataProvider.this.getStringValue("Units(" + this.in_x + ")");
             }
             if(out == null) this._jscope_set = false;
             return out;
@@ -229,16 +229,16 @@ public final class asdexDataProvider extends mdsDataProvider{
             return null;
         }
 
-        public long[] GetXLongData() {
+        public long[] getXLongData() {
             try{
-                if(this.currXData == null) this.currXData = this.GetXRealData();
+                if(this.currXData == null) this.currXData = this.getXRealData();
                 return this.currXData.getLongArray();
             }catch(final Exception exc){
                 return null;
             }
         }
 
-        RealArray GetXRealData() throws IOException {
+        RealArray getXRealData() throws IOException {
             String expr = null;
             double tBaseOut[] = null;
             if(this.in_x == null){
@@ -265,9 +265,9 @@ public final class asdexDataProvider extends mdsDataProvider{
                     }
                 }
                 if(tBaseOut != null) return new RealArray(tBaseOut);
-                return asdexDataProvider.this.GetRealArray(expr);
+                return AsdexDataProvider.this.getRealArray(expr);
             }
-            return asdexDataProvider.this.GetRealArray(this.in_x);
+            return AsdexDataProvider.this.getRealArray(this.in_x);
         }
 
         @Override
@@ -276,29 +276,29 @@ public final class asdexDataProvider extends mdsDataProvider{
             return null;
         }
 
-        public float[] GetYData() throws IOException {
+        public float[] getYData() throws IOException {
             String expr;
             if(this._jscope_set) expr = "dim_of(_jscope_" + this.v_idx + ", 1)";
             else{
                 this._jscope_set = true;
                 expr = "( _jscope_" + this.v_idx + " = (" + this.in_y + "), dim_of(_jscope_" + this.v_idx + ", 1))";
             }
-            return asdexDataProvider.this.GetFloatArray(expr);
-            // return GetFloatArray("DIM_OF("+in_y+", 1)");
+            return AsdexDataProvider.this.getFloatArray(expr);
+            // return getFloatArray("DIM_OF("+in_y+", 1)");
         }
 
         @Override
-        public String GetYLabel() throws IOException {
+        public String getYLabel() throws IOException {
             String expr;
             if(this._jscope_set) expr = "Units(_jscope_" + this.v_idx + ")";
             else{
                 this._jscope_set = true;
                 expr = "( _jscope_" + this.v_idx + " = (" + this.in_y + "), Units(_jscope_" + this.v_idx + "))";
             }
-            final String out = asdexDataProvider.this.GetStringValue(expr);
+            final String out = AsdexDataProvider.this.getStringValue(expr);
             if(out == null) this._jscope_set = false;
             return out;
-            // return GetDefaultYLabel(in_y);
+            // return getDefaultYLabel(in_y);
         }
 
         @Override
@@ -308,17 +308,17 @@ public final class asdexDataProvider extends mdsDataProvider{
         }
 
         @Override
-        public String GetZLabel() throws IOException {
+        public String getZLabel() throws IOException {
             String expr;
             if(this._jscope_set) expr = "Units(dim_of(_jscope_" + this.v_idx + ", 1))";
             else{
                 this._jscope_set = true;
                 expr = "( _jscope_" + this.v_idx + " = (" + this.in_y + "), Units(dim_of(_jscope_" + this.v_idx + ", 1)))";
             }
-            final String out = asdexDataProvider.this.GetStringValue(expr);
+            final String out = AsdexDataProvider.this.getStringValue(expr);
             if(out == null) this._jscope_set = false;
             return out;
-            // return GetDefaultZLabel(in_y);
+            // return getDefaultZLabel(in_y);
         }
 
         @Override
@@ -346,21 +346,21 @@ public final class asdexDataProvider extends mdsDataProvider{
         return false;
     }
 
-    public asdexDataProvider(){
+    public AsdexDataProvider(){
         super();
     }
 
-    public asdexDataProvider(final String provider) throws IOException{
+    public AsdexDataProvider(final String provider) throws IOException{
         super(provider);
     }
 
     @Override
-    public synchronized float[] GetFloatArray(final String in) throws IOException {
+    public synchronized float[] getFloatArray(final String in) throws IOException {
         // String parsed = ParseExpression(in);
         final String parsed = in;
         if(parsed == null) return null;
         this.error = null;
-        final float[] out_array = super.GetFloatArray(parsed);
+        final float[] out_array = super.getFloatArray(parsed);
         if(out_array == null && this.error == null) this.error = "Cannot evaluate " + in + " for shot " + this.shot;
         if(out_array != null && out_array.length <= 1){
             this.error = "Cannot evaluate " + in + " for shot " + this.shot;
@@ -370,24 +370,24 @@ public final class asdexDataProvider extends mdsDataProvider{
     }
 
     @Override
-    public synchronized int[] GetIntArray(final String in) throws IOException {
+    public synchronized int[] getIntArray(final String in) throws IOException {
         final String parsed = this.ParseExpression(in);
         if(parsed == null) return null;
-        return super.GetIntArray(parsed);
+        return super.getIntArray(parsed);
     }
 
     @Override
-    public int[] GetNumDimensions(final String spec) {
+    public int[] getNumDimensions(final String spec) {
         return new int[]{1};
     }
 
     @Override
-    public WaveData GetWaveData(final String in) {
+    public WaveData getWaveData(final String in) {
         return new SimpleWaveData(in);
     }
 
     @Override
-    public int InquireCredentials(final JFrame f, final DataServerItem server_item) {
+    public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
         return DataProvider.LOGIN_OK;
     }
 
@@ -408,16 +408,13 @@ public final class asdexDataProvider extends mdsDataProvider{
     }
 
     @Override
-    public void SetArgument(final String arg) throws IOException {
+    public void setArgument(final String arg) throws IOException {
         this.mds.setProvider(arg);
         this.mds.setUser("mdsplus");
     }
 
     @Override
-    public void SetCompression(final boolean state) {}
-
-    @Override
-    public synchronized void Update(final String exp, final long s) {
+    public synchronized void update(final String exp, final long s) {
         this.error = null;
         this.shot = s;
     }

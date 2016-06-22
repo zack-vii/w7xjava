@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Color;
@@ -1872,16 +1872,16 @@ public final class Signal implements WaveDataListener{
         long startTime = 0L;
         if(DEBUG.D) startTime = System.nanoTime();
         if(this.title == null) try{
-            this.title = this.data.GetTitle();
+            this.title = this.data.getTitle();
         }catch(final Exception e){}
         if(this.xlabel == null) try{
-            this.xlabel = (this.x_data == null) ? this.data.GetXLabel() : this.x_data.GetYLabel();
+            this.xlabel = (this.x_data == null) ? this.data.getXLabel() : this.x_data.getYLabel();
         }catch(final Exception e){}
         if(this.ylabel == null) try{
-            this.ylabel = this.data.GetYLabel();
+            this.ylabel = this.data.getYLabel();
         }catch(final Exception e){}
         if(this.zlabel == null && this.type == Signal.TYPE_2D) try{
-            this.zlabel = this.data.GetZLabel();
+            this.zlabel = this.data.getZLabel();
         }catch(final Exception e){}
         try{
             this.x = xydata.getX();

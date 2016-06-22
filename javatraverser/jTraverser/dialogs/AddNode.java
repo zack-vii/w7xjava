@@ -1,4 +1,4 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -10,10 +10,10 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import jTraverser.Node;
-import jTraverser.NodeInfo;
-import jTraverser.TreeManager;
-import jTraverser.jTraverserFacade;
+import jtraverser.Node;
+import jtraverser.NodeInfo;
+import jtraverser.TreeManager;
+import jtraverser.jTraverserFacade;
 
 @SuppressWarnings("serial")
 public final class AddNode extends JDialog{

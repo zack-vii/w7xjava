@@ -1,4 +1,4 @@
-package jTraverser.editor;
+package jtraverser.editor;
 
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;

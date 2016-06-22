@@ -1,6 +1,6 @@
-package jTraverser.editor;
+package jtraverser.editor;
 
-// package jTraverser;
+// package jtraverser;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JPanel;

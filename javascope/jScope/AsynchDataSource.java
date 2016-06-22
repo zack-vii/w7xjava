@@ -1,7 +1,7 @@
 /*
  * AsynchDataSource interface is used by MdsDataProvider to handle asynchronour data generation
  */
-package jScope;
+package jscope;
 
 /**
  * @author manduchi

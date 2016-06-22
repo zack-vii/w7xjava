@@ -3,12 +3,12 @@ package misc;
 /* $Id$ */
 import java.io.IOException;
 import javax.swing.JFrame;
-import jScope.DataProvider;
-import jScope.DataServerItem;
-import mds.mdsDataProvider;
-import mds.mdsParser;
+import jscope.DataProvider;
+import jscope.DataServerItem;
+import mds.MdsDataProvider;
+import mds.MdsParser;
 
-public final class tsDataProvider extends mdsDataProvider{
+public final class TsDataProvider extends MdsDataProvider{
     public static boolean SupportsCompression() {
         return false;
     }
@@ -21,11 +21,11 @@ public final class tsDataProvider extends mdsDataProvider{
         return false;
     }
 
-    public tsDataProvider(){
+    public TsDataProvider(){
         super();
     }
 
-    public tsDataProvider(final String provider) throws IOException{
+    public TsDataProvider(final String provider) throws IOException{
         super(provider);
     }
 
@@ -34,22 +34,22 @@ public final class tsDataProvider extends mdsDataProvider{
         return false;
     }
 
-    protected String GetDefaultXLabel(final String in_y) throws IOException {
+    protected String getDefaultXLabel(final String in_y) throws IOException {
         this.error = null;
-        return this.GetString("GetTSUnit(0)");
+        return this.getString("GetTSUnit(0)");
     }
 
-    protected String GetDefaultYLabel() throws IOException {
+    protected String getDefaultYLabel() throws IOException {
         this.error = null;
-        return this.GetString("GetTSUnit(1)");
+        return this.getString("GetTSUnit(1)");
     }
 
     @Override
-    public synchronized float[] GetFloatArray(final String in) throws IOException {
+    public synchronized float[] getFloatArray(final String in) throws IOException {
         final String parsed = this.ParseExpression(in);
         if(parsed == null) return null;
         this.error = null;
-        final float[] out_array = super.GetFloatArray(parsed);
+        final float[] out_array = super.getFloatArray(parsed);
         if(out_array == null && this.error == null) this.error = "Cannot evaluate " + in + " for shot " + this.shot;
         if(out_array != null && out_array.length <= 1){
             this.error = "Cannot evaluate " + in + " for shot " + this.shot;
@@ -59,26 +59,26 @@ public final class tsDataProvider extends mdsDataProvider{
     }
 
     @Override
-    public synchronized int[] GetIntArray(final String in) throws IOException {
+    public synchronized int[] getIntArray(final String in) throws IOException {
         final String parsed = this.ParseExpression(in);
         if(parsed == null) return null;
-        return super.GetIntArray(parsed);
+        return super.getIntArray(parsed);
     }
 
     @Override
-    public int[] GetNumDimensions(final String spec) {
+    public int[] getNumDimensions(final String spec) {
         return new int[]{1};
     }
 
     @Override
-    public int InquireCredentials(final JFrame f, final DataServerItem server_item) {
+    public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
         return DataProvider.LOGIN_OK;
     }
 
     protected String ParseExpression(final String in) {
         // if(in.startsWith("DIM_OF("))
         // return in;
-        final String res = mdsParser.parseFun(in, "GetTsBase(" + this.shot + ", \"", "\")");
+        final String res = MdsParser.parseFun(in, "GetTsBase(" + this.shot + ", \"", "\")");
         /*
          * StringTokenizer st = new StringTokenizer(in, ":"); String res = "GetTSData(\""; try{ String name = st.nextToken();
          */
@@ -94,16 +94,13 @@ public final class tsDataProvider extends mdsDataProvider{
     }
 
     @Override
-    public void SetArgument(final String arg) throws IOException {
+    public void setArgument(final String arg) throws IOException {
         this.mds.setProvider(arg);
         this.mds.setUser("mdsplus");
     }
 
     @Override
-    public void SetCompression(final boolean state) {}
-
-    @Override
-    public synchronized void Update(final String exp, final long s) {
+    public synchronized void update(final String exp, final long s) {
         this.error = null;
         this.shot = (int)s;
     }

@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.io.IOException;
@@ -41,7 +41,7 @@ public interface WaveData{
      */
     public int getNumDimension() throws IOException;
 
-    public String GetTitle() throws IOException;
+    public String getTitle() throws IOException;
 
     double[] getX2D();
 
@@ -53,7 +53,7 @@ public interface WaveData{
      * @return The X label string.
      * @exception java.io.IOException
      */
-    public String GetXLabel() throws IOException;
+    public String getXLabel() throws IOException;
 
     float[] getY2D();
 
@@ -63,7 +63,7 @@ public interface WaveData{
      * @return The Y label string.
      * @exception java.io.IOException
      */
-    public String GetYLabel() throws IOException;
+    public String getYLabel() throws IOException;
 
     float[] getZ();
 
@@ -73,7 +73,7 @@ public interface WaveData{
      * @return The Z label string.
      * @exception java.io.IOException
      */
-    public String GetZLabel() throws IOException;
+    public String getZLabel() throws IOException;
 
     // double[] getXLimits();
     // long []getXLong();

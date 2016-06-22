@@ -1,10 +1,10 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 import java.beans.PropertyEditor;
 import java.util.Vector;
-import jTraverser.Node;
-import jTraverser.jTraverserFacade;
-import jTraverser.editor.NodeEditor;
+import jtraverser.Node;
+import jtraverser.jTraverserFacade;
+import jtraverser.editor.NodeEditor;
 
 public final class DialogSet{
     private final Vector<TreeDialog> dialogs = new Vector<TreeDialog>();

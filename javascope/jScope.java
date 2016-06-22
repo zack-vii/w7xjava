@@ -1,10 +1,7 @@
+import jscope.jScopeFacade;
 
-import jScope.jScopeFacade;
-public class jScope
-{
-    public static void main(String args[])
-    {
+public class jScope{
+    public static void main(final String args[]) {
         jScopeFacade.startApplication(args);
     }
-
 }

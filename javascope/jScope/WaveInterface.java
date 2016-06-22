@@ -1,10 +1,10 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.io.IOException;
 import java.io.PrintWriter;
 import debug.DEBUG;
-import jScope.ColorMap.ColorProfile;
+import jscope.ColorMap.ColorProfile;
 
 public class WaveInterface{
     static public boolean    auto_color_on_expr = false;
@@ -12,7 +12,7 @@ public class WaveInterface{
     static final int         MAX_NUM_SHOT       = 30;
     static SignalBox         sig_box            = new SignalBox();
 
-    protected static String AddNewLineCode(final String s) {
+    protected static String addNewLineCode(final String s) {
         if(DEBUG.M) System.out.println("WaveInterface.AddNewLineCode(\"" + s + "\")");
         String s_new = new String();
         int new_pos = 0, old_pos = 0;
@@ -26,28 +26,28 @@ public class WaveInterface{
         return s_new;
     }
 
-    static public void FreeCache() {}
+    static public void freeCache() {}
 
-    private static String GetFirstLine(final String str) {
-        if(DEBUG.M) System.out.println("WaveInterface.GetFirstLine(\"" + str + "\")");
+    private static String getFirstLine(final String str) {
+        if(DEBUG.M) System.out.println("WaveInterface.getFirstLine(\"" + str + "\")");
         final int idx = str.indexOf("\n");
         if(idx != -1) return str.substring(0, idx);
         return str;
     }
 
-    static public long[] GetShotArray(final String in_shots, final String exp, final DataProvider dp) throws IOException {
-        if(DEBUG.M) System.out.println("WaveInterface.GetShotArray(\"" + in_shots + "\", " + exp + "\", " + dp + ")");
+    static public long[] getShotArray(final String in_shots, final String exp, final DataProvider dp) throws IOException {
+        if(DEBUG.M) System.out.println("WaveInterface.getShotArray(\"" + in_shots + "\", " + exp + "\", " + dp + ")");
         long shot_list[] = null;
         String error;
         if(in_shots == null || in_shots.trim().length() == 0 || dp == null) return null;
         String shotExpr = in_shots;
         if(exp != null) shotExpr = WaveInterface.processShotExpression(in_shots, exp);
-        shot_list = dp.GetShots(shotExpr);
+        shot_list = dp.getShots(shotExpr);
         if(shot_list == null || shot_list.length == 0 || shot_list.length > WaveInterface.MAX_NUM_SHOT){
             if(shot_list != null && shot_list.length > WaveInterface.MAX_NUM_SHOT) error = "Too many shots. Max shot list elements " + WaveInterface.MAX_NUM_SHOT + "\n";
             else{
-                if(dp.ErrorString() != null){
-                    error = dp.ErrorString();
+                if(dp.errorString() != null){
+                    error = dp.errorString();
                     if(error.indexOf("_jScopeMainShots") != -1) error = "Undefined main shot value";
                 }else error = "Shot syntax error\n";
             }
@@ -77,7 +77,7 @@ public class WaveInterface{
         return outStr;
     }
 
-    protected static String RemoveNewLineCode(final String s) {
+    protected static String removeNewLineCode(final String s) {
         if(DEBUG.M) System.out.println("WaveInterface.RemoveNewLineCode(\"" + s + "\")");
         String y_new = new String();
         int new_pos = 0, old_pos = 0;
@@ -90,7 +90,7 @@ public class WaveInterface{
         return y_new;
     }
 
-    static String TrimString(final String s) {
+    static String trimString(final String s) {
         if(DEBUG.M) System.out.println("WaveInterface.TrimString(\"" + s + "\")");
         String s_new = new String();
         int new_pos = 0, old_pos = 0;
@@ -102,7 +102,7 @@ public class WaveInterface{
         return s_new;
     }
 
-    protected static void WriteLine(final PrintWriter out, final String prompt, final String value) {
+    protected static void writeLine(final PrintWriter out, final String prompt, final String value) {
         if(DEBUG.M) System.out.println("WaveInterface.WriteLine(" + out + ", \"" + prompt + "\", \"" + value + "\")");
         if(value != null && value.length() != 0){
             out.println(prompt + value);
@@ -159,49 +159,49 @@ public class WaveInterface{
     public double          xmax, xmin, ymax, ymin, timemax, timemin;
 
     public WaveInterface(){
-        this.CreateWaveInterface(null, null);
+        this.createWaveInterface(null, null);
     }
 
     public WaveInterface(final DataProvider dp){
-        this.CreateWaveInterface(null, dp);
+        this.createWaveInterface(null, dp);
     }
 
     public WaveInterface(final Waveform wave){
-        this.CreateWaveInterface(wave, null);
+        this.createWaveInterface(wave, null);
     }
 
     public WaveInterface(final Waveform wave, final DataProvider dp){
         if(DEBUG.M) System.out.println("WaveInterface(" + wave + ", " + dp + ")");
-        this.CreateWaveInterface(wave, dp);
+        this.createWaveInterface(wave, dp);
     }
 
-    public void AddFrames(final String frames) {
-        this.AddFrames(frames, null);
-    }
-
-    public void AddFrames(final String frames, final String frames_time) {
+    public void addFrames(final String frames, final String frames_time) {
         if(DEBUG.M) System.out.println("WaveInterface.AddFrames(\"" + frames + "\", \"" + frames_time + "\")");
-        this.SetAsImage(true);
+        this.setAsImage(true);
         this.in_x = new String[1];
         this.in_y = new String[1];
         this.in_x[0] = frames_time;
         this.in_y[0] = frames;
     }
 
-    public boolean AddSignal(final String y_expr) {
-        return this.AddSignal("", y_expr);
+    public void AddFrames(final String frames) {
+        this.addFrames(frames, null);
     }
 
-    public boolean AddSignal(final String x_expr, final String y_expr) {
+    public boolean addSignal(final String y_expr) {
+        return this.addSignal("", y_expr);
+    }
+
+    public boolean addSignal(final String x_expr, final String y_expr) {
         if(DEBUG.M) System.out.println("WaveInterface.AddSignal(\"" + x_expr + "\", \"" + y_expr + "\")");
         final String x[] = new String[1];
         final String y[] = new String[1];
         x[0] = x_expr;
         y[0] = y_expr;
-        return this.AddSignals(x, y);
+        return this.addSignals(x, y);
     }
 
-    public boolean AddSignals(final String x_expr[], final String y_expr[]) {
+    public boolean addSignals(final String x_expr[], final String y_expr[]) {
         if(DEBUG.M) System.out.println("WaveInterface.AddSignals(x_expr[], y_expr[])");
         if(x_expr.length != y_expr.length || x_expr.length == 0) return false;
         int new_num_waves;
@@ -311,7 +311,7 @@ public class WaveInterface{
     }
 
     @SuppressWarnings("rawtypes")
-    private void CreateNewFramesClass(final int image_type) throws IOException {
+    private void createNewFramesClass(final int image_type) throws IOException {
         if(DEBUG.M) System.out.println("WaveInterface.CreateNewFramesClass()");
         if(image_type == FrameData.JAI_IMAGE){
             try{
@@ -326,7 +326,7 @@ public class WaveInterface{
         }
     }
 
-    private void CreateWaveInterface(final Waveform wave, final DataProvider dp) {
+    private void createWaveInterface(final Waveform wave, final DataProvider dp) {
         if(DEBUG.M) System.out.println("WaveInterface.CreateWaveInterface(" + wave + ", " + dp + ")");
         this.wave = wave;
         this.dp = dp;
@@ -344,9 +344,9 @@ public class WaveInterface{
         this.reversed = false;
     }
 
-    public void EnableCache(final boolean state) {}
+    public void enableCache(final boolean state) {}
 
-    public void Erase() {
+    public void erase() {
         if(DEBUG.M) System.out.println("WaveInterface.Erase()");
         this.num_waves = 0;
         this.in_label = null;
@@ -377,13 +377,13 @@ public class WaveInterface{
         this.evaluated = null;
     }
 
-    public synchronized void EvaluateOthers() throws Exception {
+    public synchronized void evaluateOthers() throws Exception {
         if(DEBUG.M) System.out.println("WaveInterface.EvaluateOthers()");
         int curr_wave;
         if(this.is_image){
             if(!this.evaluated[0]){
-                this.InitializeFrames();
-                if(this.frames != null) this.frames.SetViewRect((int)this.xmin, (int)this.ymin, (int)this.xmax, (int)this.ymax);
+                this.initializeFrames();
+                if(this.frames != null) this.frames.setViewRect((int)this.xmin, (int)this.ymin, (int)this.xmax, (int)this.ymax);
                 this.error = this.curr_error;
             }
             return;
@@ -395,7 +395,7 @@ public class WaveInterface{
         for(curr_wave = 0; curr_wave < this.num_waves; curr_wave++){
             if(!this.evaluated[curr_wave] && !(!this.interpolates[curr_wave] && this.markers[curr_wave] == Signal.NONE)){
                 this.w_error[curr_wave] = null;
-                this.signals[curr_wave] = this.GetSignal(curr_wave, this.xmin, this.xmax);
+                this.signals[curr_wave] = this.getSignal(curr_wave, this.xmin, this.xmax);
                 this.evaluated[curr_wave] = true;
                 if(this.signals[curr_wave] == null){
                     this.w_error[curr_wave] = this.curr_error;
@@ -409,7 +409,7 @@ public class WaveInterface{
         this.modified = false;
     }
 
-    public synchronized void EvaluateShot(final long shot) throws Exception {
+    public synchronized void evaluateShot(final long shot) throws Exception {
         if(DEBUG.M) System.out.println("WaveInterface.EvaluateShot(" + shot + ")");
         int curr_wave;
         if(this.is_image) return;
@@ -417,7 +417,7 @@ public class WaveInterface{
         for(curr_wave = 0; curr_wave < this.num_waves; curr_wave++){
             if((shot == 0) || (this.shots[curr_wave] == shot && !this.evaluated[curr_wave] && (this.interpolates[curr_wave] || this.markers[curr_wave] != Signal.NONE))){
                 this.w_error[curr_wave] = null;
-                this.signals[curr_wave] = this.GetSignal(curr_wave, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+                this.signals[curr_wave] = this.getSignal(curr_wave, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
                 this.evaluated[curr_wave] = true;
                 if(this.signals[curr_wave] == null){
                     this.w_error[curr_wave] = this.curr_error;
@@ -450,7 +450,7 @@ public class WaveInterface{
         if(DEBUG.D) System.out.println(">> " + this.error);
         if(this.num_waves == 0 || (this.is_image && this.frames == null)){
             if(this.error != null){
-                if(brief) er = WaveInterface.GetFirstLine(new String(this.error));
+                if(brief) er = WaveInterface.getFirstLine(new String(this.error));
             }
             return er;
         }
@@ -483,8 +483,8 @@ public class WaveInterface{
         return this.modified;
     }
 
-    public int GetNumEvaluatedSignal() {
-        if(DEBUG.M) System.out.println("WaveInterface.GetNumEvaluatedSignal()");
+    public int getNumEvaluatedSignal() {
+        if(DEBUG.M) System.out.println("WaveInterface.getNumEvaluatedSignal()");
         if(this.signals == null) return 0;
         int i, n = 0;
         for(i = 0; i < this.signals.length; i++)
@@ -492,24 +492,24 @@ public class WaveInterface{
         return n;
     }
 
-    public long[] GetShotArray(final String in_shots) throws IOException {
-        final long curr_shots[] = WaveInterface.GetShotArray(in_shots, this.experiment, this.dp);
+    public long[] getShotArray(final String in_shots) throws IOException {
+        final long curr_shots[] = WaveInterface.getShotArray(in_shots, this.experiment, this.dp);
         return curr_shots;
     }
 
-    private Signal GetSignal(final int curr_wave, double xmin, double xmax) throws Exception {
-        if(DEBUG.M) System.out.println("WaveInterface.GetSignal(" + curr_wave + ", " + xmin + ", " + xmax + ")");
+    private Signal getSignal(final int curr_wave, double xmin, double xmax) throws Exception {
+        if(DEBUG.M) System.out.println("WaveInterface.getSignal(" + curr_wave + ", " + xmin + ", " + xmax + ")");
         Signal out_signal = null;
-        final int mode = this.wave.GetMode();
+        final int mode = this.wave.getMode();
         try{
-            this.wave.SetMode(Waveform.MODE_WAIT);
+            this.wave.setMode(Waveform.MODE_WAIT);
             if(this.in_y[curr_wave] == null){
                 this.curr_error = "Missing Y value";
-                this.wave.SetMode(mode);
+                this.wave.setMode(mode);
                 return null;
             }
             synchronized(this.dp){
-                out_signal = this.GetSignalFromProvider(curr_wave, xmin, xmax);
+                out_signal = this.getSignalFromProvider(curr_wave, xmin, xmax);
             }
             if(out_signal != null){
                 if(this.xmin > xmin) xmin = this.xmin;
@@ -518,15 +518,15 @@ public class WaveInterface{
                 if(this.in_ymax != null && (this.in_ymax.trim()).length() != 0 && this.in_upd_limits) out_signal.setYmax(this.ymax, Signal.AT_CREATION | Signal.FIXED_LIMIT);
                 if(this.in_ymin != null && (this.in_ymin.trim()).length() != 0 && this.in_upd_limits) out_signal.setYmin(this.ymin, Signal.AT_CREATION | Signal.FIXED_LIMIT);
             }
-            this.wave.SetMode(mode);
+            this.wave.setMode(mode);
         }catch(final IOException exc){
-            this.wave.SetMode(mode);
+            this.wave.setMode(mode);
         }
         return out_signal;
     }
 
-    private Signal GetSignalFromProvider(final int curr_wave, final double xmin, final double xmax) throws IOException {
-        if(DEBUG.M) System.out.println("WaveInterface.GetSignalFromProvider(" + curr_wave + ", " + xmin + ", " + xmax + ")");
+    private Signal getSignalFromProvider(final int curr_wave, final double xmin, final double xmax) throws IOException {
+        if(DEBUG.M) System.out.println("WaveInterface.getSignalFromProvider(" + curr_wave + ", " + xmin + ", " + xmax + ")");
         WaveData up_err = null, low_err = null;
         WaveData wd = null;
         WaveData xwd = null;
@@ -534,43 +534,43 @@ public class WaveInterface{
         int yDimension = 1;
         Signal out_signal;
         String xlabel = null, ylabel = null, zlabel = null, title = null;
-        if(this.shots != null && this.shots.length != 0) this.dp.Update(this.experiment, this.shots[curr_wave]);
-        else this.dp.Update(null, 0);
-        if(this.dp.ErrorString() != null){
-            this.error = this.dp.ErrorString();
+        if(this.shots != null && this.shots.length != 0) this.dp.update(this.experiment, this.shots[curr_wave]);
+        else this.dp.update(null, 0);
+        if(this.dp.errorString() != null){
+            this.error = this.dp.errorString();
             return null;
         }
         if(this.in_def_node != null && this.in_def_node.length() > 0){
-            this.dp.SetEnvironment("__default_node = " + this.in_def_node);
+            this.dp.setEnvironment("__default_node = " + this.in_def_node);
         }else{
-            this.dp.SetEnvironment("__default_node = " + this.experiment + "::TOP");
+            this.dp.setEnvironment("__default_node = " + this.experiment + "::TOP");
         }
-        if(this.dp.ErrorString() != null){
-            this.error = this.dp.ErrorString();
+        if(this.dp.errorString() != null){
+            this.error = this.dp.errorString();
             return null;
         }
         try{
-            wd = this.dp.GetWaveData(this.in_y[curr_wave]);
+            wd = this.dp.getWaveData(this.in_y[curr_wave]);
             yDimension = wd.getNumDimension();
-            if(yDimension == 2) zlabel = wd.GetZLabel();
+            if(yDimension == 2) zlabel = wd.getZLabel();
         }catch(final Exception exc){
             yDimension = 1;
         }
         if(this.in_x[curr_wave] != null && (this.in_x[curr_wave].trim()).length() > 0){
             // dimension = 1;
             try{
-                xwd = this.dp.GetWaveData(this.in_x[curr_wave]);
+                xwd = this.dp.getWaveData(this.in_x[curr_wave]);
                 xDimension = xwd.getNumDimension();
                 if(DEBUG.M) System.out.println("xDimension = " + xDimension);
             }catch(final Exception exc){
                 xDimension = 1;
             }
             /*
-             * if (dp.ErrorString() != null) { curr_error = dp.ErrorString(); return null; }
+             * if (dp.errorString() != null) { curr_error = dp.errorString(); return null; }
              */
         }
-        if(this.dp.ErrorString() != null){
-            this.curr_error = this.dp.ErrorString();
+        if(this.dp.errorString() != null){
+            this.curr_error = this.dp.errorString();
             return null;
         }
         if(xDimension > 2 || yDimension > 2){
@@ -578,34 +578,34 @@ public class WaveInterface{
             return null;
         }
         if(this.in_x[curr_wave] != null && (this.in_x[curr_wave].trim()).length() != 0){
-            wd = this.dp.GetWaveData(this.in_y[curr_wave], this.in_x[curr_wave]);
+            wd = this.dp.getWaveData(this.in_y[curr_wave], this.in_x[curr_wave]);
             if(wd != null){
-                xlabel = wd.GetXLabel();
-                ylabel = wd.GetYLabel();
+                xlabel = wd.getXLabel();
+                ylabel = wd.getYLabel();
             }
             if(wd != null && this.in_up_err != null && this.in_up_err[curr_wave] != null && (this.in_up_err[curr_wave].trim()).length() != 0){
-                up_err = this.dp.GetWaveData(this.in_up_err[curr_wave]);
+                up_err = this.dp.getWaveData(this.in_up_err[curr_wave]);
             }
             if(this.in_low_err != null && this.in_low_err[curr_wave] != null && (this.in_low_err[curr_wave].trim()).length() != 0){
-                low_err = this.dp.GetWaveData(this.in_low_err[curr_wave]);
+                low_err = this.dp.getWaveData(this.in_low_err[curr_wave]);
             }
         }else // X field not defined
         {
-            if(wd == null) wd = this.dp.GetWaveData(this.in_y[curr_wave]);
+            if(wd == null) wd = this.dp.getWaveData(this.in_y[curr_wave]);
             /*
-             * if (yDimension > 1) { if (wd == null) wd = dp.GetWaveData(in_y[curr_wave]); } else { if(wd == null) { wd = dp.GetWaveData(in_y[curr_wave]); } }
+             * if (yDimension > 1) { if (wd == null) wd = dp.getWaveData(in_y[curr_wave]); } else { if(wd == null) { wd = dp.getWaveData(in_y[curr_wave]); } }
              */
             if(yDimension == 1){
                 if(this.in_up_err != null && this.in_up_err[curr_wave] != null && (this.in_up_err[curr_wave].trim()).length() != 0){
-                    up_err = this.dp.GetWaveData(this.in_up_err[curr_wave]);
+                    up_err = this.dp.getWaveData(this.in_up_err[curr_wave]);
                 }
                 if(this.in_low_err != null && this.in_low_err[curr_wave] != null && (this.in_low_err[curr_wave].trim()).length() != 0){
-                    low_err = this.dp.GetWaveData(this.in_low_err[curr_wave]);
+                    low_err = this.dp.getWaveData(this.in_low_err[curr_wave]);
                 }
             }
         }
         if(wd == null){
-            this.curr_error = this.dp.ErrorString();
+            this.curr_error = this.dp.errorString();
             return null;
         }
         wd.setContinuousUpdate(this.isContinuousUpdate);
@@ -613,19 +613,19 @@ public class WaveInterface{
         else out_signal = new Signal(wd, xwd, xmin, xmax);
         if(yDimension > 1) out_signal.setMode2D(this.mode2D[curr_wave]);
         else out_signal.setMode1D(this.mode1D[curr_wave]);
-        if(wd != null) title = wd.GetTitle();
+        if(wd != null) title = wd.getTitle();
         if(up_err != null && low_err != null) out_signal.AddAsymError(up_err, low_err);
         else if(up_err != null) out_signal.AddError(up_err);
         if(wd != null){
-            xlabel = wd.GetXLabel();
-            ylabel = wd.GetYLabel();
+            xlabel = wd.getXLabel();
+            ylabel = wd.getYLabel();
         }
         out_signal.setLabels(title, xlabel, ylabel, zlabel);
         return out_signal;
     }
 
-    public String[] GetSignalsName() {
-        if(DEBUG.M) System.out.println("WaveInterface.GetSignalsName()");
+    public String[] getSignalsName() {
+        if(DEBUG.M) System.out.println("WaveInterface.getSignalsName()");
         String name[] = null, s;
         if(this.num_waves != 0){
             final int ns = (this.num_shot > 0 ? this.num_shot : 1);
@@ -638,8 +638,8 @@ public class WaveInterface{
         return name;
     }
 
-    public boolean[] GetSignalsState() {
-        if(DEBUG.M) System.out.println("WaveInterface.GetSignalsState()");
+    public boolean[] getSignalsState() {
+        if(DEBUG.M) System.out.println("WaveInterface.getSignalsState()");
         boolean state[] = null;
         if(this.num_waves != 0){
             final int ns = (this.num_shot > 0 ? this.num_shot : 1);
@@ -650,49 +650,49 @@ public class WaveInterface{
         return state;
     }
 
-    public boolean GetSignalState(final int i) {
-        if(DEBUG.M) System.out.println("WaveInterface.GetSignalsState(" + i + ")");
+    public boolean getSignalState(final int i) {
+        if(DEBUG.M) System.out.println("WaveInterface.getSignalsState(" + i + ")");
         boolean state = false;
         // int idx = i * (num_shot > 0 ? num_shot : 1);
         if(i < this.num_waves) state = (this.interpolates[i] || (this.markers[i] != Signal.NONE));
         return state;
     }
 
-    private void InitializeFrames() {
+    private void initializeFrames() {
         if(DEBUG.M) System.out.println("WaveInterface.InitializeFrames()");
         this.curr_error = null;
         WaveformEvent we;
-        final int mode = this.wave.GetMode();
-        this.wave.SetMode(Waveform.MODE_WAIT);
+        final int mode = this.wave.getMode();
+        this.wave.setMode(Waveform.MODE_WAIT);
         if(this.in_y[0] == null){
             this.curr_error = "Missing Y value";
             return;
         }
-        if(this.shots != null && this.shots.length != 0) this.dp.Update(this.experiment, this.shots[0]);
-        else this.dp.Update(null, 0);
+        if(this.shots != null && this.shots.length != 0) this.dp.update(this.experiment, this.shots[0]);
+        else this.dp.update(null, 0);
         try{
             we = new WaveformEvent(this.wave, "Loading single or multi frame image");
             this.wave.dispatchWaveformEvent(we);
-            final FrameData fd = this.dp.GetFrameData(this.in_y[0], this.in_x[0], (float)this.timemin, (float)this.timemax);
+            final FrameData fd = this.dp.getFrameData(this.in_y[0], this.in_x[0], (float)this.timemin, (float)this.timemax);
             if(fd != null){
-                this.CreateNewFramesClass(fd.GetFrameType());
+                this.createNewFramesClass(fd.getFrameType());
                 /*
                  * frames.setHorizontalFlip(horizontal_flip); frames.setVerticalFlip(vertical_flip);
                  */
-                this.frames.SetFrameData(fd);
+                this.frames.setFrameData(fd);
                 if(this.in_label != null && this.in_label[0] != null && this.in_label[0].length() != 0) this.frames.setName(this.in_label[0]);
                 else this.frames.setName(this.in_y[0]);
                 if(this.evaluated != null && this.evaluated.length > 0) this.evaluated[0] = true;
             }else{
                 this.frames = null;
-                this.curr_error = this.dp.ErrorString();
+                this.curr_error = this.dp.errorString();
                 if(this.evaluated != null && this.evaluated.length > 0) this.evaluated[0] = false;
             }
             // frames.WaitLoadFrame();
-            this.wave.SetMode(mode);
+            this.wave.setMode(mode);
         }catch(final Throwable e){
             e.printStackTrace();
-            this.wave.SetMode(mode);
+            this.wave.setMode(mode);
             this.frames = null;
             this.curr_error = " Load Frames error " + e.getMessage();
         }
@@ -702,7 +702,7 @@ public class WaveInterface{
         return this.add_signal;
     }
 
-    public boolean IsSignalAdded() {
+    public boolean isSignalAdded() {
         return this.is_signal_added;
     }
 
@@ -712,8 +712,8 @@ public class WaveInterface{
         this.add_signal = add_signal;
     }
 
-    public void SetAsImage(final boolean is_image) {
-        if(DEBUG.M) System.out.println("WaveInterface.SetAsImage(" + is_image + ")");
+    public void setAsImage(final boolean is_image) {
+        if(DEBUG.M) System.out.println("WaveInterface.setAsImage(" + is_image + ")");
         this.is_image = is_image;
     }
 
@@ -721,8 +721,8 @@ public class WaveInterface{
         this.colorProfile = colorProfile;
     }
 
-    public void SetDataProvider(final DataProvider dp) {
-        if(DEBUG.M) System.out.println("WaveInterface.SetDataProvider(" + dp + ")");
+    public void setDataProvider(final DataProvider dp) {
+        if(DEBUG.M) System.out.println("WaveInterface.setDataProvider(" + dp + ")");
         this.dp = dp;
         this.error = null;
         this.curr_error = null;
@@ -741,12 +741,12 @@ public class WaveInterface{
         this.frames = f;
     }
 
-    public void SetIsSignalAdded(final boolean is_signal_added) {
+    public void setIsSignalAdded(final boolean is_signal_added) {
         this.is_signal_added = is_signal_added;
     }
 
-    public void SetLegendPosition(final double x, final double y) {
-        if(DEBUG.M) System.out.println("WaveInterface.SetLegendPosition(" + x + ", " + y + ")");
+    public void setLegendPosition(final double x, final double y) {
+        if(DEBUG.M) System.out.println("WaveInterface.setLegendPosition(" + x + ", " + y + ")");
         this.legend_x = x;
         this.legend_y = y;
         this.show_legend = true;
@@ -775,8 +775,8 @@ public class WaveInterface{
 
     public void setShotArray(final String in_shot) throws IOException {
         this.in_shot = in_shot;
-        final long curr_shots[] = this.GetShotArray(in_shot);
-        this.UpdateShot(curr_shots);
+        final long curr_shots[] = this.getShotArray(in_shot);
+        this.updateShot(curr_shots);
     }
 
     public void setSignalState(final String name, final boolean state) {
@@ -794,11 +794,11 @@ public class WaveInterface{
         }
     }
 
-    public void ShowLegend(final boolean state) {
+    public void showLegend(final boolean state) {
         this.show_legend = state;
     }
 
-    public synchronized boolean StartEvaluate() throws IOException {
+    public synchronized boolean startEvaluate() throws IOException {
         if(DEBUG.M) System.out.println("WaveInterface.StartEvaluate()");
         this.error = null;
         if(this.modified) this.evaluated = null;
@@ -828,80 +828,80 @@ public class WaveInterface{
         if(this.shots != null && this.shots.length > 0){
             int i = 0;
             do{
-                this.dp.Update(this.experiment, this.shots[i]);
+                this.dp.update(this.experiment, this.shots[i]);
                 i++;
-            }while(i < this.shots.length && this.dp.ErrorString() != null);
-        }else this.dp.Update(null, 0);
-        if(this.dp.ErrorString() != null){
-            this.error = this.dp.ErrorString();
+            }while(i < this.shots.length && this.dp.errorString() != null);
+        }else this.dp.update(null, 0);
+        if(this.dp.errorString() != null){
+            this.error = this.dp.errorString();
             return false;
         }
         if(DEBUG.D) System.out.println(">> Compute title");
         if(this.in_title != null && (this.in_title.trim()).length() != 0){
-            this.title = this.dp.GetString(this.in_title);
+            this.title = this.dp.getString(this.in_title);
             if(this.title == null){
-                this.error = this.dp.ErrorString();
+                this.error = this.dp.errorString();
                 return false;
             }
         }
         if(DEBUG.D) System.out.println(">> Compute limits");
         if(this.in_xmin != null && (this.in_xmin.trim()).length() != 0 && this.in_upd_limits){
-            this.xmin = this.dp.GetFloat(this.in_xmin);
-            if(this.dp.ErrorString() != null){
-                this.error = this.dp.ErrorString();
+            this.xmin = this.dp.getFloat(this.in_xmin);
+            if(this.dp.errorString() != null){
+                this.error = this.dp.errorString();
                 return false;
             }
         }else this.xmin = (!this.is_image) ? Double.NEGATIVE_INFINITY : -1;
         if(this.in_xmax != null && (this.in_xmax.trim()).length() != 0 && this.in_upd_limits){
-            this.xmax = this.dp.GetFloat(this.in_xmax);
-            if(this.dp.ErrorString() != null){
-                this.error = this.dp.ErrorString();
+            this.xmax = this.dp.getFloat(this.in_xmax);
+            if(this.dp.errorString() != null){
+                this.error = this.dp.errorString();
                 return false;
             }
         }else this.xmax = (!this.is_image) ? Double.POSITIVE_INFINITY : -1;
         if(this.in_ymax != null && (this.in_ymax.trim()).length() != 0 && this.in_upd_limits){
-            this.ymax = this.dp.GetFloat(this.in_ymax);
-            if(this.dp.ErrorString() != null){
-                this.error = this.dp.ErrorString();
+            this.ymax = this.dp.getFloat(this.in_ymax);
+            if(this.dp.errorString() != null){
+                this.error = this.dp.errorString();
                 return false;
             }
         }else this.ymax = (!this.is_image) ? Double.POSITIVE_INFINITY : -1;
         if(this.in_ymin != null && (this.in_ymin.trim()).length() != 0 && this.in_upd_limits){
-            this.ymin = this.dp.GetFloat(this.in_ymin);
-            if(this.dp.ErrorString() != null){
-                this.error = this.dp.ErrorString();
+            this.ymin = this.dp.getFloat(this.in_ymin);
+            if(this.dp.errorString() != null){
+                this.error = this.dp.errorString();
                 return false;
             }
         }else this.ymin = (!this.is_image) ? Double.NEGATIVE_INFINITY : -1;
         if(this.is_image){
             if(this.in_timemax != null && (this.in_timemax.trim()).length() != 0){
-                this.timemax = this.dp.GetFloat(this.in_timemax);
-                if(this.dp.ErrorString() != null){
-                    this.error = this.dp.ErrorString();
+                this.timemax = this.dp.getFloat(this.in_timemax);
+                if(this.dp.errorString() != null){
+                    this.error = this.dp.errorString();
                     return false;
                 }
             }else this.timemax = Double.POSITIVE_INFINITY;
             if(this.in_timemin != null && (this.in_timemin.trim()).length() != 0){
-                this.timemin = this.dp.GetFloat(this.in_timemin);
-                if(this.dp.ErrorString() != null){
-                    this.error = this.dp.ErrorString();
+                this.timemin = this.dp.getFloat(this.in_timemin);
+                if(this.dp.errorString() != null){
+                    this.error = this.dp.errorString();
                     return false;
                 }
             }else this.timemin = Double.NEGATIVE_INFINITY;
         }
         if(DEBUG.D) System.out.println(">> Compute x label");
         if(this.in_xlabel != null && (this.in_xlabel.trim()).length() != 0){
-            this.xlabel = this.dp.GetString(this.in_xlabel);
+            this.xlabel = this.dp.getString(this.in_xlabel);
             if(this.xlabel == null){
-                this.error = this.dp.ErrorString();
+                this.error = this.dp.errorString();
                 return false;
             }
         }
         if(DEBUG.D) System.out.println(">> Compute y label");
         if(this.in_ylabel != null && (this.in_ylabel.trim()).length() != 0){
-            this.ylabel = this.dp.GetString(this.in_ylabel);
+            this.ylabel = this.dp.getString(this.in_ylabel);
             if(this.ylabel == null){
-                this.error = this.dp.ErrorString();
+                this.error = this.dp.errorString();
                 return false;
             }
         }
@@ -910,7 +910,7 @@ public class WaveInterface{
         return true;
     }
 
-    public boolean UpdateShot(final long curr_shots[]) throws IOException {
+    public boolean updateShot(final long curr_shots[]) throws IOException {
         if(DEBUG.M) System.out.println("WaveInterface.UpdateShot(curr_shots[])");
         int curr_num_shot;
         if(curr_shots == null){

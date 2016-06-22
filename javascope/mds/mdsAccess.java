@@ -3,24 +3,24 @@ package mds;
 /* $Id$ */
 import java.io.IOException;
 import java.util.StringTokenizer;
-import jScope.DataAccess;
-import jScope.DataProvider;
-import jScope.FrameData;
-import jScope.Signal;
+import jscope.DataAccess;
+import jscope.DataProvider;
+import jscope.FrameData;
+import jscope.Signal;
 
-public class mdsAccess implements DataAccess{
+public class MdsAccess implements DataAccess{
     String          encoded_credentials = null;
     String          error               = null;
     String          experiment          = null;
     String          ip_addr             = null;
-    mdsDataProvider np                  = null;
+    MdsDataProvider np                  = null;
     String          prevUrl             = null;
     String          shot_str            = null;
     String          signal              = null;
 
     @Override
     public void close() {
-        if(this.np != null) this.np.Dispose();
+        if(this.np != null) this.np.dispose();
         this.np = null;
         this.ip_addr = null;
     }
@@ -34,7 +34,7 @@ public class mdsAccess implements DataAccess{
     public String getError() {
         if(this.np == null) return("Cannot create mdsDataProvider");
         if(this.error != null) return this.error;
-        return this.np.ErrorString();
+        return this.np.errorString();
     }
 
     @Override
@@ -42,17 +42,18 @@ public class mdsAccess implements DataAccess{
         return this.experiment;
     }
 
+    @Override
     public String getExpression(final String paramString) throws IOException {
         System.out.println("Expr URL = " + paramString);
         this.setProvider(paramString);
         if(this.signal == null) return null;
-        return this.np.GetStringValue(this.signal);
+        return this.np.getStringValue(this.signal);
     }
 
     @Override
     public FrameData getFrameData(final String url) throws IOException {
         this.setProvider(url);
-        return this.np.GetFrameData(this.signal, null, (float)-1E8, (float)1E8);
+        return this.np.getFrameData(this.signal, null, (float)-1E8, (float)1E8);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class mdsAccess implements DataAccess{
         final float x[] = this.getX(url);
         System.out.println("URL = " + url);
         if(x == null || y == null){
-            this.error = this.np.ErrorString();
+            this.error = this.np.errorString();
             return null;
         }
         s = new Signal(x, y);
@@ -84,14 +85,14 @@ public class mdsAccess implements DataAccess{
     public float[] getX(final String url) throws IOException {
         this.setProvider(url);
         if(this.signal == null) return null;
-        return this.np.GetFloatArray("DIM_OF(" + this.signal + ")");
+        return this.np.getFloatArray("DIM_OF(" + this.signal + ")");
     }
 
     @Override
     public float[] getY(final String url) throws IOException {
         this.setProvider(url);
         if(this.signal == null) return null;
-        return this.np.GetFloatArray(this.signal);
+        return this.np.getFloatArray(this.signal);
     }
 
     @Override
@@ -111,7 +112,7 @@ public class mdsAccess implements DataAccess{
         final String ipAddress = st1.nextToken();
         if(ipAddress == null) return;
         if((this.ip_addr == null) || (!this.ip_addr.equals(ipAddress))){
-            this.np = new mdsDataProvider(ipAddress);
+            this.np = new MdsDataProvider(ipAddress);
             this.ip_addr = ipAddress;
         }
         String region = null;
@@ -125,10 +126,10 @@ public class mdsAccess implements DataAccess{
             this.shot_str = st1.nextToken();
             final int shot = new Integer(this.shot_str).intValue();
             if(region != null){
-                final int out[] = this.np.GetIntArray("treeSetSource('" + this.experiment + "','" + region + "')");
+                final int out[] = this.np.getIntArray("treeSetSource('" + this.experiment + "','" + region + "')");
                 if(out == null) return;
             }
-            this.np.Update(this.experiment, shot, true);
+            this.np.update(this.experiment, shot, true);
         }
         this.signal = st1.nextToken();
         this.prevUrl = url;
@@ -145,7 +146,7 @@ public class mdsAccess implements DataAccess{
         final String addr = st2.nextToken();
         if(addr == null) return;
         if(this.ip_addr == null || !this.ip_addr.equals(addr)){
-            this.np = new mdsDataProvider(addr);
+            this.np = new MdsDataProvider(addr);
             /*
             if(encoded_credentials == null ||( ip_addr != null && !ip_addr.equals(addr)))
             {
@@ -160,7 +161,7 @@ public class mdsAccess implements DataAccess{
             // String shot_str = st2.nextToken();
             this.shot_str = st2.nextToken();
             final int shot = (new Integer(this.shot_str)).intValue();
-            this.np.Update(this.experiment, shot);
+            this.np.update(this.experiment, shot);
         }
         this.signal = st2.nextToken();
     }

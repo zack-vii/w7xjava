@@ -12,7 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-import jTraverser.NodeInfo;
+import jtraverser.NodeInfo;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 

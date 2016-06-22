@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Color;
@@ -416,7 +416,7 @@ public class RowColumnContainer extends JComponent{
                 k++;
             }
         }
-        this.row_col_layout.SetRowColumn(this.rows, m_ph, m_pw);
+        this.row_col_layout.setRowColumn(this.rows, m_ph, m_pw);
         this.invalidate();
         this.validate();
     }
@@ -540,7 +540,7 @@ public class RowColumnContainer extends JComponent{
                 final int m_button = e.getModifiers();
                 if(ob instanceof Btm){
                     if((m_button & InputEvent.BUTTON2_MASK) == InputEvent.BUTTON2_MASK){
-                        RowColumnContainer.this.row_col_layout.ResizeRowColumn(ob);
+                        RowColumnContainer.this.row_col_layout.resizeRowColumn(ob);
                     }
                 }
             }
@@ -549,7 +549,7 @@ public class RowColumnContainer extends JComponent{
             public void mouseReleased(final MouseEvent e) {
                 final Component ob = e.getComponent();
                 final int m_button = e.getModifiers();
-                if(ob instanceof Btm) if(!((m_button & InputEvent.BUTTON2_MASK) == InputEvent.BUTTON2_MASK)) RowColumnContainer.this.row_col_layout.ResizeRowColumn(ob, e.getPoint().x, e.getPoint().y);
+                if(ob instanceof Btm) if(!((m_button & InputEvent.BUTTON2_MASK) == InputEvent.BUTTON2_MASK)) RowColumnContainer.this.row_col_layout.resizeRowColumn(ob, e.getPoint().x, e.getPoint().y);
             }
         });
         b.addMouseMotionListener(new MouseMotionAdapter(){
@@ -557,7 +557,7 @@ public class RowColumnContainer extends JComponent{
             public void mouseDragged(final MouseEvent e) {
                 final Component ob = e.getComponent();
                 final int m_button = e.getModifiers();
-                if(!((m_button & InputEvent.BUTTON2_MASK) == InputEvent.BUTTON2_MASK)) RowColumnContainer.this.row_col_layout.DrawResize(ob, e.getPoint().x, e.getPoint().y);
+                if(!((m_button & InputEvent.BUTTON2_MASK) == InputEvent.BUTTON2_MASK)) RowColumnContainer.this.row_col_layout.drawResize(ob, e.getPoint().x, e.getPoint().y);
             }
         });
     }
@@ -578,7 +578,7 @@ public class RowColumnContainer extends JComponent{
      */
     public void setRowColumn(final int rows[]) {
         this.rows = rows;
-        this.row_col_layout.SetRowColumn(rows);
+        this.row_col_layout.setRowColumn(rows);
     }
 
     /**
@@ -614,7 +614,7 @@ public class RowColumnContainer extends JComponent{
      * @see RowColumnLayout
      */
     public void update() {
-        this.row_col_layout.SetRowColumn(this.rows, this.ph, this.pw);
+        this.row_col_layout.setRowColumn(this.rows, this.ph, this.pw);
         this.invalidate();
         this.validate();
     }
@@ -694,7 +694,7 @@ public class RowColumnContainer extends JComponent{
             for(int i = 0; i < rows.length; i++)
                 this.rows[i] = rows[i];
         }
-        this.row_col_layout.SetRowColumn(rows);
+        this.row_col_layout.setRowColumn(rows);
         this.invalidate();
         this.validate();
     }

@@ -1,4 +1,4 @@
-package jScope.tools;
+package jscope.tools;
 
 /* $Id$ */
 import java.awt.BorderLayout;
@@ -18,18 +18,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import jScope.DataAccess;
-import jScope.DataAccessURL;
-import jScope.Frames;
-import jScope.Grid;
-import jScope.MultiWaveform;
-import jScope.SetupWaveformParams;
-import jScope.Signal;
-import jScope.WaveInterface;
-import jScope.WavePopup;
-import jScope.Waveform;
-import jScope.WaveformEvent;
-import jScope.WaveformListener;
+import jscope.DataAccess;
+import jscope.DataAccessURL;
+import jscope.Frames;
+import jscope.Grid;
+import jscope.MultiWaveform;
+import jscope.SetupWaveformParams;
+import jscope.Signal;
+import jscope.WaveInterface;
+import jscope.WavePopup;
+import jscope.Waveform;
+import jscope.WaveformEvent;
+import jscope.WaveformListener;
 
 @SuppressWarnings("serial")
 public class WaveDisplay extends JApplet implements WaveformListener{
@@ -69,8 +69,8 @@ public class WaveDisplay extends JApplet implements WaveformListener{
             @Override
             public void mouseClicked(final MouseEvent e) {
                 final Waveform w = (Waveform)e.getSource();
-                if(WaveDisplay.this.wave_popup != null && w.GetMode() != Waveform.MODE_COPY){
-                    WaveDisplay.this.wave_popup.Show(w, e.getPoint());
+                if(WaveDisplay.this.wave_popup != null && w.getMode() != Waveform.MODE_COPY){
+                    WaveDisplay.this.wave_popup.show(w, e.getPoint());
                 }
             }
         });
@@ -78,21 +78,21 @@ public class WaveDisplay extends JApplet implements WaveformListener{
         point.addItemListener(new ItemListener(){
             @Override
             public void itemStateChanged(final ItemEvent e) {
-                WaveDisplay.this.w.SetMode(Waveform.MODE_POINT);
+                WaveDisplay.this.w.setMode(Waveform.MODE_POINT);
             }
         });
         final JRadioButton zoom = new JRadioButton("Zoom", true);
         zoom.addItemListener(new ItemListener(){
             @Override
             public void itemStateChanged(final ItemEvent e) {
-                WaveDisplay.this.w.SetMode(Waveform.MODE_ZOOM);
+                WaveDisplay.this.w.setMode(Waveform.MODE_ZOOM);
             }
         });
         final JRadioButton pan = new JRadioButton("Pan", false);
         pan.addItemListener(new ItemListener(){
             @Override
             public void itemStateChanged(final ItemEvent e) {
-                WaveDisplay.this.w.SetMode(Waveform.MODE_PAN);
+                WaveDisplay.this.w.setMode(Waveform.MODE_PAN);
             }
         });
         final ButtonGroup pointer_mode = new ButtonGroup();
@@ -104,7 +104,7 @@ public class WaveDisplay extends JApplet implements WaveformListener{
         panel1.add(point);
         panel1.add(zoom);
         panel1.add(pan);
-        this.w.SetGridMode(Grid.IS_DOTTED, true, true);
+        this.w.setGridMode(Grid.IS_DOTTED, true, true);
         panel.setLayout(new BorderLayout());
         panel.add(this.w, BorderLayout.CENTER);
         this.getContentPane().setLayout(new BorderLayout());
@@ -130,14 +130,14 @@ public class WaveDisplay extends JApplet implements WaveformListener{
                     da.setPassword(authentication);
                     da.setProvider(url);
                     final WaveInterface wi = this.w.getWaveInterface();
-                    if(wi.signals != null) wi.Erase();
-                    wi.SetDataProvider(da.getDataProvider());
+                    if(wi.signals != null) wi.erase();
+                    wi.setDataProvider(da.getDataProvider());
                     wi.setExperiment(da.getExperiment());
                     System.out.println("Signal Name : " + da.getSignalName());
                     System.out.println("Shots : " + da.getShot());
-                    wi.AddSignal(da.getSignalName());
+                    wi.addSignal(da.getSignalName());
                     wi.setShotArray(da.getShot());
-                    if(wi.StartEvaluate()) wi.EvaluateOthers();
+                    if(wi.startEvaluate()) wi.evaluateOthers();
                     Signal s;
                     if(wi.signals != null && (s = wi.signals[0]) != null){
                         color = WaveDisplay.getParameterValue(signalParams, "color");
@@ -154,12 +154,12 @@ public class WaveDisplay extends JApplet implements WaveformListener{
                         }
                         title = WaveDisplay.getParameterValue(signalParams, "title");
                         if(title != null){
-                            this.w.SetTitle(title);
+                            this.w.setTitle(title);
                         }
                     }else{
                         JOptionPane.showMessageDialog(this, "Evaluation Error : " + wi.getErrorTitle(false), "alert", JOptionPane.ERROR_MESSAGE);
                     }
-                    this.w.Update(wi.signals);
+                    this.w.update(wi.signals);
                 }
             }else{
                 String aspect_ratio, horizontal_flip, vertical_flip;
@@ -182,7 +182,7 @@ public class WaveDisplay extends JApplet implements WaveformListener{
                     aspect_ratio = WaveDisplay.getParameterValue(signalParams, "ratio");
                     if(aspect_ratio != null && aspect_ratio.toLowerCase().equals("false")){
                         f.setAspectRatio(false);
-                        this.w.UpdateImage(f);
+                        this.w.updateImage(f);
                     }
                 }
             }
@@ -207,16 +207,16 @@ public class WaveDisplay extends JApplet implements WaveformListener{
                 // da.setPassword(authentication);
                 da.setProvider(url);
                 final WaveInterface wi = this.w.getWaveInterface();
-                wi.SetDataProvider(da.getDataProvider());
+                wi.setDataProvider(da.getDataProvider());
                 wi.setExperiment(da.getExperiment());
                 System.out.println("Signal Name : " + da.getSignalName());
                 if(!isImage){
-                    wi.AddSignal(da.getSignalName());
+                    wi.addSignal(da.getSignalName());
                     System.out.println("Shots : " + da.getShot());
                     wi.setShotArray(da.getShot());
-                    if(wi.StartEvaluate()) wi.EvaluateOthers();
+                    if(wi.startEvaluate()) wi.evaluateOthers();
                     if(wi.signals != null && (wi.signals[0]) != null){
-                        this.w.Update(wi.signals);
+                        this.w.update(wi.signals);
                     }else{
                         JOptionPane.showMessageDialog(this, "Evaluation Error : " + wi.getErrorTitle(false), "alert", JOptionPane.ERROR_MESSAGE);
                     }
@@ -224,7 +224,7 @@ public class WaveDisplay extends JApplet implements WaveformListener{
                     final Frames f = new Frames();
                     DataAccessURL.getImages(url, f);
                     if(f != null){
-                        this.w.UpdateImage(f);
+                        this.w.updateImage(f);
                     }
                 }
             }
@@ -298,9 +298,9 @@ public class WaveDisplay extends JApplet implements WaveformListener{
     public void resetSignal() {
         final WaveInterface wi = this.w.getWaveInterface();
         if(wi.signals != null){
-            wi.Erase();
+            wi.erase();
         }
-        this.w.Erase();
+        this.w.erase();
     }
 
     @Override

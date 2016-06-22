@@ -1,4 +1,4 @@
-package jScope.tools;
+package jscope.tools;
 
 /* $Id$ */
 import java.awt.BorderLayout;
@@ -36,19 +36,19 @@ import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import jScope.DataAccess;
-import jScope.DataAccessURL;
-import jScope.MultiWavePopup;
-import jScope.MultiWaveform;
-import jScope.SetupWaveformParams;
-import jScope.Signal;
-import jScope.WaveContainerEvent;
-import jScope.WaveContainerListener;
-import jScope.WaveInterface;
-import jScope.WavePopup;
-import jScope.Waveform;
-import jScope.WaveformContainer;
-import jScope.WaveformEvent;
+import jscope.DataAccess;
+import jscope.DataAccessURL;
+import jscope.MultiWavePopup;
+import jscope.MultiWaveform;
+import jscope.SetupWaveformParams;
+import jscope.Signal;
+import jscope.WaveContainerEvent;
+import jscope.WaveContainerListener;
+import jscope.WaveInterface;
+import jscope.WavePopup;
+import jscope.Waveform;
+import jscope.WaveformContainer;
+import jscope.WaveformEvent;
 
 @SuppressWarnings("serial")
 final public class CompositeWaveDisplay extends JApplet implements WaveContainerListener{
@@ -92,7 +92,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
             for(int i = 0; i < usds.length; i++);
             return null;
         }
-
+        
         private UpdSignalData mergeMessage(UpdSignalData upd1, UpdSignalData upd2)
         {
             if(upd1.name != upd2.name || upd1.type != upd2.type) return null;
@@ -101,14 +101,14 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
             {
                if(upd1.operation == CompositeWaveDisplay.CMND_CLEAR) return upd1 ;
                if(upd2.operation == CompositeWaveDisplay.CMND_CLEAR) return upd2 ;
-
+        
                 int numSignal1 = upd1.x.length / upd1.numPointsPerSignal;
                 int numSignal2 = upd2.x.length / upd2.numPointsPerSignal;
-
+        
                 if(numSignal1 != numSignal2) return null;
-
+        
                 float y[] = float[upd1.length]
-
+        
             }
         }
          */
@@ -428,7 +428,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
                 w = (MultiWaveform)c;
                 wi = w.getWaveInterface();
                 if(wi == null){
-                    if(w.IsImage() || (w.GetSignals() != null && w.GetSignals().size() != 0)){
+                    if(w.isImage() || (w.getSignals() != null && w.getSignals().size() != 0)){
                         JOptionPane.showMessageDialog(this, "The selected waveform panel contains signals or frame.\n" + "\nDefine a new waveform panel to show frame image from " + da.getDataProvider().getClass().getName() + " data provider.", "alert", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -440,7 +440,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
                     }
                 }
             }else{
-                w = (MultiWaveform)this.wave_container.CreateWaveComponent();
+                w = (MultiWaveform)this.wave_container.createWaveComponent();
                 w.setWaveInterface((wi = new WaveInterface(w, da.getDataProvider())));
                 this.wave_container.add(w, row, column);
             }
@@ -448,10 +448,10 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
                 wi.setExperiment(da.getExperiment());
                 wi.AddFrames(da.getSignalName());
                 wi.setShotArray(da.getShot());
-                wi.StartEvaluate();
-                wi.EvaluateOthers();
+                wi.startEvaluate();
+                wi.evaluateOthers();
                 if(wi.error != null) throw(new IOException(wi.error));
-                w.Update(wi.getFrames());
+                w.update(wi.getFrames());
             }
         }catch(final Exception e){
             if(e instanceof AccessControlException){
@@ -551,10 +551,10 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
                 JOptionPane.showMessageDialog(this, "The selected waveform panel is  connected to " + w.getWaveInterface().getDataProvider().getClass().getName() + " data provider.\nDefine a new waveform panel to show raw signals", "alert", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if(this.automatic_color) s.setColorIdx(w.GetShowSignalCount());
+            if(this.automatic_color) s.setColorIdx(w.getShowSignalCount());
             w.addSignal(s);
         }else{
-            w = (MultiWaveform)this.wave_container.CreateWaveComponent();
+            w = (MultiWaveform)this.wave_container.createWaveComponent();
             w.addSignal(s);
             w.setLegendMode(MultiWaveform.LEGEND_BOTTOM);
             this.wave_container.add(w, row, col);
@@ -570,7 +570,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
                 this.signals2DVector.addElement(s);
                 break;
         }
-        w.Update();
+        w.update();
         if(this.isShowing() && !this.isValid()) this.wave_container.update();
     }
 
@@ -580,7 +580,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
                 this.automatic_color = true;
             }else{
                 this.automatic_color = false;
-                sig.setColorIdx(Waveform.ColorNameToIndex(color));
+                sig.setColorIdx(Waveform.colorNameToIndex(color));
             }
         }
         if(label != null && label.length() != 0) sig.setName(label);
@@ -603,12 +603,12 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
                 w = (MultiWaveform)c;
                 wi = w.getWaveInterface();
                 if(wi == null){
-                    if(w.GetSignals() != null && w.GetSignals().size() != 0){
+                    if(w.getSignals() != null && w.getSignals().size() != 0){
                         JOptionPane.showMessageDialog(this, "In the selected waveform panel there are raw signals.\n" + "\nDefine a new waveform panel to show signals from " + da.getDataProvider().getClass().getName() + " data provider.", "alert", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     w.setWaveInterface((wi = new WaveInterface()));
-                    wi.SetDataProvider(da.getDataProvider());
+                    wi.setDataProvider(da.getDataProvider());
                 }else{
                     if(!wi.getDataProvider().getClass().getName().equals(da.getDataProvider().getClass().getName())){
                         JOptionPane.showMessageDialog(this, "The selected waveform panel is already connected to " + wi.getDataProvider().getClass().getName() + " data provider.\nDefine a new waveform panel to show signals from " + da.getDataProvider().getClass().getName() + " data provider.", "alert", JOptionPane.ERROR_MESSAGE);
@@ -616,26 +616,26 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
                     }
                 }
             }else{
-                w = (MultiWaveform)this.wave_container.CreateWaveComponent();
+                w = (MultiWaveform)this.wave_container.createWaveComponent();
                 w.setWaveInterface((wi = new WaveInterface()));
                 this.wave_container.add(w, row, column);
-                wi.SetDataProvider(da.getDataProvider());
+                wi.setDataProvider(da.getDataProvider());
             }
             if(da != null && wi != null){
                 wi.setExperiment(da.getExperiment());
-                wi.AddSignal(da.getSignalName());
+                wi.addSignal(da.getSignalName());
                 wi.setShotArray(da.getShot());
-                wi.StartEvaluate();
-                wi.EvaluateOthers();
+                wi.startEvaluate();
+                wi.evaluateOthers();
                 // If added signal has been evaluated without
                 // error it is stored in wi.signals vector
                 if(wi.signals != null && (s = wi.signals[wi.signals.length - 1]) != null){
-                    s.setColorIdx(Waveform.ColorNameToIndex(color));
+                    s.setColorIdx(Waveform.colorNameToIndex(color));
                     s.setMarker(marker);
                     if(label != null && label.length() != 0) s.setName(label);
                     else s.setName(wi.in_y[0]);
                 }
-                w.Update(wi.signals);
+                w.update(wi.signals);
             }
         }catch(final Exception e){
             if(e instanceof AccessControlException){
@@ -732,7 +732,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
         global_autentication = this.getParameter("AUTENTICATION");
         /*
         param = getParameter("PRINT_SCALING");
-
+        
         if(param != null){
             try{
                 print_scaling = Integer.parseInt(param);
@@ -803,27 +803,27 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
         this.wave_container.addWaveContainerListener(this);
         final WavePopup wave_popup = new MultiWavePopup(new SetupWaveformParams(CompositeWaveDisplay.frame, "Waveform Params"));
         this.wave_container.setPopupMenu(wave_popup);
-        this.wave_container.SetMode(Waveform.MODE_ZOOM);
+        this.wave_container.setMode(Waveform.MODE_ZOOM);
         this.getContentPane().setLayout(new BorderLayout());
         final JRadioButton point = new JRadioButton("Point", false);
         point.addItemListener(new ItemListener(){
             @Override
             public void itemStateChanged(final ItemEvent e) {
-                CompositeWaveDisplay.this.wave_container.SetMode(Waveform.MODE_POINT);
+                CompositeWaveDisplay.this.wave_container.setMode(Waveform.MODE_POINT);
             }
         });
         final JRadioButton zoom = new JRadioButton("Zoom", true);
         zoom.addItemListener(new ItemListener(){
             @Override
             public void itemStateChanged(final ItemEvent e) {
-                CompositeWaveDisplay.this.wave_container.SetMode(Waveform.MODE_ZOOM);
+                CompositeWaveDisplay.this.wave_container.setMode(Waveform.MODE_ZOOM);
             }
         });
         final JRadioButton pan = new JRadioButton("Pan", false);
         pan.addItemListener(new ItemListener(){
             @Override
             public void itemStateChanged(final ItemEvent e) {
-                CompositeWaveDisplay.this.wave_container.SetMode(Waveform.MODE_PAN);
+                CompositeWaveDisplay.this.wave_container.setMode(Waveform.MODE_PAN);
             }
         });
         this.liveUpdate = new JCheckBox("Live Update", false);
@@ -888,7 +888,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
         this.appendThread = new AppendThread(100);
         this.appendThread.start();
         this.setEnabledMode(true);
-        this.wave_container.SetMode(Waveform.MODE_ZOOM);
+        this.wave_container.setMode(Waveform.MODE_ZOOM);
     }
 
     @Override
@@ -915,7 +915,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
      * Remove all signals added to the panels.
      */
     public void removeAllSignals() {
-        if(this.wave_container != null) this.wave_container.RemoveAllSignals();
+        if(this.wave_container != null) this.wave_container.removeAllSignals();
         if(this.signals1DHash.size() > 0) this.signals1DHash.clear();
         if(this.signals2DHash.size() > 0) this.signals2DHash.clear();
         if(this.signals1DVector.size() > 0) this.signals1DVector.clear();
@@ -928,7 +928,7 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
     public void removeAllSignals(final int row, final int col) {
         if(this.wave_container != null){
             final MultiWaveform wave = (MultiWaveform)this.wave_container.getGridComponent(row, col);
-            wave.Erase();
+            wave.erase();
         }
     }
 
@@ -954,11 +954,11 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
                 wi.in_ymax = "" + ymax;
                 wi.in_ymin = "" + ymin;
                 try{
-                    wi.StartEvaluate();
+                    wi.startEvaluate();
                     wi.setLimits();
                 }catch(final Exception e){}
             }
-            w.Update();
+            w.update();
         }
     }
 
@@ -971,17 +971,17 @@ final public class CompositeWaveDisplay extends JApplet implements WaveContainer
             this.liveUpdate.setSelected(state);
             return;
         }
-        if(this.wave_container.GetMode() != Waveform.MODE_WAIT){
-            this.currentMode = this.wave_container.GetMode();
+        if(this.wave_container.getMode() != Waveform.MODE_WAIT){
+            this.currentMode = this.wave_container.getMode();
         }
         if(state){
             this.setEnabledMode(false);
-            this.wave_container.SetMode(Waveform.MODE_WAIT);
+            this.wave_container.setMode(Waveform.MODE_WAIT);
             this.appendThread.resumeThread();
         }else{
             this.appendThread.suspendThread();
             this.setEnabledMode(true);
-            this.wave_container.SetMode(this.currentMode);
+            this.wave_container.setMode(this.currentMode);
         }
     }
 

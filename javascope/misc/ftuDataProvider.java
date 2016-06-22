@@ -4,20 +4,20 @@ package misc;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.swing.JFrame;
-import jScope.DataProvider;
-import jScope.DataServerItem;
-import mds.mdsDataProvider;
+import jscope.DataProvider;
+import jscope.DataServerItem;
+import mds.MdsDataProvider;
 
-public final class ftuDataProvider extends mdsDataProvider{
+public final class FtuDataProvider extends MdsDataProvider{
     public static final boolean DataPending() {
         return false;
     }
 
-    protected static String GetDefaultYLabel() throws IOException {
+    protected static String getDefaultYLabel() throws IOException {
         return null;
     }
 
-    private static String GetFirstSignal(final String in_y) {
+    private static String getFirstSignal(final String in_y) {
         if(in_y == null) return null;
         String curr_str;
         final StringTokenizer st = new StringTokenizer(in_y, "\\", true);
@@ -40,37 +40,37 @@ public final class ftuDataProvider extends mdsDataProvider{
         return false;
     }
 
-    public ftuDataProvider(){
+    public FtuDataProvider(){
         super();
     }
 
-    public ftuDataProvider(final String provider) throws IOException{
+    public FtuDataProvider(final String provider) throws IOException{
         super(provider);
-        this.SetEnvironment("public _IMODE = 0;");
+        this.setEnvironment("public _IMODE = 0;");
     }
 
-    protected String GetDefaultTitle(final String in_y) throws IOException {
+    protected String getDefaultTitle(final String in_y) throws IOException {
         this.error = null;
-        String first_sig = ftuDataProvider.GetFirstSignal(in_y);
+        String first_sig = FtuDataProvider.getFirstSignal(in_y);
         if(first_sig != null && first_sig.startsWith("$")) first_sig = "_" + first_sig.substring(1);
         if(first_sig == null) return null;
         final String parsed = "ftuyl(" + this.shot + ",\"" + first_sig + "\")";
         // System.out.println(parsed);
-        return this.GetString(parsed);
+        return this.getString(parsed);
     }
 
-    protected String GetDefaultXLabel(final String in_y) throws IOException {
+    protected String getDefaultXLabel(final String in_y) throws IOException {
         this.error = null;
-        String first_sig = ftuDataProvider.GetFirstSignal(in_y);
+        String first_sig = FtuDataProvider.getFirstSignal(in_y);
         if(first_sig == null) return null;
         if(first_sig != null && first_sig.startsWith("$")) first_sig = "_" + first_sig.substring(1);
-        return this.GetString("ftuxl(" + this.shot + ",\"" + first_sig + "\")");
+        return this.getString("ftuxl(" + this.shot + ",\"" + first_sig + "\")");
     }
 
     @Override
-    public synchronized float[] GetFloatArray(final String in) throws IOException {
+    public synchronized float[] getFloatArray(final String in) throws IOException {
         this.error = null;
-        final float[] out_array = super.GetFloatArray(this.ParseExpression(in));
+        final float[] out_array = super.getFloatArray(this.parseExpression(in));
         if(out_array == null && this.error == null) this.error = "Cannot evaluate " + in + " for shot " + this.shot;
         if(out_array != null && out_array.length <= 1){
             this.error = "Cannot evaluate " + in + " for shot " + this.shot;
@@ -80,16 +80,16 @@ public final class ftuDataProvider extends mdsDataProvider{
     }
 
     @Override
-    public synchronized int[] GetIntArray(final String in) throws IOException {
-        return super.GetIntArray(this.ParseExpression(in));
+    public synchronized int[] getIntArray(final String in) throws IOException {
+        return super.getIntArray(this.parseExpression(in));
     }
 
     @Override
-    public int InquireCredentials(final JFrame f, final DataServerItem server_item) {
+    public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
         return DataProvider.LOGIN_OK;
     }
 
-    protected String ParseExpression(final String in) {
+    protected String parseExpression(final String in) {
         final StringTokenizer st = new StringTokenizer(in, "\\", true);
         final StringBuffer parsed = new StringBuffer();
         int state = 0;
@@ -144,16 +144,13 @@ public final class ftuDataProvider extends mdsDataProvider{
     }
 
     @Override
-    public void SetArgument(final String arg) throws IOException {
+    public void setArgument(final String arg) throws IOException {
         this.mds.setProvider(arg);
-        this.SetEnvironment("public _IMODE = 0;");
+        this.setEnvironment("public _IMODE = 0;");
     }
 
     @Override
-    public void SetCompression(final boolean state) {}
-
-    @Override
-    public synchronized void Update(final String exp, final long s) {
+    public synchronized void update(final String exp, final long s) {
         this.error = null;
         this.shot = s;
     }

@@ -5,14 +5,14 @@
 package mds;
 
 import java.util.Vector;
-import jScope.AsynchDataSource;
-import jScope.WaveDataListener;
-import jScope.XYData;
+import jscope.AsynchDataSource;
+import jscope.WaveDataListener;
+import jscope.XYData;
 
 /**
  * @author manduchi
  */
-public class mdsAsynchDataProvider extends mdsDataProvider{
+public class MdsAsynchDataProvider extends MdsDataProvider{
     // Inner class AsynchWaevdata handles the generation of the waveform
     class AsynchWaveData implements AsynchDataSource{
         Vector<WaveDataListener> listeners  = new Vector<WaveDataListener>();
@@ -37,7 +37,7 @@ public class mdsAsynchDataProvider extends mdsDataProvider{
                         try{
                             Thread.sleep(100);
                         }catch(final InterruptedException exc){}
-                        if(!mdsAsynchDataProvider.this.asynchEnabled){
+                        if(!MdsAsynchDataProvider.this.asynchEnabled){
                             System.out.println("NOT ENABLED");
                             continue;
                         }

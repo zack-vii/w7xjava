@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Canvas;
@@ -28,7 +28,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import debug.DEBUG;
-import jScope.ColorMap.ColorProfile;
+import jscope.ColorMap.ColorProfile;
 
 @SuppressWarnings("serial")
 public final class Frames extends Canvas{
@@ -173,7 +173,7 @@ public final class Frames extends Canvas{
 
         public final Dimension getFrameDimension() {
             if(this.frameDim == null) try{
-                this.frameDim = this.fd.GetFrameDimension();
+                this.frameDim = this.fd.getFrameDimension();
             }catch(final Exception e){}
             return this.frameDim;
         }
@@ -300,10 +300,10 @@ public final class Frames extends Canvas{
 
         private final void loadFrame(final int idx) throws Exception {
             if(DEBUG.M) System.out.println("Frames.FrameCache.loadFrame(" + idx + ")");
-            this.frameType = this.fd.GetFrameType();
-            this.frameDim = this.fd.GetFrameDimension();
-            this.numFrames = this.fd.GetNumFrames();
-            final byte[] buf = this.fd.GetFrameAt(idx);
+            this.frameType = this.fd.getFrameType();
+            this.frameDim = this.fd.getFrameDimension();
+            this.numFrames = this.fd.getNumFrames();
+            final byte[] buf = this.fd.getFrameAt(idx);
             if(buf == null) return;
             BufferedImage img;
             DataBuffer db;
@@ -413,7 +413,7 @@ public final class Frames extends Canvas{
             if(DEBUG.M) System.out.println("Frames.FrameCache.setFrameData(" + fd + ")");
             this.fd = fd;
             try{
-                this.numFrames = fd.GetNumFrames();
+                this.numFrames = fd.getNumFrames();
             }catch(final Exception exc){
                 this.numFrames = 0;
             }
@@ -427,7 +427,7 @@ public final class Frames extends Canvas{
         }
     } // End class FrameCache
 
-    public static final int DecodeImageType(final byte buf[]) {
+    public static final int decodeImageType(final byte buf[]) {
         if(DEBUG.M) System.out.println("Frames.DecodeImageType(" + buf + ")");
         final String s = new String(buf, 0, 20);
         if(s.indexOf("GIF") == 0) return FrameData.AWT_IMAGE;
@@ -488,7 +488,7 @@ public final class Frames extends Canvas{
         return true;
     }
 
-    public final void FlipFrame(final byte buf[], final Dimension d, final int num_byte_pixel) {
+    public final void flipFrame(final byte buf[], final Dimension d, final int num_byte_pixel) {
         if(DEBUG.M) System.out.println("Frames.FlipFrame(" + buf + ", " + d + ", " + num_byte_pixel + ")");
         if(!this.vertical_flip && !this.horizontal_flip) return;
         final int img_size = d.height * d.width * num_byte_pixel;
@@ -507,7 +507,7 @@ public final class Frames extends Canvas{
         return this.aspect_ratio;
     }
 
-    public final int GetColorIdx() {
+    public final int getColorIdx() {
         return this.color_idx;
     }
 
@@ -515,8 +515,8 @@ public final class Frames extends Canvas{
         return this.cache.getColorProfile();
     }
 
-    public final Object GetFrame(int idx) {
-        if(DEBUG.M) System.out.println("Frames.GetFrame(" + idx + ")");
+    public final Object getFrame(int idx) {
+        if(DEBUG.M) System.out.println("Frames.getFrame(" + idx + ")");
         if(idx < 0) return null;
         final int numFrames = this.cache.getNumFrames();
         if(idx >= numFrames) idx = numFrames - 1;
@@ -537,23 +537,23 @@ public final class Frames extends Canvas{
         return img;
     }
 
-    public final Object GetFrame(final int idx, final Dimension d) {
-        if(DEBUG.M) System.out.println("Frames.GetFrame(" + idx + ", " + d + ")");
-        return this.GetFrame(idx);
+    public final Object getFrame(final int idx, final Dimension d) {
+        if(DEBUG.M) System.out.println("Frames.getFrame(" + idx + ", " + d + ")");
+        return this.getFrame(idx);
     }
 
-    protected final Dimension GetFrameDim(final int idx) {
-        if(DEBUG.M) System.out.println("Frames.GetFrameDim(" + idx + ")");
+    protected final Dimension getFrameDim(final int idx) {
+        if(DEBUG.M) System.out.println("Frames.getFrameDim(" + idx + ")");
         return this.cache.getFrameDimension();
     }
 
-    public final int GetFrameIdx() {
-        if(DEBUG.M) System.out.println("Frames.GetFrameIdx()");
+    public final int getFrameIdx() {
+        if(DEBUG.M) System.out.println("Frames.getFrameIdx()");
         return this.curr_frame_idx;
     }
 
-    public final int GetFrameIdxAtTime(final float t) {
-        if(DEBUG.M) System.out.println("Frames.GetFrameIdxAtTime(" + t + ")");
+    public final int getFrameIdxAtTime(final float t) {
+        if(DEBUG.M) System.out.println("Frames.getFrameIdxAtTime(" + t + ")");
         int idx = -1;
         float dt;
         final int numFrames = this.cache.getNumFrames();
@@ -589,7 +589,7 @@ public final class Frames extends Canvas{
             Dimension dim;
             final Dimension fr_dim = this.getFrameSize(this.curr_frame_idx, d);
             if(this.zoom_rect == null){
-                view_dim = this.GetFrameDim(this.curr_frame_idx);
+                view_dim = this.getFrameDim(this.curr_frame_idx);
                 dim = view_dim;
             }else{
                 dim = new Dimension(this.zoom_rect.width, this.zoom_rect.height);
@@ -622,7 +622,7 @@ public final class Frames extends Canvas{
         width = dim_b.width;
         height = dim_b.height;
         if(this.getAspectRatio()){
-            final Dimension dim = this.GetFrameDim(idx);
+            final Dimension dim = this.getFrameDim(idx);
             int w = dim.width;
             int h = dim.height;
             if(this.zoom_rect != null){
@@ -656,8 +656,8 @@ public final class Frames extends Canvas{
         return this.ft;
     }
 
-    public final float GetFrameTime() {
-        if(DEBUG.M) System.out.println("Frames.GetFrameTime()");
+    public final float getFrameTime() {
+        if(DEBUG.M) System.out.println("Frames.getFrameTime()");
         float t_out = 0;
         if(this.curr_frame_idx != -1 && this.frame_time.size() != 0){
             t_out = this.frame_time.elementAt(this.curr_frame_idx).floatValue();
@@ -692,7 +692,7 @@ public final class Frames extends Canvas{
             Dimension view_dim;
             Dimension dim;
             if(this.zoom_rect == null){
-                view_dim = this.GetFrameDim(this.curr_frame_idx);
+                view_dim = this.getFrameDim(this.curr_frame_idx);
                 dim = view_dim;
             }else{
                 dim = new Dimension(this.zoom_rect.width, this.zoom_rect.height);
@@ -861,8 +861,8 @@ public final class Frames extends Canvas{
         return 0;
     }
 
-    public final float GetTime(final int frame_idx) {
-        if(DEBUG.M) System.out.println("Frames.GetTime(" + frame_idx + ")");
+    public final float getTime(final int frame_idx) {
+        if(DEBUG.M) System.out.println("Frames.getTime(" + frame_idx + ")");
         if(frame_idx > this.cache.getNumFrames() - 1 || frame_idx < 0) return (float)0.0;
         return this.frame_time.elementAt(frame_idx).floatValue();
     }
@@ -942,8 +942,8 @@ public final class Frames extends Canvas{
         return this.vertical_flip;
     }
 
-    public final Rectangle GetZoomRect() {
-        if(DEBUG.M) System.out.println("Frames.GetZoomRect()");
+    public final Rectangle getZoomRect() {
+        if(DEBUG.M) System.out.println("Frames.getZoomRect()");
         return this.zoom_rect;
     }
 
@@ -959,12 +959,12 @@ public final class Frames extends Canvas{
 
     public final boolean isInImage(final int idx, final int x, final int y) {
         if(DEBUG.M) System.out.println("Frames.isInImage(" + idx + ", " + x + ", " + y + ")");
-        final Dimension d = this.GetFrameDim(idx);
+        final Dimension d = this.getFrameDim(idx);
         final Rectangle r = new Rectangle(0, 0, d.width, d.height);
         return r.contains(x, y);
     }
 
-    public final void Resize() {
+    public final void resize() {
         this.zoom_rect = null;
     }
 
@@ -976,7 +976,7 @@ public final class Frames extends Canvas{
         this.cache.setBitShift(bitShift, bitClip);
     }
 
-    public final void SetColorIdx(final int color_idx) {
+    public final void setColorIdx(final int color_idx) {
         this.color_idx = color_idx;
     }
 
@@ -986,11 +986,11 @@ public final class Frames extends Canvas{
         this.cache.setColorProfile(setColorProfile);
     }
 
-    public final void SetFrameData(final FrameData fd) throws Exception {
+    public final void setFrameData(final FrameData fd) throws Exception {
         if(DEBUG.M) System.out.println("Frames.SetFrameData(" + fd + ")");
         this.cache.setFrameData(fd);
         this.curr_frame_idx = 0;
-        final float t[] = fd.GetFrameTimes();
+        final float t[] = fd.getFrameTimes();
         for(final double element : t)
             this.frame_time.addElement(new Float(element));
     }
@@ -1019,12 +1019,12 @@ public final class Frames extends Canvas{
         this.vertical_flip = vertical_flip;
     }
 
-    public final void SetViewRect(int start_x, int start_y, int end_x, int end_y) {
+    public final void setViewRect(int start_x, int start_y, int end_x, int end_y) {
         if(DEBUG.M) System.out.println("Frames.SetViewRect(" + start_x + ", " + start_y + ", " + end_y + ", " + end_y + ")");
         this.view_rect = null;
         if(start_x == -1 && start_y == -1 && end_x == -1 && end_y == -1) return;
         if(this.getNumFrame() == 0) return;
-        final Dimension dim = this.GetFrameDim(0);
+        final Dimension dim = this.getFrameDim(0);
         if(dim == null){
             this.view_rect = new Rectangle(0, 0, 1, 1);
             this.zoom_rect = this.view_rect;
@@ -1040,7 +1040,7 @@ public final class Frames extends Canvas{
         }
     }
 
-    public final void SetZoomRegion(final int idx, final Dimension d, final Rectangle r) {
+    public final void setZoomRegion(final int idx, final Dimension d, final Rectangle r) {
         if(DEBUG.M) System.out.println("Frames.SetZoomRegion(" + idx + ", " + d + ", " + r + ")");
         final int numFrames = this.cache.getNumFrames();
         if(idx > numFrames - 1) // || frame.elementAt(idx) == null )
@@ -1049,7 +1049,7 @@ public final class Frames extends Canvas{
         final Dimension fr_sz = this.getFrameSize(idx, d);
         if(this.zoom_rect == null){
             this.zoom_rect = new Rectangle(0, 0, 0, 0);
-            dim = this.GetFrameDim(idx);
+            dim = this.getFrameDim(idx);
         }else{
             dim = new Dimension(this.zoom_rect.width, this.zoom_rect.height);
         }

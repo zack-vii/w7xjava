@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.FlowLayout;
@@ -20,7 +20,7 @@ import javax.swing.SwingConstants;
 
 @SuppressWarnings("serial")
 public final class SetupDefaults extends JDialog implements ActionListener{
-    private static int IsGridMode(final String mode) {
+    private static int isGridMode(final String mode) {
         for(int i = 0; i < Grid.GRID_MODE.length; i++)
             if(Grid.GRID_MODE[i].equals(mode)) return i;
         return -1;
@@ -52,7 +52,7 @@ public final class SetupDefaults extends JDialog implements ActionListener{
         super(fw, frame_title, true);
         this.setModal(true);
         this.main_scope = (jScopeFacade)fw;
-        this.GetPropertiesValue();
+        this.getPropertiesValue();
         final GridBagLayout gridbag = new GridBagLayout();
         final GridBagConstraints c = new GridBagConstraints();
         final Insets insets = new Insets(4, 4, 4, 4);
@@ -217,7 +217,7 @@ public final class SetupDefaults extends JDialog implements ActionListener{
         if(ob == this.cancel) this.setVisible(false);
         if(ob == this.apply || ob == this.ok){
             if(ob == this.ok) this.setVisible(false);
-            this.main_scope.UpdateDefaultValues();
+            this.main_scope.updateDefaultValues();
         }
         if(ob == this.reset){
             this.initialize();
@@ -253,7 +253,7 @@ public final class SetupDefaults extends JDialog implements ActionListener{
         return this.curr_legend_mode;
     }
 
-    void GetPropertiesValue() {
+    void getPropertiesValue() {
         final Properties js_prop = this.main_scope.js_prop;
         String prop;
         int val = 0;
@@ -261,7 +261,7 @@ public final class SetupDefaults extends JDialog implements ActionListener{
         prop = js_prop.getProperty("jScope.reversed");
         if(prop != null) this.reversed = Boolean.parseBoolean(prop);
         prop = js_prop.getProperty("jScope.grid_mode");
-        if(prop != null && (val = SetupDefaults.IsGridMode(prop)) > 0) this.curr_grid_mode = val;
+        if(prop != null && (val = SetupDefaults.isGridMode(prop)) > 0) this.curr_grid_mode = val;
         prop = js_prop.getProperty("jScope.x_grid");
         if(prop != null){
             try{
@@ -309,11 +309,11 @@ public final class SetupDefaults extends JDialog implements ActionListener{
         this.legend_mode.setSelectedIndex(this.curr_legend_mode);
         this.x_grid_lines.setText("" + this.x_curr_lines_grid);
         this.y_grid_lines.setText("" + this.y_curr_lines_grid);
-        this.horizontal_offset.setText("" + Waveform.GetHorizontalOffset());
-        this.vertical_offset.setText("" + Waveform.GetVerticalOffset());
+        this.horizontal_offset.setText("" + Waveform.getHorizontalOffset());
+        this.vertical_offset.setText("" + Waveform.getVerticalOffset());
     }
 
-    public boolean IsChanged(final jScopeDefaultValues def_vals) {
+    public boolean isChanged(final jScopeDefaultValues def_vals) {
         if(!jScopeFacade.equalsString(this.shot.getText(), def_vals.shot_str)) return true;
         if(!jScopeFacade.equalsString(this.experiment.getText(), def_vals.experiment_str)) return true;
         if(!jScopeFacade.equalsString(this.upd_event.getText(), def_vals.upd_event_str)) return true;
@@ -330,7 +330,7 @@ public final class SetupDefaults extends JDialog implements ActionListener{
         return false;
     }
 
-    public void SaveDefaultConfiguration(final jScopeDefaultValues def_vals) {
+    public void saveDefaultConfiguration(final jScopeDefaultValues def_vals) {
         def_vals.experiment_str = new String(this.experiment.getText());
         def_vals.shot_str = new String(this.shot.getText());
         def_vals.xmax = new String(this.x_max.getText());
@@ -352,14 +352,14 @@ public final class SetupDefaults extends JDialog implements ActionListener{
         }catch(final NumberFormatException exc){
             h_ofs = 0;
         }
-        Waveform.SetHorizontalOffset(h_ofs);
+        Waveform.setHorizontalOffset(h_ofs);
         this.horizontal_offset.setText("" + h_ofs);
         try{
             v_ofs = new Integer(this.vertical_offset.getText().trim()).intValue();
         }catch(final NumberFormatException exc){
             v_ofs = 0;
         }
-        Waveform.SetVerticalOffset(v_ofs);
+        Waveform.setVerticalOffset(v_ofs);
         this.vertical_offset.setText("" + v_ofs);
         if(this.auto_color_mode.getSelectedIndex() == 0) WaveInterface.auto_color_on_expr = false;
         else WaveInterface.auto_color_on_expr = true;
@@ -380,7 +380,7 @@ public final class SetupDefaults extends JDialog implements ActionListener{
         def_vals.setIsEvaluated(false);
     }
 
-    public void Show(final Frame f, final jScopeDefaultValues def_vals) {
+    public void show(final Frame f, final jScopeDefaultValues def_vals) {
         this.def_vals = def_vals;
         this.initialize();
         this.pack();

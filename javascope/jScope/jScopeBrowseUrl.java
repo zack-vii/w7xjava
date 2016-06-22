@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.BorderLayout;
@@ -42,7 +42,7 @@ public class jScopeBrowseUrl extends JDialog{
         super(owner);
         this.html = new JEditorPane();
         this.html.setEditable(false);
-        this.html.addHyperlinkListener(this.createHyperLinkListener());
+        this.html.addHyperlinkListener(this.createHyperlinkListener());
         final JScrollPane scroller = new JScrollPane();
         final JViewport vp = scroller.getViewport();
         vp.add(this.html);
@@ -122,7 +122,7 @@ public class jScopeBrowseUrl extends JDialog{
         }
     }
 
-    public final HyperlinkListener createHyperLinkListener() {
+    public final HyperlinkListener createHyperlinkListener() {
         return new HyperlinkListener(){
             @Override
             public void hyperlinkUpdate(final HyperlinkEvent e) {

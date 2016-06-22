@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.AWTEvent;
@@ -36,7 +36,7 @@ final public class WaveformEvent extends AWTEvent{
         return dateFormat.format(date).toString();
     }
 
-    private static String SetStrSize(final String s, final int size) {
+    private static String setStrSize(final String s, final int size) {
         final StringBuffer sb = new StringBuffer(size);
         sb.append(s.substring(0, ((s.length() < size) ? s.length() : size)));
         if(sb.length() < size) for(int i = sb.length(); i < size; i++)
@@ -182,46 +182,46 @@ final public class WaveformEvent extends AWTEvent{
                 if(Math.abs(this.delta_x) < 1.e-20) dx_f = 1.e-20;
                 else dx_f = Math.abs(this.delta_x);
                 if(this.showXasDate){
-                    s = WaveformEvent.SetStrSize(String.format("[%s, %s; dx %s; dy %s]", //
+                    s = WaveformEvent.setStrSize(String.format("[%s, %s; dx %s; dy %s]", //
                     WaveformEvent.getFormattedDate(Grid.toMillis(this.dateValue + this.point_x), WaveformEvent.datetime), //
-                    Waveform.ConvertToString(this.point_y, false), //
+                    Waveform.convertToString(this.point_y, false), //
                     WaveformEvent.getFormattedDate((long)this.delta_x, WaveformEvent.time), //
-                    Waveform.ConvertToString(this.delta_y, false)), 90);
+                    Waveform.convertToString(this.delta_y, false)), 90);
                 }else{
-                    s = WaveformEvent.SetStrSize(String.format("[%s, %s; dx %s; dy %s; 1/dx %s]", //
-                    Waveform.ConvertToString(this.point_x, false), //
-                    Waveform.ConvertToString(this.point_y, false), //
-                    Waveform.ConvertToString(this.delta_x, false), //
-                    Waveform.ConvertToString(this.delta_y, false), //
-                    Waveform.ConvertToString(1. / dx_f, false)), 90);
+                    s = WaveformEvent.setStrSize(String.format("[%s, %s; dx %s; dy %s; 1/dx %s]", //
+                    Waveform.convertToString(this.point_x, false), //
+                    Waveform.convertToString(this.point_y, false), //
+                    Waveform.convertToString(this.delta_x, false), //
+                    Waveform.convertToString(this.delta_y, false), //
+                    Waveform.convertToString(1. / dx_f, false)), 90);
                 }
             case WaveformEvent.POINT_UPDATE:
             case WaveformEvent.POINT_IMAGE_UPDATE:
                 if(s == null){
-                    if(!w.IsImage()){
+                    if(!w.isImage()){
                         final Float xf = new Float(this.x_value);
                         final Float tf = new Float(this.time_value);
                         final Float df = new Float(this.data_value);
                         final Float nan_f = new Float(Float.NaN);
                         String xt_string = null;
-                        if(!xf.equals(nan_f)) xt_string = ", Y = " + Waveform.ConvertToString(this.x_value, false);
+                        if(!xf.equals(nan_f)) xt_string = ", Y = " + Waveform.convertToString(this.x_value, false);
                         else if(!tf.equals(nan_f)) if(this.showXasDate){
                             xt_string = ", T = " + WaveformEvent.getFormattedDate(Grid.toMillis(this.time_value), WaveformEvent.datetime);
                             this.showXasDate = false;
-                        }else xt_string = ", X = " + Waveform.ConvertToString(this.time_value, false);
-                        else if(!df.equals(nan_f)) xt_string = ", Z = " + Waveform.ConvertToString(this.data_value, false);
+                        }else xt_string = ", X = " + Waveform.convertToString(this.time_value, false);
+                        else if(!df.equals(nan_f)) xt_string = ", Z = " + Waveform.convertToString(this.data_value, false);
                         String x_string = null;
                         int string_size = 40;
                         if(this.showXasDate){
                             x_string = WaveformEvent.getFormattedDate(Grid.toMillis(this.point_x), WaveformEvent.datetime);
                             string_size = 45;
                         }else x_string = "" + new Float(this.point_x);
-                        if(xt_string == null) s = WaveformEvent.SetStrSize(String.format("[%s, %f]", x_string, this.point_y), string_size);
-                        else s = WaveformEvent.SetStrSize(String.format("[%s, %f %s]", x_string, this.point_y, xt_string), string_size + 40);
+                        if(xt_string == null) s = WaveformEvent.setStrSize(String.format("[%s, %f]", x_string, this.point_y), string_size);
+                        else s = WaveformEvent.setStrSize(String.format("[%s, %f %s]", x_string, this.point_y, xt_string), string_size + 40);
                     }else if(this.frame_type == FrameData.BITMAP_IMAGE_32 || this.frame_type == FrameData.BITMAP_IMAGE_16){
-                        s = WaveformEvent.SetStrSize(String.format("[%d, %d : (%f) : %f]", (int)this.point_x, (int)this.point_y, this.point_value, this.delta_x), 50);
+                        s = WaveformEvent.setStrSize(String.format("[%d, %d : (%f) : %f]", (int)this.point_x, (int)this.point_y, this.point_value, this.delta_x), 50);
                     }else{
-                        s = WaveformEvent.SetStrSize(String.format("[%d, %d : (%06x) : %f]", (int)this.point_x, (int)this.point_y, this.pixel_value & 0xffffff, this.delta_x), 50);
+                        s = WaveformEvent.setStrSize(String.format("[%d, %d : (%06x) : %f]", (int)this.point_x, (int)this.point_y, this.pixel_value & 0xffffff, this.delta_x), 50);
                     }
                 }
                 break;

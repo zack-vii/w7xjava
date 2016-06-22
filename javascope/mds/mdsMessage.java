@@ -11,16 +11,16 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Vector;
 import java.util.zip.InflaterInputStream;
-import jScope.ConnectionEvent;
-import jScope.ConnectionListener;
+import jscope.ConnectionEvent;
+import jscope.ConnectionListener;
 
-public final class mdsMessage extends Object{
+public final class MdsMessage extends Object{
     private static final byte     BIG_ENDIAN_MASK            = (byte)0x80;
     private static final byte     COMPRESSED                 = (byte)0x20;
     protected static final String EVENTASTREQUEST            = "---EVENTAST---REQUEST---";
     protected static final String EVENTCANREQUEST            = "---EVENTCAN---REQUEST---";
     private static final int      HEADER_SIZE                = 48;
-    private static final byte     JAVA_CLIENT                = (byte)((byte)3 | mdsMessage.BIG_ENDIAN_MASK | mdsMessage.SWAP_ENDIAN_ON_SERVER_MASK);
+    private static final byte     JAVA_CLIENT                = (byte)((byte)3 | MdsMessage.BIG_ENDIAN_MASK | MdsMessage.SWAP_ENDIAN_ON_SERVER_MASK);
     private static int            msgid                      = 1;
     // private static final byte SENDCAPABILITIES = (byte)0xF;
     private static final int      SUPPORTS_COMPRESSION       = 0x8000;
@@ -131,28 +131,28 @@ public final class mdsMessage extends Object{
         final byte[] buf = new byte[bytes_to_read];
         int read_bytes = 0, curr_offset = 0;
         final boolean send = (bytes_to_read > 2000);
-        if(send) mdsMessage.dispatchConnectionEvent(listeners, new ConnectionEvent(dis, buf.length, curr_offset));
+        if(send) MdsMessage.dispatchConnectionEvent(listeners, new ConnectionEvent(dis, buf.length, curr_offset));
         while(bytes_to_read > 0){
             read_bytes = dis.read(buf, curr_offset, bytes_to_read);
             curr_offset += read_bytes;
             bytes_to_read -= read_bytes;
-            if(send) mdsMessage.dispatchConnectionEvent(listeners, new ConnectionEvent(dis, buf.length, curr_offset));
+            if(send) MdsMessage.dispatchConnectionEvent(listeners, new ConnectionEvent(dis, buf.length, curr_offset));
         }
         return buf;
     }
 
     protected static final synchronized byte[] ReadCompressedBuf(final InputStream dis, final boolean swap, final Vector<ConnectionListener> listeners) throws IOException {
         DataInput reader = new DataInputStream(dis);
-        if(swap) reader = mdsMessage.littleEndian(reader);
-        final int bytes_to_read = reader.readInt() - mdsMessage.HEADER_SIZE;
+        if(swap) reader = MdsMessage.littleEndian(reader);
+        final int bytes_to_read = reader.readInt() - MdsMessage.HEADER_SIZE;
         final InflaterInputStream zis = new InflaterInputStream(dis);
-        final byte[] buf = mdsMessage.readBuf(bytes_to_read, zis, listeners);
+        final byte[] buf = MdsMessage.readBuf(bytes_to_read, zis, listeners);
         while(zis.available() == 1)
             zis.skip(1); // EOF
         return buf;
     }
 
-    public final synchronized static mdsMessage Receive(final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
+    public final synchronized static MdsMessage Receive(final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
         final byte c_type;
         /*reader = new DataInputStream(dis);
         if(dis.markSupported()){// attempt on getting c_type using mark and reset caused hang
@@ -161,13 +161,13 @@ public final class mdsMessage extends Object{
             c_type = reader.readByte();
             dis.reset();
         }else{*/
-        final byte[] buf = mdsMessage.readBuf(mdsMessage.HEADER_SIZE, dis, null);
+        final byte[] buf = MdsMessage.readBuf(MdsMessage.HEADER_SIZE, dis, null);
         DataInput reader = new DataInputStream(new ByteArrayInputStream(buf));
         c_type = buf[14];
         // }
-        final boolean swap = ((c_type & mdsMessage.BIG_ENDIAN_MASK) == 0);
-        if(swap) reader = mdsMessage.littleEndian(reader);
-        final boolean compressed = ((c_type & mdsMessage.COMPRESSED) == mdsMessage.COMPRESSED);
+        final boolean swap = ((c_type & MdsMessage.BIG_ENDIAN_MASK) == 0);
+        if(swap) reader = MdsMessage.littleEndian(reader);
+        final boolean compressed = ((c_type & MdsMessage.COMPRESSED) == MdsMessage.COMPRESSED);
         final int msglen = reader.readInt();
         final int status = reader.readInt();
         reader.skipBytes(2);// short length
@@ -181,13 +181,13 @@ public final class mdsMessage extends Object{
         for(int i = 0; i < Descriptor.MAX_DIM; i++)
             dims[i] = reader.readInt();
         final byte[] body;
-        if(msglen > mdsMessage.HEADER_SIZE){
-            if(compressed) body = mdsMessage.ReadCompressedBuf(dis, swap, listeners);
+        if(msglen > MdsMessage.HEADER_SIZE){
+            if(compressed) body = MdsMessage.ReadCompressedBuf(dis, swap, listeners);
             else{
-                body = mdsMessage.readBuf(msglen - mdsMessage.HEADER_SIZE, dis, listeners);
+                body = MdsMessage.readBuf(msglen - MdsMessage.HEADER_SIZE, dis, listeners);
             }
         }else body = new byte[0];
-        return new mdsMessage(descr_idx, dtype, nargs, dims, ndims, body, c_type, status, message_id);
+        return new MdsMessage(descr_idx, dtype, nargs, dims, ndims, body, c_type, status, message_id);
     }
     protected final byte body[];
     private final byte   client_type;
@@ -201,22 +201,22 @@ public final class mdsMessage extends Object{
     private final byte   ndims;
     protected int        status;
 
-    public mdsMessage(){
+    public MdsMessage(){
         this((byte)0, (byte)0, (byte)0, null, new byte[1]);
         this.verify();
     }
 
-    protected mdsMessage(final byte c){
+    protected MdsMessage(final byte c){
         this((byte)0, Descriptor.DTYPE_CSTRING, (byte)1, null, new byte[]{c});
     }
 
-    public mdsMessage(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte body[]){
-        this(descr_idx, dtype, nargs, dims, (dims == null) ? (byte)0 : (byte)dims.length, body, mdsMessage.JAVA_CLIENT, 0, mdsMessage.msgid);
+    public MdsMessage(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte body[]){
+        this(descr_idx, dtype, nargs, dims, (dims == null) ? (byte)0 : (byte)dims.length, body, MdsMessage.JAVA_CLIENT, 0, MdsMessage.msgid);
     }
 
-    public mdsMessage(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte ndims, final byte body[], final byte client_type, final int status, final int msgid){
+    public MdsMessage(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte ndims, final byte body[], final byte client_type, final int status, final int msgid){
         final int body_size = (body != null ? body.length : 0);
-        this.msglen = mdsMessage.HEADER_SIZE + body_size;
+        this.msglen = MdsMessage.HEADER_SIZE + body_size;
         this.status = status;
         this.message_id = msgid;
         this.length = Descriptor.getDataSize(dtype, body);
@@ -232,7 +232,7 @@ public final class mdsMessage extends Object{
         this.body = body;
     }
 
-    protected mdsMessage(final String s){
+    protected MdsMessage(final String s){
         this((byte)0, Descriptor.DTYPE_CSTRING, (byte)1, null, s.getBytes());
     }
 
@@ -243,7 +243,7 @@ public final class mdsMessage extends Object{
     protected final double[] asDoubleArray() throws IOException {
         final double out[] = new double[this.body.length / Double.BYTES];
         DataInput reader = new DataInputStream(new ByteArrayInputStream(this.body));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         for(int i = 0; i < out.length; i++)
             out[i] = reader.readDouble();
         return out;
@@ -251,14 +251,14 @@ public final class mdsMessage extends Object{
 
     protected final float asFloat(final byte bytes[]) throws IOException {
         DataInput reader = new DataInputStream(new ByteArrayInputStream(bytes));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         return reader.readFloat();
     }
 
     protected final float[] asFloatArray() throws IOException {
         final float out[] = new float[this.body.length / Float.BYTES];
         DataInput reader = new DataInputStream(new ByteArrayInputStream(this.body));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         for(int i = 0; i < out.length; i++)
             out[i] = reader.readFloat();
         return out;
@@ -266,14 +266,14 @@ public final class mdsMessage extends Object{
 
     protected final int asInt(final byte bytes[]) throws IOException {
         DataInput reader = new DataInputStream(new ByteArrayInputStream(bytes));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         return reader.readInt();
     }
 
     public final int[] asIntArray() throws IOException {
         final int out[] = new int[this.body.length / Integer.BYTES];
         DataInput reader = new DataInputStream(new ByteArrayInputStream(this.body));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         for(int i = 0; i < out.length; i++)
             out[i] = reader.readInt();
         return out;
@@ -282,7 +282,7 @@ public final class mdsMessage extends Object{
     public final long[] asLongArray() throws IOException {
         final long out[] = new long[this.body.length / Long.BYTES];
         DataInput reader = new DataInputStream(new ByteArrayInputStream(this.body));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         for(int i = 0; i < out.length; i++)
             out[i] = reader.readLong();
         return out;
@@ -290,14 +290,14 @@ public final class mdsMessage extends Object{
 
     public final short asShort(final byte bytes[]) throws IOException {
         DataInput reader = new DataInputStream(new ByteArrayInputStream(bytes));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         return reader.readShort();
     }
 
     public final short[] asShortArray() throws IOException {
         final short out[] = new short[this.body.length / Short.BYTES];
         DataInput reader = new DataInputStream(new ByteArrayInputStream(this.body));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         for(int i = 0; i < out.length; i++)
             out[i] = reader.readShort();
         return out;
@@ -310,7 +310,7 @@ public final class mdsMessage extends Object{
     public final long[] asUIntArray() throws IOException {
         final long out[] = new long[this.body.length / Integer.BYTES];
         DataInput reader = new DataInputStream(new ByteArrayInputStream(this.body));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         for(int i = 0; i < out.length; i++)
             out[i] = reader.readInt() & 0xFFFFFFFFl;
         return out;
@@ -319,7 +319,7 @@ public final class mdsMessage extends Object{
     public final int[] asUShortArray() throws IOException {
         final int out[] = new int[this.body.length / Short.BYTES];
         DataInput reader = new DataInputStream(new ByteArrayInputStream(this.body));
-        if(this.isBigEndian()) reader = mdsMessage.littleEndian(reader);
+        if(this.isBigEndian()) reader = MdsMessage.littleEndian(reader);
         for(int i = 0; i < out.length; i++)
             out[i] = reader.readShort() & 0xFFFF;
         return out;
@@ -330,7 +330,7 @@ public final class mdsMessage extends Object{
     }
 
     private final boolean isBigEndian() {
-        return (this.client_type & mdsMessage.BIG_ENDIAN_MASK) == 0;
+        return (this.client_type & MdsMessage.BIG_ENDIAN_MASK) == 0;
     }
 
     public final synchronized void Send(final DataOutputStream dos) throws IOException {
@@ -347,12 +347,12 @@ public final class mdsMessage extends Object{
             dos.writeInt(this.dims[i]);
         dos.write(this.body, 0, this.body.length);
         dos.flush();
-        if(this.descr_idx == (this.getNargs() - 1)) mdsMessage.msgid++;
-        if(mdsMessage.msgid == 0) mdsMessage.msgid = 1;
+        if(this.descr_idx == (this.getNargs() - 1)) MdsMessage.msgid++;
+        if(MdsMessage.msgid == 0) MdsMessage.msgid = 1;
     }
 
     protected final void useCompression(final boolean use_cmp) {
-        this.status = (use_cmp ? mdsMessage.SUPPORTS_COMPRESSION | 5 : 0);
+        this.status = (use_cmp ? MdsMessage.SUPPORTS_COMPRESSION | 5 : 0);
     }
 
     public final void verify() {

@@ -1,4 +1,4 @@
-package jTraverser.tools;
+package jtraverser.tools;
 
 import java.awt.Component;
 import java.io.File;
@@ -17,7 +17,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-import jTraverser.NodeInfo;
+import jtraverser.NodeInfo;
 import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;

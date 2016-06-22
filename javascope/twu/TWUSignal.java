@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class TWUSignal{
+public class TwuSignal{
     /* -------------------------------------------------------------------- */
     public static String revision() {
         return "$Id$";
@@ -17,7 +17,7 @@ public class TWUSignal{
     private BufferedReader instream     = null;
     private int            sampleCount  = 0;
     private int            samples2Read = 0;
-    private TWUProperties  twup         = null;
+    private TwuProperties  twup         = null;
     private float          ydata[]      = null;
 
     /* -------------------------------------------------------------------- */
@@ -26,11 +26,11 @@ public class TWUSignal{
     // signal found on the Web-Ubrella. This array contains at most
     // "maxSamples" samples, from the whole signal, subsampled by a simple
     // skipping algorithm.
-    public TWUSignal(final TWUProperties SigURL){
+    public TwuSignal(final TwuProperties SigURL){
         this(SigURL, 0, 0, 0);
     }
 
-    public TWUSignal(final TWUProperties SigURL, final int firstSample, final int step, int maxSamples){
+    public TwuSignal(final TwuProperties SigURL, final int firstSample, final int step, int maxSamples){
         boolean success = false;
         this.twup = SigURL;
         if(maxSamples <= 0) maxSamples = this.twup.LengthTotal();
@@ -85,7 +85,7 @@ public class TWUSignal{
             if(maxSamples > 0) bulk.append("&total=" + maxSamples);
             this.bulkURL = new URL(bulk.toString());
             final URLConnection con = this.bulkURL.openConnection();
-            con.setRequestProperty("User-Agent", "TWUSignal.java for jScope ($Revision$)");
+            con.setRequestProperty("User-Agent", "TwuSignal.java for jScope ($Revision$)");
             // It seems to be more efficient, for the type of data we have in the
             // bulk files, to close the connection after the server has send all
             // the data. In that way HTTP/1.1 servers will not "chunk" the data.
@@ -95,7 +95,7 @@ public class TWUSignal{
             con.connect();
             this.instream = new BufferedReader(new InputStreamReader(con.getInputStream()));
         }catch(final Exception e){
-            System.out.println("TWUSignal.prepareToRead :" + e);
+            System.out.println("TwuSignal.prepareToRead :" + e);
             this.error = true;
         }
     }
@@ -166,7 +166,7 @@ public class TWUSignal{
                 }
             }
         }catch(final Exception e){
-            System.out.println("TWUSignal.tryToRead :" + e);
+            System.out.println("TwuSignal.tryToRead :" + e);
             this.error = true;
         }
     }

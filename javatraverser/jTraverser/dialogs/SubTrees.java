@@ -1,4 +1,4 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -19,10 +19,10 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import jTraverser.Node;
-import jTraverser.NodeInfo;
-import jTraverser.Tree;
-import jTraverser.TreeManager;
+import jtraverser.Node;
+import jtraverser.NodeInfo;
+import jtraverser.Tree;
+import jtraverser.TreeManager;
 import mds.MdsException;
 import mds.data.descriptor_s.Nid;
 

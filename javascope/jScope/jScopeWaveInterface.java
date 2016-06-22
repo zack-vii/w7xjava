@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import debug.DEBUG;
-import jScope.ColorMap.ColorProfile;
+import jscope.ColorMap.ColorProfile;
 
 public final class jScopeWaveInterface extends WaveInterface{
     public static final int B_default_node = 9;
@@ -225,47 +225,47 @@ public final class jScopeWaveInterface extends WaveInterface{
         if(wi.cin_def_node != null) this.cin_def_node = new String(wi.cin_def_node);
         else this.cin_def_node = null;
         this.def_vals = wi.def_vals;
-        this.SetDataProvider(wi.dp);
+        this.setDataProvider(wi.dp);
     }
 
     public jScopeWaveInterface(final Waveform wave, final DataProvider dp, final jScopeDefaultValues def_vals, final boolean enable_cache){
         super(dp);
         if(DEBUG.M) System.out.println("jScopeWaveInterface(" + wave + ", " + dp + ", " + def_vals + ", " + enable_cache + ")");
         this.setDefaultsValues(def_vals);
-        this.EnableCache(enable_cache);
+        this.enableCache(enable_cache);
         this.wave = wave;
     }
 
-    public void AddEvent(final UpdateEventListener w) throws IOException {
+    public void addEvent(final UpdateEventListener w) throws IOException {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.AddEvent(" + w + ")");
         final int bit = jScopeWaveInterface.B_event;
         final boolean def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
-        final String new_event = this.GetDefaultValue(bit, def_flag);
+        final String new_event = this.getDefaultValue(bit, def_flag);
         if(this.in_upd_event == null || !this.in_upd_event.equals(new_event)){
-            this.AddEvent(w, new_event);
+            this.addEvent(w, new_event);
         }
     }
 
-    public void AddEvent(final UpdateEventListener w, final String event) throws IOException {
+    public void addEvent(final UpdateEventListener w, final String event) throws IOException {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.AddEvent(" + w + ", \"" + event + "\")");
         if(this.in_upd_event != null && this.in_upd_event.length() != 0){
             if(event == null || event.length() == 0){
-                this.dp.RemoveUpdateEventListener(w, this.in_upd_event);
+                this.dp.removeUpdateEventListener(w, this.in_upd_event);
                 this.in_upd_event = null;
             }else{
                 if(!this.in_upd_event.equals(event)){
-                    this.dp.RemoveUpdateEventListener(w, this.in_upd_event);
-                    this.dp.AddUpdateEventListener(w, event);
+                    this.dp.removeUpdateEventListener(w, this.in_upd_event);
+                    this.dp.addUpdateEventListener(w, event);
                     this.in_upd_event = event;
                 }
             }
         }else if(event != null && event.length() != 0){
-            this.dp.AddUpdateEventListener(w, event);
+            this.dp.addUpdateEventListener(w, event);
             this.in_upd_event = event;
         }
     }
 
-    public void CreateVector() {
+    public void createVector() {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.CreateVector()");
         this.in_label = new String[this.num_waves];
         this.shots = new long[this.num_waves];
@@ -290,8 +290,8 @@ public final class jScopeWaveInterface extends WaveInterface{
     }
 
     @Override
-    public void Erase() {
-        super.Erase();
+    public void erase() {
+        super.erase();
         if(DEBUG.M) System.out.println("jScopeWaveInterface.Erase()");
         this.in_def_node = null;
         this.in_upd_event = null;
@@ -317,11 +317,11 @@ public final class jScopeWaveInterface extends WaveInterface{
         this.cin_upd_limits = true;
     }
 
-    public void FromFile(final Properties pr, final String prompt, final ColorMapDialog cmd) throws IOException {
+    public void fromFile(final Properties pr, final String prompt, final ColorMapDialog cmd) throws IOException {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.mode2DStringToCode(" + pr + ", \"" + prompt + "\", " + cmd + ")");
         String prop = null;
         int num_expr = 0;
-        this.Erase();
+        this.erase();
         try{
             prop = pr.getProperty(prompt + ".height");
             if(prop != null) this.height = Integer.parseInt(prop);
@@ -374,7 +374,7 @@ public final class jScopeWaveInterface extends WaveInterface{
             prop = pr.getProperty(prompt + ".x");
             if(prop != null){
                 String x_str = prop;
-                x_str = WaveInterface.RemoveNewLineCode(x_str);
+                x_str = WaveInterface.removeNewLineCode(x_str);
                 if(this.in_x == null || this.in_x.length == 0) this.in_x = new String[1];
                 this.in_x[0] = x_str;
             }
@@ -386,7 +386,7 @@ public final class jScopeWaveInterface extends WaveInterface{
                 String token = null;
                 String y_str = prop.toLowerCase();
                 String x_str = null;
-                y_str = WaveInterface.RemoveNewLineCode(y_str);
+                y_str = WaveInterface.removeNewLineCode(y_str);
                 if(this.in_x != null && this.in_x.length != 0) x_str = this.in_x[0];
                 if(y_str.indexOf("[") == 0 && y_str.indexOf("$roprand") != -1){
                     try{
@@ -404,7 +404,7 @@ public final class jScopeWaveInterface extends WaveInterface{
                     }
                 }else num_expr = 1;
                 this.num_waves = num_expr * this.num_shot;
-                this.CreateVector();
+                this.createVector();
                 if(num_expr > 1){
                     try{
                         st_y = new StringTokenizer(y_str, "[]");
@@ -430,7 +430,7 @@ public final class jScopeWaveInterface extends WaveInterface{
                     }catch(final Exception e){
                         num_expr = 1;
                         this.num_waves = num_expr * this.num_shot;
-                        this.CreateVector();
+                        this.createVector();
                     }
                 }
                 if(num_expr == 1){
@@ -451,7 +451,7 @@ public final class jScopeWaveInterface extends WaveInterface{
                 this.num_shot = (this.num_shot > 0) ? this.num_shot : 1;
                 if(num_expr != 0){
                     this.num_waves = num_expr * this.num_shot;
-                    this.CreateVector();
+                    this.createVector();
                 }
             }
             prop = pr.getProperty(prompt + ".global_defaults");
@@ -468,14 +468,14 @@ public final class jScopeWaveInterface extends WaveInterface{
                 prop = pr.getProperty(prompt + ".x_expr_" + idx);
                 if(prop != null){
                     expr_idx = (idx - 1) * this.num_shot;
-                    this.in_x[expr_idx] = WaveInterface.RemoveNewLineCode(prop);
+                    this.in_x[expr_idx] = WaveInterface.removeNewLineCode(prop);
                     for(int j = 1; j < this.num_shot; j++)
                         this.in_x[expr_idx + j] = this.in_x[expr_idx];
                 }
                 prop = pr.getProperty(prompt + ".y_expr_" + idx);
                 if(prop != null){
                     expr_idx = (idx - 1) * this.num_shot;
-                    this.in_y[expr_idx] = WaveInterface.RemoveNewLineCode(prop);
+                    this.in_y[expr_idx] = WaveInterface.removeNewLineCode(prop);
                     for(int j = 1; j < this.num_shot; j++)
                         this.in_y[expr_idx + j] = this.in_y[expr_idx];
                 }
@@ -512,7 +512,7 @@ public final class jScopeWaveInterface extends WaveInterface{
         }
     }
 
-    public String GetDefaultValue(final int i, final boolean def_flag) {
+    public String getDefaultValue(final int i, final boolean def_flag) {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.GetDefaultValue(" + i + ", " + def_flag + ")");
         String out = null;
         switch(i){
@@ -602,20 +602,20 @@ public final class jScopeWaveInterface extends WaveInterface{
      * 1 global setting defined shot
      * 2 main scope defined shot
      */
-    public int GetShotIdx() {
+    public int getShotIdx() {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.GetShotIdx()");
         final String main_shot_str = ((jScopeWaveContainer)(this.wave.getParent())).getMainShotStr();
-        if(this.UseDefaultShot()){
+        if(this.useDefaultShot()){
             if(main_shot_str != null && main_shot_str.length() != 0) return 2;
             return 1;
         }
         return 0;
     }
 
-    public String GetUsedShot() {
+    public String getUsedShot() {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.GetUsedShot()");
         String out = null;
-        switch(this.GetShotIdx()){
+        switch(this.getShotIdx()){
             case 0:
                 out = this.cin_shot;
                 break;
@@ -643,11 +643,11 @@ public final class jScopeWaveInterface extends WaveInterface{
     public synchronized void refresh() throws Exception {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.refresh()");
         try{
-            this.error = this.Update();
+            this.error = this.update();
             if(this.error == null){
                 if(this.getModified()){
-                    this.StartEvaluate();
-                    if(this.error == null) this.EvaluateOthers();
+                    this.startEvaluate();
+                    if(this.error == null) this.evaluateOthers();
                 }
                 this.setModified(this.error != null);
             }
@@ -657,22 +657,22 @@ public final class jScopeWaveInterface extends WaveInterface{
         }
     }
 
-    public void RemoveEvent(final UpdateEventListener w) throws IOException {
+    public void removeEvent(final UpdateEventListener w) throws IOException {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.RemoveEvent(" + w + ")");
         if(this.in_upd_event != null){
-            this.dp.RemoveUpdateEventListener(w, this.in_upd_event);
+            this.dp.removeUpdateEventListener(w, this.in_upd_event);
             this.in_upd_event = null;
         }
     }
 
-    public void RemoveEvent(final UpdateEventListener w, final String event) throws IOException {
+    public void removeEvent(final UpdateEventListener w, final String event) throws IOException {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.RemoveEvent(" + w + ", \"" + event + "\")");
-        this.dp.RemoveUpdateEventListener(w, event);
+        this.dp.removeUpdateEventListener(w, event);
     }
 
     @Override
-    public void SetDataProvider(final DataProvider _dp) {
-        super.SetDataProvider(_dp);
+    public void setDataProvider(final DataProvider _dp) {
+        super.setDataProvider(_dp);
         if(DEBUG.M) System.out.println("jScopeWaveInterface.SetDataProvider(" + _dp + ")");
         this.default_is_update = false;
         this.previous_shot = "";
@@ -696,7 +696,7 @@ public final class jScopeWaveInterface extends WaveInterface{
         this.defaults &= ~(1 << jScopeWaveInterface.B_exp);
     }
 
-    public void ToFile(final PrintWriter out, final String prompt) throws IOException {
+    public void toFile(final PrintWriter out, final String prompt) throws IOException {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.ToFile(" + out + ", \"" + prompt + "\")");
         int exp, exp_n, sht, sht_n, cnum_shot, eval_shot = 1;
         cnum_shot = this.num_shot;
@@ -713,85 +713,85 @@ public final class jScopeWaveInterface extends WaveInterface{
             }
         }
          */
-        WaveInterface.WriteLine(out, prompt + "x_label: ", this.cin_xlabel);
-        WaveInterface.WriteLine(out, prompt + "y_label: ", this.cin_ylabel);
+        WaveInterface.writeLine(out, prompt + "x_label: ", this.cin_xlabel);
+        WaveInterface.writeLine(out, prompt + "y_label: ", this.cin_ylabel);
         if(!this.is_image){
-            WaveInterface.WriteLine(out, prompt + "x_log: ", "" + this.x_log);
-            WaveInterface.WriteLine(out, prompt + "y_log: ", "" + this.y_log);
-            WaveInterface.WriteLine(out, prompt + "update_limits: ", "" + this.cin_upd_limits);
+            WaveInterface.writeLine(out, prompt + "x_log: ", "" + this.x_log);
+            WaveInterface.writeLine(out, prompt + "y_log: ", "" + this.y_log);
+            WaveInterface.writeLine(out, prompt + "update_limits: ", "" + this.cin_upd_limits);
             if(this.show_legend){
-                WaveInterface.WriteLine(out, prompt + "legend: ", "(" + this.legend_x + "," + this.legend_y + ")");
+                WaveInterface.writeLine(out, prompt + "legend: ", "(" + this.legend_x + "," + this.legend_y + ")");
             }
         }else{
-            WaveInterface.WriteLine(out, prompt + "is_image: ", "" + this.is_image);
-            WaveInterface.WriteLine(out, prompt + "keep_ratio: ", "" + this.keep_ratio);
-            WaveInterface.WriteLine(out, prompt + "horizontal_flip: ", "" + this.horizontal_flip);
-            WaveInterface.WriteLine(out, prompt + "vertical_flip: ", "" + this.vertical_flip);
+            WaveInterface.writeLine(out, prompt + "is_image: ", "" + this.is_image);
+            WaveInterface.writeLine(out, prompt + "keep_ratio: ", "" + this.keep_ratio);
+            WaveInterface.writeLine(out, prompt + "horizontal_flip: ", "" + this.horizontal_flip);
+            WaveInterface.writeLine(out, prompt + "vertical_flip: ", "" + this.vertical_flip);
         }
         if(this.colorProfile != null){
-            if(this.colorProfile.useRGB) WaveInterface.WriteLine(out, prompt + "useRGB: ", "" + this.colorProfile.useRGB);
+            if(this.colorProfile.useRGB) WaveInterface.writeLine(out, prompt + "useRGB: ", "" + this.colorProfile.useRGB);
             else{
-                WaveInterface.WriteLine(out, prompt + "palette: ", "" + this.colorProfile.colorMap.name);
-                WaveInterface.WriteLine(out, prompt + "bitShift: ", "" + this.colorProfile.bitShift);
-                WaveInterface.WriteLine(out, prompt + "bitClip: ", "" + this.colorProfile.bitClip);
+                WaveInterface.writeLine(out, prompt + "palette: ", "" + this.colorProfile.colorMap.name);
+                WaveInterface.writeLine(out, prompt + "bitShift: ", "" + this.colorProfile.bitShift);
+                WaveInterface.writeLine(out, prompt + "bitClip: ", "" + this.colorProfile.bitClip);
             }
         }
-        WaveInterface.WriteLine(out, prompt + "experiment: ", this.cexperiment);
-        WaveInterface.WriteLine(out, prompt + "event: ", this.cin_upd_event);
-        WaveInterface.WriteLine(out, prompt + "default_node: ", this.cin_def_node);
-        WaveInterface.WriteLine(out, prompt + "num_shot: ", "" + cnum_shot);
+        WaveInterface.writeLine(out, prompt + "experiment: ", this.cexperiment);
+        WaveInterface.writeLine(out, prompt + "event: ", this.cin_upd_event);
+        WaveInterface.writeLine(out, prompt + "default_node: ", this.cin_def_node);
+        WaveInterface.writeLine(out, prompt + "num_shot: ", "" + cnum_shot);
         if(cnum_shot != 0){
-            if(this.UseDefaultShot()) eval_shot = this.num_shot > 0 ? this.num_shot : 1;
+            if(this.useDefaultShot()) eval_shot = this.num_shot > 0 ? this.num_shot : 1;
             else eval_shot = cnum_shot;
-            WaveInterface.WriteLine(out, prompt + "num_expr: ", "" + this.num_waves / eval_shot);
+            WaveInterface.writeLine(out, prompt + "num_expr: ", "" + this.num_waves / eval_shot);
         }else{
-            WaveInterface.WriteLine(out, prompt + "num_expr: ", "" + this.num_waves);
+            WaveInterface.writeLine(out, prompt + "num_expr: ", "" + this.num_waves);
             // Shot is not defined in the pannel.
             // cnum_shot must be set to 1 to save, in the configuration file,
             // signal view parameters
             cnum_shot = 1;
         }
-        WaveInterface.WriteLine(out, prompt + "shot: ", this.cin_shot);
-        WaveInterface.WriteLine(out, prompt + "ymin: ", this.cin_ymin);
-        WaveInterface.WriteLine(out, prompt + "ymax: ", this.cin_ymax);
-        WaveInterface.WriteLine(out, prompt + "xmin: ", this.cin_xmin);
-        WaveInterface.WriteLine(out, prompt + "xmax: ", this.cin_xmax);
+        WaveInterface.writeLine(out, prompt + "shot: ", this.cin_shot);
+        WaveInterface.writeLine(out, prompt + "ymin: ", this.cin_ymin);
+        WaveInterface.writeLine(out, prompt + "ymax: ", this.cin_ymax);
+        WaveInterface.writeLine(out, prompt + "xmin: ", this.cin_xmin);
+        WaveInterface.writeLine(out, prompt + "xmax: ", this.cin_xmax);
         if(this.is_image){
-            WaveInterface.WriteLine(out, prompt + "time_min: ", this.cin_timemin);
-            WaveInterface.WriteLine(out, prompt + "time_max: ", this.cin_timemax);
+            WaveInterface.writeLine(out, prompt + "time_min: ", this.cin_timemin);
+            WaveInterface.writeLine(out, prompt + "time_max: ", this.cin_timemax);
         }
         // GAB 2014
-        WaveInterface.WriteLine(out, prompt + "continuous_update: ", this.isContinuousUpdate ? "1" : "0");
+        WaveInterface.writeLine(out, prompt + "continuous_update: ", this.isContinuousUpdate ? "1" : "0");
         // ///////
-        WaveInterface.WriteLine(out, prompt + "title: ", this.cin_title);
-        WaveInterface.WriteLine(out, prompt + "global_defaults: ", "" + this.defaults);
+        WaveInterface.writeLine(out, prompt + "title: ", this.cin_title);
+        WaveInterface.writeLine(out, prompt + "global_defaults: ", "" + this.defaults);
         for(exp = 0, exp_n = 1; exp < this.num_waves; exp += eval_shot, exp_n++){
-            WaveInterface.WriteLine(out, prompt + "label" + "_" + exp_n + ": ", this.in_label[exp]);
+            WaveInterface.writeLine(out, prompt + "label" + "_" + exp_n + ": ", this.in_label[exp]);
             // add blank at the end of expression to fix bug when last expression character is \
-            WaveInterface.WriteLine(out, prompt + "x_expr" + "_" + exp_n + ": ", WaveInterface.AddNewLineCode(this.in_x[exp]));
-            WaveInterface.WriteLine(out, prompt + "y_expr" + "_" + exp_n + ": ", WaveInterface.AddNewLineCode(this.in_y[exp]));
+            WaveInterface.writeLine(out, prompt + "x_expr" + "_" + exp_n + ": ", WaveInterface.addNewLineCode(this.in_x[exp]));
+            WaveInterface.writeLine(out, prompt + "y_expr" + "_" + exp_n + ": ", WaveInterface.addNewLineCode(this.in_y[exp]));
             if(!this.is_image){
-                WaveInterface.WriteLine(out, prompt + "up_error" + "_" + exp_n + ": ", this.in_up_err[exp]);
-                WaveInterface.WriteLine(out, prompt + "low_error" + "_" + exp_n + ": ", this.in_low_err[exp]);
+                WaveInterface.writeLine(out, prompt + "up_error" + "_" + exp_n + ": ", this.in_up_err[exp]);
+                WaveInterface.writeLine(out, prompt + "low_error" + "_" + exp_n + ": ", this.in_low_err[exp]);
                 for(sht = 0, sht_n = 1; sht < cnum_shot; sht++, sht_n++){
-                    WaveInterface.WriteLine(out, prompt + "mode_1D" + "_" + exp_n + "_" + sht_n + ": ", "" + jScopeWaveInterface.mode1DCodeToString(this.mode1D[exp + sht]));
-                    WaveInterface.WriteLine(out, prompt + "mode_2D" + "_" + exp_n + "_" + sht_n + ": ", "" + jScopeWaveInterface.mode2DCodeToString(this.mode2D[exp + sht]));
-                    WaveInterface.WriteLine(out, prompt + "color" + "_" + exp_n + "_" + sht_n + ": ", "" + this.colors_idx[exp + sht]);
-                    WaveInterface.WriteLine(out, prompt + "marker" + "_" + exp_n + "_" + sht_n + ": ", "" + this.markers[exp + sht]);
-                    WaveInterface.WriteLine(out, prompt + "step_marker" + "_" + exp_n + "_" + sht_n + ": ", "" + this.markers_step[exp + sht]);
+                    WaveInterface.writeLine(out, prompt + "mode_1D" + "_" + exp_n + "_" + sht_n + ": ", "" + jScopeWaveInterface.mode1DCodeToString(this.mode1D[exp + sht]));
+                    WaveInterface.writeLine(out, prompt + "mode_2D" + "_" + exp_n + "_" + sht_n + ": ", "" + jScopeWaveInterface.mode2DCodeToString(this.mode2D[exp + sht]));
+                    WaveInterface.writeLine(out, prompt + "color" + "_" + exp_n + "_" + sht_n + ": ", "" + this.colors_idx[exp + sht]);
+                    WaveInterface.writeLine(out, prompt + "marker" + "_" + exp_n + "_" + sht_n + ": ", "" + this.markers[exp + sht]);
+                    WaveInterface.writeLine(out, prompt + "step_marker" + "_" + exp_n + "_" + sht_n + ": ", "" + this.markers_step[exp + sht]);
                 }
             }
         }
     }
 
-    public String Update() throws IOException {
+    public String update() throws IOException {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.Update()");
-        final int mode = this.wave.GetMode();
+        final int mode = this.wave.getMode();
         try{
-            this.wave.SetMode(Waveform.MODE_WAIT);
-            this.UpdateShot();
+            this.wave.setMode(Waveform.MODE_WAIT);
+            this.updateShot();
             if(this.error == null){
-                this.UpdateDefault();
+                this.updateDefault();
                 /* ces 2015
                 if (in_def_node != null)
                 {
@@ -804,15 +804,15 @@ public final class jScopeWaveInterface extends WaveInterface{
             }else{
                 this.signals = null;
             }
-            this.wave.SetMode(mode);
+            this.wave.setMode(mode);
         }catch(final IOException exc){
-            this.wave.SetMode(mode);
+            this.wave.setMode(mode);
             throw(exc);
         }
         return this.error;
     }
 
-    public void UpdateDefault() {
+    public void updateDefault() {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.UpdateDefault()");
         boolean def_flag;
         int bit;
@@ -820,7 +820,7 @@ public final class jScopeWaveInterface extends WaveInterface{
         this.default_is_update = true;
         bit = jScopeWaveInterface.B_title;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
-        this.in_title = this.GetDefaultValue(bit, def_flag);
+        this.in_title = this.getDefaultValue(bit, def_flag);
         /*
         bit = jScopeWaveInterface.B_shot;
         def_flag =    ((defaults & (1<<bit)) == 1<<bit);
@@ -828,49 +828,49 @@ public final class jScopeWaveInterface extends WaveInterface{
          */
         bit = jScopeWaveInterface.B_exp;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
-        this.experiment = this.GetDefaultValue(bit, def_flag);
+        this.experiment = this.getDefaultValue(bit, def_flag);
         bit = jScopeWaveInterface.B_x_max;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
         if(this.is_image){
-            this.in_timemax = this.GetDefaultValue(bit, def_flag);
+            this.in_timemax = this.getDefaultValue(bit, def_flag);
             this.in_xmax = this.cin_xmax;
-        }else this.in_xmax = this.GetDefaultValue(bit, def_flag);
+        }else this.in_xmax = this.getDefaultValue(bit, def_flag);
         bit = jScopeWaveInterface.B_x_min;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
         if(this.is_image){
-            this.in_timemin = this.GetDefaultValue(bit, def_flag);
+            this.in_timemin = this.getDefaultValue(bit, def_flag);
             this.in_xmin = this.cin_xmin;
-        }else this.in_xmin = this.GetDefaultValue(bit, def_flag);
+        }else this.in_xmin = this.getDefaultValue(bit, def_flag);
         bit = jScopeWaveInterface.B_x_label;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
-        this.in_xlabel = this.GetDefaultValue(bit, def_flag);
+        this.in_xlabel = this.getDefaultValue(bit, def_flag);
         bit = jScopeWaveInterface.B_y_max;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
-        this.in_ymax = this.GetDefaultValue(bit, def_flag);
+        this.in_ymax = this.getDefaultValue(bit, def_flag);
         bit = jScopeWaveInterface.B_y_min;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
-        this.in_ymin = this.GetDefaultValue(bit, def_flag);
+        this.in_ymin = this.getDefaultValue(bit, def_flag);
         bit = jScopeWaveInterface.B_y_label;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
-        this.in_ylabel = this.GetDefaultValue(bit, def_flag);
+        this.in_ylabel = this.getDefaultValue(bit, def_flag);
         bit = jScopeWaveInterface.B_default_node;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
-        this.in_def_node = this.GetDefaultValue(bit, def_flag);
+        this.in_def_node = this.getDefaultValue(bit, def_flag);
         bit = jScopeWaveInterface.B_update;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
-        this.in_upd_limits = (new Boolean(this.GetDefaultValue(bit, def_flag))).booleanValue();
+        this.in_upd_limits = (new Boolean(this.getDefaultValue(bit, def_flag))).booleanValue();
         /*
         bit = jScopeWaveInterface.B_event;
         def_flag =    ((defaults & (1<<bit)) == 1<<bit);
-        in_upd_event = GetDefaultValue(bit , def_flag );
+        in_upd_event = getDefaultValue(bit , def_flag );
          */
     }
 
-    public void UpdateShot() throws IOException {
+    public void updateShot() throws IOException {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.UpdateShot()");
         long curr_shots[] = null;
         final String main_shot_str = ((jScopeWaveContainer)(this.wave.getParent())).getMainShotStr();
-        final String c_shot_str = jScopeWaveInterface.containMainShot(this.GetUsedShot(), main_shot_str);
+        final String c_shot_str = jScopeWaveInterface.containMainShot(this.getUsedShot(), main_shot_str);
         /* 12-2-2009
                 if( !getModified() && in_shot != null && c_shot_str != null)
                 {
@@ -895,14 +895,14 @@ public final class jScopeWaveInterface extends WaveInterface{
                     previous_shot = "not defined";
                 }
          */
-        if(this.UseDefaultShot()){
+        if(this.useDefaultShot()){
             if(main_shot_str != null && main_shot_str.length() != 0){
                 curr_shots = ((jScopeWaveContainer)(this.wave.getParent())).getMainShots();
                 if(curr_shots == null) this.error = "Main Shot evaluation error: " + ((jScopeWaveContainer)(this.wave.getParent())).getMainShotError(true);
             }else{
                 if(this.def_vals.getIsEvaluated() && this.def_vals.shots != null) curr_shots = this.def_vals.shots;
                 else{
-                    curr_shots = this.GetShotArray(jScopeWaveInterface.containMainShot(this.def_vals.shot_str, main_shot_str));
+                    curr_shots = this.getShotArray(jScopeWaveInterface.containMainShot(this.def_vals.shot_str, main_shot_str));
                     if(this.error == null){
                         this.def_vals.shots = curr_shots;
                         this.def_vals.setIsEvaluated(false);
@@ -910,13 +910,13 @@ public final class jScopeWaveInterface extends WaveInterface{
                 }
             }
         }else{
-            curr_shots = this.GetShotArray(jScopeWaveInterface.containMainShot(this.cin_shot, main_shot_str));
+            curr_shots = this.getShotArray(jScopeWaveInterface.containMainShot(this.cin_shot, main_shot_str));
         }
         this.in_shot = c_shot_str;
-        if(!this.UpdateShot(curr_shots)) this.previous_shot = "not defined";
+        if(!this.updateShot(curr_shots)) this.previous_shot = "not defined";
     }
 
-    public boolean UseDefaultShot() {
+    public boolean useDefaultShot() {
         if(DEBUG.M) System.out.println("jScopeWaveInterface.UseDefaultShot()");
         return((this.defaults & (1 << jScopeWaveInterface.B_shot)) != 0);
     }

@@ -1,7 +1,7 @@
 package twu;
 
 // -------------------------------------------------------------------------------------------------
-// twuDataProvider
+// TwuDataProvider
 // An implementation of "DataProvider" for signals from a TEC Web-Umbrella (TWU) server.
 //
 // The first versions of this class (cvs revisions 1.x) were designed and written
@@ -20,16 +20,16 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.swing.JFrame;
-import jScope.ConnectionEvent;
-import jScope.ConnectionListener;
-import jScope.DataAccessURL;
-import jScope.DataProvider;
-import jScope.DataServerItem;
-import jScope.FrameData;
-import jScope.UpdateEventListener;
-import jScope.WaveData;
+import jscope.ConnectionEvent;
+import jscope.ConnectionListener;
+import jscope.DataAccessURL;
+import jscope.DataProvider;
+import jscope.DataServerItem;
+import jscope.FrameData;
+import jscope.UpdateEventListener;
+import jscope.WaveData;
 
-public final class twuDataProvider implements DataProvider{
+public final class TwuDataProvider implements DataProvider{
     public static boolean DataPending() {
         return false;
     }
@@ -53,15 +53,15 @@ public final class twuDataProvider implements DataProvider{
     private transient Vector<ConnectionListener> connection_listener = new Vector<ConnectionListener>();
     private String                               error_string;
     private String                               experiment;
-    private twuWaveData                          lastWaveData        = null;
+    private TwuWaveData                          lastWaveData        = null;
     protected long                               shot;
 
-    public twuDataProvider(){
+    public TwuDataProvider(){
         super();
     }
 
-    public twuDataProvider(final String user_agent){
-        DataAccessURL.addProtocol(new twuAccess());
+    public TwuDataProvider(final String user_agent){
+        DataAccessURL.addProtocol(new TwuAccess());
         // Could be used in the constructor for TWUProperties and in similar get URL actions.
         // A site could used this as a possible (internal) software distribution management
         // tool. In the log of a web-server you can, by checking the user_agent, see which
@@ -77,20 +77,20 @@ public final class twuDataProvider implements DataProvider{
     // connection handling methods ....
     // -------------------------------------------
     @Override
-    public synchronized void AddConnectionListener(final ConnectionListener l) {
+    public synchronized void addConnectionListener(final ConnectionListener l) {
         if(l == null) return;
         this.connection_listener.addElement(l);
     }
 
     @Override
-    public void AddUpdateEventListener(final UpdateEventListener l, final String event) {}
+    public void addUpdateEventListener(final UpdateEventListener l, final String event) {}
 
     @Override
     public final boolean checkProvider() {
         return true;
     }
 
-    protected void DispatchConnectionEvent(final ConnectionEvent e) {
+    protected void dispatchConnectionEvent(final ConnectionEvent e) {
         if(this.connection_listener != null){
             for(int i = 0; i < this.connection_listener.size(); i++)
                 this.connection_listener.elementAt(i).processConnectionEvent(e);
@@ -98,7 +98,7 @@ public final class twuDataProvider implements DataProvider{
     }
 
     @Override
-    public void Dispose() {}
+    public void dispose() {}
 
     // --------------------------------------------------------------------------------------------
     // interface methods for getting *Data objects
@@ -106,18 +106,18 @@ public final class twuDataProvider implements DataProvider{
     public void enableAsyncUpdate(final boolean enable) {}
 
     @Override
-    public String ErrorString() {
+    public String errorString() {
         return this.error_string;
     }
 
-    public synchronized twuWaveData FindWaveData(final String in_y, final String in_x) {
+    public synchronized TwuWaveData findWaveData(final String in_y, final String in_x) {
         if(this.lastWaveData == null || this.lastWaveData.notEqualsInputSignal(in_y, in_x, this.shot)){
-            this.lastWaveData = new twuWaveData(this, in_y, in_x);
+            this.lastWaveData = new TwuWaveData(this, in_y, in_x);
             try{
                 // Ensure that the properties are fetched right away.
-                this.lastWaveData.getTWUProperties();
+                this.lastWaveData.getTwuProperties();
             }catch(final IOException e){
-                this.setErrorstring("No Such Signal : " + twuNameServices.GetSignalPath(in_y, this.shot));
+                this.setErrorstring("No Such Signal : " + TwuNameServices.getSignalPath(in_y, this.shot));
                 // throw new IOException ("No Such Signal");
             }
         }
@@ -126,7 +126,7 @@ public final class twuDataProvider implements DataProvider{
 
     @Override
     public Class getDefaultBrowser() {
-        return textorBrowseSignals.class;
+        return TextorBrowseSignals.class;
     }
 
     protected synchronized String getExperiment() {
@@ -134,17 +134,17 @@ public final class twuDataProvider implements DataProvider{
     }
 
     @Override
-    public float GetFloat(final String in) {
+    public float getFloat(final String in) {
         return Float.parseFloat(in);
     }
 
     // ---------------------------------------------------------------------------------------------
-    public synchronized float[] GetFloatArray(final String in) {
+    public synchronized float[] getFloatArray(final String in) {
         this.resetErrorstring(null);
-        final twuWaveData wd = (twuWaveData)this.GetWaveData(in);
+        final TwuWaveData wd = (TwuWaveData)this.getWaveData(in);
         float[] data = null;
         try{
-            // data = wd.GetFloatData() ;
+            // data = wd.getFloatData() ;
             data = wd.getData(4000).getY();
         }catch(final Exception e){
             this.resetErrorstring(e.toString());
@@ -156,27 +156,27 @@ public final class twuDataProvider implements DataProvider{
     // ----------------------------------------------------
     // Methods for TwuAccess.
     // ----------------------------------------------------
-    public synchronized float[] GetFloatArray(final String in, final boolean is_time) throws IOException {
-        final twuWaveData wd = (twuWaveData)this.GetWaveData(in); // TwuAccess wants to get the full signal data .
-        return is_time ? wd.GetXData() : wd.GetYData();
+    public synchronized float[] getFloatArray(final String in, final boolean is_time) throws IOException {
+        final TwuWaveData wd = (TwuWaveData)this.getWaveData(in); // TwuAccess wants to get the full signal data .
+        return is_time ? wd.getXData() : wd.getYData();
     }
 
     @Override
-    public FrameData GetFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
-        return(new twuSimpleFrameData(this, in_y, in_x, time_min, time_max));
+    public FrameData getFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
+        return(new TwuSimpleFrameData(this, in_y, in_x, time_min, time_max));
     }
 
     @Override
-    public final String GetLegendString(final String s) {
+    public final String getLegendString(final String s) {
         return s;
     }
 
-    public synchronized WaveData GetResampledWaveData(final String in, final double start, final double end, final int n_points) {
-        return this.GetResampledWaveData(in, null, start, end, n_points);
+    public synchronized WaveData getResampledWaveData(final String in, final double start, final double end, final int n_points) {
+        return this.getResampledWaveData(in, null, start, end, n_points);
     }
 
-    public synchronized WaveData GetResampledWaveData(final String in_y, final String in_x, final double start, final double end, final int n_points) {
-        final twuWaveData find = this.FindWaveData(in_y, in_x);
+    public synchronized WaveData getResampledWaveData(final String in_y, final String in_x, final double start, final double end, final int n_points) {
+        final TwuWaveData find = this.findWaveData(in_y, in_x);
         find.setZoom((float)start, (float)end, n_points);
         return find;
     }
@@ -185,7 +185,7 @@ public final class twuDataProvider implements DataProvider{
     // parsing of / extraction from input signal string
     // -------------------------------------------------------
     @Override
-    public long[] GetShots(final String in) {
+    public long[] getShots(final String in) {
         this.resetErrorstring(null);
         long[] result;
         String curr_in = in.trim();
@@ -228,31 +228,31 @@ public final class twuDataProvider implements DataProvider{
         return null;
     }
 
-    public synchronized String GetSignalProperty(final String prop, final String in) throws IOException {
-        final twuWaveData wd = (twuWaveData)this.GetWaveData(in);
-        return wd.getTWUProperties().getProperty(prop);
+    public synchronized String getSignalProperty(final String prop, final String in) throws IOException {
+        final TwuWaveData wd = (TwuWaveData)this.getWaveData(in);
+        return wd.getTwuProperties().getProperty(prop);
     }
 
     @Override
-    public String GetString(final String in) {
+    public String getString(final String in) {
         return in;
     }
 
     // ---------------------------------------------------
     @Override
-    public synchronized WaveData GetWaveData(final String in) {
-        return this.GetWaveData(in, null);
+    public synchronized WaveData getWaveData(final String in) {
+        return this.getWaveData(in, null);
     }
 
     @Override
-    public synchronized WaveData GetWaveData(final String in_y, final String in_x) {
-        final twuWaveData find = this.FindWaveData(in_y, in_x);
+    public synchronized WaveData getWaveData(final String in_y, final String in_x) {
+        final TwuWaveData find = this.findWaveData(in_y, in_x);
         find.setFullFetch();
         return find;
     }
 
     @Override
-    public int InquireCredentials(final JFrame f, final DataServerItem server_item) {
+    public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
         return DataProvider.LOGIN_OK;
     }
 
@@ -262,34 +262,34 @@ public final class twuDataProvider implements DataProvider{
     }
 
     @Override
-    public synchronized void RemoveConnectionListener(final ConnectionListener l) {
+    public synchronized void removeConnectionListener(final ConnectionListener l) {
         if(l == null) return;
         this.connection_listener.removeElement(l);
     }
 
     @Override
-    public void RemoveUpdateEventListener(final UpdateEventListener l, final String event) {}
+    public void removeUpdateEventListener(final UpdateEventListener l, final String event) {}
 
     protected synchronized void resetErrorstring(final String newErrStr) {
         this.error_string = newErrStr;
     }
 
     @Override
-    public void SetArgument(final String arg) {}
+    public void setArgument(final String arg) {}
 
-    public void SetCompression(final boolean state) {}
+    public void setCompression(final boolean state) {}
 
     public void setContinuousUpdate() {}
 
     @Override
-    public void SetEnvironment(final String s) {}
+    public void setEnvironment(final String s) {}
 
     protected synchronized void setErrorstring(final String newErrStr) {
         if(this.error_string == null) this.error_string = newErrStr;
     }
 
     @Override
-    public boolean SupportsTunneling() {
+    public boolean supportsTunneling() {
         return false;
     }
 
@@ -297,7 +297,7 @@ public final class twuDataProvider implements DataProvider{
     // Constructor, other small stuff ...
     // -------------------------------------------
     @Override
-    public synchronized void Update(final String experiment, final long shot) {
+    public synchronized void update(final String experiment, final long shot) {
         this.experiment = experiment;
         this.shot = shot;
         this.resetErrorstring(null);

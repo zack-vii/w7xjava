@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Color;
@@ -15,9 +15,9 @@ public class AboutWindow extends JLabel{
 
     public AboutWindow(){
         try{
-            final String icon_file = jScopeFacade.findFileInClassPath("jScope/AboutWindow.jpg");
+            final String icon_file = jScopeFacade.findFileInClassPath("jscope/AboutWindow.jpg");
             if(icon_file != null) this.io = new ImageIcon(icon_file);
-            else this.io = new ImageIcon(this.getClass().getClassLoader().getResource("jScope/AboutWindow.jpg"));
+            else this.io = new ImageIcon(this.getClass().getClassLoader().getResource("jscope/AboutWindow.jpg"));
             if(jScopeFacade.is_debug) System.out.println("AboutWindow image path " + icon_file + this.io);
             this.setIcon(this.io);
         }catch(final NullPointerException e){

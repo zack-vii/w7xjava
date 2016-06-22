@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -124,7 +124,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             this.setName("Monitor Thread");
             try{
                 while(true){
-                    jScopeFacade.this.SetWindowTitle("Free :" + (int)(Runtime.getRuntime().freeMemory() / 1024) + " " + "Total :" + (int)(Runtime.getRuntime().totalMemory()) / 1024 + " " + "USED :" + (int)((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024.));
+                    jScopeFacade.this.setWindowTitle("Free :" + (int)(Runtime.getRuntime().freeMemory() / 1024) + " " + "Total :" + (int)(Runtime.getRuntime().totalMemory()) / 1024 + " " + "USED :" + (int)((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024.));
                     Thread.sleep(2000, 0);
                 }
             }catch(final InterruptedException e){}
@@ -195,13 +195,13 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             final Object ob = e.getSource();
             if(ob == this.apply){
                 this.dw.setPublicVariables(this.getPublicVar());
-                this.dw.UpdateAllWaves();
+                this.dw.updateAllWaves();
             }
             if(ob == this.save){
-                this.SavePubVar();
+                this.savePubVar();
             }
             if(ob == this.reset){
-                this.SetPubVar();
+                this.setPubVar();
             }
             if(ob == this.cancel){
                 this.is_pv_apply = false;
@@ -257,7 +257,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             return(new String(buf));
         }
 
-        private void SavePubVar() {
+        private void savePubVar() {
             String txt1, txt2;
             if(this.name_list.size() != 0) this.name_list.removeAllElements();
             if(this.expr_list.size() != 0) this.expr_list.removeAllElements();
@@ -273,20 +273,12 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             this.dw.setChange(true);
         }
 
-        private void SetPubVar() {
+        private void setPubVar() {
             final Container p = this.getContentPane();
             for(int i = 2, j = 0; j < this.name_list.size() && j < jScopeFacade.MAX_VARIABLE; i += 2, j++){
                 ((JTextField)p.getComponent(i)).setText(this.name_list.elementAt(j));
                 ((JTextField)p.getComponent(i + 1)).setText(this.expr_list.elementAt(j));
             }
-        }
-
-        public void Show() {
-            this.is_pv_apply = true;
-            this.SetPubVar();
-            this.pack();
-            this.setLocationRelativeTo(this.dw);
-            this.setVisible(true);
         }
 
         public void toFile(final PrintWriter out, final String prompt) {
@@ -299,7 +291,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
     /**
      * Switch the between the Windows, Motif, Mac, and the Java Look and Feel
      */
-    class ToggleUIListener implements ItemListener{
+    private final class ToggleUIListener implements ItemListener{
         @Override
         public void itemStateChanged(final ItemEvent e) {
             final Component root = jScopeFacade.this;
@@ -416,7 +408,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         else return inTime;
     }
 
-    static public void displayPageFormatAttributes(final int idx, final PageFormat myPageFormat) {
+    public static final void displayPageFormatAttributes(final int idx, final PageFormat myPageFormat) {
         System.out.println("+----------------------------------------------------------+");
         System.out.println("Index = " + idx);
         System.out.println("Width = " + myPageFormat.getWidth());
@@ -430,13 +422,13 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         System.out.println("+----------------------------------------------------------+");
     }
 
-    public static boolean equalsString(final String s1, final String s2) {
+    public static final boolean equalsString(final String s1, final String s2) {
         if(s1 == null) return s2 == null || s2.length() == 0;
         if(s2 == null) return s1.length() == 0;
         return s1.equals(s2);
     }
 
-    public static String findFileInClassPath(final String file) {
+    public static final String findFileInClassPath(final String file) {
         final StringTokenizer path = new StringTokenizer(System.getProperty("java.class.path"), File.pathSeparator);
         String p, f_name;
         File f;
@@ -451,15 +443,15 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         return null;
     }
 
-    public static Rectangle getRectangle() {
+    public static final Rectangle getRectangle() {
         return jScopeFacade.instance.getBounds();
     }
 
-    public static long getRefreshPeriod() {
+    public static final long getRefreshPeriod() {
         return jScopeFacade.refreshPeriod;
     }
 
-    private static DataServerItem getServerItem(final String server) {
+    private static final DataServerItem getServerItem(final String server) {
         for(final DataServerItem element : jScopeFacade.server_ip_list)
             if(element.equals(server)) return element;
         return null;
@@ -479,7 +471,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
      * L&F options should be active or inactive.
      */
     @SuppressWarnings("rawtypes")
-    protected static boolean isAvailableLookAndFeel(final String classname) {
+    protected static final boolean isAvailableLookAndFeel(final String classname) {
         try{ // Try to create a L&F given a String
             final Class lnfClass = Class.forName(classname);
             final LookAndFeel newLAF = (LookAndFeel)(lnfClass.newInstance());
@@ -492,7 +484,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
     /**********************
      * jScope Main
      ***********************/
-    static boolean IsNewJVMVersion() {
+    private static final boolean isNewJVMVersion() {
         final String ver = System.getProperty("java.version");
         return(!(ver.indexOf("1.0") != -1 || ver.indexOf("1.1") != -1));
     }
@@ -505,7 +497,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         jScopeFacade.startApplication(args);
     }
 
-    public static void ShowMessage(final Component parentComponent, final Object message, final String title, final int messageType) {
+    public static void showMessage(final Component parentComponent, final Object message, final String title, final int messageType) {
         jScopeFacade.T_parentComponent = parentComponent;
         jScopeFacade.T_message = message;
         jScopeFacade.T_title = title;
@@ -532,7 +524,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                 }
             }
         }
-        if(jScopeFacade.IsNewJVMVersion()) jScopeFacade.instance = new jScopeFacade(100, 100, propertiesFile);
+        if(jScopeFacade.isNewJVMVersion()) jScopeFacade.instance = new jScopeFacade(100, 100, propertiesFile);
         else{
             System.out.println("jScope application required JDK version 1.2 or later");
             System.exit(1);
@@ -621,45 +613,45 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
     public void actionPerformed(final ActionEvent e) {
         final Object ob = e.getSource();
         String action_cmd = null;
-        if(ob != this.open_i) this.wave_panel.RemoveSelection();
+        if(ob != this.open_i) this.wave_panel.removeSelection();
         if(ob instanceof AbstractButton) action_cmd = ((AbstractButton)ob).getModel().getActionCommand();
         if(action_cmd != null){
             final StringTokenizer act = new StringTokenizer(action_cmd);
             final String action = act.nextToken();
             if(action.equals("SET_SERVER")){
                 final String value = action_cmd.substring(action.length() + 1);
-                if(!this.wave_panel.GetServerLabel().equals(value)) this.SetDataServer(jScopeFacade.getServerItem(value));
+                if(!this.wave_panel.getServerLabel().equals(value)) this.setDataServer(jScopeFacade.getServerItem(value));
             }
         }
         if(ob == this.signal_expr){
             final String sig = this.signal_expr.getText().trim();
             if(sig != null && sig.length() != 0){
-                this.SetMainShot();
-                this.wave_panel.AddSignal(sig, false);
+                this.setMainShot();
+                this.wave_panel.addSignal(sig, false);
                 this.setChange(true);
             }
         }
         if(ob == this.apply_b || ob == this.shot_t){
             this.incShotValue = 0;
             if(this.executing_update){
-                if(ob == this.apply_b) this.wave_panel.AbortUpdate();
+                if(ob == this.apply_b) this.wave_panel.abortUpdate();
             }else{
                 if(ob == this.shot_t){
-                    this.SetMainShot();
+                    this.setMainShot();
                 }
                 final String sig = this.signal_expr.getText().trim();
                 if(sig != null && sig.length() != 0){
-                    this.wave_panel.AddSignal(sig, true);
+                    this.wave_panel.addSignal(sig, true);
                     this.setChange(true);
                 }
-                this.UpdateAllWaves();
+                this.updateAllWaves();
             }
         }
         if(ob == this.color_i){
             final javax.swing.Timer t = new javax.swing.Timer(20, new ActionListener(){
                 @Override
                 public void actionPerformed(final ActionEvent ae) {
-                    jScopeFacade.this.color_dialog.ShowColorDialog(jScopeFacade.this.wave_panel);
+                    jScopeFacade.this.color_dialog.showColorDialog(jScopeFacade.this.wave_panel);
                 }
             });
             t.setRepeats(false);
@@ -680,7 +672,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             final javax.swing.Timer t = new javax.swing.Timer(20, new ActionListener(){
                 @Override
                 public void actionPerformed(final ActionEvent ae) {
-                    jScopeFacade.this.setup_default.Show(jScopeFacade.this, jScopeFacade.this.def_values);
+                    jScopeFacade.this.setup_default.show(jScopeFacade.this, jScopeFacade.this.def_values);
                 }
             });
             t.setRepeats(false);
@@ -693,10 +685,10 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                 public void actionPerformed(final ActionEvent ae) {
                     final boolean returnFlag = jScopeFacade.this.win_diag.ShowWindowDialog();
                     if(returnFlag){
-                        jScopeFacade.this.wave_panel.ResetDrawPanel(jScopeFacade.this.win_diag.out_row);
+                        jScopeFacade.this.wave_panel.resetDrawPanel(jScopeFacade.this.win_diag.out_row);
                         // wave_panel.update();
-                        jScopeFacade.this.UpdateColors();
-                        jScopeFacade.this.UpdateFont();
+                        jScopeFacade.this.updateColors();
+                        jScopeFacade.this.updateFont();
                         jScopeFacade.this.setChange(true);
                     }
                 }
@@ -709,20 +701,20 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                 this.curr_directory = this.last_directory;
                 this.config_file = this.curr_directory;
                 this.setChange(false);
-                this.LoadConfiguration();
+                this.loadConfiguration();
             }
         }
         if(ob == this.use_i){
-            this.LoadConfigurationFrom();
+            this.loadConfigurationFrom();
         }
         if(ob == this.save_i){
-            this.SaveConfiguration(this.config_file);
+            this.saveConfiguration(this.config_file);
         }
         if(ob == this.save_as_i){
-            this.SaveAs();
+            this.saveAs();
         }
         if(ob == this.save_all_as_text_i){
-            this.wave_panel.SaveAsText(null, true);
+            this.wave_panel.saveAsText(null, true);
         }
         if(ob == this.exit_i){
             if(jScopeFacade.num_scope > 1){
@@ -751,29 +743,29 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             jScopeFacade.num_scope++;
             final Rectangle r = this.getBounds();
             final jScopeFacade new_scope = this.buildNewScope(r.x + 5, r.y + 40);
-            new_scope.wave_panel.SetCopySource(this.wave_panel.GetCopySource());
+            new_scope.wave_panel.setCopySource(this.wave_panel.getCopySource());
             new_scope.startScope(null);
         }
         if(ob == this.all_i){
-            this.wave_panel.AutoscaleAll();
+            this.wave_panel.autoscaleAll();
         }
         if(ob == this.allY_i){
-            this.wave_panel.AutoscaleAllY();
+            this.wave_panel.autoscaleAllY();
         }
         if(ob == this.copy_i){
-            this.wave_panel.SetMode(Waveform.MODE_COPY);
+            this.wave_panel.setMode(Waveform.MODE_COPY);
             this.copy.getModel().setSelected(true);
         }
         if(ob == this.zoom_i){
-            this.wave_panel.SetMode(Waveform.MODE_ZOOM);
+            this.wave_panel.setMode(Waveform.MODE_ZOOM);
             this.zoom.getModel().setSelected(true);
         }
         if(ob == this.point_i){
-            this.wave_panel.SetMode(Waveform.MODE_POINT);
+            this.wave_panel.setMode(Waveform.MODE_POINT);
             this.point.getModel().setSelected(true);
         }
         if(ob == this.pan_i){
-            this.wave_panel.SetMode(Waveform.MODE_PAN);
+            this.wave_panel.setMode(Waveform.MODE_PAN);
             this.pan.getModel().setSelected(true);
         }
         if(ob == this.server_list_i){
@@ -790,8 +782,12 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         if(ob == this.pub_variables_i){
             final javax.swing.Timer t = new javax.swing.Timer(20, new ActionListener(){
                 @Override
-                public void actionPerformed(final ActionEvent ae) {
-                    jScopeFacade.this.pub_var_diag.Show();
+                public void actionPerformed(final ActionEvent ae) {// show
+                    jScopeFacade.this.pub_var_diag.is_pv_apply = true;
+                    jScopeFacade.this.pub_var_diag.setPubVar();
+                    jScopeFacade.this.pub_var_diag.pack();
+                    jScopeFacade.this.pub_var_diag.setLocationRelativeTo(jScopeFacade.this.pub_var_diag.dw);
+                    jScopeFacade.this.pub_var_diag.setVisible(true);
                 }
             });
             t.setRepeats(false);
@@ -799,7 +795,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         }
     }
 
-    public void ArrowsIncDecShot() {
+    private final void arrowsIncDecShot() {
         int idx;
         String sh = this.shot_t.getText();
         if((idx = sh.lastIndexOf("+")) > 1 || (idx = sh.lastIndexOf("-")) > 1) sh = sh.substring(0, idx).trim();
@@ -807,25 +803,25 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         else this.shot_t.setText(sh);
     }
 
-    public boolean briefError() {
+    public final boolean briefError() {
         return this.brief_error_i.getState();
     }
 
-    protected jScopeFacade buildNewScope(final int x, final int y) {
+    protected final jScopeFacade buildNewScope(final int x, final int y) {
         return new jScopeFacade(x, y, this.propertiesFilePath);
     }
 
-    protected jScopeWaveContainer buildWaveContainer() {
+    protected final jScopeWaveContainer buildWaveContainer() {
         final int rows[] = {1, 0, 0, 0};
         return(new jScopeWaveContainer(rows, this.def_values));
     }
 
-    public void closeScope() {
-        if(this.IsChange()){
+    public final void closeScope() {
+        if(this.isChange()){
             switch(this.saveWarning()){
                 case JOptionPane.YES_OPTION:
-                    if(this.config_file == null) this.SaveAs();
-                    else this.SaveConfiguration(this.config_file);
+                    if(this.config_file == null) this.saveAs();
+                    else this.saveConfiguration(this.config_file);
                     break;
                 case JOptionPane.NO_OPTION:
                     // exitScope();
@@ -883,13 +879,13 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         f.renameTo(fr);
     }
 
-    private boolean EventUpdateEnabled() {
+    private boolean eventUpdateEnabled() {
         if(this.update_i.getState()){
-            this.SetStatusLabel("Disable event update");
+            this.setStatusLabel("Disable event update");
             return false;
         }
         if(this.getExtendedState() == Frame.ICONIFIED && this.update_when_icon_i.getState()){
-            this.SetStatusLabel("Event update is disabled when iconified");
+            this.setStatusLabel("Event update is disabled when iconified");
             return false;
         }
         return true;
@@ -897,14 +893,14 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
 
     private void exitScope() {
         try{
-            this.wave_panel.RemoveAllEvents(this);
+            this.wave_panel.removeAllEvents(this);
         }catch(final IOException e){}
         this.dispose();
         jScopeFacade.num_scope--;
         // System.gc();
     }
 
-    public void FromFile(final Properties pr) throws IOException {
+    public void fromFile(final Properties pr) throws IOException {
         String prop = "";
         try{
             if((prop = pr.getProperty("Scope.update.disable")) != null){
@@ -932,7 +928,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         }
     }
 
-    protected void GetPropertiesValue() {
+    protected void getPropertiesValue() {
         if(this.js_prop == null) return;
         // jScope configurations file directory can be defined
         // with decrease priority order:
@@ -992,7 +988,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             try{
                 val = Integer.parseInt(prop);
             }catch(final NumberFormatException e){}
-            Waveform.SetVerticalOffset(val);
+            Waveform.setVerticalOffset(val);
         }
         val = 0;
         prop = this.js_prop.getProperty("jScope.horizontal_offset");
@@ -1000,7 +996,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             try{
                 val = Integer.parseInt(prop);
             }catch(final NumberFormatException e){}
-            Waveform.SetHorizontalOffset(val);
+            Waveform.setHorizontalOffset(val);
         }
         final Properties p = System.getProperties();
         if(cache_directory != null) p.put("Signal.cache_directory", cache_directory);
@@ -1043,7 +1039,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         return(addr.trim().indexOf(".") != -1 && addr.trim().indexOf(" ") == -1);
     }
      */
-    private void InitDataServer() {
+    private void initDataServer() {
         if(DEBUG.M) System.out.println("InitDataServer()");
         String ip_addr = null;
         String dp_class = null;
@@ -1059,18 +1055,18 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             // url browse signal set it into srv_item
             this.server_diag.addServerIp(srv_item);
         }
-        if(srv_item == null || !this.SetDataServer(srv_item)){
-            srv_item = jScopeWaveContainer.DataServerFromClient(srv_item);
-            if(srv_item == null || !this.SetDataServer(srv_item)){
+        if(srv_item == null || !this.setDataServer(srv_item)){
+            srv_item = jScopeWaveContainer.dataServerFromClient(srv_item);
+            if(srv_item == null || !this.setDataServer(srv_item)){
                 if(jScopeFacade.server_ip_list != null && this.default_server_idx >= 0 && this.default_server_idx < jScopeFacade.server_ip_list.length){
                     srv_item = jScopeFacade.server_ip_list[this.default_server_idx];
-                    this.SetDataServer(srv_item);
+                    this.setDataServer(srv_item);
                 }else this.setDataServerLabel();
             }
         }
     }
 
-    public void InitProperties() {
+    public void initProperties() {
         String f_name = this.propertiesFilePath;
         if(f_name == null){
             f_name = System.getProperty("user.home") + File.separator + "jScope" + File.separator + "jScope.properties";
@@ -1125,15 +1121,15 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         }
     }
 
-    public void InvalidateDefaults() {
-        this.wave_panel.InvalidateDefaults();
+    public void invalidateDefaults() {
+        this.wave_panel.invalidateDefaults();
     }
 
-    public boolean IsChange() {
+    public boolean isChange() {
         return this.modified;
     }
 
-    public boolean IsShotDefinedXX() {
+    public boolean isShotDefinedXX() {
         String s = this.shot_t.getText();
         if(s != null && s.trim().length() > 0) return true;
         s = this.def_values.shot_str;
@@ -1149,10 +1145,10 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         final Object ob = e.getSource();
         if(ob == this.brief_error_i) WaveInterface.brief_error = this.brief_error_i.getState();
         if(e.getStateChange() != ItemEvent.SELECTED) return;
-        if(ob == this.copy) this.wave_panel.SetMode(Waveform.MODE_COPY);
-        if(ob == this.zoom) this.wave_panel.SetMode(Waveform.MODE_ZOOM);
-        if(ob == this.point) this.wave_panel.SetMode(Waveform.MODE_POINT);
-        if(ob == this.pan) this.wave_panel.SetMode(Waveform.MODE_PAN);
+        if(ob == this.copy) this.wave_panel.setMode(Waveform.MODE_COPY);
+        if(ob == this.zoom) this.wave_panel.setMode(Waveform.MODE_ZOOM);
+        if(ob == this.point) this.wave_panel.setMode(Waveform.MODE_POINT);
+        if(ob == this.pan) this.wave_panel.setMode(Waveform.MODE_PAN);
     }
 
     public void jScopeCreate(final int spos_x, final int spos_y) {
@@ -1166,8 +1162,8 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         this.attrs.add(res);
         if(this.printerSelection != null) this.prnJob = this.printerSelection.createPrintJob();
         this.setBounds(spos_x, spos_y, 750, 550);
-        this.InitProperties();
-        this.GetPropertiesValue();
+        this.initProperties();
+        this.getPropertiesValue();
         this.font_dialog = new FontSelection(this, "Waveform Font Selection");
         this.setup_default = new SetupDefaults(this, "Default Setup", this.def_values);
         this.color_dialog = new ColorDialog(this, "Color Configuration Dialog");
@@ -1208,7 +1204,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         browse_signals_i.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                jScopeFacade.this.wave_panel.ShowBrowseSignals();
+                jScopeFacade.this.wave_panel.showBrowseSignals();
             }
         });
         this.open_i = new JMenuItem("New Window");
@@ -1239,7 +1235,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                     final BufferedImage ri = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
                     final Graphics2D g2d = (Graphics2D)ri.getGraphics();
                     g2d.setBackground(Color.white);
-                    jScopeFacade.this.wave_panel.PrintAll(g2d, dim.height, dim.width);
+                    jScopeFacade.this.wave_panel.printAll(g2d, dim.height, dim.width);
                     try{
                         final ImageTransferable imageTransferable = new ImageTransferable(ri);
                         final Clipboard cli = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -1266,7 +1262,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                         if(jScopeFacade.this.printerSelection != null){
                             System.out.println(jScopeFacade.this.printerSelection.getName() + " |||| " + jScopeFacade.this.printerSelection.getSupportedDocFlavors() + " |||| " + jScopeFacade.this.printerSelection.hashCode());
                             jScopeFacade.this.prnJob = jScopeFacade.this.printerSelection.createPrintJob();
-                            jScopeFacade.this.PrintAllWaves(jScopeFacade.this.attrs);
+                            jScopeFacade.this.printAllWaves(jScopeFacade.this.attrs);
                             /*
                             try
                             {
@@ -1316,7 +1312,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                     @Override
                     public void run() {
                         this.setName("Print All Thread");
-                        jScopeFacade.this.PrintAllWaves(jScopeFacade.this.attrs);
+                        jScopeFacade.this.printAllWaves(jScopeFacade.this.attrs);
                     }
                 };
                 print_page.start();
@@ -1525,7 +1521,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         this.setup_dialog = new SetupDataDialog(this, "Setup");
         this.wave_panel = this.buildWaveContainer();
         this.wave_panel.addWaveContainerListener(this);
-        this.wave_panel.SetParams(Waveform.MODE_ZOOM, this.setup_default.getGridMode(), this.setup_default.getLegendMode(), this.setup_default.getXLines(), this.setup_default.getYLines(), this.setup_default.getReversed());
+        this.wave_panel.setParams(Waveform.MODE_ZOOM, this.setup_default.getGridMode(), this.setup_default.getLegendMode(), this.setup_default.getXLines(), this.setup_default.getYLines(), this.setup_default.getReversed());
         this.wave_panel.setPopupMenu(new jScopeWavePopup(this.setup_dialog, this.colorMapDialog));
         this.getContentPane().add("Center", this.wave_panel);
         this.panel = new JPanel();
@@ -1538,7 +1534,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             {
                public void focusLost(FocusEvent e)
                {
-                    wave_panel.SetMainShot(shot_t.getText());
+                    wave_panel.setMainShot(shot_t.getText());
                }
             }
              );
@@ -1571,8 +1567,8 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                 if(jScopeFacade.this.shot_t.getText() != null && jScopeFacade.this.shot_t.getText().trim().length() != 0){
                     if(!jScopeFacade.this.executing_update){
                         jScopeFacade.this.incShotValue--;
-                        jScopeFacade.this.ArrowsIncDecShot();
-                        jScopeFacade.this.UpdateAllWaves();
+                        jScopeFacade.this.arrowsIncDecShot();
+                        jScopeFacade.this.updateAllWaves();
                     }
                 }
             }
@@ -1583,8 +1579,8 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                 if(jScopeFacade.this.shot_t.getText() != null && jScopeFacade.this.shot_t.getText().trim().length() != 0){
                     if(!jScopeFacade.this.executing_update){
                         jScopeFacade.this.incShotValue++;
-                        jScopeFacade.this.ArrowsIncDecShot();
-                        jScopeFacade.this.UpdateAllWaves();
+                        jScopeFacade.this.arrowsIncDecShot();
+                        jScopeFacade.this.updateAllWaves();
                     }
                 }
             }
@@ -1622,7 +1618,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         this.panel1.add("Center", this.point_pos);
         this.panel1.add("South", panel2);
         this.getContentPane().add("South", this.panel1);
-        this.color_dialog.SetReversed(this.setup_default.getReversed());
+        this.color_dialog.setReversed(this.setup_default.getReversed());
         if(jScopeFacade.is_debug){
             final Thread mon_mem = new MonMemory();
             mon_mem.start();
@@ -1635,9 +1631,9 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             });
             this.panel1.add("West", exec_gc);
         }
-        this.InitDataServer();
-        this.UpdateFont();
-        this.UpdateColors();
+        this.initDataServer();
+        this.updateFont();
+        this.updateColors();
     }
 
     /*    public void handleQuit()
@@ -1655,56 +1651,56 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         jScopeFacade.jScopeSetUI(this.file_diag);
     }
 
-    public void LoadConfiguration() {
+    public void loadConfiguration() {
         if(this.config_file == null) return;
         this.incShotValue = 0;
         try{
             final jScopeProperties pr = new jScopeProperties();
             pr.load(new FileInputStream(this.config_file));
-            this.LoadConfiguration(pr);
+            this.loadConfiguration(pr);
         }catch(final IOException e){
-            this.Reset();
+            this.reset();
             JOptionPane.showMessageDialog(this, e.getMessage(), "alert LoadConfiguration", JOptionPane.ERROR_MESSAGE);
         }
         this.save_i.setEnabled(true);
     }
 
-    public void LoadConfiguration(final Properties pr) {
-        this.wave_panel.EraseAllWave();
+    public void loadConfiguration(final Properties pr) {
+        this.wave_panel.eraseAllWave();
         try{
-            this.LoadFromFile(pr);
+            this.loadFromFile(pr);
             this.setBounds(this.xpos, this.ypos, this.width, this.height);
-            this.UpdateColors();
-            this.UpdateFont();
+            this.updateColors();
+            this.updateFont();
             this.wave_panel.update();
             this.validate();
-            DataServerItem dsi = this.wave_panel.GetServerItem();
+            DataServerItem dsi = this.wave_panel.getServerItem();
             dsi = this.server_diag.addServerIp(dsi);
             /*
             remove 28/06/2005
-                        wave_panel.SetServerItem(dsi);
+                        wave_panel.setServerItem(dsi);
              */
-            if(!this.SetDataServer(dsi)) this.SetDataServer(new DataServerItem("Not Connected", null, null, "jScope.NotConnectedDataProvider", null, null, null, false));
-            // SetFastNetworkState(wave_panel.GetFastNetworkState());
+            if(!this.setDataServer(dsi)) this.setDataServer(new DataServerItem("Not Connected", null, null, "jScope.NotConnectedDataProvider", null, null, null, false));
+            // SetFastNetworkState(wave_panel.getFastNetworkState());
             this.shot_t.setText("");
-            this.UpdateAllWaves();
+            this.updateAllWaves();
         }catch(final Exception e){
-            this.Reset();
+            this.reset();
             JOptionPane.showMessageDialog(this, e.getMessage(), "alert LoadConfiguration", JOptionPane.ERROR_MESSAGE);
         }
         // SetWindowTitle("");
         // System.gc();
     }
 
-    private void LoadConfigurationFrom() {
-        if(this.IsChange()){
+    private void loadConfigurationFrom() {
+        if(this.isChange()){
             switch(this.saveWarning()){
                 case JOptionPane.YES_OPTION:
                     if(this.config_file == null){
-                        this.SaveAs();
+                        this.saveAs();
                         return;
                     }
-                    this.SaveConfiguration(this.config_file);
+                    this.saveConfiguration(this.config_file);
                     break;
                 case JOptionPane.CANCEL_OPTION:
                     return;
@@ -1723,7 +1719,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                     if(f != null && f.trim().length() != 0 && d != null && d.trim().length() != 0){
                         jScopeFacade.this.curr_directory = d;
                         jScopeFacade.this.config_file = jScopeFacade.this.curr_directory;
-                        jScopeFacade.this.LoadConfiguration();
+                        jScopeFacade.this.loadConfiguration();
                     }
                 }
             }
@@ -1732,14 +1728,14 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         t.start();
     }
 
-    public void LoadFromFile(final Properties pr) throws IOException {
+    public void loadFromFile(final Properties pr) throws IOException {
         try{
-            this.FromFile(pr);
+            this.fromFile(pr);
             this.font_dialog.fromFile(pr, "Scope.font");
-            this.color_dialog.FromFile(pr, "Scope.color_");
+            this.color_dialog.fromFile(pr, "Scope.color_");
             this.pub_var_diag.fromFile(pr, "Scope.public_variable_");
-            this.wave_panel.FromFile(pr, "Scope", this.color_dialog.getColorMapIndex(), this.colorMapDialog);
-            this.def_values.FromFile(pr, "Scope");
+            this.wave_panel.fromFile(pr, "Scope", this.color_dialog.getColorMapIndex(), this.colorMapDialog);
+            this.def_values.fromFile(pr, "Scope");
         }catch(final Exception e){
             throw(new IOException("Configuration file syntax error : " + e.getMessage()));
         }
@@ -1776,11 +1772,11 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         return Printable.NO_SUCH_PAGE;
     }
 
-    protected void PrintAllWaves(final PrintRequestAttributeSet attrs) {
+    protected void printAllWaves(final PrintRequestAttributeSet attrs) {
         try{
-            this.SetStatusLabel("Executing print");
-            this.wave_panel.PrintAllWaves(this.prnJob, attrs);
-            this.SetStatusLabel("End print operation");
+            this.setStatusLabel("Executing print");
+            this.wave_panel.printAllWaves(this.prnJob, attrs);
+            this.setStatusLabel("End print operation");
         }catch(final PrinterException er){
             System.out.println(er);
             JOptionPane.showMessageDialog(this, "Error on print operation", "alert PrintAllWaves", JOptionPane.ERROR_MESSAGE);
@@ -1795,7 +1791,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         this.progress_bar.setString("");
         if(e.getID() == ConnectionEvent.LOST_CONNECTION){
             JOptionPane.showMessageDialog(this, e.info, "alert processConnectionEvent", JOptionPane.ERROR_MESSAGE);
-            this.SetDataServer(new DataServerItem("Not Connected", null, null, "NotConnectedDataProvider", null, null, null, false));
+            this.setDataServer(new DataServerItem("Not Connected", null, null, "NotConnectedDataProvider", null, null, null, false));
             return;
         }
         if(e.current_size == 0 && e.total_size == 0){
@@ -1811,19 +1807,19 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
 
     @Override
     public void processUpdateEvent(final UpdateEvent e) {
-        if(this.EventUpdateEnabled()){
-            final String print_event = this.wave_panel.GetPrintEvent();
-            final String event = this.wave_panel.GetEvent();
+        if(this.eventUpdateEnabled()){
+            final String print_event = this.wave_panel.getPrintEvent();
+            final String event = this.wave_panel.getEvent();
             if(e.name.equals(event)){
                 SwingUtilities.invokeLater(new Runnable(){
                     @Override
                     public void run() {
-                        jScopeFacade.this.UpdateAllWaves();
+                        jScopeFacade.this.updateAllWaves();
                     }
                 });
             }
             // wave_panel.StartUpdate();
-            if(e.name.equals(print_event)) this.wave_panel.StartPrint(this.prnJob, this.attrs);
+            if(e.name.equals(print_event)) this.wave_panel.startPrint(this.prnJob, this.attrs);
         }
     }
 
@@ -1837,18 +1833,14 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                 this.apply_b.setText("Apply");
                 this.executing_update = false;
                 if(event_id == WaveContainerEvent.KILL_UPDATE){
-                    /*
-                                                JOptionPane.showMessageDialog(this, e.info,
-                                                    "alert processWaveContainerEvent",
-                                                    JOptionPane.ERROR_MESSAGE);
-                     */
+                    // JOptionPane.showMessageDialog(this, e.info,"alert processWaveContainerEvent", JOptionPane.ERROR_MESSAGE);
                     System.out.println(" processWaveContainerEvent " + e.getInfo());
-                    this.SetStatusLabel(" Aborted ");
-                }else this.SetStatusLabel(e.getInfo());
-                this.SetWindowTitle("");
+                    this.setStatusLabel(" Aborted ");
+                }else this.setStatusLabel(e.getInfo());
+                this.setWindowTitle("");
                 break;
             case WaveContainerEvent.START_UPDATE:
-                this.SetStatusLabel(e.getInfo());
+                this.setStatusLabel(e.getInfo());
                 break;
             case WaveContainerEvent.WAVEFORM_EVENT:
                 final WaveformEvent we = (WaveformEvent)e.getEvent();
@@ -1857,13 +1849,13 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                 final int we_id = we.getID();
                 switch(we_id){
                     case WaveformEvent.EVENT_UPDATE:
-                        if(this.EventUpdateEnabled()){
+                        if(this.eventUpdateEnabled()){
                             this.setPublicVariables(this.pub_var_diag.getPublicVar());
-                            this.SetMainShot();
+                            this.setMainShot();
                             /*
                             wave_panel.Refresh(w, we.status_info);
                              */
-                            w.RefreshOnEvent();
+                            w.refreshOnEvent();
                             // ??????*******
                         }
                         break;
@@ -1878,7 +1870,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                         }
                         break;
                     case WaveformEvent.STATUS_INFO:
-                        this.SetStatusLabel(we.status_info);
+                        this.setStatusLabel(we.status_info);
                         break;
                     case WaveformEvent.CACHE_DATA:
                         if(we.status_info != null) this.progress_bar.setString(we.status_info);
@@ -1890,32 +1882,32 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         }
     }
 
-    public void RepaintAllWaves() {
-        final int wave_mode = this.wave_panel.GetMode();
+    public void repaintAllWaves() {
+        final int wave_mode = this.wave_panel.getMode();
         jScopeMultiWave w;
-        this.wave_panel.SetMode(Waveform.MODE_WAIT);
+        this.wave_panel.setMode(Waveform.MODE_WAIT);
         for(int i = 0, k = 0; i < 4; i++){
             for(int j = 0; j < this.wave_panel.getComponentsInColumn(i); j++, k++){
-                w = (jScopeMultiWave)this.wave_panel.GetWavePanel(k);
+                w = (jScopeMultiWave)this.wave_panel.getWavePanel(k);
                 if(w.wi != null){
-                    this.SetStatusLabel("Repaint signal column " + (i + 1) + " row " + (j + 1));
+                    this.setStatusLabel("Repaint signal column " + (i + 1) + " row " + (j + 1));
                     this.setColor(w.wi);
-                    w.Update(w.wi);
+                    w.update(w.wi);
                 }
             }
         }
-        this.wave_panel.RepaintAllWaves();
-        this.wave_panel.SetMode(wave_mode);
+        this.wave_panel.repaintAllWaves();
+        this.wave_panel.setMode(wave_mode);
     }
 
-    private void Reset() {
+    private void reset() {
         this.config_file = null;
         this.incShotValue = 0;
-        this.SetWindowTitle("");
-        this.wave_panel.Reset();
+        this.setWindowTitle("");
+        this.wave_panel.reset();
     }
 
-    private void SaveAs() {
+    private void saveAs() {
         if(this.curr_directory != null && this.curr_directory.trim().length() != 0) this.file_diag.setCurrentDirectory(new File(this.curr_directory));
         int returnVal = JFileChooser.CANCEL_OPTION;
         boolean done = false;
@@ -1940,12 +1932,12 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
                 this.config_file = this.curr_directory;
             }else this.config_file = null;
             if(this.config_file != null){
-                this.SaveConfiguration(this.config_file);
+                this.saveConfiguration(this.config_file);
             }
         }
     }
 
-    public void SaveConfiguration(String conf_file) {
+    public void saveConfiguration(String conf_file) {
         PrintWriter out;
         File ftmp, fok;
         if(conf_file == null || conf_file.length() == 0) return;
@@ -1959,7 +1951,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         ftmp = new File(conf_file + "_tmp");
         try{
             out = new PrintWriter(new FileWriter(ftmp));
-            this.ToFile(out);
+            this.toFile(out);
             out.close();
             if(fok.exists()) this.createHistoryFile(fok);
             ftmp.renameTo(fok);
@@ -1975,7 +1967,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         return val;
     }
 
-    public void SetApplicationFonts(final Font font) {
+    public void setApplicationFonts(final Font font) {
         final Font userEntryFont = font;
         final Font defaultFont = font;
         final Font boldFont = font;
@@ -2015,26 +2007,26 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         this.jScopeUpdateUI();
     }
 
-    public void SetApplicationFonts(final String font, final int style, final int size) {
-        this.SetApplicationFonts(new Font(font, style, size));
+    public void setApplicationFonts(final String font, final int style, final int size) {
+        this.setApplicationFonts(new Font(font, style, size));
     }
 
     public void setChange(final boolean change) {
         if(this.modified == change) return;
         this.modified = change;
-        this.SetWindowTitle("");
+        this.setWindowTitle("");
     }
 
     private void setColor(final WaveInterface wi) {
         // if(wi == null || wi.colors_idx == null) return;
         // for(int i = 0; i < wi.colors_idx.length; i++)
-        // wi.colors[i] = color_dialog.GetColorAt(wi.colors_idx[i]);
+        // wi.colors[i] = color_dialog.getColorAt(wi.colors_idx[i]);
     }
 
-    public boolean SetDataServer(final DataServerItem new_srv_item) {
+    public boolean setDataServer(final DataServerItem new_srv_item) {
         try{
-            this.wave_panel.SetDataServer(new_srv_item, this);
-            this.wave_panel.SetCacheState(new_srv_item.enable_cache);
+            this.wave_panel.setDataServer(new_srv_item, this);
+            this.wave_panel.setCacheState(new_srv_item.enable_cache);
             this.setDataServerLabel();
             return true;
         }catch(final Exception e){
@@ -2045,11 +2037,11 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
     }
 
     public void setDataServerLabel() {
-        this.net_text.setText("Data Server:" + this.wave_panel.GetServerLabel());
+        this.net_text.setText("Data Server:" + this.wave_panel.getServerLabel());
     }
 
-    public void SetMainShot() {
-        this.wave_panel.SetMainShot(this.shot_t.getText());
+    public void setMainShot() {
+        this.wave_panel.setMainShot(this.shot_t.getText());
     }
 
     public void setPropertiesFile(final String propFile) {
@@ -2059,18 +2051,18 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
     public void setPublicVariables(final String public_variables) {
         this.def_values.setPublicVariables(public_variables);
         // Force update in all waveform
-        if(!this.def_values.getIsEvaluated()) this.wave_panel.SetModifiedState(true);
+        if(!this.def_values.getIsEvaluated()) this.wave_panel.setModifiedState(true);
     }
 
-    public void SetStatusLabel(final String msg) {
+    public void setStatusLabel(final String msg) {
         this.info_text.setText(" Status: " + msg);
     }
 
-    public void SetWindowTitle(final String info) {
+    public void setWindowTitle(final String info) {
         String f_name = this.config_file;
         if(f_name == null) f_name = "Untitled";
-        if(this.wave_panel.GetTitle() != null) this.setTitle(" - " + this.wave_panel.GetEvaluatedTitle() + " - " + f_name + (this.IsChange() ? " (changed)" : "") + " " + info);
-        else this.setTitle("- Scope - " + f_name + (this.IsChange() ? " (changed)" : "") + " " + info);
+        if(this.wave_panel.getTitle() != null) this.setTitle(" - " + this.wave_panel.getEvaluatedTitle() + " - " + f_name + (this.isChange() ? " (changed)" : "") + " " + info);
+        else this.setTitle("- Scope - " + f_name + (this.isChange() ? " (changed)" : "") + " " + info);
     }
 
     public void showAboutScreen() {
@@ -2080,26 +2072,26 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
     public void startScope(final String file) {
         if(file != null){
             this.config_file = new String(file);
-            this.LoadConfiguration();
+            this.loadConfiguration();
         }
-        this.SetWindowTitle("");
+        this.setWindowTitle("");
         this.setVisible(true);
     }
 
-    private void ToFile(final PrintWriter out) throws IOException {
+    private void toFile(final PrintWriter out) throws IOException {
         final Rectangle r = this.getBounds();
         this.setChange(false);
-        this.SetWindowTitle("");
+        this.setWindowTitle("");
         out.println("Scope.geometry: " + r.width + "x" + r.height + "+" + r.x + "+" + r.y);
         out.println("Scope.update.disable: " + this.update_i.getState());
         out.println("Scope.update.disable_when_icon: " + this.update_when_icon_i.getState());
         this.font_dialog.toFile(out, "Scope.font");
         this.pub_var_diag.toFile(out, "Scope.public_variable_");
         this.color_dialog.toFile(out, "Scope.color_");
-        this.wave_panel.ToFile(out, "Scope.");
+        this.wave_panel.toFile(out, "Scope.");
     }
 
-    public void UpdateAllWaves() {
+    public void updateAllWaves() {
         final String s = this.shot_t.getText();
         final String s1 = this.def_values.shot_str;
         // Set main shot text field with global setting shot if defined.
@@ -2107,38 +2099,38 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         this.executing_update = true;
         this.apply_b.setText("Abort");
         this.setPublicVariables(this.pub_var_diag.getPublicVar());
-        this.SetMainShot();
-        this.wave_panel.StartUpdate();
+        this.setMainShot();
+        this.wave_panel.startUpdate();
     }
 
-    public void UpdateColors() {
-        this.wave_panel.SetColors(this.color_dialog.GetColors(), this.color_dialog.GetColorsName());
-        this.setup_dialog.SetColorList();
+    public void updateColors() {
+        this.wave_panel.setColors(this.color_dialog.getColors(), this.color_dialog.getColorsName());
+        this.setup_dialog.setColorList();
     }
 
-    public void UpdateDefaultValues() {
+    public void updateDefaultValues() {
         boolean is_changed = false;
         try{
-            if((is_changed = this.setup_default.IsChanged(this.def_values))){
+            if((is_changed = this.setup_default.isChanged(this.def_values))){
                 this.setChange(true);
-                this.wave_panel.RemoveAllEvents(this);
-                this.setup_default.SaveDefaultConfiguration(this.def_values);
-                this.InvalidateDefaults();
-                this.wave_panel.AddAllEvents(this);
-                this.UpdateAllWaves();
-            }else this.setup_default.SaveDefaultConfiguration(this.def_values);
-            this.wave_panel.SetParams(this.wave_panel.GetMode(), this.setup_default.getGridMode(), this.setup_default.getLegendMode(), this.setup_default.getXLines(), this.setup_default.getYLines(), this.setup_default.getReversed());
-            this.color_dialog.SetReversed(this.setup_default.getReversed());
-            this.UpdateColors();
-            if(!is_changed) this.RepaintAllWaves();
+                this.wave_panel.removeAllEvents(this);
+                this.setup_default.saveDefaultConfiguration(this.def_values);
+                this.invalidateDefaults();
+                this.wave_panel.addAllEvents(this);
+                this.updateAllWaves();
+            }else this.setup_default.saveDefaultConfiguration(this.def_values);
+            this.wave_panel.setParams(this.wave_panel.getMode(), this.setup_default.getGridMode(), this.setup_default.getLegendMode(), this.setup_default.getXLines(), this.setup_default.getYLines(), this.setup_default.getReversed());
+            this.color_dialog.setReversed(this.setup_default.getReversed());
+            this.updateColors();
+            if(!is_changed) this.repaintAllWaves();
         }catch(final IOException e){
             JOptionPane.showMessageDialog(this, e.toString(), "alert UpdateDefaultValues", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     // private void updateServerMenu() {}
-    public void UpdateFont() {
-        WaveformContainer.SetFont(this.font_dialog.GetFont());
+    public void updateFont() {
+        this.wave_panel.setFont(this.font_dialog.getFont());
     }
 
     @Override
@@ -2170,16 +2162,16 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
 
 @SuppressWarnings("serial")
 class ServerDialog extends JDialog implements ActionListener{
-    private static String                   know_provider[]   = {"w7x.w7xDataProvider", "mds.mdsDataProvider",
-                                                              // "mds.mdsDataProviderUdt",
-                                                              // "jet.jetMdsDataProvider",
-                                                              // "twu.twuDataProvider",
-                                                              // "jet.jetDataProvider",
-                                                              // "ftu.ftuDataProvider",
-                                                              // "ts.tsDataProvider",
-                                                              // "asdex.asdexDataProvider",
-                                                              // "ascii.asciiDataProvider",
-                                                                        "local.localDataProvider", "mds.mdsAsynchDataProvider"};
+    private static String                   know_provider[]   = {"w7x.W7XDataProvider", "mds.MdsDataProvider",
+                                                              // "mds.MdsDataProviderUdt",
+                                                              // "jet.JetMdsDataProvider",
+                                                              // "jet.JetDataProvider",
+                                                              // "twu.TwuDataProvider",
+                                                              // "ftu.FtuDataProvider",
+                                                              // "ts.TsDataProvider",
+                                                              // "asdex.AsdexDataProvider",
+                                                              // "ascii.AsciiDataProvider",
+                                                                        "local.LocalDataProvider", "mds.MdsAsynchDataProvider"};
     static private JList                    server_list;
     private final JButton                   add_b, remove_b, exit_b, connect_b, modify_b;
     JCheckBox                               automatic;
@@ -2193,7 +2185,7 @@ class ServerDialog extends JDialog implements ActionListener{
     JCheckBox                               tunneling;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    ServerDialog(final JFrame _dw, final String title){
+    public ServerDialog(final JFrame _dw, final String title){
         super(_dw, title, true);
         this.dw = (jScopeFacade)_dw;
         // setResizable(false);
@@ -2328,7 +2320,7 @@ class ServerDialog extends JDialog implements ActionListener{
                         if(srv != null){
                             final Class cl = Class.forName("jScope." + srv);
                             final DataProvider dp = ((DataProvider)cl.newInstance());
-                            final boolean state = dp.SupportsTunneling();
+                            final boolean state = dp.supportsTunneling();
                             ServerDialog.this.tunneling.setEnabled(state);
                             ServerDialog.this.tunnel_port.setEnabled(state);
                         }
@@ -2358,7 +2350,7 @@ class ServerDialog extends JDialog implements ActionListener{
         gridbag.setConstraints(p, c);
         this.getContentPane().add(p);
         this.addKnowProvider();
-        if(jScopeFacade.server_ip_list == null) this.GetPropertiesValue();
+        if(jScopeFacade.server_ip_list == null) this.getPropertiesValue();
         else this.addServerIpList(jScopeFacade.server_ip_list);
     }
 
@@ -2381,7 +2373,7 @@ class ServerDialog extends JDialog implements ActionListener{
         }
         if(ob == this.connect_b){
             final int idx = ServerDialog.server_list.getSelectedIndex();
-            if(idx >= 0) this.dw.SetDataServer(jScopeFacade.server_ip_list[idx]);
+            if(idx >= 0) this.dw.setDataServer(jScopeFacade.server_ip_list[idx]);
         }
         if(ob == this.modify_b){
             final int idx = ServerDialog.server_list.getSelectedIndex();
@@ -2407,9 +2399,9 @@ class ServerDialog extends JDialog implements ActionListener{
                     ServerDialog.server_list.repaint();
                     // It is need to update the current data server if it is
                     // the modified server
-                    // if (dw.wave_panel.GetServerItem().equals(dw.server_ip_list[idx]))
+                    // if (dw.wave_panel.getServerItem().equals(dw.server_ip_list[idx]))
                     // {
-                    // dw.SetDataServer(dw.server_ip_list[idx]);
+                    // dw.setDataServer(dw.server_ip_list[idx]);
                     // }
                 }
             }
@@ -2453,10 +2445,8 @@ class ServerDialog extends JDialog implements ActionListener{
         23-05-2005
         Ovverride configuration file server definitions
         with property server definition with the same name
-
         else
         {
-
             if (found_dsi != null)
             {
                 dsi.user = found_dsi.user;
@@ -2486,7 +2476,7 @@ class ServerDialog extends JDialog implements ActionListener{
         return null;
     }
 
-    private void GetPropertiesValue() {
+    private void getPropertiesValue() {
         final Properties js_prop = this.dw.js_prop;
         DataServerItem dsi;
         int i = 1;
@@ -2531,7 +2521,7 @@ class ServerDialog extends JDialog implements ActionListener{
     public void Show() {
         this.pack();
         this.resetAll();
-        final DataServerItem found_dsi = this.findServer(this.dw.wave_panel.GetServerItem());
+        final DataServerItem found_dsi = this.findServer(this.dw.wave_panel.getServerItem());
         if(found_dsi != null) ServerDialog.server_list.setSelectedValue(found_dsi, true);
         this.setLocationRelativeTo(this.dw);
         this.setVisible(true);
@@ -2645,12 +2635,12 @@ class WindowDialog extends JDialog implements ActionListener{
         final Object ob = e.getSource();
         try{
             if(ob == this.ok || ob == this.apply){
-                this.parent.wave_panel.SetTitle(new String(this.titleText.getText()));
+                this.parent.wave_panel.setTitle(new String(this.titleText.getText()));
                 String event = new String(this.eventText.getText().trim());
-                this.parent.wave_panel.SetEvent(this.parent, event);
+                this.parent.wave_panel.setEvent(this.parent, event);
                 event = new String(this.printEventText.getText().trim());
-                this.parent.wave_panel.SetPrintEvent(this.parent, event);
-                this.parent.SetWindowTitle("");
+                this.parent.wave_panel.setPrintEvent(this.parent, event);
+                this.parent.setWindowTitle("");
                 this.out_row[0] = this.row_1.getValue();
                 this.out_row[1] = this.row_2.getValue();
                 this.out_row[2] = this.row_3.getValue();
@@ -2673,9 +2663,9 @@ class WindowDialog extends JDialog implements ActionListener{
 
     public boolean ShowWindowDialog() {
         this.changed = false;
-        if(this.parent.wave_panel.GetTitle() != null) this.titleText.setText(this.parent.wave_panel.GetTitle());
-        if(this.parent.wave_panel.GetEvent() != null) this.eventText.setText(this.parent.wave_panel.GetEvent());
-        if(this.parent.wave_panel.GetPrintEvent() != null) this.printEventText.setText(this.parent.wave_panel.GetPrintEvent());
+        if(this.parent.wave_panel.getTitle() != null) this.titleText.setText(this.parent.wave_panel.getTitle());
+        if(this.parent.wave_panel.getEvent() != null) this.eventText.setText(this.parent.wave_panel.getEvent());
+        if(this.parent.wave_panel.getPrintEvent() != null) this.printEventText.setText(this.parent.wave_panel.getPrintEvent());
         final int in_row[] = this.parent.wave_panel.getComponentsInColumns();
         this.row_1.setValue(in_row[0]);
         this.row_2.setValue(in_row[1]);

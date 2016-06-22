@@ -1,4 +1,4 @@
-package jTraverser;
+package jtraverser;
 
 /** class NodeInfo carries all the NCI information */
 import java.io.Serializable;

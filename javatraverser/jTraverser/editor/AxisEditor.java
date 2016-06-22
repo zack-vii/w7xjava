@@ -1,11 +1,11 @@
-package jTraverser.editor;
+package jtraverser.editor;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import jTraverser.dialogs.TreeDialog;
+import jtraverser.dialogs.TreeDialog;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Range;

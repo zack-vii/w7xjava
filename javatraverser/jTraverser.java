@@ -1,4 +1,4 @@
-import jTraverser.jTraverserFacade;
+import jtraverser.jTraverserFacade;
 
 public class jTraverser{
     public static void main(final String args[]) {

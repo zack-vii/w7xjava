@@ -12,16 +12,16 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import javax.swing.JFrame;
-import jScope.ConnectionListener;
-import jScope.DataProvider;
-import jScope.DataServerItem;
-import jScope.FrameData;
-import jScope.UpdateEventListener;
-import jScope.WaveData;
-import jScope.WaveDataListener;
-import jScope.XYData;
+import jscope.ConnectionListener;
+import jscope.DataProvider;
+import jscope.DataServerItem;
+import jscope.FrameData;
+import jscope.UpdateEventListener;
+import jscope.WaveData;
+import jscope.WaveDataListener;
+import jscope.XYData;
 
-public final class asciiDataProvider implements DataProvider{
+public final class AsciiDataProvider implements DataProvider{
     /*
      * File structure extension prop Title= Signal= XLabel= YLabel= ZLabel= Dimension= Time=t_start:t_end:dt;....;t_start:t_end:dt or t1,t2,...,tn Data=y1,y2,y3....,yn X=x1,x2,x3....,xn
      */
@@ -33,16 +33,16 @@ public final class asciiDataProvider implements DataProvider{
 
         public SimpleWaveData(final String in_y){
             this.file_y = this.getPathValue(in_y);
-            asciiDataProvider.this.xPropertiesFile = asciiDataProvider.this.yPropertiesFile = this.setPropValues(this.file_y, this.y_prop);
+            AsciiDataProvider.this.xPropertiesFile = AsciiDataProvider.this.yPropertiesFile = this.setPropValues(this.file_y, this.y_prop);
             this.x_prop = this.y_prop;
             this.file_x = null;
         }
 
         public SimpleWaveData(final String in_y, final String in_x){
             this.file_y = this.getPathValue(in_y);
-            asciiDataProvider.this.yPropertiesFile = this.setPropValues(this.file_y, this.y_prop);
+            AsciiDataProvider.this.yPropertiesFile = this.setPropValues(this.file_y, this.y_prop);
             this.file_x = this.getPathValue(in_x);
-            asciiDataProvider.this.xPropertiesFile = this.setPropValues(this.file_x, this.x_prop);
+            AsciiDataProvider.this.xPropertiesFile = this.setPropValues(this.file_x, this.x_prop);
         }
 
         @Override
@@ -57,7 +57,7 @@ public final class asciiDataProvider implements DataProvider{
                     out[i] = dis.readFloat();
                 dis.close();
             }catch(final Exception exc){
-                asciiDataProvider.this.error = "File sintax error : " + exc.getMessage();
+                AsciiDataProvider.this.error = "File sintax error : " + exc.getMessage();
                 out = null;
             }
             return out;
@@ -66,7 +66,7 @@ public final class asciiDataProvider implements DataProvider{
         private float[] decodeTimes(final String val) {
             try{
                 if(val == null){
-                    asciiDataProvider.this.error = "File syntax error";
+                    AsciiDataProvider.this.error = "File syntax error";
                     return null;
                 }
                 StringTokenizer st = new StringTokenizer(val, ":");
@@ -90,14 +90,14 @@ public final class asciiDataProvider implements DataProvider{
                 }
                 return this.decodeValues(val);
             }catch(final Exception exc){
-                asciiDataProvider.this.error = "File syntax error: " + exc.getMessage();
+                AsciiDataProvider.this.error = "File syntax error: " + exc.getMessage();
                 return null;
             }
         }
 
         private float[] decodeValues(final String val) {
             if(val == null){
-                asciiDataProvider.this.error = "File syntax error";
+                AsciiDataProvider.this.error = "File syntax error";
                 return null;
             }
             final StringTokenizer st = new StringTokenizer(val, ",");
@@ -111,7 +111,7 @@ public final class asciiDataProvider implements DataProvider{
                     out[i++] = Float.parseFloat(d_st);
                 }
             }catch(final NumberFormatException exc){
-                asciiDataProvider.this.error = "File syntax error : " + exc.getMessage();
+                AsciiDataProvider.this.error = "File syntax error : " + exc.getMessage();
                 out = null;
             }
             return out;
@@ -120,25 +120,25 @@ public final class asciiDataProvider implements DataProvider{
         // GAB JULY 2014 NEW WAVEDATA INTERFACE RAFFAZZONATA
         @Override
         public XYData getData(final double xmin, final double xmax, final int numPoints) throws Exception {
-            final double x[] = this.GetXDoubleData();
-            final float y[] = this.GetFloatData();
+            final double x[] = this.getXDoubleData();
+            final float y[] = this.getFloatData();
             return new XYData(x, y, Double.POSITIVE_INFINITY);
         }
 
         @Override
         public XYData getData(final int numPoints) throws Exception {
-            final double x[] = this.GetXDoubleData();
-            final float y[] = this.GetFloatData();
+            final double x[] = this.getXDoubleData();
+            final float y[] = this.getFloatData();
             return new XYData(x, y, Double.POSITIVE_INFINITY);
         }
 
         @Override
         public void getDataAsync(final double lowerBound, final double upperBound, final int numPoints) {}
 
-        public float[] GetFloatData() throws IOException {
-            if(asciiDataProvider.this.xPropertiesFile) return this.decodeValues(this.x_prop.getProperty("Data"));
-            if(asciiDataProvider.this.y == null) throw(new IOException(asciiDataProvider.this.error));
-            return asciiDataProvider.this.y;
+        public float[] getFloatData() throws IOException {
+            if(AsciiDataProvider.this.xPropertiesFile) return this.decodeValues(this.x_prop.getProperty("Data"));
+            if(AsciiDataProvider.this.y == null) throw(new IOException(AsciiDataProvider.this.error));
+            return AsciiDataProvider.this.y;
         }
 
         @Override
@@ -153,15 +153,15 @@ public final class asciiDataProvider implements DataProvider{
 
         private String getPathValue(final String in) {
             String out = "";
-            if(asciiDataProvider.this.path_exp != null) out = asciiDataProvider.this.path_exp;
-            if(asciiDataProvider.this.curr_shot > 0) out = out + File.separatorChar + asciiDataProvider.this.curr_shot;
+            if(AsciiDataProvider.this.path_exp != null) out = AsciiDataProvider.this.path_exp;
+            if(AsciiDataProvider.this.curr_shot > 0) out = out + File.separatorChar + AsciiDataProvider.this.curr_shot;
             if(out != null && out.length() > 0) out = out + File.separatorChar + in;
             else out = in;
             return out;
         }
 
         @Override
-        public String GetTitle() throws IOException {
+        public String getTitle() throws IOException {
             return this.y_prop.getProperty("Title");
         }
 
@@ -177,22 +177,22 @@ public final class asciiDataProvider implements DataProvider{
             return null;
         }
 
-        public float[] GetXData() throws IOException {
+        public float[] getXData() throws IOException {
             if(this.file_x == null){
-                if(asciiDataProvider.this.yPropertiesFile) return this.decodeTimes(this.y_prop.getProperty("Time"));
-                if(asciiDataProvider.this.x == null) throw(new IOException(asciiDataProvider.this.error));
-                return asciiDataProvider.this.x;
-            }else if(asciiDataProvider.this.xPropertiesFile) return this.decodeValues(this.x_prop.getProperty("Data"));
-            if(asciiDataProvider.this.y == null) throw(new IOException(asciiDataProvider.this.error));
-            return asciiDataProvider.this.y;
+                if(AsciiDataProvider.this.yPropertiesFile) return this.decodeTimes(this.y_prop.getProperty("Time"));
+                if(AsciiDataProvider.this.x == null) throw(new IOException(AsciiDataProvider.this.error));
+                return AsciiDataProvider.this.x;
+            }else if(AsciiDataProvider.this.xPropertiesFile) return this.decodeValues(this.x_prop.getProperty("Data"));
+            if(AsciiDataProvider.this.y == null) throw(new IOException(AsciiDataProvider.this.error));
+            return AsciiDataProvider.this.y;
         }
 
-        public double[] GetXDoubleData() {
+        public double[] getXDoubleData() {
             return null;
         }
 
         @Override
-        public String GetXLabel() throws IOException {
+        public String getXLabel() throws IOException {
             if(this.file_x == null) return this.y_prop.getProperty("XLabel");
             return this.x_prop.getProperty("YLabel");
         }
@@ -207,7 +207,7 @@ public final class asciiDataProvider implements DataProvider{
             return null;
         }
 
-        public long[] GetXLongData() {
+        public long[] getXLongData() {
             return null;
         }
 
@@ -217,14 +217,14 @@ public final class asciiDataProvider implements DataProvider{
             return null;
         }
 
-        public float[] GetYData() throws IOException {
-            if(asciiDataProvider.this.xPropertiesFile) return this.decodeValues(this.x_prop.getProperty("X"));
-            asciiDataProvider.this.error = "2D signal in column ASCII file format not yet supported";
+        public float[] getYData() throws IOException {
+            if(AsciiDataProvider.this.xPropertiesFile) return this.decodeValues(this.x_prop.getProperty("X"));
+            AsciiDataProvider.this.error = "2D signal in column ASCII file format not yet supported";
             return null; // throw new IOException(error);
         }
 
         @Override
-        public String GetYLabel() throws IOException {
+        public String getYLabel() throws IOException {
             return this.y_prop.getProperty("YLabel");
         }
 
@@ -235,7 +235,7 @@ public final class asciiDataProvider implements DataProvider{
         }
 
         @Override
-        public String GetZLabel() throws IOException {
+        public String getZLabel() throws IOException {
             return this.y_prop.getProperty("ZLabel");
         }
 
@@ -257,27 +257,27 @@ public final class asciiDataProvider implements DataProvider{
                 st = new StringTokenizer(ln);
                 final int numColumn = st.countTokens();
                 if(numColumn == 2 && st.nextToken().equals("Time") && st.nextToken().equals("Data")){
-                    asciiDataProvider.this.x = new float[1000];
-                    asciiDataProvider.this.y = new float[1000];
+                    AsciiDataProvider.this.x = new float[1000];
+                    AsciiDataProvider.this.y = new float[1000];
                     int count = 0;
                     int maxCount = 1000;
                     while((ln = bufR.readLine()) != null){
                         st = new StringTokenizer(ln);
                         if(count == maxCount){
-                            asciiDataProvider.this.x = this.resizeBuffer(asciiDataProvider.this.x, asciiDataProvider.this.x.length + 1000);
-                            asciiDataProvider.this.y = this.resizeBuffer(asciiDataProvider.this.y, asciiDataProvider.this.y.length + 1000);
-                            maxCount = asciiDataProvider.this.y.length;
+                            AsciiDataProvider.this.x = this.resizeBuffer(AsciiDataProvider.this.x, AsciiDataProvider.this.x.length + 1000);
+                            AsciiDataProvider.this.y = this.resizeBuffer(AsciiDataProvider.this.y, AsciiDataProvider.this.y.length + 1000);
+                            maxCount = AsciiDataProvider.this.y.length;
                         }
-                        asciiDataProvider.this.x[count] = Float.parseFloat(st.nextToken());
-                        asciiDataProvider.this.y[count] = Float.parseFloat(st.nextToken());
+                        AsciiDataProvider.this.x[count] = Float.parseFloat(st.nextToken());
+                        AsciiDataProvider.this.y[count] = Float.parseFloat(st.nextToken());
                         count++;
                     }
-                    asciiDataProvider.this.x = this.resizeBuffer(asciiDataProvider.this.x, count);
-                    asciiDataProvider.this.y = this.resizeBuffer(asciiDataProvider.this.y, count);
+                    AsciiDataProvider.this.x = this.resizeBuffer(AsciiDataProvider.this.x, count);
+                    AsciiDataProvider.this.y = this.resizeBuffer(AsciiDataProvider.this.y, count);
                 }
             }
             bufR.close();
-            if(asciiDataProvider.this.x == null || asciiDataProvider.this.y == null) throw(new Exception("No data in file or file syntax error"));
+            if(AsciiDataProvider.this.x == null || AsciiDataProvider.this.y == null) throw(new Exception("No data in file or file syntax error"));
         }
 
         private int numElement(final String val, final String separator) {
@@ -303,7 +303,7 @@ public final class asciiDataProvider implements DataProvider{
                     this.loadSignalValues(in);
                 }
             }catch(final Exception exc){
-                asciiDataProvider.this.error = "File " + in + " error : " + exc.getMessage();
+                AsciiDataProvider.this.error = "File " + in + " error : " + exc.getMessage();
             }
             return false;
         }
@@ -375,8 +375,8 @@ public final class asciiDataProvider implements DataProvider{
 
     /*
     public static void main(final String args[]) {//TODO:main
-        final asciiDataProvider p = new asciiDataProvider();
-        p.GetWaveData("c:\\test.txt");
+        final AsciiDataProvider p = new AsciiDataProvider();
+        p.getWaveData("c:\\test.txt");
     }
     */
     public static boolean SupportsCompression() {
@@ -405,27 +405,27 @@ public final class asciiDataProvider implements DataProvider{
     }
 
     @Override
-    public void AddConnectionListener(final ConnectionListener l) {}
+    public void addConnectionListener(final ConnectionListener l) {}
 
     @Override
-    public void AddUpdateEventListener(final UpdateEventListener l, final String event) {}
+    public void addUpdateEventListener(final UpdateEventListener l, final String event) {}
 
     @Override
     public final boolean checkProvider() {
         try{
-            this.GetShots("0");
+            this.getShots("0");
             return true;
         }catch(final IOException exc){}
         return false;
     }
 
     @Override
-    public void Dispose() {}
+    public void dispose() {}
 
     public void enableAsyncUpdate(final boolean enable) {}
 
     @Override
-    public String ErrorString() {
+    public String errorString() {
         return this.error;
     }
 
@@ -438,23 +438,23 @@ public final class asciiDataProvider implements DataProvider{
     }
 
     @Override
-    public float GetFloat(final String in) {
+    public float getFloat(final String in) {
         this.error = null;
         return Float.parseFloat(in);
     }
 
     @Override
-    public FrameData GetFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
+    public FrameData getFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
         throw(new IOException("Frames visualization on DemoDataProvider not implemented"));
     }
 
     @Override
-    public final String GetLegendString(final String s) {
+    public final String getLegendString(final String s) {
         return s;
     }
 
     @Override
-    public long[] GetShots(final String in) throws IOException {
+    public long[] getShots(final String in) throws IOException {
         this.error = null;
         long[] result;
         String curr_in = in.trim();
@@ -498,23 +498,23 @@ public final class asciiDataProvider implements DataProvider{
     }
 
     @Override
-    public String GetString(final String in) {
+    public String getString(final String in) {
         this.error = null;
         return new String(in);
     }
 
     @Override
-    public WaveData GetWaveData(final String in) {
+    public WaveData getWaveData(final String in) {
         return new SimpleWaveData(in);
     }
 
     @Override
-    public WaveData GetWaveData(final String in_y, final String in_x) {
+    public WaveData getWaveData(final String in_y, final String in_x) {
         return new SimpleWaveData(in_y, in_x);
     }
 
     @Override
-    public int InquireCredentials(final JFrame f, final DataServerItem server_item) {
+    public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
         return DataProvider.LOGIN_OK;
     }
 
@@ -524,30 +524,30 @@ public final class asciiDataProvider implements DataProvider{
     }
 
     @Override
-    public void RemoveConnectionListener(final ConnectionListener l) {}
+    public void removeConnectionListener(final ConnectionListener l) {}
 
     @Override
-    public void RemoveUpdateEventListener(final UpdateEventListener l, final String event) {}
+    public void removeUpdateEventListener(final UpdateEventListener l, final String event) {}
 
     @Override
-    public void SetArgument(final String arg) {}
+    public void setArgument(final String arg) {}
 
-    public void SetCompression(final boolean state) {}
+    public void setCompression(final boolean state) {}
 
     public void setContinuousUpdate(final boolean continuousUpdate) {}
 
     @Override
-    public void SetEnvironment(final String exp) {
+    public void setEnvironment(final String exp) {
         this.error = null;
     }
 
     @Override
-    public boolean SupportsTunneling() {
+    public boolean supportsTunneling() {
         return false;
     }
 
     @Override
-    public void Update(final String exp, final long s) {
+    public void update(final String exp, final long s) {
         this.error = null;
         this.path_exp = exp;
         this.curr_shot = s;

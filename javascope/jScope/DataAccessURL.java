@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.io.IOException;
@@ -43,7 +43,7 @@ public final class DataAccessURL{
         da.setPassword(passwd);
         final FrameData fd = da.getFrameData(url);
         if(fd == null && da.getError() == null) throw(new IOException("Incorrect password or read images error"));
-        f.SetFrameData(fd);
+        f.setFrameData(fd);
         f.setName(da.getSignalName());
         if(da.getError() != null){ throw(new IOException(da.getError())); }
     }

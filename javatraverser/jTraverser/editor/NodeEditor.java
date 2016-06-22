@@ -1,10 +1,10 @@
-package jTraverser.editor;
+package jtraverser.editor;
 
-// package jTraverser;
+// package jtraverser;
 import javax.swing.JPanel;
-import jTraverser.Node;
-import jTraverser.Tree;
-import jTraverser.dialogs.TreeDialog;
+import jtraverser.Node;
+import jtraverser.Tree;
+import jtraverser.dialogs.TreeDialog;
 
 @SuppressWarnings("serial")
 public class NodeEditor extends JPanel{

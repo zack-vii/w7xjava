@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.BorderLayout;
@@ -277,7 +277,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
             gridbag.setConstraints(this.mode2D, c);
             p.add(this.mode2D);
             this.color = new JComboBox();
-            this.SetColorList();
+            this.setColorList();
             this.color.addItemListener(this);
             gridbag.setConstraints(this.color, c);
             p.add(this.color);
@@ -325,7 +325,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
                     for(int i = 0; i < this.shots.length; i++, ws = this.getSignalSetup()){
                         ws.shot = this.shots[i];
                         ws.color_idx = color_idx;
-                        color_idx = (color_idx + 1) % SetupDataDialog.this.main_scope.color_dialog.GetNumColor();
+                        color_idx = (color_idx + 1) % SetupDataDialog.this.main_scope.color_dialog.getNumColor();
                         this.addSignalSetup(ws);
                         this.signalListAdd(ws);
                     }
@@ -345,9 +345,9 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         public boolean evaluateShotList(String in_shot) throws IOException {
             if(this.shots != null && this.shots.length != 0) this.list_num_shot = this.shots.length;
             else this.list_num_shot = 1;
-            SetupDataDialog.this.main_scope.SetMainShot();
+            SetupDataDialog.this.main_scope.setMainShot();
             in_shot = jScopeWaveInterface.containMainShot(in_shot, SetupDataDialog.this.main_scope.wave_panel.getMainShotStr());
-            final long new_shots[] = SetupDataDialog.this.wi.GetShotArray(in_shot);
+            final long new_shots[] = SetupDataDialog.this.wi.getShotArray(in_shot);
             if(new_shots == null){
                 if(this.shots == null) return false;
                 this.shots = null;
@@ -468,7 +468,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         @Override
         public void itemStateChanged(final ItemEvent e) {
             final Object ob = e.getSource();
-            if(ob instanceof JCheckBox) SetupDataDialog.this.DefaultButtonChange(ob);
+            if(ob instanceof JCheckBox) SetupDataDialog.this.defaultButtonChange(ob);
             if(this.getSignalSelect() == -1 || SetupDataDialog.this.image_b.isSelected()) return;
             if(ob == this.marker){
                 final int m_idx = this.marker.getSelectedIndex();
@@ -553,8 +553,8 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         }
 
         @SuppressWarnings("unchecked")
-        public void SetColorList() {
-            final String[] colors_name = SetupDataDialog.this.main_scope.color_dialog.GetColorsName();
+        public void setColorList() {
+            final String[] colors_name = SetupDataDialog.this.main_scope.color_dialog.getColorsName();
             if(this.color.getItemCount() != 0) this.color.removeAllItems();
             if(colors_name != null){
                 for(final String element : colors_name)
@@ -654,7 +654,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
                     }else{
                         final Data ws = new Data();
                         ws.copy(this.signals.elementAt(j));
-                        color_idx = (color_idx + 1) % SetupDataDialog.this.main_scope.color_dialog.GetNumColor();
+                        color_idx = (color_idx + 1) % SetupDataDialog.this.main_scope.color_dialog.getNumColor();
                         ws.color_idx = color_idx;
                         this.signals.insertElementAt(ws, k);
                     }
@@ -713,7 +713,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         @Override
         public void componentAdded(final java.awt.event.ContainerEvent event) {
             final Object object = event.getSource();
-            if(object == SetupDataDialog.this) SetupDataDialog.this.SetupDataDialog_componentAdded(event);
+            if(object == SetupDataDialog.this) SetupDataDialog.this.setupDataDialog_componentAdded(event);
         }
     }
     static final int  BROWSE_X   = 0, BROWSE_Y = 1;
@@ -1015,9 +1015,9 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         this.checkSetup();
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         try{
-            this.main_scope.wave_panel.Refresh(this.wave, "Update ");
+            this.main_scope.wave_panel.refresh(this.wave, "Update ");
         }catch(final Throwable e){
-            this.main_scope.SetStatusLabel("Error during apply: " + e);
+            this.main_scope.setStatusLabel("Error during apply: " + e);
         }finally{
             this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
@@ -1032,7 +1032,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
     private int checkSetup() {
         int error = 0;
         boolean def_exp = true, def_shot = true;
-        this.main_scope.SetStatusLabel("");
+        this.main_scope.setStatusLabel("");
         if(this.experiment.getText() == null || this.experiment.getText().trim().length() == 0) def_exp = false;
         if(this.shot.getText() == null || this.shot.getText().trim().length() == 0) def_shot = false;
         if(def_exp ^ def_shot){
@@ -1049,22 +1049,22 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         return error;
     }
 
-    private void DefaultButtonChange(final Object ob) {
+    private void defaultButtonChange(final Object ob) {
         boolean def_flag;
-        if(ob == this.title_b) SetupDataDialog.defaultButtonOperation(this.title, def_flag = this.title_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_title, def_flag));
+        if(ob == this.title_b) SetupDataDialog.defaultButtonOperation(this.title, def_flag = this.title_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_title, def_flag));
         if(ob == this.shot_b) this.putShotValue(this.shot_b.isSelected());
-        if(ob == this.experiment_b) SetupDataDialog.defaultButtonOperation(this.experiment, def_flag = this.experiment_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_exp, def_flag));
-        if(ob == this.upd_event_b) SetupDataDialog.defaultButtonOperation(this.upd_event, def_flag = this.upd_event_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_event, def_flag));
-        if(ob == this.def_node_b) SetupDataDialog.defaultButtonOperation(this.def_node, def_flag = this.def_node_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_default_node, def_flag));
-        if(ob == this.x_max_b) SetupDataDialog.defaultButtonOperation(this.x_max, def_flag = this.x_max_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_max, def_flag));
-        if(ob == this.x_min_b) SetupDataDialog.defaultButtonOperation(this.x_min, def_flag = this.x_min_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_min, def_flag));
-        if(ob == this.time_max_b) SetupDataDialog.defaultButtonOperation(this.time_max, def_flag = this.time_max_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_max, def_flag));
-        if(ob == this.time_min_b) SetupDataDialog.defaultButtonOperation(this.time_min, def_flag = this.time_min_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_min, def_flag));
-        if(ob == this.x_label_b) SetupDataDialog.defaultButtonOperation(this.x_label, def_flag = this.x_label_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_label, def_flag));
-        if(ob == this.y_max_b) SetupDataDialog.defaultButtonOperation(this.y_max, def_flag = this.y_max_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_y_max, def_flag));
-        if(ob == this.y_min_b) SetupDataDialog.defaultButtonOperation(this.y_min, def_flag = this.y_min_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_y_min, def_flag));
-        if(ob == this.y_label_b) SetupDataDialog.defaultButtonOperation(this.y_label, def_flag = this.y_label_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_y_label, def_flag));
-        if(ob == this.upd_limits_b) SetupDataDialog.defaultButtonOperation(this.upd_limits, def_flag = this.upd_limits_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_update, def_flag));
+        if(ob == this.experiment_b) SetupDataDialog.defaultButtonOperation(this.experiment, def_flag = this.experiment_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_exp, def_flag));
+        if(ob == this.upd_event_b) SetupDataDialog.defaultButtonOperation(this.upd_event, def_flag = this.upd_event_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_event, def_flag));
+        if(ob == this.def_node_b) SetupDataDialog.defaultButtonOperation(this.def_node, def_flag = this.def_node_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_default_node, def_flag));
+        if(ob == this.x_max_b) SetupDataDialog.defaultButtonOperation(this.x_max, def_flag = this.x_max_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_max, def_flag));
+        if(ob == this.x_min_b) SetupDataDialog.defaultButtonOperation(this.x_min, def_flag = this.x_min_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_min, def_flag));
+        if(ob == this.time_max_b) SetupDataDialog.defaultButtonOperation(this.time_max, def_flag = this.time_max_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_max, def_flag));
+        if(ob == this.time_min_b) SetupDataDialog.defaultButtonOperation(this.time_min, def_flag = this.time_min_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_min, def_flag));
+        if(ob == this.x_label_b) SetupDataDialog.defaultButtonOperation(this.x_label, def_flag = this.x_label_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_label, def_flag));
+        if(ob == this.y_max_b) SetupDataDialog.defaultButtonOperation(this.y_max, def_flag = this.y_max_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_y_max, def_flag));
+        if(ob == this.y_min_b) SetupDataDialog.defaultButtonOperation(this.y_min, def_flag = this.y_min_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_y_min, def_flag));
+        if(ob == this.y_label_b) SetupDataDialog.defaultButtonOperation(this.y_label, def_flag = this.y_label_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_y_label, def_flag));
+        if(ob == this.upd_limits_b) SetupDataDialog.defaultButtonOperation(this.upd_limits, def_flag = this.upd_limits_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_update, def_flag));
     }
 
     public void eraseForm() {
@@ -1187,7 +1187,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
                 this.setImageDialog(this.image_b.isSelected());
                 return;
             }
-            this.DefaultButtonChange(ob);
+            this.defaultButtonChange(ob);
         }
     }
 
@@ -1221,7 +1221,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         this.wave.removeWaveformListener(this);
         switch(e.getID()){
             case WaveformEvent.END_UPDATE:
-                final String full_error = ((jScopeWaveInterface)w.wi).getErrorString();// main_scope.wave_panel.GetBriefError());
+                final String full_error = ((jScopeWaveInterface)w.wi).getErrorString();// main_scope.wave_panel.getBriefError());
                 if(full_error != null){
                     JOptionPane.showMessageDialog(this, full_error, "alert", JOptionPane.ERROR_MESSAGE);
                 }
@@ -1230,35 +1230,35 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         }
     }
 
-    public void PutDefaultValues() {
+    public void putDefaultValues() {
         boolean def_flag;
-        SetupDataDialog.defaultButtonOperation(this.title, def_flag = this.title_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_title, def_flag));
+        SetupDataDialog.defaultButtonOperation(this.title, def_flag = this.title_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_title, def_flag));
         this.putShotValue(this.shot_b.isSelected());
-        SetupDataDialog.defaultButtonOperation(this.experiment, def_flag = this.experiment_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_exp, def_flag));
+        SetupDataDialog.defaultButtonOperation(this.experiment, def_flag = this.experiment_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_exp, def_flag));
         if(this.image_b.isSelected()){
-            SetupDataDialog.defaultButtonOperation(this.time_max, def_flag = this.time_max_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_max, def_flag));
+            SetupDataDialog.defaultButtonOperation(this.time_max, def_flag = this.time_max_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_max, def_flag));
             if(!def_flag) this.time_max.setText(this.wi.cin_timemax);
-            SetupDataDialog.defaultButtonOperation(this.time_min, def_flag = this.time_min_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_min, def_flag));
+            SetupDataDialog.defaultButtonOperation(this.time_min, def_flag = this.time_min_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_min, def_flag));
             if(!def_flag) this.time_min.setText(this.wi.cin_timemin);
             this.x_min.setText(this.wi.cin_xmin);
             this.x_max.setText(this.wi.cin_xmax);
         }else{
-            SetupDataDialog.defaultButtonOperation(this.x_max, def_flag = this.x_max_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_max, def_flag));
-            SetupDataDialog.defaultButtonOperation(this.x_min, def_flag = this.x_min_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_min, def_flag));
+            SetupDataDialog.defaultButtonOperation(this.x_max, def_flag = this.x_max_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_max, def_flag));
+            SetupDataDialog.defaultButtonOperation(this.x_min, def_flag = this.x_min_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_min, def_flag));
         }
-        SetupDataDialog.defaultButtonOperation(this.x_label, def_flag = this.x_label_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_x_label, def_flag));
-        SetupDataDialog.defaultButtonOperation(this.y_max, def_flag = this.y_max_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_y_max, def_flag));
-        SetupDataDialog.defaultButtonOperation(this.y_min, def_flag = this.y_min_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_y_min, def_flag));
-        SetupDataDialog.defaultButtonOperation(this.y_label, def_flag = this.y_label_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_y_label, def_flag));
-        SetupDataDialog.defaultButtonOperation(this.upd_event, def_flag = this.upd_event_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_event, def_flag));
-        SetupDataDialog.defaultButtonOperation(this.def_node, def_flag = this.def_node_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_default_node, def_flag));
-        SetupDataDialog.defaultButtonOperation(this.upd_limits, def_flag = this.upd_limits_b.isSelected(), this.wi.GetDefaultValue(jScopeWaveInterface.B_update, def_flag));
+        SetupDataDialog.defaultButtonOperation(this.x_label, def_flag = this.x_label_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_x_label, def_flag));
+        SetupDataDialog.defaultButtonOperation(this.y_max, def_flag = this.y_max_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_y_max, def_flag));
+        SetupDataDialog.defaultButtonOperation(this.y_min, def_flag = this.y_min_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_y_min, def_flag));
+        SetupDataDialog.defaultButtonOperation(this.y_label, def_flag = this.y_label_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_y_label, def_flag));
+        SetupDataDialog.defaultButtonOperation(this.upd_event, def_flag = this.upd_event_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_event, def_flag));
+        SetupDataDialog.defaultButtonOperation(this.def_node, def_flag = this.def_node_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_default_node, def_flag));
+        SetupDataDialog.defaultButtonOperation(this.upd_limits, def_flag = this.upd_limits_b.isSelected(), this.wi.getDefaultValue(jScopeWaveInterface.B_update, def_flag));
     }
 
     private void putShotValue(final boolean def_flag) {
         if(def_flag) this.wi.defaults |= (1 << jScopeWaveInterface.B_shot);
         else this.wi.defaults &= ~(1 << jScopeWaveInterface.B_shot);
-        switch(this.wi.GetShotIdx()){
+        switch(this.wi.getShotIdx()){
             case 0:
                 this.shot.setForeground(Color.black);
                 this.shot.setEditable(true);
@@ -1272,7 +1272,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
                 this.shot.setEditable(false);
                 break;
         }
-        this.shot.setText(this.wi.GetUsedShot());
+        this.shot.setText(this.wi.getUsedShot());
     }
 
     public void putWindowSetup(final jScopeWaveInterface wi) {
@@ -1313,7 +1313,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         this.horizontal_flip_b.setSelected(wi.horizontal_flip);
         this.vertical_flip_b.setSelected(wi.vertical_flip);
         this.setDefaultFlags(wi.defaults);
-        this.PutDefaultValues();
+        this.putDefaultValues();
         // if(!wi.is_image)
         // {
         this.signal_label.setText("");
@@ -1378,15 +1378,15 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         this.def_node.setEditable(!state);
         this.upd_limits_b.setSelected(state);
         this.upd_limits.setEnabled(!state);
-        this.PutDefaultValues();
+        this.putDefaultValues();
     }
 
     public void selectSignal(final int sig) {
         this.signalList.setSignalSelect(sig);
     }
 
-    public void SetColorList() {
-        this.signalList.SetColorList();
+    public void setColorList() {
+        this.signalList.setColorList();
     }
 
     private void setDefaultFlags(final int flags) {
@@ -1503,11 +1503,11 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         // validate();
     }
 
-    void SetupDataDialog_componentAdded(final java.awt.event.ContainerEvent event) {
-        // to do: code goes here.
+    void setupDataDialog_componentAdded(final java.awt.event.ContainerEvent event) {
+        // TODO: code goes here.
     }
 
-    public void Show(final Waveform w, final int col, final int row) {
+    public void show(final Waveform w, final int col, final int row) {
         // wave_coord = new Point(row, col);
         this.wave = (jScopeMultiWave)w;
         // wave.addWaveformListener(this);
@@ -1517,7 +1517,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         this.putWindowSetup((jScopeWaveInterface)this.wave.wi);
         this.updateDataSetup();
         this.setLocationRelativeTo(w.getParent());
-        this.signalList.signalSelect(this.wave.GetSelectedSignal());
+        this.signalList.signalSelect(this.wave.getSelectedSignal());
         this.setTitle("Wave Setup for column " + col + " row " + row);
         jScopeFacade.jScopeSetUI(this);
         jScopeFacade.jScopeSetUI(this.error_w);
@@ -1565,7 +1565,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
         s = this.signalList.getSignals();
         num_signal = s.length;
         if(num_signal == 0){
-            if(this.wave.wi != null) this.wave.wi.Erase();
+            if(this.wave.wi != null) this.wave.wi.erase();
             return 1;
         }
         this.wi.setModified(this.isChanged(s));
@@ -1592,7 +1592,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
                 this.wave.wi.interpolates[i] = s[i].interpolate;
                 this.wave.wi.mode2D[i] = s[i].mode2D;
                 this.wave.wi.mode1D[i] = s[i].mode1D;
-                // wave.wi.colors[i] = main_scope.color_dialog.GetColorAt(s[i].color_idx);
+                // wave.wi.colors[i] = main_scope.color_dialog.getColorAt(s[i].color_idx);
                 this.wave.wi.colors_idx[i] = s[i].color_idx;
                 this.wave.wi.in_label[i] = s[i].label;
             }
@@ -1647,7 +1647,7 @@ final class SetupDataDialog extends JDialog implements ActionListener, ItemListe
                 this.wi.mode1D[i] = s[i].mode1D;
                 if(s[i].up_err != null) this.wi.in_up_err[i] = new String(s[i].up_err);
                 if(s[i].low_err != null) this.wi.in_low_err[i] = new String(s[i].low_err);
-                // wi.colors[i] = main_scope.color_dialog.GetColorAt(s[i].color_idx);
+                // wi.colors[i] = main_scope.color_dialog.getColorAt(s[i].color_idx);
                 this.wi.colors_idx[i] = s[i].color_idx;
             }
         }

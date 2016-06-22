@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.FlowLayout;
@@ -71,7 +71,7 @@ final public class SignalsBoxDialog extends JDialog{
                     y_expr[i] = (String)SignalsBoxDialog.this.table.getValueAt(idx[i], 0);
                     x_expr[i] = (String)SignalsBoxDialog.this.table.getValueAt(idx[i], 1);
                 }
-                SignalsBoxDialog.this.scope.wave_panel.AddSignals(null, null, x_expr, y_expr, true, false);
+                SignalsBoxDialog.this.scope.wave_panel.addSignals(null, null, x_expr, y_expr, true, false);
             }
         });
         p.add(add);

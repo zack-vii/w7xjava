@@ -1,4 +1,4 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -11,8 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import jTraverser.Node;
-import jTraverser.TreeManager;
+import jtraverser.Node;
+import jtraverser.TreeManager;
 
 @SuppressWarnings("serial")
 public final class Rename extends JDialog{

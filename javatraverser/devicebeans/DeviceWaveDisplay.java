@@ -3,7 +3,7 @@ package devicebeans;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import jScope.Waveform;
+import jscope.Waveform;
 import mds.data.descriptor.Descriptor;
 
 @SuppressWarnings("serial")
@@ -22,7 +22,7 @@ public class DeviceWaveDisplay extends DeviceComponent{
             final Descriptor yData = this.subtree.evaluate(data);
             this.x = xData.toFloat();
             this.y = yData.toFloat();
-            this.wave.Update(this.x, this.y);
+            this.wave.update(this.x, this.y);
         }catch(final Exception exc){}
     }
 

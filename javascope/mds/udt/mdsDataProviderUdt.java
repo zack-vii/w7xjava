@@ -5,15 +5,15 @@
  */
 package mds.udt;
 
-import mds.mdsConnection;
-import mds.mdsDataProvider;
+import mds.MdsConnection;
+import mds.MdsDataProvider;
 
 /**
  * @author manduchi
  */
-public class mdsDataProviderUdt extends mdsDataProvider{
+public class MdsDataProviderUdt extends MdsDataProvider{
     @Override
-    protected mdsConnection getConnection() {
-        return new mdsConnectionUdt();
+    protected MdsConnection getConnection() {
+        return new MdsConnectionUdt();
     }
 }

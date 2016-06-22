@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Point;
@@ -26,8 +26,8 @@ public class MultiWavePopup extends WavePopup{
         this.legend.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                if(!MultiWavePopup.this.wave.isFixedLegend() || !MultiWavePopup.this.wave.IsShowLegend()) MultiWavePopup.this.PositionLegend(MultiWavePopup.this.getLocation());
-                else if(MultiWavePopup.this.wave.isFixedLegend()) MultiWavePopup.this.RemoveLegend();
+                if(!MultiWavePopup.this.wave.isFixedLegend() || !MultiWavePopup.this.wave.isShowLegend()) MultiWavePopup.this.positionLegend(MultiWavePopup.this.getLocation());
+                else if(MultiWavePopup.this.wave.isFixedLegend()) MultiWavePopup.this.removeLegend();
             }
         });
         this.legend.setEnabled(false);
@@ -35,7 +35,7 @@ public class MultiWavePopup extends WavePopup{
         this.remove_legend.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                MultiWavePopup.this.RemoveLegend();
+                MultiWavePopup.this.removeLegend();
             }
         });
         this.remove_legend.setEnabled(false);
@@ -48,26 +48,26 @@ public class MultiWavePopup extends WavePopup{
     }
 
     @Override
-    protected void InitOptionMenu() {
+    protected void initOptionMenu() {
         int sig_idx;
-        final String s_name[] = this.wave.GetSignalsName();
-        final boolean s_state[] = this.wave.GetSignalsState();
+        final String s_name[] = this.wave.getSignalsName();
+        final boolean s_state[] = this.wave.getSignalsState();
         if(!(s_name != null && s_state != null && s_name.length > 0 && s_name.length > 0 && s_name.length == s_state.length)) return;
-        final boolean state = (this.wave.mode == Waveform.MODE_POINT || this.wave.GetShowSignalCount() == 1);
+        final boolean state = (this.wave.mode == Waveform.MODE_POINT || this.wave.getShowSignalCount() == 1);
         this.markerList.setEnabled(state);
         this.colorList.setEnabled(state);
         this.set_point.setEnabled(this.wave.mode == Waveform.MODE_POINT);
         if(state){
-            if(this.wave.GetShowSignalCount() == 1) sig_idx = 0;
-            else sig_idx = this.wave.GetSelectedSignal();
-            final boolean state_m = state && (this.wave.GetMarker(sig_idx) != Signal.NONE && this.wave.GetMarker(sig_idx) != Signal.POINT);
+            if(this.wave.getShowSignalCount() == 1) sig_idx = 0;
+            else sig_idx = this.wave.getSelectedSignal();
+            final boolean state_m = state && (this.wave.getMarker(sig_idx) != Signal.NONE && this.wave.getMarker(sig_idx) != Signal.POINT);
             this.markerStep.setEnabled(state_m);
-            WavePopup.SelectListItem(this.markerList_bg, this.wave.GetMarker(sig_idx));
+            WavePopup.selectListItem(this.markerList_bg, this.wave.getMarker(sig_idx));
             int st;
             for(st = 0; st < Signal.markerStepList.length; st++)
-                if(Signal.markerStepList[st] == this.wave.GetMarkerStep(sig_idx)) break;
-            WavePopup.SelectListItem(this.markerStep_bg, st);
-            WavePopup.SelectListItem(this.colorList_bg, this.wave.GetColorIdx(sig_idx));
+                if(Signal.markerStepList[st] == this.wave.getMarkerStep(sig_idx)) break;
+            WavePopup.selectListItem(this.markerStep_bg, st);
+            WavePopup.selectListItem(this.colorList_bg, this.wave.getColorIdx(sig_idx));
         }else this.markerStep.setEnabled(false);
         JCheckBoxMenuItem ob;
         if(s_name != null){
@@ -82,59 +82,59 @@ public class MultiWavePopup extends WavePopup{
                     @Override
                     public void itemStateChanged(final ItemEvent e) {
                         final Object target = e.getSource();
-                        MultiWavePopup.this.SetSignalState(((JCheckBoxMenuItem)target).getText(), ((JCheckBoxMenuItem)target).getState());
-                        MultiWavePopup.this.wave.Repaint(true);
+                        MultiWavePopup.this.setSignalState(((JCheckBoxMenuItem)target).getText(), ((JCheckBoxMenuItem)target).getState());
+                        MultiWavePopup.this.wave.repaint(true);
                     }
                 });
             }
         }
         if(this.wave.isFixedLegend()){
-            if(this.wave.IsShowLegend()) this.legend.setText("Hide Legend");
+            if(this.wave.isShowLegend()) this.legend.setText("Hide Legend");
             else this.legend.setText("Show Legend");
         }else{
             this.legend.setText("Position Legend");
-            if(this.wave.IsShowLegend()) this.remove_legend.setEnabled(true);
+            if(this.wave.isShowLegend()) this.remove_legend.setEnabled(true);
             else this.remove_legend.setEnabled(false);
         }
     }
 
-    protected void PositionLegend(final Point p) {
-        this.wave.SetLegend(p);
+    protected void positionLegend(final Point p) {
+        this.wave.setLegend(p);
     }
 
-    protected void RemoveLegend() {
-        this.wave.RemoveLegend();
-    }
-
-    @Override
-    public void SetColor(final int idx) {
-        if(this.wave.GetColorIdx(this.wave.GetSelectedSignal()) != idx) this.wave.SetColorIdx(this.wave.GetSelectedSignal(), idx);
-    }
-
-    protected void SetInterpolate(final boolean state) {
-        this.wave.SetInterpolate(this.wave.GetSelectedSignal(), state);
+    protected void removeLegend() {
+        this.wave.removeLegend();
     }
 
     @Override
-    public void SetMarker(final int idx) {
-        if(this.wave.GetMarker(this.wave.GetSelectedSignal()) != idx) this.wave.SetMarker(this.wave.GetSelectedSignal(), idx);
+    public void setColor(final int idx) {
+        if(this.wave.getColorIdx(this.wave.getSelectedSignal()) != idx) this.wave.setColorIdx(this.wave.getSelectedSignal(), idx);
+    }
+
+    protected void setInterpolate(final boolean state) {
+        this.wave.setInterpolate(this.wave.getSelectedSignal(), state);
     }
 
     @Override
-    public void SetMarkerStep(final int step) {
-        if(this.wave.GetMarkerStep(this.wave.GetSelectedSignal()) != step) this.wave.SetMarkerStep(this.wave.GetSelectedSignal(), step);
+    public void setMarker(final int idx) {
+        if(this.wave.getMarker(this.wave.getSelectedSignal()) != idx) this.wave.setMarker(this.wave.getSelectedSignal(), idx);
     }
 
     @Override
-    protected void SetMenu() {
+    public void setMarkerStep(final int step) {
+        if(this.wave.getMarkerStep(this.wave.getSelectedSignal()) != step) this.wave.setMarkerStep(this.wave.getSelectedSignal(), step);
+    }
+
+    @Override
+    protected void setMenu() {
         this.wave = (MultiWaveform)super.wave;
-        super.SetMenu();
+        super.setMenu();
     }
 
     @Override
-    protected void SetMenuItem(final boolean is_image) {
+    protected void setMenuItem(final boolean is_image) {
         int start = 0;
-        super.SetMenuItem(is_image);
+        super.setMenuItem(is_image);
         if(!is_image){
             if(this.parent instanceof WaveformManager) start += 2;
             this.insert(this.legend, start + 1);
@@ -149,21 +149,21 @@ public class MultiWavePopup extends WavePopup{
     }
 
     @Override
-    protected void SetMode2D(final int mode) {
-        this.wave.setSignalMode(this.wave.GetSelectedSignal(), mode);
+    protected void setMode2D(final int mode) {
+        this.wave.setSignalMode(this.wave.getSelectedSignal(), mode);
     }
 
     @Override
-    protected void SetSignalMenu() {
-        super.SetSignalMenu();
-        if(this.wave.GetShowSignalCount() == 0){
+    protected void setSignalMenu() {
+        super.setSignalMenu();
+        if(this.wave.getShowSignalCount() == 0){
             this.legend.setEnabled(false);
             this.remove_legend.setEnabled(false);
             this.signalList.setEnabled(false);
         }
     }
 
-    public void SetSignalState(final String label, final boolean state) {
-        this.wave.SetSignalState(label, state);
+    public void setSignalState(final String label, final boolean state) {
+        this.wave.setSignalState(label, state);
     }
 }

@@ -2,8 +2,8 @@ package mds;
 
 /* $Id$ */
 @SuppressWarnings("serial")
-public class mdsIOException extends Exception{
-    mdsIOException(final String message){
+public class MdsIOException extends Exception{
+    MdsIOException(final String message){
         super(message);
     }
 }

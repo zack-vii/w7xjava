@@ -1,28 +1,28 @@
 DOCS = jScope.html jScope.jpg \
-  jScope/popup.jpg jScope/about_jscope.jpg \
-  jScope/CompositeWaveDisplay.html \
-  jScope/ConnectionEvent.html jScope/ConnectionListener.html \
-  jScope/DataProvider.html jScope/FrameData.html \
-  jScope/ReadMe.html jScope/data_popup.jpg jScope/data_setup.jpg \
-  jScope/frame_popup.jpg jScope/image_setup.jpg \
-  jScope/UpdateEvent.html jScope/UpdateEventListener.html \
-  jScope/WaveData.html jScope/WaveDisplay.html
+  jscope/popup.jpg jscope/about_jscope.jpg \
+  jscope/CompositeWaveDisplay.html \
+  jscope/ConnectionEvent.html jscope/ConnectionListener.html \
+  jscope/DataProvider.html jscope/FrameData.html \
+  jscope/ReadMe.html jscope/data_popup.jpg jscope/data_setup.jpg \
+  jscope/frame_popup.jpg jscope/image_setup.jpg \
+  jscope/UpdateEvent.html jscope/UpdateEventListener.html \
+  jscope/WaveData.html jscope/WaveDisplay.html
 
 TOPDOCS = jScope.html \
-  jScope/CompositeWaveDisplay.html \
-  jScope/ConnectionEvent.html jScope/ConnectionListener.html \
-  jScope/DataProvider.html jScope/FrameData.html jScope/ReadMe.html \
-  jScope/UpdateEvent.html jScope/UpdateEventListener.html \
-  jScope/WaveData.html jScope/WaveDisplay.html
+  jscope/CompositeWaveDisplay.html \
+  jscope/ConnectionEvent.html jscope/ConnectionListener.html \
+  jscope/DataProvider.html jscope/FrameData.html jscope/ReadMe.html \
+  jscope/UpdateEvent.html jscope/UpdateEventListener.html \
+  jscope/WaveData.html jscope/WaveDisplay.html
 
 SUBDOCS = \
   jScope.html jScope.jpg \
-  jScope/CompositeWaveDisplay.html \
-  jScope/ConnectionEvent.html jScope/ConnectionListener.html \
-  jScope/DataProvider.html jScope/FrameData.html \
-  jScope/data_setup.jpg jScope/frame_popup.jpg jScope/image_setup.jpg \
-  jScope/UpdateEvent.html jScope/UpdateEventListener.html \
-  jScope/WaveData.html jScope/popup.jpg
+  jscope/CompositeWaveDisplay.html \
+  jscope/ConnectionEvent.html jscope/ConnectionListener.html \
+  jscope/DataProvider.html jscope/FrameData.html \
+  jscope/data_setup.jpg jscope/frame_popup.jpg jscope/image_setup.jpg \
+  jscope/UpdateEvent.html jscope/UpdateEventListener.html \
+  jscope/WaveData.html jscope/popup.jpg
 
 JET_SRC = \
   jet/Ji/JiDataSource.java \
@@ -40,128 +40,128 @@ JET_SRC = \
   jet/Ji/JiSlab.java \
   jet/Ji/JiVarImpl.java \
   jet/Ji/JiVar.java \
-  jet/jetDataProvider.java \
-  jet/jetMdsDataProvider.java
+  jet/JetDataProvider.java \
+  jet/JetMdsDataProvider.java
 
 LOCAL_SRC = \
-  local/localDataProvider.java \
-  local/localDataProviderInfo.java
+  local/LocalDataProvider.java \
+  local/LocalDataProviderInfo.java
 
 MDS_SRC = \
-  mds/mdsAccess.java \
-  mds/mdsBrowseSignals.java \
-  mds/mdsConnection.java \
-  mds/mdsDataClient.java \
-  mds/mdsDataProvider.java \
-  mds/mdsIOException.java \
-  mds/mdsMessage.java \
-  mds/mdsParser.java \
-  mds/sshTunneling.java
+  mds/MdsAccess.java \
+  mds/MdsBrowseSignals.java \
+  mds/MdsConnection.java \
+  mds/MdsDataClient.java \
+  mds/MdsDataProvider.java \
+  mds/MdsIOException.java \
+  mds/MdsMessage.java \
+  mds/MdsParser.java \
+  mds/SshTunneling.java
 
 MDSUDT_SRC = \
-  mds/udt/mdsConnectionUdt.java \
-  mds/udt/mdsDataProviderUdt.java \
-  mds/udt/mdsIpProtocolWrapper.java \
+  mds/udt/MdsConnectionUdt.java \
+  mds/udt/MdsDataProviderUdt.java \
+  mds/udt/MdsIpProtocolWrapper.java \
 
 MISC_SRC = \
-  misc/asciiDataProvider.java \
-  misc/asdexDataProvider.java \
-  misc/ftuDataProvider.java \
-  misc/tsDataProvider.java \
-  misc/universalDataProvider.java
+  misc/AsciiDataProvider.java \
+  misc/AsdexDataProvider.java \
+  misc/FtuDataProvider.java \
+  misc/TsDataProvider.java \
+  misc/UniversalDataProvider.java
 
 TWU_SRC = \
-  twu/textorBrowseSignals.java \
-  twu/FakeTWUProperties.java \
-  twu/TWUFetchOptions.java \
-  twu/TWUProperties.java \
-  twu/TWUSignal.java \
-  twu/twuAccess.java \
-  twu/twuDataProvider.java \
-  twu/twuNameServices.java \
-  twu/twuSimpleFrameData.java \
-  twu/twuSingleSignal.java \
-  twu/twuWaveData.java
+  twu/TextorBrowseSignals.java \
+  twu/FakeTwuProperties.java \
+  twu/TwuFetchOptions.java \
+  twu/TwuProperties.java \
+  twu/TwuSignal.java \
+  twu/TwuAccess.java \
+  twu/TwuDataProvider.java \
+  twu/TwuNameServices.java \
+  twu/TwuSimpleFrameData.java \
+  twu/TwuSingleSignal.java \
+  twu/TwuWaveData.java
 
 W7X_SRC = \
-  w7x/w7xDataProvider.java \
-  w7x/w7xBrowseSignals.java
+  w7x/W7XDataProvider.java \
+  w7x/W7XBrowseSignals.java
 
 
 COMMON_SRC = \
-  jScope/AboutWindow.java \
-  jScope/Array.java \
-  jScope/Base64.java \
-  jScope/ColorDialog.java \
-  jScope/ColorMapDialog.java \
-  jScope/ColorMap.java \
-  jScope/ConnectionEvent.java \
-  jScope/ConnectionListener.java \
-  jScope/ContourSignal.java \
-  jScope/DataAccess.java \
-  jScope/DataAccessURL.java \
-  jScope/DataCached.java \
-  jScope/DataCacheObject.java \
-  jScope/DataProvider.java \
-  jScope/DataServerItem.java \
-  jScope/Descriptor.java \
-  jScope/FontSelection.java \
-  jScope/FrameData.java \
-  jScope/Frames.java \
-  jScope/Grid.java \
-  jScope/ImageTransferable.java \
-  jScope/jScopeBrowseSignals.java \
-  jScope/jScopeBrowseUrl.java \
-  jScope/jScopeDefaultValues.java \
-  jScope/jScopeFacade.java \
-  jScope/jScopeMultiWave.java \
-  jScope/jScopeProperties.java \
-  jScope/jScopeWaveContainer.java \
-  jScope/jScopeWaveInterface.java \
-  jScope/jScopeWavePopup.java \
-  jScope/MultiWaveform.java \
-  jScope/MultiWavePopup.java \
-  jScope/NotConnectedDataProvider.java \
-  jScope/ProfileDialog.java \
-  jScope/PropertiesEditor.java \
-  jScope/RandomAccessData.java \
-  jScope/RowColumnContainer.java \
-  jScope/SignalListener.java \
-  jScope/RowColumnLayout.java \
-  jScope/SetupDataDialog.java \
-  jScope/SetupDefaults.java \
-  jScope/SetupWaveformParams.java \
-  jScope/SignalBox.java \
-  jScope/AsynchDataSource.java \
-  jScope/Signal.java \
-  jScope/SignalsBoxDialog.java \
-  jScope/UpdateEvent.java \
-  jScope/UpdateEventListener.java \
-  jScope/WaveContainerEvent.java \
-  jScope/WaveContainerListener.java \
-  jScope/WaveData.java \
-  jScope/WaveformContainer.java \
-  jScope/WaveformEditor.java \
-  jScope/WaveformEditorListener.java \
-  jScope/WaveformEvent.java \
-  jScope/Waveform.java \
-  jScope/WaveformListener.java \
-  jScope/WaveformManager.java \
-  jScope/WaveformMetrics.java \
-  jScope/WaveInterface.java \
-  jScope/WavePopup.java \
-  jScope/XYData.java \
-  jScope/XYWaveData.java \
-  jScope/WaveDataListener.java
+  jscope/AboutWindow.java \
+  jscope/Array.java \
+  jscope/Base64.java \
+  jscope/ColorDialog.java \
+  jscope/ColorMapDialog.java \
+  jscope/ColorMap.java \
+  jscope/ConnectionEvent.java \
+  jscope/ConnectionListener.java \
+  jscope/ContourSignal.java \
+  jscope/DataAccess.java \
+  jscope/DataAccessURL.java \
+  jscope/DataCached.java \
+  jscope/DataCacheObject.java \
+  jscope/DataProvider.java \
+  jscope/DataServerItem.java \
+  jscope/Descriptor.java \
+  jscope/FontSelection.java \
+  jscope/FrameData.java \
+  jscope/Frames.java \
+  jscope/Grid.java \
+  jscope/ImageTransferable.java \
+  jscope/jScopeBrowseSignals.java \
+  jscope/jScopeBrowseUrl.java \
+  jscope/jScopeDefaultValues.java \
+  jscope/jScopeFacade.java \
+  jscope/jScopeMultiWave.java \
+  jscope/jScopeProperties.java \
+  jscope/jScopeWaveContainer.java \
+  jscope/jScopeWaveInterface.java \
+  jscope/jScopeWavePopup.java \
+  jscope/MultiWaveform.java \
+  jscope/MultiWavePopup.java \
+  jscope/NotConnectedDataProvider.java \
+  jscope/ProfileDialog.java \
+  jscope/PropertiesEditor.java \
+  jscope/RandomAccessData.java \
+  jscope/RowColumnContainer.java \
+  jscope/SignalListener.java \
+  jscope/RowColumnLayout.java \
+  jscope/SetupDataDialog.java \
+  jscope/SetupDefaults.java \
+  jscope/SetupWaveformParams.java \
+  jscope/SignalBox.java \
+  jscope/AsynchDataSource.java \
+  jscope/Signal.java \
+  jscope/SignalsBoxDialog.java \
+  jscope/UpdateEvent.java \
+  jscope/UpdateEventListener.java \
+  jscope/WaveContainerEvent.java \
+  jscope/WaveContainerListener.java \
+  jscope/WaveData.java \
+  jscope/WaveformContainer.java \
+  jscope/WaveformEditor.java \
+  jscope/WaveformEditorListener.java \
+  jscope/WaveformEvent.java \
+  jscope/Waveform.java \
+  jscope/WaveformListener.java \
+  jscope/WaveformManager.java \
+  jscope/WaveformMetrics.java \
+  jscope/WaveInterface.java \
+  jscope/WavePopup.java \
+  jscope/XYData.java \
+  jscope/XYWaveData.java \
+  jscope/WaveDataListener.java
 
 WAVEDISPLAY_SRC = \
-  jScope/Tools/WaveDisplay.java \
-  jScope/Tools/CompositeWaveDisplay.java
+  jscope/Tools/WaveDisplay.java \
+  jscope/Tools/CompositeWaveDisplay.java
 
 JSCOPE_SRC = \
   jScope.java
 
 EXTRA_CLASS = \
-  jScope/FontPanel.class \
-  jScope/ServerDialog*.class \
-  jScope/WindowDialog.class
+  jscope/FontPanel.class \
+  jscope/ServerDialog*.class \
+  jscope/WindowDialog.class

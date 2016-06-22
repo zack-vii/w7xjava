@@ -1,12 +1,12 @@
 package devicebeans;
 
-// package jTraverser;
+// package jtraverser;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
-import jTraverser.editor.NodeEditor;
+import jtraverser.editor.NodeEditor;
 import mds.data.descriptor.Descriptor;
 
 public class NodeInfoPropertyEditor implements PropertyEditor{

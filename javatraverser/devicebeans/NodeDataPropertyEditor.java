@@ -1,6 +1,6 @@
 package devicebeans;
 
-// package jTraverser;
+// package jtraverser;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;

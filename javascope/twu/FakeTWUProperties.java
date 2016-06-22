@@ -3,8 +3,8 @@
  */
 package twu;
 
-public class FakeTWUProperties extends TWUProperties{
-    public FakeTWUProperties(final int len){
+public class FakeTwuProperties extends TwuProperties{
+    public FakeTwuProperties(final int len){
         super(null);
         this.signalProps.put("TWU.properties.version", "0.7");
         this.signalProps.put("Dimensions", "1");

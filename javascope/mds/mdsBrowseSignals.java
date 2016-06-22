@@ -3,10 +3,10 @@ package mds;
 /* $Id$ */
 import java.util.Properties;
 import java.util.StringTokenizer;
-import jScope.jScopeBrowseSignals;
+import jscope.jScopeBrowseSignals;
 
 @SuppressWarnings("serial")
-public class mdsBrowseSignals extends jScopeBrowseSignals{
+public class MdsBrowseSignals extends jScopeBrowseSignals{
     private String server_url;
     private String shot;
     private String tree;

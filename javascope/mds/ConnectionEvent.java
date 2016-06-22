@@ -3,7 +3,7 @@ package mds;
 /* $Id$ */
 import java.awt.AWTEvent;
 import java.sql.Connection;
-import jScope.DataProvider;
+import jscope.DataProvider;
 
 /**
  * ConnectionEvent instances describe the current status of the data transfer and are passed by the DataProvider

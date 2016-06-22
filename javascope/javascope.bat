@@ -44,127 +44,127 @@ SET JET_SRC=^
   jet\ji\JiSlab.java ^
   jet\ji\JiVarImpl.java ^
   jet\ji\JiVar.java ^
-  jet\jetDataProvider.java ^
-  jet\jetMdsDataProvider.java
+  jet\JetDataProvider.java ^
+  jet\JetMdsDataProvider.java
 
 SET LOCAL_SRC=^
-  local\localDataProvider.java ^
-  local\localDataProviderInfo.java
+  local\LocalDataProvider.java ^
+  local\LocalDataProviderInfo.java
 
 SET MDS_SRC=^
   mds\Descriptor.java ^
-  mds\mdsAccess.java ^
-  mds\mdsBrowseSignals.java ^
-  mds\mdsConnection.java ^
-  mds\mdsDataClient.java ^
-  mds\mdsDataProvider.java ^
-  mds\mdsIOException.java ^
-  mds\mdsMessage.java ^
-  mds\mdsParser.java ^
-  mds\sshTunneling.java
+  mds\MdsAccess.java ^
+  mds\MdsBrowseSignals.java ^
+  mds\MdsConnection.java ^
+  mds\MdsDataClient.java ^
+  mds\MdsDataProvider.java ^
+  mds\MdsIOException.java ^
+  mds\MdsMessage.java ^
+  mds\MdsParser.java ^
+  mds\SshTunneling.java
 
 SET MDSUDT_SRC=^
-  mds\udt\mdsConnectionUdt.java ^
-  mds\udt\mdsDataProviderUdt.java ^
-  mds\udt\mdsIpProtocolWrapper.java
+  mds\udt\MdsConnectionUdt.java ^
+  mds\udt\MdsDataProviderUdt.java ^
+  mds\udt\MdsIpProtocolWrapper.java
 
 SET MISC_SRC=^
-  misc\asciiDataProvider.java ^
-  misc\asdexDataProvider.java ^
-  misc\ftuDataProvider.java ^
-  misc\tsDataProvider.java ^
-  misc\universalDataProvider.java
+  misc\AsciiDataProvider.java ^
+  misc\AsdexDataProvider.java ^
+  misc\FtuDataProvider.java ^
+  misc\TsDataProvider.java ^
+  misc\UniversalDataProvider.java
 
 SET TWU_SRC=^
-  twu\textorBrowseSignals.java ^
-  twu\FakeTWUProperties.java ^
-  twu\TWUFetchOptions.java ^
-  twu\TWUProperties.java ^
-  twu\TWUSignal.java ^
-  twu\twuAccess.java ^
-  twu\twuDataProvider.java ^
-  twu\twuNameServices.java ^
-  twu\twuSimpleFrameData.java ^
-  twu\twuSingleSignal.java ^
-  twu\twuWaveData.java
+  twu\TextorBrowseSignals.java ^
+  twu\FakeTwuProperties.java ^
+  twu\TwuFetchOptions.java ^
+  twu\TwuProperties.java ^
+  twu\TwuSignal.java ^
+  twu\TwuAccess.java ^
+  twu\TwuDataProvider.java ^
+  twu\TwuNameServices.java ^
+  twu\TwuSimpleFrameData.java ^
+  twu\TwuSingleSignal.java ^
+  twu\TwuWaveData.java
 
 SET W7X_SRC=^
-  w7x\w7xDataProvider.java ^
-  w7x\w7xBrowseSignals.java ^
-  w7x\signalaccess.java
+  w7x\W7XDataProvider.java ^
+  w7x\W7XBrowseSignals.java ^
+  w7x\Signalaccess.java
 
 
 SET COMMON_SRC=^
-  jScope\AboutWindow.java ^
-  jScope\Base64.java ^
-  jScope\ColorDialog.java ^
-  jScope\ColorMapDialog.java ^
-  jScope\ColorMap.java ^
-  jScope\ConnectionEvent.java ^
-  jScope\ConnectionListener.java ^
-  jScope\ContourSignal.java ^
-  jScope\DataAccess.java ^
-  jScope\DataAccessURL.java ^
-  jScope\DataCached.java ^
-  jScope\DataCacheObject.java ^
-  jScope\DataProvider.java ^
-  jScope\DataServerItem.java ^
-  jScope\FontSelection.java ^
-  jScope\FrameData.java ^
-  jScope\Frames.java ^
-  jScope\Grid.java ^
-  jScope\ImageTransferable.java ^
-  jScope\jScopeBrowseSignals.java ^
-  jScope\jScopeBrowseUrl.java ^
-  jScope\jScopeDefaultValues.java ^
-  jScope\jScopeFacade.java ^
-  jScope\jScopeMultiWave.java ^
-  jScope\jScopeProperties.java ^
-  jScope\jScopeWaveContainer.java ^
-  jScope\jScopeWaveInterface.java ^
-  jScope\jScopeWavePopup.java ^
-  jScope\MultiWaveform.java ^
-  jScope\MultiWavePopup.java ^
-  jScope\NotConnectedDataProvider.java ^
-  jScope\ProfileDialog.java ^
-  jScope\PropertiesEditor.java ^
-  jScope\RandomAccessData.java ^
-  jScope\RowColumnContainer.java ^
-  jScope\SignalListener.java ^
-  jScope\RowColumnLayout.java ^
-  jScope\SetupDataDialog.java ^
-  jScope\SetupDefaults.java ^
-  jScope\SetupWaveformParams.java ^
-  jScope\SignalBox.java ^
-  jScope\AsynchDataSource.java ^
-  jScope\Signal.java ^
-  jScope\SignalsBoxDialog.java ^
-  jScope\UpdateEvent.java ^
-  jScope\UpdateEventListener.java ^
-  jScope\WaveContainerEvent.java ^
-  jScope\WaveContainerListener.java ^
-  jScope\WaveData.java ^
-  jScope\WaveformContainer.java ^
-  jScope\WaveformEditor.java ^
-  jScope\WaveformEditorListener.java ^
-  jScope\WaveformEvent.java ^
-  jScope\Waveform.java ^
-  jScope\WaveformListener.java ^
-  jScope\WaveformManager.java ^
-  jScope\WaveformMetrics.java ^
-  jScope\WaveInterface.java ^
-  jScope\WavePopup.java ^
-  jScope\XYData.java ^
-  jScope\XYWaveData.java ^
-  jScope\WaveDataListener.java
+  jscope\AboutWindow.java ^
+  jscope\Base64.java ^
+  jscope\ColorDialog.java ^
+  jscope\ColorMapDialog.java ^
+  jscope\ColorMap.java ^
+  jscope\ConnectionEvent.java ^
+  jscope\ConnectionListener.java ^
+  jscope\ContourSignal.java ^
+  jscope\DataAccess.java ^
+  jscope\DataAccessURL.java ^
+  jscope\DataCached.java ^
+  jscope\DataCacheObject.java ^
+  jscope\DataProvider.java ^
+  jscope\DataServerItem.java ^
+  jscope\FontSelection.java ^
+  jscope\FrameData.java ^
+  jscope\Frames.java ^
+  jscope\Grid.java ^
+  jscope\ImageTransferable.java ^
+  jscope\jScopeBrowseSignals.java ^
+  jscope\jScopeBrowseUrl.java ^
+  jscope\jScopeDefaultValues.java ^
+  jscope\jScopeFacade.java ^
+  jscope\jScopeMultiWave.java ^
+  jscope\jScopeProperties.java ^
+  jscope\jScopeWaveContainer.java ^
+  jscope\jScopeWaveInterface.java ^
+  jscope\jScopeWavePopup.java ^
+  jscope\MultiWaveform.java ^
+  jscope\MultiWavePopup.java ^
+  jscope\NotConnectedDataProvider.java ^
+  jscope\ProfileDialog.java ^
+  jscope\PropertiesEditor.java ^
+  jscope\RandomAccessData.java ^
+  jscope\RowColumnContainer.java ^
+  jscope\SignalListener.java ^
+  jscope\RowColumnLayout.java ^
+  jscope\SetupDataDialog.java ^
+  jscope\SetupDefaults.java ^
+  jscope\SetupWaveformParams.java ^
+  jscope\SignalBox.java ^
+  jscope\AsynchDataSource.java ^
+  jscope\Signal.java ^
+  jscope\SignalsBoxDialog.java ^
+  jscope\UpdateEvent.java ^
+  jscope\UpdateEventListener.java ^
+  jscope\WaveContainerEvent.java ^
+  jscope\WaveContainerListener.java ^
+  jscope\WaveData.java ^
+  jscope\WaveformContainer.java ^
+  jscope\WaveformEditor.java ^
+  jscope\WaveformEditorListener.java ^
+  jscope\WaveformEvent.java ^
+  jscope\Waveform.java ^
+  jscope\WaveformListener.java ^
+  jscope\WaveformManager.java ^
+  jscope\WaveformMetrics.java ^
+  jscope\WaveInterface.java ^
+  jscope\WavePopup.java ^
+  jscope\XYData.java ^
+  jscope\XYWaveData.java ^
+  jscope\WaveDataListener.java
 
 SET WAVEDISPLAY_SRC=^
-  jScope\tools\WaveDisplay.java ^
-  jScope\tools\CompositeWaveDisplay.java
+  jscope\tools\WaveDisplay.java ^
+  jscope\tools\CompositeWaveDisplay.java
 
 SET JSCOPE_RES=^
-  jScope\AboutWindow.jpg ^
-  jScope\colors.tbl
+  jscope\AboutWindow.jpg ^
+  jscope\colors.tbl
 
 SET JSCOPE_SRC=^
   jScope.java ^
@@ -177,17 +177,17 @@ SET JSCOPE_SRC=^
   %W7X_SRC%
 
 SET EXTRA_CLASS=^
-jScope\FakeTWUProperties.class ^
-jScope\FontPanel.class ^
-jScope\ServerDialog*.class ^
-jScope\WindowDialog.class
+jscope\FakeTwuProperties.class ^
+jscope\FontPanel.class ^
+jscope\ServerDialog*.class ^
+jscope\WindowDialog.class
 
-SET CLASSPATH=-classpath ".;mds\MindTerm.jar;w7x\swingx.jar;w7x\w7xDataProvider.jar"
+SET CLASSPATH=-classpath ".;mds\MindTerm.jar;w7x\swingx.jar;w7x\W7XDataProvider.jar"
 SET JAVAC="%JDK_HOME%\bin\javac.exe"
 SET JCFLAGS=-O -source 1.6 -target 1.6 -g:none||rem-Xlint -deprecation
 SET SRCDIR=%CD%
 SET JAR="%JDK_HOME%\bin\jar.exe"
-SET JSMANIFEST=jScope\MANIFEST.mf
+SET JSMANIFEST=jscope\MANIFEST.mf
 SET JARDIR=..\java\classes
 
 ECHO compiling *.java to *.class . . .
@@ -201,10 +201,10 @@ COPY /Y jScope.properties %JARDIR%\>NUL
 MKDIR  %JARDIR%\docs 2>NUL
 MKDIR  %JARDIR%\jars 2>NUL
 FOR %%F IN (%DOCS%) DO COPY /Y %%F /D %JARDIR%\docs>NUL
-FOR %%F IN (%JSCOPE_RES%) DO COPY /Y %%F /D %JARDIR%\jScope>NUL
-COPY %CD%\mds\MindTerm.jar %JARDIR%\mdsDataProvider.jar>NUL
-rem COPY %CD%\w7x\swingx.jar %JARDIR%>NUL || rem included in w7xDataProvider
-COPY %CD%\w7x\w7xDataProvider.jar %JARDIR%>NUL
+FOR %%F IN (%JSCOPE_RES%) DO COPY /Y %%F /D %JARDIR%\jscope>NUL
+COPY %CD%\Mds\MindTerm.jar %JARDIR%\MdsDataProvider.jar>NUL
+rem COPY %CD%\w7x\swingx.jar %JARDIR%>NUL || rem included in W7XDataProvider
+COPY %CD%\w7x\W7XDataProvider.jar %JARDIR%>NUL
 COPY /Y %JSMANIFEST% %JARDIR%\%JSMANIFEST% >NUL
 COPY /Y %JSMANIFEST% %JARDIR%\%JSMANIFEST% >NUL
 ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>%JARDIR%\%JSMANIFEST%
@@ -212,13 +212,13 @@ ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>%JARDIR%\%JSM
 :packjar
 ECHO creating jar packages
 PUSHD %JARDIR%
-%JAR% -cmf %JSMANIFEST% "jScope.jar" jScope.class jScope.properties jScope docs
-%JAR% -cmf %SRCDIR%\jet\MANIFEST.mf "jetDataProvider.jar" jet
-%JAR% -cmf %SRCDIR%\local\MANIFEST.mf "localDataProvider.jar" local
-%JAR% -umf %SRCDIR%\mds\MANIFEST.mf "mdsDataProvider.jar" mds
-%JAR% -cmf %SRCDIR%\misc\MANIFEST.mf "miscDataProvider.jar" misc
-%JAR% -cmf %SRCDIR%\twu\MANIFEST.mf "twuDataProvider.jar" twu
-%JAR% -umf %SRCDIR%\w7x\MANIFEST.mf "w7xDataProvider.jar" w7x
+%JAR% -cmf %JSMANIFEST% "jScope.jar" jScope.class jScope.properties jscope docs
+%JAR% -cmf %SRCDIR%\jet\MANIFEST.mf "JetDataProvider.jar" jet
+%JAR% -cmf %SRCDIR%\local\MANIFEST.mf "LocalDataProvider.jar" local
+%JAR% -umf %SRCDIR%\mds\MANIFEST.mf "MdsDataProvider.jar" mds
+%JAR% -cmf %SRCDIR%\misc\MANIFEST.mf "MiscDataProvider.jar" misc
+%JAR% -cmf %SRCDIR%\twu\MANIFEST.mf "TwuDataProvider.jar" twu
+%JAR% -umf %SRCDIR%\w7x\MANIFEST.mf "W7XDataProvider.jar" w7x
 %JAR% -cf "WaveDisplay.jar" %COMMON_SRC:.java=.class% %WAVEDISPLAY_SRC:.java=.class%
 POPD
 
@@ -226,10 +226,10 @@ POPD
 ECHO cleaning up
 PUSHD %JARDIR%
 RMDIR /S /Q docs 2>NUL
-DEL colors1.tbl jScope.properties jScope.class 2>NUL
+DEL colors.tbl jScope.properties jScope.class 2>NUL
 RMDIR /S /Q jars 2>nul
 RMDIR /S /Q jet 2>nul
-RMDIR /S /Q jScope 2>nul
+RMDIR /S /Q jscope 2>nul
 RMDIR /S /Q local 2>nul
 RMDIR /S /Q mds 2>nul
 RMDIR /S /Q misc 2>nul

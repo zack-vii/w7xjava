@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Color;
@@ -82,11 +82,11 @@ public class Grid implements Serializable{
         this.x_values = new double[50];
         this.y_values = new double[50];
         this.xmax = xmax;
-        this.x_dim = this.BuildGrid(this.x_values, Grid.IS_X, xmax, ymax, xmin, ymin, xlog, ylog);
-        this.y_dim = this.BuildGrid(this.y_values, Grid.IS_Y, xmax, ymax, xmin, ymin, xlog, ylog);
+        this.x_dim = this.buildGrid(this.x_values, Grid.IS_X, xmax, ymax, xmin, ymin, xlog, ylog);
+        this.y_dim = this.buildGrid(this.y_values, Grid.IS_Y, xmax, ymax, xmin, ymin, xlog, ylog);
     }
 
-    private int BuildGrid(final double val[], final int mode, double xmax, double ymax, final double xmin, final double ymin, final boolean xlog, final boolean ylog) {
+    private int buildGrid(final double val[], final int mode, double xmax, double ymax, final double xmin, final double ymin, final boolean xlog, final boolean ylog) {
         if(ymax <= ymin) ymax = ymin + 1E-10;
         if(xmax <= xmin) xmax = xmin + 1E-10;
         final double curr_max, curr_min;
@@ -121,11 +121,11 @@ public class Grid implements Serializable{
         return fac_cnt;
     }
 
-    public Rectangle GetBoundingBox(final Dimension d) {
+    public Rectangle getBoundingBox(final Dimension d) {
         return new Rectangle(this.label_width, 0, d.width - this.label_width + 1, d.height - this.label_height + 1);
     }
 
-    public void GetLimits(final Graphics g, final Rectangle lim_rect, final boolean ylog) {
+    public void getLimits(final Graphics g, final Rectangle lim_rect, final boolean ylog) {
         int label_width, label_height, curr_dim;
         FontMetrics fm;
         fm = g.getFontMetrics();
@@ -137,7 +137,7 @@ public class Grid implements Serializable{
         label_width = 0;
         if(!this.int_ylabels){
             for(int i = 0; i < this.y_dim; i++){
-                curr_dim = fm.stringWidth(Waveform.ConvertToString(this.y_values[i], ylog));
+                curr_dim = fm.stringWidth(Waveform.convertToString(this.y_values[i], ylog));
                 if(label_width < curr_dim) label_width = curr_dim;
             }
             if(this.y_label != null) label_width += fm.getHeight();
@@ -164,7 +164,7 @@ public class Grid implements Serializable{
         this.label_width = 0;
         if(!this.int_ylabels && wm != null){
             for(i = 0; i < this.y_dim; i++){
-                curr_dim = fm.stringWidth(Waveform.ConvertToString(this.y_values[i], wm.YLog()));
+                curr_dim = fm.stringWidth(Waveform.convertToString(this.y_values[i], wm.getYLog()));
                 if(this.label_width < curr_dim) this.label_width = curr_dim;
             }
             if(this.y_label != null) this.label_width += fm.getHeight();
@@ -173,7 +173,7 @@ public class Grid implements Serializable{
         prev_col = g.getColor();
         if(wm != null){
             for(i = 0; i < this.y_dim; i++){
-                dim = wm.YPixel(this.y_values[i], d);
+                dim = wm.toYPixel(this.y_values[i], d);
                 switch(this.mode){
                     case IS_DOTTED:
                         if(dim <= d.height - this.label_height) for(j = this.label_width; j < d.width; j += 4)
@@ -189,10 +189,10 @@ public class Grid implements Serializable{
                             g.drawLine(d.width - d.width / 80, dim, d.width, dim);
                         }
                         if(i == this.y_dim - 1) break;
-                        if(wm.YLog()) curr_step = (this.y_values[i + 1] - this.y_values[i]) / this.num_y_steps;
+                        if(wm.getYLog()) curr_step = (this.y_values[i + 1] - this.y_values[i]) / this.num_y_steps;
                         else curr_step = this.y_step;
                         for(j = 1; j <= this.num_y_steps; j++){
-                            curr_dim = wm.YPixel(this.y_values[i] + j * curr_step, d);
+                            curr_dim = wm.toYPixel(this.y_values[i] + j * curr_step, d);
                             if(curr_dim <= d.height - this.label_height){
                                 g.drawLine(this.label_width + 3, curr_dim, this.label_width + d.width / 100 + 3, curr_dim);
                                 g.drawLine(d.width - d.width / 100, curr_dim, d.width, curr_dim);
@@ -209,14 +209,14 @@ public class Grid implements Serializable{
                             if(this.mode == Grid.IS_NONE) ylabel_offset += d.width / 40;
                             else ylabel_offset = 2;
                         }
-                        g.drawString(Waveform.ConvertToString(this.y_values[i], wm.YLog()), ylabel_offset + 1, curr_dim);
+                        g.drawString(Waveform.convertToString(this.y_values[i], wm.getYLog()), ylabel_offset + 1, curr_dim);
                     }
                 }
             }
             int prevIdx;
             String currStringSubSec = "";
             for(i = prevIdx = 0; i < this.x_dim; i++){
-                dim = wm.XPixel(this.x_values[i], d);
+                dim = wm.toXPixel(this.x_values[i], d);
                 switch(this.mode){
                     case IS_DOTTED:
                         if(dim >= this.label_width) for(j = 0; j < d.height - this.label_height; j += 4)
@@ -232,11 +232,11 @@ public class Grid implements Serializable{
                             g.drawLine(dim, d.height - this.label_height - d.height / 40, dim, d.height - this.label_height);
                         }
                         if(i == this.x_dim - 1) break;
-                        if(wm.XLog()) curr_step = (this.x_values[i + 1] - this.x_values[i]) / this.num_x_steps;
+                        if(wm.getXLog()) curr_step = (this.x_values[i + 1] - this.x_values[i]) / this.num_x_steps;
                         else curr_step = this.x_step;
                         for(j = 1; j <= this.num_x_steps; j++){
                             final double val = this.x_values[i] + j * curr_step;
-                            curr_dim = wm.XPixel(val, d);
+                            curr_dim = wm.toXPixel(val, d);
                             if(curr_dim >= this.label_width){
                                 g.drawLine(curr_dim, 2, curr_dim, d.height / 80);
                                 g.drawLine(curr_dim, d.height - this.label_height - d.height / 80, curr_dim, d.height - this.label_height);
@@ -281,7 +281,7 @@ public class Grid implements Serializable{
                                     if(timeMillis < this.xmax){
                                         final Color c = g.getColor();
                                         g.setColor(Color.BLUE);
-                                        curr_dim = wm.XPixel(timeMillis, d);
+                                        curr_dim = wm.toXPixel(timeMillis, d);
                                         if(curr_dim >= this.label_width){
                                             // g.drawLine(curr_dim, 0, curr_dim,d.height - label_height); case IS_DOTTED:
                                             for(j = 0; j < d.height - this.label_height; j += 7)
@@ -294,9 +294,9 @@ public class Grid implements Serializable{
                             }
                         }
                     }catch(final Exception exc){
-                        curr_string = Waveform.ConvertToString(this.x_values[i], wm.XLog());
+                        curr_string = Waveform.convertToString(this.x_values[i], wm.getXLog());
                     }
-                }else curr_string = Waveform.ConvertToString(this.x_values[i], wm.XLog());
+                }else curr_string = Waveform.convertToString(this.x_values[i], wm.getXLog());
                 curr_dim = dim - fm.stringWidth(curr_string) / 2;
                 if(curr_dim >= this.label_width && dim + fm.stringWidth(curr_string) / 2 < d.width){
                     if(this.xAxisHMS && i > 0 && Grid.toMillis(this.x_values[i] - this.x_values[prevIdx]) < 1000) g.drawString(currStringSubSec, curr_dim, d.height - fm.getHeight() / 10 - this.label_descent);
@@ -337,7 +337,7 @@ public class Grid implements Serializable{
         this.y_label = y_label;
     }
 
-    void SetReversed(final boolean reversed) {
+    void setReversed(final boolean reversed) {
         this.reversed = reversed;
     }
 

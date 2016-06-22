@@ -23,36 +23,36 @@ import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import debug.DEBUG;
-import jScope.Array;
-import jScope.Array.AllFrames;
-import jScope.Array.ByteArray;
-import jScope.Array.RealArray;
-import jScope.AsynchDataSource;
-import jScope.ConnectionEvent;
-import jScope.ConnectionListener;
-import jScope.DataProvider;
-import jScope.DataServerItem;
-import jScope.FrameData;
-import jScope.Frames;
-import jScope.UpdateEventListener;
-import jScope.WaveData;
-import jScope.WaveDataListener;
-import jScope.XYData;
-import jScope.jScopeFacade;
+import jscope.Array;
+import jscope.AsynchDataSource;
+import jscope.ConnectionEvent;
+import jscope.ConnectionListener;
+import jscope.DataProvider;
+import jscope.DataServerItem;
+import jscope.FrameData;
+import jscope.Frames;
+import jscope.UpdateEventListener;
+import jscope.WaveData;
+import jscope.WaveDataListener;
+import jscope.XYData;
+import jscope.jScopeFacade;
+import jscope.Array.AllFrames;
+import jscope.Array.ByteArray;
+import jscope.Array.RealArray;
 
-public class mdsDataProvider implements DataProvider{
+public class MdsDataProvider implements DataProvider{
     class SegmentedFrameData implements FrameData{
         int                          bytesPerPixel;
         Dimension                    dim;
         int                          framesPerSegment;
         int                          mode;
-        final mdsDataProvider.Signal sig;
+        final MdsDataProvider.Signal sig;
         int                          startSegment, endSegment, actSegments;
         float                        time_max, time_min;
         float                        times[];
 
-        public SegmentedFrameData(final mdsDataProvider.Signal sig, final float time_min, final float time_max) throws IOException{
-            if(DEBUG.M) System.out.println("mdsDataProvider.SegmentedFrameData(\"" + sig + "\", " + time_min + ", " + time_max + ")");
+        public SegmentedFrameData(final MdsDataProvider.Signal sig, final float time_min, final float time_max) throws IOException{
+            if(DEBUG.M) System.out.println("MdsDataProvider.SegmentedFrameData(\"" + sig + "\", " + time_min + ", " + time_max + ")");
             this.sig = sig;
             this.time_min = time_min;
             this.time_max = time_max;
@@ -90,7 +90,7 @@ public class mdsDataProvider implements DataProvider{
         }
 
         private void findSegments() throws IOException {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SegmentedFrameData.findSegments() @ " + this.sig.y);
+            if(DEBUG.M) System.out.println("MdsDataProvider.SegmentedFrameData.findSegments() @ " + this.sig.y);
             try{
                 final float[] limits = this.sig.seglimits;
                 for(this.startSegment = 0; this.startSegment < this.sig.numSegments - 1; this.startSegment++)
@@ -103,8 +103,8 @@ public class mdsDataProvider implements DataProvider{
         }
 
         @Override
-        public byte[] GetFrameAt(final int idx) throws IOException {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SegmentedFrameData.GetFrameAt(" + idx + ")");
+        public byte[] getFrameAt(final int idx) throws IOException {
+            if(DEBUG.M) System.out.println("MdsDataProvider.SegmentedFrameData.getFrameAt(" + idx + ")");
             final int segmentIdx = this.startSegment + idx / this.framesPerSegment;
             final int segmentOffset = (idx % this.framesPerSegment) * this.dim.width * this.dim.height * this.bytesPerPixel;
             final byte[] segment = ((ByteArray)this.sig.getSegment(segmentIdx).dat).buf;
@@ -115,22 +115,22 @@ public class mdsDataProvider implements DataProvider{
         }
 
         @Override
-        public Dimension GetFrameDimension() {
+        public Dimension getFrameDimension() {
             return this.dim;
         }
 
         @Override
-        public float[] GetFrameTimes() {
+        public float[] getFrameTimes() {
             return this.times;
         }
 
         @Override
-        public int GetFrameType() throws IOException {
+        public int getFrameType() throws IOException {
             return this.mode;
         }
 
         @Override
-        public int GetNumFrames() {
+        public int getNumFrames() {
             return this.actSegments * this.framesPerSegment;
         }
     }
@@ -144,15 +144,15 @@ public class mdsDataProvider implements DataProvider{
 
             public Segment(final String node, final int idx) throws IOException{
                 final String expr = new StringBuilder(255).append("SHAPE(_seg=GetSegment(").append(node).append(',').append(idx).append("))").toString();
-                int[] shape = mdsDataProvider.this.GetIntegerArray(expr);
+                int[] shape = MdsDataProvider.this.getIntegerArray(expr);
                 if(Signal.this.isframe){
                     if(shape.length == 4 && shape[2] == 3){
                         this.dat = this.getRGB("_seg", shape);
                         shape = new int[]{shape[0], shape[1], shape[3]};
-                    }else this.dat = mdsDataProvider.this.getByteArray("_seg");
-                }else this.dat = mdsDataProvider.this.GetRealArray("_seg");
+                    }else this.dat = MdsDataProvider.this.getByteArray("_seg");
+                }else this.dat = MdsDataProvider.this.getRealArray("_seg");
                 this.shape = shape;
-                this.dim = mdsDataProvider.this.GetFloatArray("DIM_OF(_seg)");
+                this.dim = MdsDataProvider.this.getFloatArray("DIM_OF(_seg)");
                 this.idx = idx;
                 this.node = node;
             }
@@ -163,7 +163,7 @@ public class mdsDataProvider implements DataProvider{
             }
 
             private ByteArray getRGB(final String expr, final int[] shape) throws IOException {
-                final int[] ibuf = mdsDataProvider.this.GetIntArray(expr);
+                final int[] ibuf = MdsDataProvider.this.getIntArray(expr);
                 final int imlen = shape[0] * shape[1];
                 final ByteBuffer bb = ByteBuffer.allocate(Integer.BYTES * imlen * shape[3]);
                 final IntBuffer r = IntBuffer.wrap(ibuf);
@@ -193,8 +193,8 @@ public class mdsDataProvider implements DataProvider{
         public final String   y, x;
 
         public Signal(final String in_y, final String in_x, final boolean isframe){
-            if(DEBUG.M) System.out.println("mdsDataProvider.Signal(\"" + in_y + "\",\"" + in_x + "\"," + isframe + ")");
-            mdsDataProvider.this.error = null;
+            if(DEBUG.M) System.out.println("MdsDataProvider.Signal(\"" + in_y + "\",\"" + in_x + "\"," + isframe + ")");
+            MdsDataProvider.this.error = null;
             this.y = this.getNode(in_y);
             this.isframe = isframe;
             this.x = (in_x == null || in_x == "") ? null : this.getNode(in_x);
@@ -237,21 +237,21 @@ public class mdsDataProvider implements DataProvider{
                 this.units_of_dim = this.getStringOrError("UNITS_OF(" + xxx + ")");
                 this.help_of_dat = this.getStringOrError("HELP_OF(_yyy)");
                 this.shape = this.getIntArray("SHAPE(_yyy)");
-                mdsDataProvider.this.mds.mdsValue("DEALLOCATE('_yyy')");
-                if(this.x != null) mdsDataProvider.this.mds.mdsValue("DEALLOCATE('_xxx')");
+                MdsDataProvider.this.mds.mdsValue("DEALLOCATE('_yyy')");
+                if(this.x != null) MdsDataProvider.this.mds.mdsValue("DEALLOCATE('_xxx')");
             }
         }
 
         public final void deallocate_seg() {
-            mdsDataProvider.this.mds.mdsValue("DEALLOCATE('_seg')");
+            MdsDataProvider.this.mds.mdsValue("DEALLOCATE('_seg')");
         }
 
         private final Object getByteArrayOrError(final String expr, final String orig) {
             try{
-                return mdsDataProvider.this.getByteArray(expr);
+                return MdsDataProvider.this.getByteArray(expr);
             }catch(final IOException e){
                 final String error = e.getMessage();
-                mdsDataProvider.this.error = error;
+                MdsDataProvider.this.error = error;
                 if(orig == null) return e;
                 return new IOException(error.replaceFirst(Pattern.quote(expr), Matcher.quoteReplacement(orig)));
             }
@@ -259,7 +259,7 @@ public class mdsDataProvider implements DataProvider{
 
         private final int[] getIntArray(final String expr) {
             try{
-                return mdsDataProvider.this.GetIntArray(expr);
+                return MdsDataProvider.this.getIntArray(expr);
             }catch(final Exception e){
                 return new int[]{0};
             }
@@ -267,10 +267,10 @@ public class mdsDataProvider implements DataProvider{
 
         private final float[] getLimits() {
             try{ // try using GetLimits
-                return mdsDataProvider.this.GetFloatArray("GetLimits(" + this.y + ")");
+                return MdsDataProvider.this.getFloatArray("GetLimits(" + this.y + ")");
             }catch(final Exception e1){ // readout the limits manually
                 try{
-                    return mdsDataProvider.this.GetFloatArray("COMMA(_N=GETNCI(" + this.y + ",'NID_NUMBER'),_L=[],FOR(_I=0,_I<20,_I++,COMMA(_S=0,_E=0,_R=TreeShr->TreeGetSegmentLimits(VAL(_N),VAL(_I),XD(_S),XD(_E)),IF(_R&1,_L=[_L,_S,_E],_L=[_L,$ROPRAND,$ROPRAND]))),_L)");
+                    return MdsDataProvider.this.getFloatArray("COMMA(_N=GETNCI(" + this.y + ",'NID_NUMBER'),_L=[],FOR(_I=0,_I<20,_I++,COMMA(_S=0,_E=0,_R=TreeShr->TreeGetSegmentLimits(VAL(_N),VAL(_I),XD(_S),XD(_E)),IF(_R&1,_L=[_L,_S,_E],_L=[_L,$ROPRAND,$ROPRAND]))),_L)");
                 }catch(final Exception e2){
                     System.err.println("GetLimits: " + e2);
                     return null;
@@ -279,10 +279,10 @@ public class mdsDataProvider implements DataProvider{
         }
 
         private final String getNode(String node) {
-            if(DEBUG.M) System.out.println("mdsDataProvider.Signal.getNode(\"" + node + "\")");
+            if(DEBUG.M) System.out.println("MdsDataProvider.Signal.getNode(\"" + node + "\")");
             try{
-                while((mdsDataProvider.this.GetIntArray("[GETNCI(" + node + ",'DTYPE')]")[0] & 0xFE) == 192)// is nid or path
-                    node = mdsDataProvider.this.GetString("GETNCI(GETNCI(" + node + ",'RECORD'),'PATH')");
+                while((MdsDataProvider.this.getIntArray("[GETNCI(" + node + ",'DTYPE')]")[0] & 0xFE) == 192)// is nid or path
+                    node = MdsDataProvider.this.getString("GETNCI(GETNCI(" + node + ",'RECORD'),'PATH')");
             }catch(final Exception e){
                 if(DEBUG.D) System.err.println(node + " : " + e);
             }
@@ -291,7 +291,7 @@ public class mdsDataProvider implements DataProvider{
 
         private final int getNumSegments(final String node) {
             try{
-                return mdsDataProvider.this.GetIntArray("[GetNumSegments(" + node + ")]")[0];
+                return MdsDataProvider.this.getIntArray("[GetNumSegments(" + node + ")]")[0];
             }catch(final Exception e){
                 if(DEBUG.D) System.err.println(node + " not segmented : " + e);
             }
@@ -300,10 +300,10 @@ public class mdsDataProvider implements DataProvider{
 
         private final Object getRealArrayOrError(final String expr, final String orig) {
             try{
-                return mdsDataProvider.this.GetRealArray(expr);
+                return MdsDataProvider.this.getRealArray(expr);
             }catch(final IOException e){
                 final String error = e.getMessage();
-                mdsDataProvider.this.error = error;
+                MdsDataProvider.this.error = error;
                 if(orig == null) return e;
                 return new IOException(error.replaceFirst(Pattern.quote(expr), Matcher.quoteReplacement(orig)));
             }
@@ -321,7 +321,7 @@ public class mdsDataProvider implements DataProvider{
 
         private final Object getStringOrError(final String expr) {
             try{
-                return mdsDataProvider.this.mds.mdsValue(expr).strdata;
+                return MdsDataProvider.this.mds.mdsValue(expr).strdata;
             }catch(final Exception e){
                 return e;
             }
@@ -346,7 +346,7 @@ public class mdsDataProvider implements DataProvider{
         private float[]   times           = null;
 
         public SimpleFrameData(final Signal sig, final double time_min, final double time_max) throws Exception{
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleFrameData(" + sig + ", " + time_min + ", " + time_max + ")");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleFrameData(" + sig + ", " + time_min + ", " + time_max + ")");
             final float all_times[];
             this.time_min = time_min;
             this.time_max = time_max;
@@ -374,8 +374,8 @@ public class mdsDataProvider implements DataProvider{
         }
 
         @Override
-        public byte[] GetFrameAt(final int idx) throws IOException {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleFrameData.GetFrameAt(" + idx + ")");
+        public byte[] getFrameAt(final int idx) throws IOException {
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleFrameData.getFrameAt(" + idx + ")");
             byte[] b_img = null;
             if(this.mode == FrameData.BITMAP_IMAGE_8 || this.mode == FrameData.BITMAP_IMAGE_16 || this.mode == FrameData.BITMAP_IMAGE_32 || this.mode == FrameData.BITMAP_IMAGE_FLOAT){
                 if(this.buf == null) throw(new IOException("Frames not loaded"));
@@ -396,31 +396,31 @@ public class mdsDataProvider implements DataProvider{
         }
 
         @Override
-        public Dimension GetFrameDimension() {
+        public Dimension getFrameDimension() {
             return this.dim;
         }
 
         @Override
-        public float[] GetFrameTimes() {
+        public float[] getFrameTimes() {
             return this.times;
         }
 
         @Override
-        public int GetFrameType() throws IOException {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleFrameData.GetFrameType()");
+        public int getFrameType() throws IOException {
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleFrameData.getFrameType()");
             if(this.mode != -1) return this.mode;
             int i;
             for(i = 0; i < this.n_frames; i++){
-                this.buf = this.GetFrameAt(i);
+                this.buf = this.getFrameAt(i);
                 if(this.buf != null) break;
             }
             this.first_frame_idx = i;
-            this.mode = Frames.DecodeImageType(this.buf);
+            this.mode = Frames.decodeImageType(this.buf);
             return this.mode;
         }
 
         @Override
-        public int GetNumFrames() {
+        public int getNumFrames() {
             return this.n_frames;
         }
     } // END Inner Class SimpleFrameData
@@ -434,7 +434,7 @@ public class mdsDataProvider implements DataProvider{
         private boolean                        isXLong            = false;
         private int                            numDimensions      = SimpleWaveData.DIMENSION_UNKNOWN;
         private int                            segmentMode        = SimpleWaveData.SEGMENTED_UNKNOWN;
-        private final mdsDataProvider.Signal   signal;
+        private final MdsDataProvider.Signal   signal;
         private String                         title              = null;
         private final Vector<WaveDataListener> waveDataListenersV = new Vector<WaveDataListener>();
         private long                           x2DLong[];
@@ -446,15 +446,15 @@ public class mdsDataProvider implements DataProvider{
         }
 
         public SimpleWaveData(final String in_y, final String in_x, final String experiment, final long shot){
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData(\"" + in_y + "\", \"" + in_x + "\", \"" + experiment + "\", " + shot + ")");
-            this.signal = new mdsDataProvider.Signal(in_y, in_x, false);
-            mdsDataProvider.this.error = null;
-            this.SegmentMode();
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData(\"" + in_y + "\", \"" + in_x + "\", \"" + experiment + "\", " + shot + ")");
+            this.signal = new MdsDataProvider.Signal(in_y, in_x, false);
+            MdsDataProvider.this.error = null;
+            this.segmentMode();
         }
 
         @Override
         public void addWaveDataListener(final WaveDataListener listener) {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.addWaveDataListener()");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.addWaveDataListener()");
             this.waveDataListenersV.addElement(listener);
             if(this.asynchSource != null) this.asynchSource.addDataListener(listener);
         }
@@ -462,9 +462,9 @@ public class mdsDataProvider implements DataProvider{
         // Check if the passed Y expression specifies also an asynchronous part (separated by the pattern &&&)
         // in case get an implementation of AsynchDataSource
         boolean checkForAsynchRequest(final String expression) {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.checkForAsynchRequest(\"" + expression + "\")");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.checkForAsynchRequest(\"" + expression + "\")");
             if(expression.startsWith("ASYNCH::")){
-                this.asynchSource = mdsDataProvider.this.getAsynchSource();
+                this.asynchSource = MdsDataProvider.this.getAsynchSource();
                 if(this.asynchSource != null){
                     this.asynchSource.startGeneration(expression.substring("ASYNCH::".length()));
                 }
@@ -480,7 +480,7 @@ public class mdsDataProvider implements DataProvider{
         }
 
         public final XYData getData(final double xmin, final double xmax, final int numPoints, final boolean isLong) throws Exception {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.XYData(" + xmin + ", " + xmax + ", " + numPoints + ", " + isLong + ")");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.XYData(" + xmin + ", " + xmax + ", " + numPoints + ", " + isLong + ")");
             if(this.signal.dat == null || this.signal.dim == null) return null;
             if(this.signal.dat instanceof IOException){
                 this.title = ((IOException)this.signal.dat).getMessage();
@@ -511,54 +511,54 @@ public class mdsDataProvider implements DataProvider{
 
         @Override
         public final XYData getData(final int numPoints) throws Exception {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getData(" + numPoints + ")");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getData(" + numPoints + ")");
             return this.getData(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, numPoints);
         }
 
         @Override
         public final void getDataAsync(final double lowerBound, final double upperBound, final int numPoints) {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getDataAsync(" + lowerBound + ", " + upperBound + ", " + numPoints + ")");
-            mdsDataProvider.this.updateWorker.updateInfo(lowerBound, upperBound, numPoints, this.waveDataListenersV, this, this.isXLong);
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getDataAsync(" + lowerBound + ", " + upperBound + ", " + numPoints + ")");
+            MdsDataProvider.this.updateWorker.updateInfo(lowerBound, upperBound, numPoints, this.waveDataListenersV, this, this.isXLong);
         }
 
         @Override
         public final int getNumDimension() throws IOException {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getNumDimension()");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getNumDimension()");
             if(this.numDimensions != SimpleWaveData.DIMENSION_UNKNOWN) return this.numDimensions;
             return this.numDimensions = this.signal.shape.length;
         }
 
         @Override
-        public final String GetTitle() throws IOException {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.GetTitle()");
+        public final String getTitle() throws IOException {
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getTitle()");
             if(this.title == null && this.signal.help_of_dat != null) this.title = this.signal.help_of_dat.toString();
             return this.title;
         }
 
         public final float[] getX_X2D() {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getX_X2D()");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getX_X2D()");
             if(this.signal.dim instanceof RealArray) return ((RealArray)this.signal.dim).getFloatArray();
             return null;
         }
 
         public final float[] getX_Y2D() {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getX_Y2D()");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getX_Y2D()");
             try{
-                return mdsDataProvider.this.GetFloatArray("DIM_OF(" + this.signal.y + ", 1)");
+                return MdsDataProvider.this.getFloatArray("DIM_OF(" + this.signal.y + ", 1)");
             }catch(final Exception exc){
                 return null;
             }
         }
 
         public final float[] getX_Z() {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getX_Z()");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getX_Z()");
             if(this.signal.dat instanceof RealArray) return ((RealArray)this.signal.dat).getFloatArray();
             return null;
         }
 
         @Override
         public final double[] getX2D() {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getX2D()");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getX2D()");
             if(this.signal.dim instanceof RealArray) try{
                 final RealArray realArray = ((RealArray)this.signal.dim);
                 if(realArray.isLong){
@@ -574,20 +574,20 @@ public class mdsDataProvider implements DataProvider{
 
         @Override
         public final long[] getX2DLong() {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getX2DLong()");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getX2DLong()");
             return this.x2DLong;
         }
 
         @Override
-        public final String GetXLabel() throws IOException {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.GetXLabel()");
+        public final String getXLabel() throws IOException {
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getXLabel()");
             if(this.xLabel == null && this.signal.units_of_dim != null) this.xLabel = this.signal.units_of_dim.toString();
             return this.xLabel;
         }
 
         /*
         private String getTimeContext(double xmin, double xmax, boolean isLong) throws Exception {
-        if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.setTimeContext(" + xmin + ", " + xmax + ", " + isLong + ")");
+        if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.setTimeContext(" + xmin + ", " + xmax + ", " + isLong + ")");
         String res;
         try{
         if(xmin == Double.NEGATIVE_INFINITY && xmax == Double.POSITIVE_INFINITY) res = "SetTimeContext(*,*,*);";
@@ -603,7 +603,7 @@ public class mdsDataProvider implements DataProvider{
         }
         }catch(Exception exc){
         if(DEBUG.M){
-            System.err.println("# mdsDataProvider.SimpleWaveData.setTimeContext: " + exc);
+            System.err.println("# MdsDataProvider.SimpleWaveData.setTimeContext: " + exc);
         }
         res = "";
         }
@@ -612,7 +612,7 @@ public class mdsDataProvider implements DataProvider{
          */
         @SuppressWarnings("unused")
         private final XYData getXYSignal(final double xmin, final double xmax, final int numPoints, boolean isLong, final String setTimeContext) throws Exception {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getXYSignal(" + xmin + ", " + xmax + ", " + numPoints + ", " + isLong + ", \"" + setTimeContext + "\")");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getXYSignal(" + xmin + ", " + xmax + ", " + numPoints + ", " + isLong + ", \"" + setTimeContext + "\")");
             // If the requested number of samples is Integer.MAX_VALUE, force the old way of getting data
             if(numPoints == Integer.MAX_VALUE) throw new Exception("Use Old Method for getting data");
             XYData res = null;
@@ -633,8 +633,8 @@ public class mdsDataProvider implements DataProvider{
             // all fine if setTimeContext is an empty string
             // if a space is required between ; and further code setTimeContext sould have it
             try{
-                if(isLong) retData = mdsDataProvider.this.GetByteArray(setTimeContext + "mdsMisc->GetXYSignalLongTimes:DSC", args);
-                else retData = mdsDataProvider.this.GetByteArray(setTimeContext + "mdsMisc->GetXYSignal:DSC", args);
+                if(isLong) retData = MdsDataProvider.this.getByteArray(setTimeContext + "mdsMisc->GetXYSignalLongTimes:DSC", args).buf;
+                else retData = MdsDataProvider.this.getByteArray(setTimeContext + "mdsMisc->GetXYSignal:DSC", args).buf;
             }catch(final IOException exc){
                 throw(new Exception(exc.getMessage()));
             }
@@ -657,7 +657,7 @@ public class mdsDataProvider implements DataProvider{
             else dRes = fRes;
             nSamples = dis.readInt();
             if(nSamples <= 0){
-                mdsDataProvider.this.error = "No Samples returned";
+                MdsDataProvider.this.error = "No Samples returned";
                 return null;
             }
             final byte type = dis.readByte();
@@ -713,28 +713,28 @@ public class mdsDataProvider implements DataProvider{
             if(this.segmentMode == SimpleWaveData.SEGMENTED_YES && this.continuousUpdate){
                 long refreshPeriod = jScopeFacade.getRefreshPeriod();
                 if(refreshPeriod <= 0) refreshPeriod = 1000; // default 1 s refresh
-                mdsDataProvider.this.updateWorker.updateInfo(/*xmin*/maxX, Double.POSITIVE_INFINITY, 2000, this.waveDataListenersV, this, isLong, refreshPeriod);
+                MdsDataProvider.this.updateWorker.updateInfo(/*xmin*/maxX, Double.POSITIVE_INFINITY, 2000, this.waveDataListenersV, this, isLong, refreshPeriod);
             }
             return res;
         }
 
         @Override
         public final float[] getY2D() {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getY2D()");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getY2D()");
             try{
-                return mdsDataProvider.this.GetFloatArray("DIM_OF(" + this.signal.y + ", 1)");
+                return MdsDataProvider.this.getFloatArray("DIM_OF(" + this.signal.y + ", 1)");
             }catch(final Exception exc){
                 return null;
             }
         }
 
         @Override
-        public final String GetYLabel() throws IOException {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.GetYLabel()");
+        public final String getYLabel() throws IOException {
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getYLabel()");
             if(this.yLabel == null) try{
                 if(this.getNumDimension() > 1){
-                    if(this.segmentMode == SimpleWaveData.SEGMENTED_YES) this.yLabel = mdsDataProvider.this.GetStringValue("Units(Dim_of(GetSegment(" + this.signal.y + ",0),1))");
-                    else this.yLabel = mdsDataProvider.this.GetStringValue("Units(Dim_of(" + this.signal.y + ",1))");
+                    if(this.segmentMode == SimpleWaveData.SEGMENTED_YES) this.yLabel = MdsDataProvider.this.getStringValue("Units(Dim_of(GetSegment(" + this.signal.y + ",0),1))");
+                    else this.yLabel = MdsDataProvider.this.getStringValue("Units(Dim_of(" + this.signal.y + ",1))");
                 }else{
                     if(this.yLabel == null && this.signal.units_of_dat != null) ;
                 }
@@ -746,7 +746,7 @@ public class mdsDataProvider implements DataProvider{
 
         @Override
         public float[] getZ() {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.getZ()");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getZ()");
             try{
                 return (float[])this.signal.dat;
             }catch(final Exception exc){
@@ -755,8 +755,8 @@ public class mdsDataProvider implements DataProvider{
         }
 
         @Override
-        public String GetZLabel() {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.GetZLabel()");
+        public String getZLabel() {
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.getZLabel()");
             return this.signal.units_of_dat.toString();
         }
 
@@ -768,15 +768,15 @@ public class mdsDataProvider implements DataProvider{
             return this.isXLong;
         }
 
-        private final boolean SegmentMode() {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.SegmentMode()");
+        private final boolean segmentMode() {
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.SegmentMode()");
             if(this.segmentMode == SimpleWaveData.SEGMENTED_UNKNOWN) this.segmentMode = this.signal.numSegments > 0 ? SimpleWaveData.SEGMENTED_YES : SimpleWaveData.SEGMENTED_NO;
             return this.segmentMode == SimpleWaveData.SEGMENTED_YES;
         }
 
         @Override
         public final void setContinuousUpdate(final boolean continuousUpdate) {
-            if(DEBUG.M) System.out.println("mdsDataProvider.SimpleWaveData.setContinuousUpdate(" + continuousUpdate + ")");
+            if(DEBUG.M) System.out.println("MdsDataProvider.SimpleWaveData.setContinuousUpdate(" + continuousUpdate + ")");
             this.continuousUpdate = continuousUpdate;
         }
     } // END Inner Class SimpleWaveData
@@ -895,8 +895,8 @@ public class mdsDataProvider implements DataProvider{
     protected static final int  MAX_PIXELS        = 20000;
     protected static final long RESAMPLE_TRESHOLD = 1000000;
 
-    private static final double GetDate(final String in) throws Exception {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetDate(\"" + in + "\")");
+    private static final double getDate(final String in) throws Exception {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getDate(\"" + in + "\")");
         final Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z");
         final Date date = df.parse(in + " UTC");
@@ -905,8 +905,8 @@ public class mdsDataProvider implements DataProvider{
         return javaTime;
     }
 
-    private static final double GetNow(final String in) throws Exception {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetNow(\"" + in + "\")");
+    private static final double getNow(final String in) throws Exception {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getNow(\"" + in + "\")");
         boolean isPlus = true;
         int hours = 0, minutes = 0, seconds = 0;
         String currStr = in.trim().toUpperCase();
@@ -955,13 +955,13 @@ public class mdsDataProvider implements DataProvider{
     /*
     @SuppressWarnings("all")
     public static final void main(final String[] args) {//TODO:main
-        final mdsDataProvider dp = new mdsDataProvider(args[0]);
+        final MdsDataProvider dp = new MdsDataProvider(args[0]);
         try{
             dp.CheckOpen("W7X", 0);
-            System.out.println(dp.GetString("TCL('DIR',_out);_out"));
-            final mdsDataProvider.Signal signal = dp.GetSignal("sqrt(QSS.HARDWARE.ARRAY:TUBE01)", null, false);
+            System.out.println(dp.getString("TCL('DIR',_out);_out"));
+            final MdsDataProvider.Signal signal = dp.getSignal("sqrt(QSS.HARDWARE.ARRAY:TUBE01)", null, false);
             System.out.println(signal);
-            final SimpleWaveData wd = (SimpleWaveData)dp.GetWaveData("sqrt(QSS.HARDWARE.ARRAY:TUBE01)");
+            final SimpleWaveData wd = (SimpleWaveData)dp.getWaveData("sqrt(QSS.HARDWARE.ARRAY:TUBE01)");
             System.out.println(wd.getData(-1, 2, 1000));
             System.out.println(dp.error);
             System.exit(0);
@@ -970,8 +970,8 @@ public class mdsDataProvider implements DataProvider{
         }
     }
     */
-    protected static final boolean NotYetNumber(final String in) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.NotYetNumber(\"" + in + "\")");
+    protected static final boolean notYetNumber(final String in) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.NotYetNumber(\"" + in + "\")");
         try{
             Float.parseFloat(in);
         }catch(final NumberFormatException e){
@@ -980,8 +980,8 @@ public class mdsDataProvider implements DataProvider{
         return true;
     }
 
-    protected static final boolean NotYetString(final String in) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.NotYetString(\"" + in + "\")");
+    protected static final boolean notYetString(final String in) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.NotYetString(\"" + in + "\")");
         int i;
         if(in.charAt(0) == '\"' || in.charAt(0) == '\''){
             for(i = 1; i < in.length() && (in.charAt(i) != '\"' && in.charAt(i) != '\'' || ((in.charAt(i) == '\"' || in.charAt(i) == '\'') && in.charAt(i - 1) == '\\')); i++);
@@ -990,11 +990,11 @@ public class mdsDataProvider implements DataProvider{
         return true;
     }
 
-    public static boolean SupportsCompression() {
+    public static boolean supportsCompression() {
         return true;
     }
 
-    public static boolean SupportsFastNetwork() {
+    public static boolean supportsFastNetwork() {
         return true;
     }
     private boolean        def_node_changed = false;
@@ -1003,27 +1003,27 @@ public class mdsDataProvider implements DataProvider{
     protected String       error;
     protected String       experiment;
     protected boolean      is_tunneling     = false;
-    public mdsConnection   mds;
+    public MdsConnection   mds;
     protected boolean      open, connected;
     protected String       provider;
     public long            shot;
-    protected sshTunneling ssh_tunneling;
+    protected SshTunneling ssh_tunneling;
     protected String       tunnel_provider  = "127.0.0.1:8000";
     protected UpdateWorker updateWorker;
     private boolean        use_compression  = false;
 
-    public mdsDataProvider(){
+    public MdsDataProvider(){
         this(null);
     }
 
-    public mdsDataProvider(final String provider){
-        if(DEBUG.M) System.out.println("mdsDataProvider(\"" + provider + "\")");
-        jScope.DataAccessURL.addProtocol(new mdsAccess());
+    public MdsDataProvider(final String provider){
+        if(DEBUG.M) System.out.println("MdsDataProvider(\"" + provider + "\")");
+        jscope.DataAccessURL.addProtocol(new MdsAccess());
         this.setProvider(provider);
         this.experiment = null;
         this.shot = 0;
         this.open = this.connected = false;
-        this.mds = new mdsConnection(this.provider);
+        this.mds = new MdsConnection(this.provider);
         this.error = null;
         // updateWorker = new UpdateWorker();
         // updateWorker.start();
@@ -1035,22 +1035,22 @@ public class mdsDataProvider implements DataProvider{
     }
 
     @Override
-    public synchronized void AddConnectionListener(final ConnectionListener l) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.AddConnectionListener(" + l + ")");
+    public synchronized void addConnectionListener(final ConnectionListener l) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.AddConnectionListener(" + l + ")");
         if(this.mds == null){ return; }
         this.mds.addConnectionListener(l);
     }
 
     @Override
-    public synchronized void AddUpdateEventListener(final UpdateEventListener l, final String event_name) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.AddUpdateEventListener(" + l + "," + event_name + ")");
+    public synchronized void addUpdateEventListener(final UpdateEventListener l, final String event_name) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.AddUpdateEventListener(" + l + "," + event_name + ")");
         if(event_name == null || event_name.trim().length() == 0) return;
-        this.CheckConnection();
+        this.checkConnection();
         this.mds.mdsSetEvent(l, event_name);
     }
 
-    protected synchronized void CheckConnection() throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.CheckConnection()");
+    protected synchronized void checkConnection() throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.CheckConnection()");
         if(!this.connected){
             if(!this.mds.ConnectToMds(this.use_compression)){
                 if(this.mds.error != null) throw new IOException(this.mds.error);
@@ -1063,12 +1063,12 @@ public class mdsDataProvider implements DataProvider{
         }
     }
 
-    public synchronized boolean CheckOpen() throws IOException {
-        return this.CheckOpen(this.experiment, this.shot);
+    public synchronized boolean checkOpen() throws IOException {
+        return this.checkOpen(this.experiment, this.shot);
     }
 
-    public synchronized boolean CheckOpen(final String experiment, final long shot) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.CheckOpen(\"" + experiment + "\", " + shot + ")");
+    public synchronized boolean checkOpen(final String experiment, final long shot) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.CheckOpen(\"" + experiment + "\", " + shot + ")");
         if(!this.connected){
             if(!this.mds.ConnectToMds(this.use_compression)){
                 if(this.mds.error != null) throw new IOException("Cannot connect to data server : " + this.mds.error);
@@ -1089,7 +1089,7 @@ public class mdsDataProvider implements DataProvider{
                 this.shot = shot;
                 this.experiment = experiment;
                 if(this.environment_vars != null && this.environment_vars.length() > 0){
-                    this.SetEnvironmentSpecific(this.environment_vars);
+                    this.setEnvironmentSpecific(this.environment_vars);
                     if(this.error != null){
                         this.error = "Public variable evaluation error " + experiment + " shot " + shot + " : " + this.error;
                         return false;
@@ -1115,25 +1115,25 @@ public class mdsDataProvider implements DataProvider{
     @Override
     public final boolean checkProvider() {
         try{
-            this.GetShots("0");
+            this.getShots("0");
             return true;
         }catch(final IOException exc){}
         return false;
     }
 
-    protected void DispatchConnectionEvent(final ConnectionEvent e) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.DispatchConnectionEvent(" + e + ")");
+    protected void dispatchConnectionEvent(final ConnectionEvent e) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.DispatchConnectionEvent(" + e + ")");
         if(this.mds == null){ return; }
         this.mds.dispatchConnectionEvent(e);
     }
 
     @Override
-    public synchronized void Dispose() {
-        if(DEBUG.M) System.out.println("mdsDataProvider.Dispose()");
+    public synchronized void dispose() {
+        if(DEBUG.M) System.out.println("MdsDataProvider.Dispose()");
         if(this.is_tunneling && this.ssh_tunneling != null) this.ssh_tunneling.Dispose();
         if(this.connected){
             this.connected = false;
-            this.mds.DisconnectFromMds();
+            this.mds.disconnectFromMds();
             if(DEBUG.D) System.out.println(">> disconnected");
             final ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOST_CONNECTION, "Lost connection from : " + this.provider);
             this.mds.dispatchConnectionEvent(ce);
@@ -1148,31 +1148,31 @@ public class mdsDataProvider implements DataProvider{
     }
 
     @Override
-    public synchronized String ErrorString() {
+    public synchronized String errorString() {
         return this.error;
     }
 
     @Override
     protected void finalize() {
-        if(DEBUG.M) System.out.println("mdsDataProvider.finalize()");
+        if(DEBUG.M) System.out.println("MdsDataProvider.finalize()");
         if(this.open) this.mds.mdsValue("JavaClose(\"" + this.experiment + "\"," + this.shot + ")");
-        if(this.connected) this.mds.DisconnectFromMds();
+        if(this.connected) this.mds.disconnectFromMds();
         if(DEBUG.D) System.out.println(">> disconnected");
     }
 
-    public synchronized AllFrames GetAllFrames(final String in_frame) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetAllFrames(" + in_frame + ")");
+    public synchronized AllFrames getAllFrames(final String in_frame) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getAllFrames(" + in_frame + ")");
         ByteArray img = null;
         float[] time = null;
         int[] shape;
         img = this.getByteArray("_jScope_img = IF_ERROR(COMMA(*," + in_frame + "),*)");
         if(img == null) return null;
-        if(DEBUG.D) System.out.println(">> mdsDataProvider.getByteArray: " + img.buf.length);
-        shape = this.GetIntArray("SHAPE( _jScope_img )");
-        time = this.GetFloatArray("DIM_OF( _jScope_img )");
+        if(DEBUG.D) System.out.println(">> MdsDataProvider.getByteArray: " + img.buf.length);
+        shape = this.getIntArray("SHAPE( _jScope_img )");
+        time = this.getFloatArray("DIM_OF( _jScope_img )");
         this.mds.mdsValue("DEALLOCATE('_jScope_img')");
         if(time == null || shape == null) return null;
-        if(DEBUG.D) System.out.println(">> mdsDataProvider.GetDoubleArray: " + time.length);
+        if(DEBUG.D) System.out.println(">> MdsDataProvider.getDoubleArray: " + time.length);
         /*
         if(shape.length == 3){
         num_time = shape[2];
@@ -1190,7 +1190,7 @@ public class mdsDataProvider implements DataProvider{
 
     // To be overridden by any DataProvider implementation with added dynamic generation
     @SuppressWarnings("static-method")
-    public jScope.AsynchDataSource getAsynchSource() {
+    public jscope.AsynchDataSource getAsynchSource() {
         return null;
     }
 
@@ -1199,8 +1199,8 @@ public class mdsDataProvider implements DataProvider{
     }
 
     public synchronized ByteArray getByteArray(final String in, final Vector<Descriptor> args) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.getByteArray(\"" + in + "\", " + args + ")");
-        if(!this.CheckOpen()) throw new IOException("TreeNotOpen");
+        if(DEBUG.M) System.out.println("MdsDataProvider.getByteArray(\"" + in + "\", " + args + ")");
+        if(!this.checkOpen()) throw new IOException("TreeNotOpen");
         if(DEBUG.D) System.out.println(">> mds = " + this.mds);
         final Descriptor desc = this.mds.mdsValue(in, args);
         if(desc == null || desc.dtype == 0) throw new IOException("mdsValue: no result (" + in + ")");
@@ -1240,17 +1240,9 @@ public class mdsDataProvider implements DataProvider{
         throw new IOException(this.error);
     }
 
-    public synchronized byte[] GetByteArray(final String in) throws IOException {
-        return this.getByteArray(in, null).buf;
-    }
-
-    public synchronized byte[] GetByteArray(final String in, final Vector<Descriptor> args) throws IOException {
-        return this.getByteArray(in, args).buf;
-    }
-
-    protected mdsConnection getConnection() {
-        if(DEBUG.M) System.out.println("mdsDataProvider(\"" + this.provider + "\")");
-        return new mdsConnection();
+    protected MdsConnection getConnection() {
+        if(DEBUG.M) System.out.println("MdsDataProvider(\"" + this.provider + "\")");
+        return new MdsConnection();
     }
 
     @Override
@@ -1259,14 +1251,14 @@ public class mdsDataProvider implements DataProvider{
         return null;
     }
 
-    public double[] GetDoubleArray(final String in) throws IOException {
-        final RealArray realArray = this.GetRealArray(in);
+    public double[] getDoubleArray(final String in) throws IOException {
+        final RealArray realArray = this.getRealArray(in);
         if(realArray == null) return null;
         return realArray.getDoubleArray();
     }
 
-    protected String GetExperimentName(final String in_frame) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetExperimentName(\"" + in_frame + "\")");
+    protected String getExperimentName(final String in_frame) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getExperimentName(\"" + in_frame + "\")");
         if(this.experiment == null){
             if(in_frame.indexOf(".") == -1) return in_frame;
             return in_frame.substring(0, in_frame.indexOf("."));
@@ -1275,18 +1267,18 @@ public class mdsDataProvider implements DataProvider{
     }
 
     @Override
-    public synchronized float GetFloat(final String in) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetFloat(\"" + in + "\")");
+    public synchronized float getFloat(final String in) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getFloat(\"" + in + "\")");
         this.error = null;
         // First check Whether this is a date
         try{
-            return (float)mdsDataProvider.GetDate(in);
+            return (float)MdsDataProvider.getDate(in);
         }catch(final Exception excD){}
         try{
-            return (float)mdsDataProvider.GetNow(in);
+            return (float)MdsDataProvider.getNow(in);
         }catch(final Exception excN){}
-        if(mdsDataProvider.NotYetNumber(in)){
-            if(!this.CheckOpen()) return 0;
+        if(MdsDataProvider.notYetNumber(in)){
+            if(!this.checkOpen()) return 0;
             final Descriptor desc = this.mds.mdsValue(in);
             if(desc.error != null) this.error = desc.error;
             switch(desc.dtype){
@@ -1310,30 +1302,30 @@ public class mdsDataProvider implements DataProvider{
         return 0;
     }
 
-    public float[] GetFloatArray(final String in) throws IOException {
-        final RealArray realArray = this.GetRealArray(in);
+    public float[] getFloatArray(final String in) throws IOException {
+        final RealArray realArray = this.getRealArray(in);
         if(realArray == null) return null;
         return realArray.getFloatArray();
     }
 
     @Override
-    public FrameData GetFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetFrameData(\"" + in_y + "\", \"" + in_x + "\", " + time_min + ", " + time_max + ")");
-        final Signal sig = new mdsDataProvider.Signal(in_y, in_x, true);
+    public FrameData getFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getFrameData(\"" + in_y + "\", \"" + in_x + "\", " + time_min + ", " + time_max + ")");
+        final Signal sig = new MdsDataProvider.Signal(in_y, in_x, true);
         this.error = null;
         if(sig.numSegments > 0) return new SegmentedFrameData(sig, time_min, time_max);
         try{
             return(new SimpleFrameData(sig, time_min, time_max));
         }catch(final Exception e){
-            if(DEBUG.D) System.err.println("# mdsDataProvider.SimpleFrameData(" + in_y + "): " + e);
+            if(DEBUG.D) System.err.println("# MdsDataProvider.SimpleFrameData(" + in_y + "): " + e);
             else System.err.println(e);
         }
         return null;
     }
 
-    public synchronized float[] GetFrameTimes(final String in) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetFrameTimes(\"" + in + "\")");
-        final String exp = this.GetExperimentName(in);
+    public synchronized float[] getFrameTimes(final String in) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getFrameTimes(\"" + in + "\")");
+        final String exp = this.getExperimentName(in);
         final String expr = "JavaGetFrameTimes(\"" + exp + "\",\"" + in + "\"," + this.shot + " )";
         final Descriptor desc = this.mds.mdsValue(expr);
         float[] out_data;
@@ -1359,14 +1351,14 @@ public class mdsDataProvider implements DataProvider{
         throw new IOException(in + " : " + this.error);
     }
 
-    public int[] GetIntArray(final String in) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetIntArray(\"" + in + "\")");
-        if(!this.CheckOpen()) throw new IOException("Tree not open");
-        return this.GetIntegerArray(in);
+    public int[] getIntArray(final String in) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getIntArray(\"" + in + "\")");
+        if(!this.checkOpen()) throw new IOException("Tree not open");
+        return this.getIntegerArray(in);
     }
 
-    private synchronized int[] GetIntegerArray(final String in) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetIntegerArray(\"" + in + "\")");
+    private synchronized int[] getIntegerArray(final String in) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getIntegerArray(\"" + in + "\")");
         int out_data[];
         final Descriptor desc = this.mds.mdsValue(in);
         switch(desc.dtype){
@@ -1399,12 +1391,12 @@ public class mdsDataProvider implements DataProvider{
     }
 
     @Override
-    public final String GetLegendString(final String s) {
+    public final String getLegendString(final String s) {
         return s;
     }
 
-    public synchronized long[] GetLongArray(final String in) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetLongArray(\"" + in + "\")");
+    public synchronized long[] getLongArray(final String in) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getLongArray(\"" + in + "\")");
         long out_data[];
         final Descriptor desc = this.mds.mdsValue(in);
         switch(desc.dtype){
@@ -1437,11 +1429,11 @@ public class mdsDataProvider implements DataProvider{
         throw new IOException(in + " : " + this.error);
     }
 
-    public int[] GetNumDimensions(final String expression) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetNumDimensions(\"" + expression + "\")");
+    public int[] getNumDimensions(final String expression) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getNumDimensions(\"" + expression + "\")");
         // return GetIntArray(in_y);
         // Gabriele June 2013: reduce dimension if one component is 1
-        final int[] fullDims = this.GetIntArray("SHAPE( " + expression + " )");
+        final int[] fullDims = this.getIntArray("SHAPE( " + expression + " )");
         if(fullDims == null) return null;
         if(fullDims.length == 1) return fullDims;
         // count dimensions == 1
@@ -1461,13 +1453,13 @@ public class mdsDataProvider implements DataProvider{
         return this.provider;
     }
 
-    public synchronized RealArray GetRealArray(final String in) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetRealArray(\"" + in + "\")");
+    public synchronized RealArray getRealArray(final String in) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getRealArray(\"" + in + "\")");
         final ConnectionEvent e = new ConnectionEvent(this, 1, 0);
-        this.DispatchConnectionEvent(e);
-        if(!this.CheckOpen()) return null;
+        this.dispatchConnectionEvent(e);
+        if(!this.checkOpen()) return null;
         final Descriptor desc = this.mds.mdsValue(in);
-        if(DEBUG.D) System.out.println(">> mdsDataProvider.GetRealArray: " + desc.dtype);
+        if(DEBUG.D) System.out.println(">> MdsDataProvider.getRealArray: " + desc.dtype);
         switch(desc.dtype){
             case Descriptor.DTYPE_FLOAT:
                 return new Array.RealArray(desc.float_data);
@@ -1495,22 +1487,22 @@ public class mdsDataProvider implements DataProvider{
             case Descriptor.DTYPE_LONGLONG:
                 return new Array.RealArray(desc.long_data);
             case Descriptor.DTYPE_CSTRING:
-                if(DEBUG.D) System.out.println(">> mdsDataProvider.GetRealArray: " + desc.dtype);
+                if(DEBUG.D) System.out.println(">> MdsDataProvider.getRealArray: " + desc.dtype);
                 if((desc.status & 1) == 0) this.error = desc.error;
                 break;
             default:
-                this.error = "Data type code : " + desc.dtype + " not yet supported (RealArray.GetRealArray)";
+                this.error = "Data type code : " + desc.dtype + " not yet supported (RealArray.getRealArray)";
         }
         throw new IOException(in + " : " + this.error);
     }
 
     @Override
-    public long[] GetShots(final String in) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetShots(\"" + in + "\")");
+    public long[] getShots(final String in) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getShots(\"" + in + "\")");
         // To shot evaluation don't execute check
         // if a pulse file is open
-        this.CheckConnection();
-        return this.GetLongArray(in);
+        this.checkConnection();
+        return this.getLongArray(in);
     }
 
     public Signal GetSignal(final String in_y, final String in_x, final boolean isframes) {
@@ -1518,12 +1510,12 @@ public class mdsDataProvider implements DataProvider{
     }
 
     @Override
-    public synchronized String GetString(final String in) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetString(\"" + in + "\")");
+    public synchronized String getString(final String in) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getString(\"" + in + "\")");
         if(in == null) return null;
         this.error = null;
-        if(mdsDataProvider.NotYetString(in)){
-            if(!this.CheckOpen()) return null;
+        if(MdsDataProvider.notYetString(in)){
+            if(!this.checkOpen()) return null;
             final Descriptor desc = this.mds.mdsValue(in);
             switch(desc.dtype){
                 case Descriptor.DTYPE_BYTE:
@@ -1542,9 +1534,9 @@ public class mdsDataProvider implements DataProvider{
         return new String(in.getBytes(), 1, in.length() - 2, "UTF-8");
     }
 
-    protected String GetStringValue(final String expression) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.GetStringValue(\"" + expression + "\")");
-        String out = this.GetString(expression);
+    protected String getStringValue(final String expression) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.getStringValue(\"" + expression + "\")");
+        String out = this.getString(expression);
         if(out == null || out.length() == 0 || this.error != null){
             this.error = null;
             return null;
@@ -1554,29 +1546,29 @@ public class mdsDataProvider implements DataProvider{
     }
 
     @Override
-    public WaveData GetWaveData(final String in) {
+    public WaveData getWaveData(final String in) {
         return new SimpleWaveData(in, this.experiment, this.shot);
     }
 
     @Override
-    public WaveData GetWaveData(final String in_y, final String in_x) {
+    public WaveData getWaveData(final String in_y, final String in_x) {
         return new SimpleWaveData(in_y, in_x, this.experiment, this.shot);
     }
 
     @Override
-    public int InquireCredentials(final JFrame f, final DataServerItem server_item) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.InquireCredentials(" + f + ", " + server_item + ")");
+    public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.InquireCredentials(" + f + ", " + server_item + ")");
         this.mds.setUser(server_item.user);
         this.is_tunneling = false;
         if(server_item.tunnel_port != null && server_item.tunnel_port.trim().length() != 0){
             final StringTokenizer st = new StringTokenizer(server_item.argument, ":");
             String ip;
-            String remote_port = "" + mdsConnection.DEFAULT_PORT;
+            String remote_port = "" + MdsConnection.DEFAULT_PORT;
             ip = st.nextToken();
             if(st.hasMoreTokens()) remote_port = st.nextToken();
             this.is_tunneling = true;
             try{
-                this.ssh_tunneling = new sshTunneling(f, this, ip, remote_port, server_item.user, server_item.tunnel_port);
+                this.ssh_tunneling = new SshTunneling(f, this, ip, remote_port, server_item.user, server_item.tunnel_port);
                 this.ssh_tunneling.start();
                 this.tunnel_provider = "127.0.0.1:" + server_item.tunnel_port;
             }catch(final Throwable exc){
@@ -1589,7 +1581,7 @@ public class mdsDataProvider implements DataProvider{
 
     public final boolean isPresent(final String expression) {
         try{
-            final int out = this.GetIntegerArray("PRESENT( " + expression + " )")[0];
+            final int out = this.getIntegerArray("PRESENT( " + expression + " )")[0];
             System.out.println(">> " + expression + " present = " + out);
             return out > 0;
         }catch(final IOException exc){
@@ -1603,36 +1595,37 @@ public class mdsDataProvider implements DataProvider{
     }
 
     @Override
-    public final synchronized void RemoveConnectionListener(final ConnectionListener l) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.RemoveConnectionListener(" + l + ")");
+    public final synchronized void removeConnectionListener(final ConnectionListener l) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.RemoveConnectionListener(" + l + ")");
         if(this.mds == null) return;
         this.mds.removeConnectionListener(l);
     }
 
     @Override
-    public final synchronized void RemoveUpdateEventListener(final UpdateEventListener l, final String event_name) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.RemoveUpdateEventListener(" + l + "," + event_name + ")");
+    public final synchronized void removeUpdateEventListener(final UpdateEventListener l, final String event_name) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.RemoveUpdateEventListener(" + l + "," + event_name + ")");
         if(event_name == null || event_name.trim().length() == 0) return;
-        this.CheckConnection();
+        this.checkConnection();
         this.mds.mdsRemoveEvent(l, event_name);
     }
 
     @Override
-    public void SetArgument(final String arg) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.SetArgument(" + arg + ")");
+    public void setArgument(final String arg) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.setArgument(" + arg + ")");
         this.setProvider(arg);
         this.mds.setProvider(this.provider);
     }
 
-    public void SetCompression(final boolean state) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.SetCompression(" + state + ")");
-        if(this.connected) this.Dispose();
+    @SuppressWarnings("unused")
+    private void setCompression(final boolean state) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.setCompression(" + state + ")");
+        if(this.connected) this.dispose();
         this.use_compression = state;
     }
 
     @Override
-    public final synchronized void SetEnvironment(final String in) throws IOException {
-        if(DEBUG.M) System.out.println("mdsDataProvider.SetEnvironment(\"" + in + "\")");
+    public final synchronized void setEnvironment(final String in) throws IOException {
+        if(DEBUG.M) System.out.println("MdsDataProvider.setEnvironment(\"" + in + "\")");
         if(in == null || in.length() == 0) return;
         final Properties pr = new Properties();
         pr.load(new ByteArrayInputStream(in.getBytes()));
@@ -1652,30 +1645,30 @@ public class mdsDataProvider implements DataProvider{
         }
     }
 
-    private final void SetEnvironmentSpecific(final String in) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.SetEnvironmentSpecific(\"" + in + "\")");
+    private final void setEnvironmentSpecific(final String in) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.setEnvironmentSpecific(\"" + in + "\")");
         final Descriptor desc = this.mds.mdsValue(in);
         if(desc.dtype == Descriptor.DTYPE_CSTRING) if((desc.status & 1) == 0) this.error = desc.error;
     }
 
     public final void setProvider(final String arg) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.setProvider(" + arg + ")");
+        if(DEBUG.M) System.out.println("MdsDataProvider.setProvider(" + arg + ")");
         if(this.is_tunneling) this.provider = this.tunnel_provider;
         else this.provider = arg;
     }
 
     @Override
-    public boolean SupportsTunneling() {
+    public boolean supportsTunneling() {
         return true;
     }
 
     @Override
-    public synchronized void Update(final String experiment, final long shot) {
-        this.Update(experiment, shot, false);
+    public synchronized void update(final String experiment, final long shot) {
+        this.update(experiment, shot, false);
     }
 
-    public final synchronized void Update(final String experiment, final long shot, final boolean resetExperiment) {
-        if(DEBUG.M) System.out.println("mdsDataProvider.Update(\"" + experiment + "\", " + shot + ", " + resetExperiment + ")");
+    public final synchronized void update(final String experiment, final long shot, final boolean resetExperiment) {
+        if(DEBUG.M) System.out.println("MdsDataProvider.Update(\"" + experiment + "\", " + shot + ", " + resetExperiment + ")");
         this.error = null;
         if(resetExperiment) this.experiment = null;
         if((shot != this.shot) || (shot == 0L) || (this.experiment == null) || (this.experiment.length() == 0) || (!this.experiment.equalsIgnoreCase(experiment))){

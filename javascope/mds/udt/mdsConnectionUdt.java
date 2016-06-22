@@ -7,19 +7,19 @@ package mds.udt;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import mds.mdsConnection;
+import mds.MdsConnection;
 
 /**
  * @author manduchi
  */
-public class mdsConnectionUdt extends mdsConnection{
+public class MdsConnectionUdt extends MdsConnection{
     @Override
     protected void connectToServer() throws IOException {
         if(this.provider != null){
             this.host = this.getProviderHost();
             this.port = this.getProviderPort();
             this.user = this.getProviderUser();
-            final mdsIpProtocolWrapper mipw = new mdsIpProtocolWrapper("udt://" + this.host + ":" + this.port);
+            final MdsIpProtocolWrapper mipw = new MdsIpProtocolWrapper("udt://" + this.host + ":" + this.port);
             this.dis = mipw.getInputStream();
             this.dos = new DataOutputStream(mipw.getOutputStream());
         }

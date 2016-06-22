@@ -1,6 +1,6 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
-import jTraverser.TreeManager;
+import jtraverser.TreeManager;
 
 public final class Dialogs{
     public final AddNode addNode;

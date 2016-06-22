@@ -2,7 +2,7 @@ package jet.ji;
 
 /* $Id$ */
 import java.io.IOException;
-import jScope.RandomAccessData;
+import jscope.RandomAccessData;
 
 class JiNcVarShort extends JiNcVarImp{
     public JiNcVarShort(final RandomAccessData in, final JiNcVar parent, final long offset){

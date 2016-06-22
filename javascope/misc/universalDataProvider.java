@@ -4,39 +4,39 @@ package misc;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.swing.JFrame;
-import jScope.ConnectionListener;
-import jScope.DataProvider;
-import jScope.DataServerItem;
-import jScope.FrameData;
-import jScope.UpdateEventListener;
-import jScope.WaveData;
-import jet.jetDataProvider;
-import jet.jetMdsDataProvider;
-import mds.mdsDataProvider;
-import twu.twuDataProvider;
+import jet.JetDataProvider;
+import jet.JetMdsDataProvider;
+import jscope.ConnectionListener;
+import jscope.DataProvider;
+import jscope.DataServerItem;
+import jscope.FrameData;
+import jscope.UpdateEventListener;
+import jscope.WaveData;
+import mds.MdsDataProvider;
+import twu.TwuDataProvider;
 
-public final class universalDataProvider implements DataProvider{
+public final class UniversalDataProvider implements DataProvider{
     public static boolean DataPending() {
         return false;
     }
 
-    public static byte[] GetAllFrames(final String in_frame) {
+    public static byte[] getAllFrames(final String in_frame) {
         return null;
     }
 
-    public static byte[] GetFrameAt(final String in_expr, final int frame_idx) {
+    public static byte[] getFrameAt(final String in_expr, final int frame_idx) {
         return null;
     }
 
-    public static float[] GetFrameTimes(final String in_expr) {
+    public static float[] getFrameTimes(final String in_expr) {
         return null;
     }
 
-    public static WaveData GetResampledWaveData(final String in, final double start, final double end, final int n_points) {
+    public static WaveData getResampledWaveData(final String in, final double start, final double end, final int n_points) {
         return null;
     }
 
-    public static WaveData GetResampledWaveData(final String in_y, final String in_x, final double start, final double end, final int n_points) {
+    public static WaveData getResampledWaveData(final String in_y, final String in_x, final double start, final double end, final int n_points) {
         return null;
     }
 
@@ -57,40 +57,40 @@ public final class universalDataProvider implements DataProvider{
     public static boolean SupportsFastNetwork() {
         return false;
     }
-    asdexDataProvider  asd;
+    AsdexDataProvider  asd;
     String             error = "Unknown experiment";
-    ftuDataProvider    ftu;
-    jetDataProvider    jet;
-    jetMdsDataProvider jetmds;
-    mdsDataProvider    rfx;
-    tsDataProvider     ts;
-    twuDataProvider    twu;
+    FtuDataProvider    ftu;
+    JetDataProvider    jet;
+    JetMdsDataProvider jetmds;
+    MdsDataProvider    rfx;
+    TsDataProvider     ts;
+    TwuDataProvider    twu;
 
-    public universalDataProvider() throws IOException{
-        this.rfx = new mdsDataProvider();
+    public UniversalDataProvider() throws IOException{
+        this.rfx = new MdsDataProvider();
         try{
-            this.rfx.SetArgument("150.178.3.80");
+            this.rfx.setArgument("150.178.3.80");
         }catch(final Exception exc){
             this.rfx = null;
         }
-        this.ftu = new ftuDataProvider();
+        this.ftu = new FtuDataProvider();
         try{
-            this.ftu.SetArgument("192.107.51.84:8100");
+            this.ftu.setArgument("192.107.51.84:8100");
         }catch(final Exception exc){
             this.ftu = null;
         }
-        this.twu = new twuDataProvider();
-        this.jet = new jetDataProvider();
-        this.jetmds = new jetMdsDataProvider();
-        this.ts = new tsDataProvider();
+        this.twu = new TwuDataProvider();
+        this.jet = new JetDataProvider();
+        this.jetmds = new JetMdsDataProvider();
+        this.ts = new TsDataProvider();
         try{
-            this.ts.SetArgument("132.169.8.164:8000");
+            this.ts.setArgument("132.169.8.164:8000");
         }catch(final Exception exc){
             this.ts = null;
         }
-        this.asd = new asdexDataProvider();
+        this.asd = new AsdexDataProvider();
         try{
-            this.asd.SetArgument("localhost:8000");
+            this.asd.setArgument("localhost:8000");
         }catch(final Exception exc){
             this.asd = null;
         }
@@ -108,25 +108,25 @@ public final class universalDataProvider implements DataProvider{
     }
 
     @Override
-    public void AddConnectionListener(final ConnectionListener l) {
-        if(this.twu != null) this.twu.AddConnectionListener(l);
-        if(this.rfx != null) this.rfx.AddConnectionListener(l);
-        if(this.ftu != null) this.ftu.AddConnectionListener(l);
-        if(this.jet != null) this.jet.AddConnectionListener(l);
-        if(this.jetmds != null) this.jetmds.AddConnectionListener(l);
-        if(this.ts != null) this.ts.AddConnectionListener(l);
-        if(this.asd != null) this.asd.AddConnectionListener(l);
+    public void addConnectionListener(final ConnectionListener l) {
+        if(this.twu != null) this.twu.addConnectionListener(l);
+        if(this.rfx != null) this.rfx.addConnectionListener(l);
+        if(this.ftu != null) this.ftu.addConnectionListener(l);
+        if(this.jet != null) this.jet.addConnectionListener(l);
+        if(this.jetmds != null) this.jetmds.addConnectionListener(l);
+        if(this.ts != null) this.ts.addConnectionListener(l);
+        if(this.asd != null) this.asd.addConnectionListener(l);
     }
 
     @Override
-    public void AddUpdateEventListener(final UpdateEventListener l, final String event) throws IOException {
-        if(this.twu != null) this.twu.AddUpdateEventListener(l, event);
-        if(this.rfx != null) this.rfx.AddUpdateEventListener(l, event);
-        if(this.ftu != null) this.ftu.AddUpdateEventListener(l, event);
-        if(this.jet != null) this.jet.AddUpdateEventListener(l, event);
-        if(this.jetmds != null) this.jetmds.AddUpdateEventListener(l, event);
-        if(this.ts != null) this.ts.AddUpdateEventListener(l, event);
-        if(this.asd != null) this.asd.AddUpdateEventListener(l, event);
+    public void addUpdateEventListener(final UpdateEventListener l, final String event) throws IOException {
+        if(this.twu != null) this.twu.addUpdateEventListener(l, event);
+        if(this.rfx != null) this.rfx.addUpdateEventListener(l, event);
+        if(this.ftu != null) this.ftu.addUpdateEventListener(l, event);
+        if(this.jet != null) this.jet.addUpdateEventListener(l, event);
+        if(this.jetmds != null) this.jetmds.addUpdateEventListener(l, event);
+        if(this.ts != null) this.ts.addUpdateEventListener(l, event);
+        if(this.asd != null) this.asd.addUpdateEventListener(l, event);
     }
 
     @Override
@@ -143,20 +143,20 @@ public final class universalDataProvider implements DataProvider{
     }
 
     @Override
-    public void Dispose() {
-        if(this.rfx != null) this.rfx.Dispose();
-        if(this.ftu != null) this.ftu.Dispose();
-        if(this.twu != null) this.twu.Dispose();
-        if(this.jet != null) this.jet.Dispose();
-        if(this.jetmds != null) this.jetmds.Dispose();
-        if(this.ts != null) this.ts.Dispose();
-        if(this.asd != null) this.asd.Dispose();
+    public void dispose() {
+        if(this.rfx != null) this.rfx.dispose();
+        if(this.ftu != null) this.ftu.dispose();
+        if(this.twu != null) this.twu.dispose();
+        if(this.jet != null) this.jet.dispose();
+        if(this.jetmds != null) this.jetmds.dispose();
+        if(this.ts != null) this.ts.dispose();
+        if(this.asd != null) this.asd.dispose();
     }
 
     public void enableAsyncUpdate(final boolean enable) {}
 
     @Override
-    public String ErrorString() {
+    public String errorString() {
         return this.error;
     }
 
@@ -167,26 +167,26 @@ public final class universalDataProvider implements DataProvider{
     }
 
     @Override
-    public float GetFloat(final String in) {
+    public float getFloat(final String in) {
         this.error = null;
         return Float.parseFloat(in);
     }
 
     @Override
-    public FrameData GetFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
+    public FrameData getFrameData(final String in_y, final String in_x, final float time_min, final float time_max) throws IOException {
         return null;
     }
 
     @Override
-    public final String GetLegendString(final String s) {
+    public final String getLegendString(final String s) {
         return s;
     }
 
     @Override
-    public long[] GetShots(final String in) {
+    public long[] getShots(final String in) {
         final long d[] = new long[1];
         try{
-            return this.rfx.GetShots(in);
+            return this.rfx.getShots(in);
         }catch(final Exception exc){
             try{
                 final StringTokenizer st = new StringTokenizer(in, ":");
@@ -200,33 +200,33 @@ public final class universalDataProvider implements DataProvider{
     }
 
     @Override
-    public String GetString(final String in) {
+    public String getString(final String in) {
         this.error = null;
         return new String(in);
     }
 
     @Override
-    public WaveData GetWaveData(final String in) {
+    public WaveData getWaveData(final String in) {
         try{
-            return this.SelectProvider(in).GetWaveData(universalDataProvider.RemoveExp(in));
+            return this.selectProvider(in).getWaveData(UniversalDataProvider.RemoveExp(in));
         }catch(final Exception exc){
             return null;
         }
     }
 
     @Override
-    public WaveData GetWaveData(final String in_y, final String in_x) {
+    public WaveData getWaveData(final String in_y, final String in_x) {
         try{
-            return this.SelectProvider(in_y).GetWaveData(universalDataProvider.RemoveExp(in_y), in_x);
+            return this.selectProvider(in_y).getWaveData(UniversalDataProvider.RemoveExp(in_y), in_x);
         }catch(final Exception exc){
             return null;
         }
     }
 
     @Override
-    public int InquireCredentials(final JFrame f, final DataServerItem server_item) {
-        if(this.rfx != null) this.rfx.InquireCredentials(f, new DataServerItem("java_user_ext"));
-        return this.jet.InquireCredentials(f, server_item);
+    public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
+        if(this.rfx != null) this.rfx.inquireCredentials(f, new DataServerItem("java_user_ext"));
+        return this.jet.inquireCredentials(f, server_item);
     }
 
     @Override
@@ -235,28 +235,28 @@ public final class universalDataProvider implements DataProvider{
     }
 
     @Override
-    public void RemoveConnectionListener(final ConnectionListener l) {
-        if(this.twu != null) this.twu.RemoveConnectionListener(l);
-        if(this.rfx != null) this.rfx.RemoveConnectionListener(l);
-        if(this.ftu != null) this.ftu.RemoveConnectionListener(l);
-        if(this.jet != null) this.jet.RemoveConnectionListener(l);
-        if(this.jetmds != null) this.jetmds.RemoveConnectionListener(l);
-        if(this.ts != null) this.ts.RemoveConnectionListener(l);
-        if(this.asd != null) this.asd.RemoveConnectionListener(l);
+    public void removeConnectionListener(final ConnectionListener l) {
+        if(this.twu != null) this.twu.removeConnectionListener(l);
+        if(this.rfx != null) this.rfx.removeConnectionListener(l);
+        if(this.ftu != null) this.ftu.removeConnectionListener(l);
+        if(this.jet != null) this.jet.removeConnectionListener(l);
+        if(this.jetmds != null) this.jetmds.removeConnectionListener(l);
+        if(this.ts != null) this.ts.removeConnectionListener(l);
+        if(this.asd != null) this.asd.removeConnectionListener(l);
     }
 
     @Override
-    public void RemoveUpdateEventListener(final UpdateEventListener l, final String event) throws IOException {
-        if(this.twu != null) this.twu.RemoveUpdateEventListener(l, event);
-        if(this.rfx != null) this.rfx.RemoveUpdateEventListener(l, event);
-        if(this.ftu != null) this.ftu.RemoveUpdateEventListener(l, event);
-        if(this.jet != null) this.jet.RemoveUpdateEventListener(l, event);
-        if(this.jetmds != null) this.jetmds.RemoveUpdateEventListener(l, event);
-        if(this.ts != null) this.ts.RemoveUpdateEventListener(l, event);
-        if(this.asd != null) this.asd.RemoveUpdateEventListener(l, event);
+    public void removeUpdateEventListener(final UpdateEventListener l, final String event) throws IOException {
+        if(this.twu != null) this.twu.removeUpdateEventListener(l, event);
+        if(this.rfx != null) this.rfx.removeUpdateEventListener(l, event);
+        if(this.ftu != null) this.ftu.removeUpdateEventListener(l, event);
+        if(this.jet != null) this.jet.removeUpdateEventListener(l, event);
+        if(this.jetmds != null) this.jetmds.removeUpdateEventListener(l, event);
+        if(this.ts != null) this.ts.removeUpdateEventListener(l, event);
+        if(this.asd != null) this.asd.removeUpdateEventListener(l, event);
     }
 
-    protected DataProvider SelectProvider(final String spec) {
+    private DataProvider selectProvider(final String spec) {
         if(spec.startsWith("rfx:")) return this.rfx;
         if(spec.startsWith("ftu:")) return this.ftu;
         if(spec.startsWith("twu:")) return this.twu;
@@ -269,32 +269,32 @@ public final class universalDataProvider implements DataProvider{
     }
 
     @Override
-    public void SetArgument(final String arg) {}
+    public void setArgument(final String arg) {}
 
-    public void SetCompression(final boolean state) {}
+    public void setCompression(final boolean state) {}
 
     public void setContinuousUpdate() {}
 
     @Override
-    public void SetEnvironment(final String exp) {
+    public void setEnvironment(final String exp) {
         this.error = null;
     }
 
     @Override
-    public boolean SupportsTunneling() {
+    public boolean supportsTunneling() {
         return false;
     }
 
     @Override
-    public void Update(final String exp, final long s) {
+    public void update(final String exp, final long s) {
         if(exp == null) return;
-        if(exp.equals("rfx") && this.rfx != null) this.rfx.Update(exp, s);
-        else if(exp.equals("ftu") && this.ftu != null) this.ftu.Update(exp, s);
-        else if(exp.equals("twu") && this.twu != null) this.twu.Update(exp, s);
-        else if(exp.equals("jet") && this.jet != null) this.jet.Update(null, s);
-        else if(exp.equals("jetmds") && this.jetmds != null) this.jetmds.Update(null, s);
-        else if(exp.equals("ts") && this.ts != null) this.ts.Update(null, s);
-        else if(exp.equals("asd") && this.asd != null) this.asd.Update(null, s);
+        if(exp.equals("rfx") && this.rfx != null) this.rfx.update(exp, s);
+        else if(exp.equals("ftu") && this.ftu != null) this.ftu.update(exp, s);
+        else if(exp.equals("twu") && this.twu != null) this.twu.update(exp, s);
+        else if(exp.equals("jet") && this.jet != null) this.jet.update(null, s);
+        else if(exp.equals("jetmds") && this.jetmds != null) this.jetmds.update(null, s);
+        else if(exp.equals("ts") && this.ts != null) this.ts.update(null, s);
+        else if(exp.equals("asd") && this.asd != null) this.asd.update(null, s);
         this.error = null;
     }
 }

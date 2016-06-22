@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Color;
@@ -14,7 +14,7 @@ import java.util.StringTokenizer;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import debug.DEBUG;
-import jScope.ColorMap.ColorProfile;
+import jscope.ColorMap.ColorProfile;
 
 /**
  * Class MultiWaveform extends the capability of class Waveform to deal with multiple
@@ -41,9 +41,9 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
                 final StringTokenizer st = new StringTokenizer(data, ":");
                 final String experiment = st.nextToken();
                 final String path = data.substring(experiment.length() + 1);
-                if(support.getDropAction() == TransferHandler.MOVE) jScopeMultiWave.this.wi.Erase();
+                if(support.getDropAction() == TransferHandler.MOVE) jScopeMultiWave.this.wi.erase();
                 jScopeMultiWave.this.wi.setExperiment(experiment);
-                jScopeMultiWave.this.wi.AddSignal(path);
+                jScopeMultiWave.this.wi.addSignal(path);
                 final WaveformEvent we = new WaveformEvent(jScopeMultiWave.this, WaveformEvent.EVENT_UPDATE, "Update on Drop event ");
                 jScopeMultiWave.this.dispatchWaveformEvent(we);
             }catch(final Exception exc){
@@ -65,17 +65,17 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
         this.setTransferHandler(new ToTransferHandler());
     }
 
-    public void AddEvent() throws IOException {
-        ((jScopeWaveInterface)this.wi).AddEvent(this);
+    public void addEvent() throws IOException {
+        ((jScopeWaveInterface)this.wi).addEvent(this);
     }
 
-    public void AddEvent(final String event) throws IOException {
-        ((jScopeWaveInterface)this.wi).AddEvent(this, event);
+    public void addEvent(final String event) throws IOException {
+        ((jScopeWaveInterface)this.wi).addEvent(this, event);
     }
 
     @Override
-    protected void DrawImage(final Graphics g, final Object img, final Dimension dim, final int type) {
-        if(type != FrameData.JAI_IMAGE) super.DrawImage(g, img, dim, type);
+    protected void drawImage(final Graphics g, final Object img, final Dimension dim, final int type) {
+        if(type != FrameData.JAI_IMAGE) super.drawImage(g, img, dim, type);
         else{
             ((Graphics2D)g).clearRect(0, 0, dim.width, dim.height);
             ((Graphics2D)g).drawRenderedImage((RenderedImage)img, new AffineTransform(1f, 0f, 0f, 1f, 0F, 0F));
@@ -88,7 +88,7 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
     }
 
     @Override
-    public int GetMarker(final int idx) {
+    public int getMarker(final int idx) {
         if(idx < this.wi.num_waves) return this.wi.markers[idx];
         return 0;
     }
@@ -119,7 +119,7 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
             if(sign != null && sign.getType() == Signal.TYPE_2D){
                 switch(sign.getMode2D()){
                     case Signal.MODE_XZ:
-                        s = s + " [X-Z Y = " + Waveform.ConvertToString(sign.getYinXZplot(), false) + " ]";
+                        s = s + " [X-Z Y = " + Waveform.convertToString(sign.getYinXZplot(), false) + " ]";
                         break;
                     case Signal.MODE_YZ:
                         s = s + " [Y-Z X = " + sign.getStringOfXinYZplot() +
@@ -136,42 +136,42 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
                 }
             }
         }
-        return this.wi.dp.GetLegendString(s);
+        return this.wi.dp.getLegendString(s);
     }
 
     @Override
-    public String[] GetSignalsName() {
-        return this.wi.GetSignalsName();
+    public String[] getSignalsName() {
+        return this.wi.getSignalsName();
     }
 
     @Override
-    public boolean[] GetSignalsState() {
-        return this.wi.GetSignalsState();
+    public boolean[] getSignalsState() {
+        return this.wi.getSignalsState();
     }
 
     @Override
     protected boolean isSignalShow(final int i) {
-        return this.wi.GetSignalState(i);
+        return this.wi.getSignalState(i);
     }
 
     public void jScopeErase() {
-        this.Erase();
-        this.wi.Erase();
+        this.erase();
+        this.wi.erase();
     }
 
     public synchronized void jScopeWaveUpdate() {
         if(this.wi.isAddSignal()){
             // reset to previous configuration if signal/s are not added
-            if(((jScopeWaveInterface)this.wi).prev_wi != null && ((jScopeWaveInterface)this.wi).prev_wi.GetNumEvaluatedSignal() == ((jScopeWaveInterface)this.wi).GetNumEvaluatedSignal()){
+            if(((jScopeWaveInterface)this.wi).prev_wi != null && ((jScopeWaveInterface)this.wi).prev_wi.getNumEvaluatedSignal() == ((jScopeWaveInterface)this.wi).getNumEvaluatedSignal()){
                 ((jScopeWaveInterface)this.wi).prev_wi.error = (this.wi).error;
                 ((jScopeWaveInterface)this.wi).prev_wi.w_error = ((jScopeWaveInterface)this.wi).w_error;
                 ((jScopeWaveInterface)this.wi).prev_wi.setAddSignal(this.wi.isAddSignal());
                 this.wi = ((jScopeWaveInterface)this.wi).prev_wi;
-                this.wi.SetIsSignalAdded(false);
-            }else this.wi.SetIsSignalAdded(true);
+                this.wi.setIsSignalAdded(false);
+            }else this.wi.setIsSignalAdded(true);
             ((jScopeWaveInterface)this.wi).prev_wi = null;
         }
-        this.Update(this.wi);
+        this.update(this.wi);
         final WaveformEvent e = new WaveformEvent(this, WaveformEvent.END_UPDATE);
         this.dispatchWaveformEvent(e);
     }
@@ -189,10 +189,10 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
         });
     }
 
-    public void Refresh() {
+    public void refresh() {
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         try{
-            this.AddEvent();
+            this.addEvent();
         }catch(final IOException e){}
         final Thread p = new Thread(){
             @Override
@@ -212,12 +212,12 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
         p.start();
     }
 
-    public void RefreshOnEvent() {
+    public void refreshOnEvent() {
         /*
         setCursor(new Cursor(Cursor.WAIT_CURSOR));
         try
         {
-            AddEvent();
+            addEvent();
         }
         catch (IOException e)
         {}
@@ -245,18 +245,18 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
         });
     }
 
-    public void RemoveEvent() throws IOException {
-        ((jScopeWaveInterface)this.wi).RemoveEvent(this);
+    public void removeEvent() throws IOException {
+        ((jScopeWaveInterface)this.wi).removeEvent(this);
     }
 
-    public void RemoveEvent(final String event) throws IOException {
-        ((jScopeWaveInterface)this.wi).AddEvent(this, event);
+    public void removeEvent(final String event) throws IOException {
+        ((jScopeWaveInterface)this.wi).addEvent(this, event);
     }
 
     @Override
     public void removeNotify() {
         try{
-            this.RemoveEvent();
+            this.removeEvent();
         }catch(final IOException e){}
         this.wi = null;
         this.signals = null;
@@ -273,12 +273,12 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
     }
 
     @Override
-    public void SetSignalState(final String label, final boolean state) {
+    public void setSignalState(final String label, final boolean state) {
         this.wi.setSignalState(label, state);
-        super.SetSignalState(label, state);
+        super.setSignalState(label, state);
     }
 
-    public void Update(final WaveInterface wi) {
+    public void update(final WaveInterface wi) {
         this.wi = wi;
         this.resetMode();
         this.orig_signals = null;
@@ -296,7 +296,7 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
         super.legend_x = this.wi.legend_x;
         super.legend_y = this.wi.legend_y;
         super.is_image = this.wi.is_image;
-        this.SetFrames(this.wi.getFrames());
+        this.setFrames(this.wi.getFrames());
         if(this.wi.signals != null){
             boolean all_null = true;
             for(int i = 0; i < this.wi.signals.length; i++)
@@ -312,7 +312,7 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
                     this.wi.signals[i].setMode2D(this.wi.mode2D[i]);
                 }
             if(!all_null){
-                this.Update(this.wi.signals);
+                this.update(this.wi.signals);
                 return;
             }
         }
@@ -324,9 +324,9 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
             if(this.signals.size() != 0) this.signals.removeAllElements();
             if(this.wi.getModified()) this.frame = 0;
             this.not_drawn = true;
-            super.Update();
+            super.update();
             return;
         }
-        this.Erase();
+        this.erase();
     }
 }

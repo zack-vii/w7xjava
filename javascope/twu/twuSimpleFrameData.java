@@ -13,12 +13,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.StringTokenizer;
-import jScope.ConnectionEvent;
-import jScope.FrameData;
-import jScope.Frames;
+import jscope.ConnectionEvent;
+import jscope.FrameData;
+import jscope.Frames;
 
 // -------------------------------------------------------------------------------------------------
-class twuSimpleFrameData implements FrameData{
+public class TwuSimpleFrameData implements FrameData{
     byte                    buf[];
     private final Dimension dim             = null;
     String                  error;
@@ -27,12 +27,12 @@ class twuSimpleFrameData implements FrameData{
     int                     mode            = -1;
     private int             n_frames        = 0;
     int                     pixel_size;
-    private twuDataProvider provider        = null;
+    private TwuDataProvider provider        = null;
     private int             st_idx          = -1, end_idx = -1;
     float                   time_max, time_min;
     private float           times[]         = null;
 
-    public twuSimpleFrameData(final twuDataProvider dp, final String in_y, final String in_x, final float time_min, final float time_max) throws IOException{
+    public TwuSimpleFrameData(final TwuDataProvider dp, final String in_y, final String in_x, final float time_min, final float time_max) throws IOException{
         int i;
         float t;
         float all_times[] = null;
@@ -43,7 +43,7 @@ class twuSimpleFrameData implements FrameData{
         this.time_max = time_max;
         /* Da modificare per multi frame */
         if(in_x == null || in_x.length() == 0) all_times = new float[352 / 3];
-        else all_times = this.provider.GetFloatArray(in_x);
+        else all_times = this.provider.getFloatArray(in_x);
         for(i = 0; i < all_times.length; i++)
             all_times[i] = (float)(-0.1 + 0.06 * i);
         // if(all_times == null){ throw(new IOException("Frame time evaluation error")); }
@@ -64,13 +64,13 @@ class twuSimpleFrameData implements FrameData{
     }
 
     @Override
-    public byte[] GetFrameAt(int idx) throws IOException {
+    public byte[] getFrameAt(int idx) throws IOException {
         if(idx == this.first_frame_idx && this.buf != null) return this.buf;
-        // b_img = MdsDataProvider.this.GetFrameAt(in_y, st_idx+idx);
+        // b_img = MdsDataProvider.this.getFrameAt(in_y, st_idx+idx);
         // Da modificare per leggere i frames
         idx *= 3;
         final ConnectionEvent ce = new ConnectionEvent(this, "Loading Image " + idx, 0, 0);
-        this.provider.DispatchConnectionEvent(ce);
+        this.provider.dispatchConnectionEvent(ce);
         final StringTokenizer st = new StringTokenizer(this.in_y, "/", true);
         String str = new String();
         final int nt = st.countTokens();
@@ -100,12 +100,12 @@ class twuSimpleFrameData implements FrameData{
     }
 
     @Override
-    public Dimension GetFrameDimension() {
+    public Dimension getFrameDimension() {
         return this.dim;
     }
 
     @Override
-    public float[] GetFrameTimes() {
+    public float[] getFrameTimes() {
         final float dtimes[] = new float[this.times.length];
         for(int i = 0; i < this.times.length; i++)
             dtimes[i] = this.times[i];
@@ -113,20 +113,20 @@ class twuSimpleFrameData implements FrameData{
     }
 
     @Override
-    public int GetFrameType() throws IOException {
+    public int getFrameType() throws IOException {
         if(this.mode != -1) return this.mode;
         int i;
         for(i = 0; i < this.n_frames; i++){
-            this.buf = this.GetFrameAt(i);
+            this.buf = this.getFrameAt(i);
             if(this.buf != null) break;
         }
         this.first_frame_idx = i;
-        this.mode = Frames.DecodeImageType(this.buf);
+        this.mode = Frames.decodeImageType(this.buf);
         return this.mode;
     }
 
     @Override
-    public int GetNumFrames() {
+    public int getNumFrames() {
         return this.n_frames;
     }
 }

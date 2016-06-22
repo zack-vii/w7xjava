@@ -25,9 +25,9 @@ import com.mindbright.ssh2.SSH2SimpleClient;
 import com.mindbright.ssh2.SSH2Transport;
 import com.mindbright.util.RandomSeed;
 import com.mindbright.util.SecureRandomAndPad;
-import jScope.DataProvider;
+import jscope.DataProvider;
 
-final public class sshTunneling extends Thread{
+final public class SshTunneling extends Thread{
     public static SecureRandomAndPad createSecureRandom() {
         /*
          * NOTE, this is how it should be done if you want good randomness, however good randomness takes time so we settle with just some low-entropy garbage here. RandomSeed seed = new RandomSeed("/dev/random", "/dev/urandom"); byte[] s =
@@ -52,7 +52,7 @@ final public class sshTunneling extends Thread{
     JTextField       user_text;
     String           username;
 
-    public sshTunneling(final JFrame f, final DataProvider da, final String ip, final String remotePort, final String user, final String localPort) throws IOException{
+    public SshTunneling(final JFrame f, final DataProvider da, final String ip, final String remotePort, final String user, final String localPort) throws IOException{
         this.da = da;
         this.server = ip;
         this.remotePort = remotePort;
@@ -62,10 +62,10 @@ final public class sshTunneling extends Thread{
         if(status != DataProvider.LOGIN_OK) throw(new IOException("Login not successful"));
     }
 
-    boolean CheckPasswd(final String server, final String username, final String passwd) {
+    boolean checkPasswd(final String server, final String username, final String passwd) {
         try{
             final Socket serverSocket = new Socket(server, 22);
-            this.transport = new SSH2Transport(serverSocket, sshTunneling.createSecureRandom());
+            this.transport = new SSH2Transport(serverSocket, SshTunneling.createSecureRandom());
             this.client = new SSH2SimpleClient(this.transport, username, passwd);
             return true;
         }catch(final Exception exc){
@@ -96,14 +96,14 @@ final public class sshTunneling extends Thread{
         ok_b.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                sshTunneling.this.username = sshTunneling.this.user_text.getText();
-                sshTunneling.this.passwd = new String(sshTunneling.this.passwd_text.getPassword());
-                if(!sshTunneling.this.CheckPasswd(sshTunneling.this.server, sshTunneling.this.username, sshTunneling.this.passwd)){
-                    JOptionPane.showMessageDialog(sshTunneling.this.inquiry_dialog, "Login ERROR : " + ((sshTunneling.this.error_string != null) ? sshTunneling.this.error_string : "no further information"), "alert", JOptionPane.ERROR_MESSAGE);
-                    sshTunneling.this.login_status = DataProvider.LOGIN_ERROR;
+                SshTunneling.this.username = SshTunneling.this.user_text.getText();
+                SshTunneling.this.passwd = new String(SshTunneling.this.passwd_text.getPassword());
+                if(!SshTunneling.this.checkPasswd(SshTunneling.this.server, SshTunneling.this.username, SshTunneling.this.passwd)){
+                    JOptionPane.showMessageDialog(SshTunneling.this.inquiry_dialog, "Login ERROR : " + ((SshTunneling.this.error_string != null) ? SshTunneling.this.error_string : "no further information"), "alert", JOptionPane.ERROR_MESSAGE);
+                    SshTunneling.this.login_status = DataProvider.LOGIN_ERROR;
                 }else{
-                    sshTunneling.this.inquiry_dialog.setVisible(false);
-                    sshTunneling.this.login_status = DataProvider.LOGIN_OK;
+                    SshTunneling.this.inquiry_dialog.setVisible(false);
+                    SshTunneling.this.login_status = DataProvider.LOGIN_OK;
                 }
             }
         });
@@ -112,8 +112,8 @@ final public class sshTunneling extends Thread{
         clear_b.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                sshTunneling.this.user_text.setText("");
-                sshTunneling.this.passwd_text.setText("");
+                SshTunneling.this.user_text.setText("");
+                SshTunneling.this.passwd_text.setText("");
             }
         });
         p.add(clear_b);
@@ -121,8 +121,8 @@ final public class sshTunneling extends Thread{
         cancel_b.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                sshTunneling.this.login_status = DataProvider.LOGIN_CANCEL;
-                sshTunneling.this.inquiry_dialog.setVisible(false);
+                SshTunneling.this.login_status = DataProvider.LOGIN_CANCEL;
+                SshTunneling.this.inquiry_dialog.setVisible(false);
             }
         });
         p.add(cancel_b);

@@ -3,12 +3,12 @@ package twu;
 /* $Id$ */
 import java.io.IOException;
 import java.util.StringTokenizer;
-import jScope.DataAccess;
-import jScope.DataProvider;
-import jScope.FrameData;
-import jScope.Signal;
+import jscope.DataAccess;
+import jscope.DataProvider;
+import jscope.FrameData;
+import jscope.Signal;
 
-final public class twuAccess implements DataAccess{
+final public class TwuAccess implements DataAccess{
     /*
     public static void main(final String args[]) {//TODO:main
         final twuAccess access = new twuAccess();
@@ -26,7 +26,7 @@ final public class twuAccess implements DataAccess{
     String          ip_addr    = null;
     String          shot_str   = null;
     String          signal     = null;
-    twuDataProvider tw         = null;
+    TwuDataProvider tw         = null;
 
     @Override
     public void close() {}
@@ -39,7 +39,7 @@ final public class twuAccess implements DataAccess{
     @Override
     public String getError() {
         if(this.tw == null) return("Cannot create TwuDataProvider");
-        return this.tw.ErrorString();
+        return this.tw.errorString();
     }
 
     @Override
@@ -67,11 +67,11 @@ final public class twuAccess implements DataAccess{
         this.setProvider(url);
         if(this.signal == null) return null;
         Signal s = null;
-        final float y[] = this.tw.GetFloatArray(this.signal, false);
-        final float x[] = this.tw.GetFloatArray(this.signal, true);
+        final float y[] = this.tw.getFloatArray(this.signal, false);
+        final float x[] = this.tw.getFloatArray(this.signal, true);
         if(x == null || y == null) return null;
         s = new Signal(x, y);
-        s.setName(this.tw.GetSignalProperty("SignalName", this.signal));
+        s.setName(this.tw.getSignalProperty("SignalName", this.signal));
         // System.out.println(tw.getSignalProperty("SignalName", signal));
         return s;
     }
@@ -85,14 +85,14 @@ final public class twuAccess implements DataAccess{
     public float[] getX(final String url) throws IOException {
         this.setProvider(url);
         if(this.signal == null) return null;
-        return this.tw.GetFloatArray(this.signal, true);
+        return this.tw.getFloatArray(this.signal, true);
     }
 
     @Override
     public float[] getY(final String url) throws IOException {
         this.setProvider(url);
         if(this.signal == null) return null;
-        return this.tw.GetFloatArray(this.signal, false);
+        return this.tw.getFloatArray(this.signal, false);
     }
 
     @Override
@@ -108,7 +108,7 @@ final public class twuAccess implements DataAccess{
         st.nextToken(); // skip
         this.shot_str = st.nextToken();
         if(this.tw == null){
-            this.tw = new twuDataProvider("jScope applet (Version 7.2.2)");
+            this.tw = new TwuDataProvider("jScope applet (Version 7.2.2)");
         }
     }
 

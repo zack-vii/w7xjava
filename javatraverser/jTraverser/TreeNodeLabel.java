@@ -1,4 +1,4 @@
-package jTraverser;
+package jtraverser;
 
 import java.awt.Color;
 import java.awt.Font;

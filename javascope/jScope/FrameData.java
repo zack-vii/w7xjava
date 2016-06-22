@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Dimension;
@@ -28,7 +28,7 @@ public interface FrameData{
      *         ordering.
      * @exception java.io.IOException
      */
-    public byte[] GetFrameAt(int idx) throws IOException;
+    public byte[] getFrameAt(int idx) throws IOException;
 
     /**
      * Return the dimension of a frame. All the frames in the sequence must have the same dimension.
@@ -36,7 +36,7 @@ public interface FrameData{
      * @return The frame dimension.
      * @exception java.io.IOException
      */
-    public Dimension GetFrameDimension() throws Exception;
+    public Dimension getFrameDimension() throws Exception;
 
     /**
      * Return the times associated with every frame of the sequence. This information is required to correlate
@@ -45,7 +45,7 @@ public interface FrameData{
      * @return The time array for the frame sequence.
      * @exception java.io.IOException
      */
-    public float[] GetFrameTimes() throws Exception;
+    public float[] getFrameTimes() throws Exception;
 
     /**
      * Returns the type of the corresponding frames. Returned frames can have either of the following types: <br>
@@ -59,7 +59,7 @@ public interface FrameData{
      * @return The type of the corresponding frame.
      * @exception java.io.IOException
      */
-    public int GetFrameType() throws Exception;
+    public int getFrameType() throws Exception;
 
     /**
      * Returns the number of frames in the sequence.
@@ -67,5 +67,5 @@ public interface FrameData{
      * @return The number of frames in the sequence.
      * @exception java.io.IOException
      */
-    public int GetNumFrames() throws Exception;
+    public int getNumFrames() throws Exception;
 }

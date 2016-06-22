@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 import java.util.Properties;
 
@@ -15,7 +15,7 @@ public final class jScopeDefaultValues{
     public boolean  upd_limits       = true;
     public String   xmin, xmax, ymax, ymin;
 
-    public final void FromFile(final Properties pr, final String prompt) {
+    public final void fromFile(final Properties pr, final String prompt) {
         final String prop = pr.getProperty(prompt + ".reversed");
         if(prop != null) this.reversed = Boolean.parseBoolean(prop);
         else this.reversed = false;
@@ -33,7 +33,7 @@ public final class jScopeDefaultValues{
         return(this.public_variables != null && this.public_variables.length() > 0);
     }
 
-    public void Reset() {
+    public void reset() {
         this.shots = null;
         this.xmin = this.xmax = this.ymax = this.ymin = null;
         this.title_str = this.xlabel = this.ylabel = null;

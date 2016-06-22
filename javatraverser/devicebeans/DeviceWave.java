@@ -27,9 +27,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import jScope.Waveform;
-import jScope.WaveformEditor;
-import jScope.WaveformEditorListener;
+import jscope.Waveform;
+import jscope.WaveformEditor;
+import jscope.WaveformEditorListener;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_a.Float32Array;
 import mds.data.descriptor_r.Signal;
@@ -568,9 +568,9 @@ public class DeviceWave extends DeviceComponent{
     @Override
     public void setHighlight(final boolean highlighted) {
         if(highlighted){
-            Waveform.SetColors(new Color[]{Color.red}, new String[]{"Red"});
+            Waveform.setColors(new Color[]{Color.red}, new String[]{"Red"});
         }else{
-            Waveform.SetColors(new Color[]{Color.black}, new String[]{"Black"});
+            Waveform.setColors(new Color[]{Color.black}, new String[]{"Black"});
         }
         super.setHighlight(highlighted);
     }

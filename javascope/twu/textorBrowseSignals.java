@@ -5,10 +5,10 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
-import jScope.jScopeBrowseSignals;
+import jscope.jScopeBrowseSignals;
 
 @SuppressWarnings("serial")
-public final class textorBrowseSignals extends jScopeBrowseSignals{
+public final class TextorBrowseSignals extends jScopeBrowseSignals{
     static private boolean reasonableShotNr(final String shot) {
         try{
             new Integer(shot);
@@ -63,7 +63,7 @@ public final class textorBrowseSignals extends jScopeBrowseSignals{
                     // (displayed and so) as a URL. I hope that this does not clash with
                     // other jScope codes. If so, tell me!
                     // J.G.Krom (Textor, Juelich, Germany) <J.Krom@fz-juelich.de>
-                    if(textorBrowseSignals.reasonableShotNr(this.shot)){
+                    if(TextorBrowseSignals.reasonableShotNr(this.shot)){
                         sig_path = "//" + this.server_url + "/" + this.tree + "/" + group + "/#####" + st.nextToken("");
                         // The hashes field should map on the shotnumber field. The rest of the
                         // URL should be as normal.

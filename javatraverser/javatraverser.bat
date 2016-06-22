@@ -72,51 +72,51 @@ SET DEVICE_SRC=^
   devicebeans\tools\StoreFile.java
 
 SET TRAV_SRC=^
-  jTraverser\DataChangeEvent.java ^
-  jTraverser\DataChangeListener.java ^
-  jTraverser\Node.java ^
-  jTraverser\NodeInfo.java ^
-  jTraverser\Tree.java ^
-  jTraverser\TreeManager.java ^
-  jTraverser\TreeNodeLabel.java ^
-  jTraverser\dialogs\AddNode.java ^
-  jTraverser\dialogs\DialogSet.java ^
-  jTraverser\dialogs\Dialogs.java ^
-  jTraverser\dialogs\DisplayData.java ^
-  jTraverser\dialogs\DisplayNci.java ^
-  jTraverser\dialogs\DisplayTags.java ^
-  jTraverser\dialogs\Flags.java ^
-  jTraverser\dialogs\GraphPanel.java ^
-  jTraverser\dialogs\ModifyData.java ^
-  jTraverser\dialogs\ModifyTags.java ^
-  jTraverser\dialogs\Rename.java ^
-  jTraverser\dialogs\SubTrees.java ^
-  jTraverser\dialogs\TreeDialog.java ^
-  jTraverser\dialogs\TreeOpenDialog.java ^
-  jTraverser\editor\ActionEditor.java ^
-  jTraverser\editor\ArgEditor.java ^
-  jTraverser\editor\AxisEditor.java ^
-  jTraverser\editor\DataEditor.java ^
-  jTraverser\editor\DispatchEditor.java ^
-  jTraverser\editor\Editor.java ^
-  jTraverser\editor\ExprEditor.java ^
-  jTraverser\editor\LabeledExprEditor.java ^
-  jTraverser\editor\MethodEditor.java ^
-  jTraverser\editor\NodeEditor.java ^
-  jTraverser\editor\ParameterEditor.java ^
-  jTraverser\editor\ProcedureEditor.java ^
-  jTraverser\editor\ProgramEditor.java ^
-  jTraverser\editor\PythonEditor.java ^
-  jTraverser\editor\RangeEditor.java ^
-  jTraverser\editor\RoutineEditor.java ^
-  jTraverser\editor\TaskEditor.java ^
-  jTraverser\editor\WindowEditor.java ^
-  jTraverser\jTraverserFacade.java ^
+  jtraverser\DataChangeEvent.java ^
+  jtraverser\DataChangeListener.java ^
+  jtraverser\Node.java ^
+  jtraverser\NodeInfo.java ^
+  jtraverser\Tree.java ^
+  jtraverser\TreeManager.java ^
+  jtraverser\TreeNodeLabel.java ^
+  jtraverser\dialogs\AddNode.java ^
+  jtraverser\dialogs\DialogSet.java ^
+  jtraverser\dialogs\Dialogs.java ^
+  jtraverser\dialogs\DisplayData.java ^
+  jtraverser\dialogs\DisplayNci.java ^
+  jtraverser\dialogs\DisplayTags.java ^
+  jtraverser\dialogs\Flags.java ^
+  jtraverser\dialogs\GraphPanel.java ^
+  jtraverser\dialogs\ModifyData.java ^
+  jtraverser\dialogs\ModifyTags.java ^
+  jtraverser\dialogs\Rename.java ^
+  jtraverser\dialogs\SubTrees.java ^
+  jtraverser\dialogs\TreeDialog.java ^
+  jtraverser\dialogs\TreeOpenDialog.java ^
+  jtraverser\editor\ActionEditor.java ^
+  jtraverser\editor\ArgEditor.java ^
+  jtraverser\editor\AxisEditor.java ^
+  jtraverser\editor\DataEditor.java ^
+  jtraverser\editor\DispatchEditor.java ^
+  jtraverser\editor\Editor.java ^
+  jtraverser\editor\ExprEditor.java ^
+  jtraverser\editor\LabeledExprEditor.java ^
+  jtraverser\editor\MethodEditor.java ^
+  jtraverser\editor\NodeEditor.java ^
+  jtraverser\editor\ParameterEditor.java ^
+  jtraverser\editor\ProcedureEditor.java ^
+  jtraverser\editor\ProgramEditor.java ^
+  jtraverser\editor\PythonEditor.java ^
+  jtraverser\editor\RangeEditor.java ^
+  jtraverser\editor\RoutineEditor.java ^
+  jtraverser\editor\TaskEditor.java ^
+  jtraverser\editor\WindowEditor.java ^
+  jtraverser\jTraverserFacade.java ^
   jTraverser.java
 
 SET TOOLS_SRC=^
-  jTraverser\tools\CompileTree.java ^
-  jTraverser\tools\DecompileTree.java
+  jtraverser\tools\CompileTree.java ^
+  jtraverser\tools\DecompileTree.java
 
 SET LOCAL_SRC=^
   local\localDatabase.java
@@ -221,26 +221,26 @@ SET DEVICE_GIFS=^
   devicebeans\DeviceSetup.gif
 
 SET TRAV_GIFS=^
-  jTraverser\action.gif ^
-  jTraverser\any.gif ^
-  jTraverser\axis.gif ^
-  jTraverser\compound.gif ^
-  jTraverser\device.gif ^
-  jTraverser\dispatch.gif ^
-  jTraverser\numeric.gif ^
-  jTraverser\signal.gif ^
-  jTraverser\structure.gif ^
-  jTraverser\subtree.gif ^
-  jTraverser\task.gif ^
-  jTraverser\text.gif ^
-  jTraverser\window.gif
+  jtraverser\action.gif ^
+  jtraverser\any.gif ^
+  jtraverser\axis.gif ^
+  jtraverser\compound.gif ^
+  jtraverser\device.gif ^
+  jtraverser\dispatch.gif ^
+  jtraverser\numeric.gif ^
+  jtraverser\signal.gif ^
+  jtraverser\structure.gif ^
+  jtraverser\subtree.gif ^
+  jtraverser\task.gif ^
+  jtraverser\text.gif ^
+  jtraverser\window.gif
 
 SET CLASSPATH=-classpath ".;.\mds\mdsip\MindTerm.jar;..\java\classes\jScope.jar"
 SET JAVAC="%JDK_HOME%\bin\javac.exe" ||rem -Xlint -deprecation
 SET JCFLAGS= -O -source 1.6 -target 1.6 -g:none||rem -Xlint -deprecation
 SET JAR="%JDK_HOME%\bin\jar.exe"
 SET DBMANIFEST=devicebeans\MANIFEST.mf
-SET JTMANIFEST=jTraverser\MANIFEST.mf
+SET JTMANIFEST=jtraverser\MANIFEST.mf
 SET JARDIR=..\java\classes
 MKDIR %JARDIR% 2>NUL
 SET DEVICE_CLS=%DEVICE_SRC:.java=*.class%
@@ -258,7 +258,7 @@ ECHO gathering data
 MKDIR %JARDIR%\devicebeans 2>NUL
 MKDIR %JARDIR%\jTraverser 2>NUL
 COPY /Y devicebeans\*.gif %JARDIR%\devicebeans >NUL
-COPY /Y jTraverser\*.gif %JARDIR%\jTraverser >NUL
+COPY /Y jtraverser\*.gif %JARDIR%\jTraverser >NUL
 COPY /Y %DBMANIFEST% %JARDIR%\%DBMANIFEST% >NUL
 COPY /Y %JTMANIFEST% %JARDIR%\%JTMANIFEST% >NUL
 ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>%JARDIR%\%JTMANIFEST%
@@ -280,10 +280,10 @@ DEL /Q mds\data\array\* 2>NUL
 DEL /Q mds\data\* 2>NUL
 DEL /Q mds\* 2>NUL
 DEL /Q devicebeans\* 2>NUL
-DEL /Q jTraverser\Dialogs\* 2>NUL
-DEL /Q jTraverser\Editor* 2>NUL
-DEL /Q jTraverser\Tools* 2>NUL
-DEL /Q jTraverser\* 2>NUL
+DEL /Q jtraverser\Dialogs\* 2>NUL
+DEL /Q jtraverser\Editor* 2>NUL
+DEL /Q jtraverser\Tools* 2>NUL
+DEL /Q jtraverser\* 2>NUL
 DEL /Q jTraverser.class 2>NUL
 DEL /Q debug\* 2>NUL
 RMDIR /Q/S local

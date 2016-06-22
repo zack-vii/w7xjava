@@ -26,10 +26,10 @@ MKDIR full 2>NUL
 PUSHD full
 ECHO unpacking jScope.jar
 %JAR% -xf ..\jScope.jar
-ECHO unpacking mdsDataProvider.jar
-%JAR% -xf ..\mdsDataProvider.jar
-ECHO unpacking w7xDataProvider.jar
-%JAR% -xf ..\w7xDataProvider.jar
+ECHO unpacking MdsDataProvider.jar
+%JAR% -xf ..\MdsDataProvider.jar
+ECHO unpacking W7XDataProvider.jar
+%JAR% -xf ..\W7XDataProvider.jar
 DEL META-INF\MANIFEST.MF
 POPD
 COPY /Y %SRCDIR%\MANIFEST.MF .\MANIFEST.MF >NUL

@@ -1,7 +1,7 @@
-package jTraverser.dialogs;
+package jtraverser.dialogs;
 
 import javax.swing.JFrame;
-import jTraverser.editor.NodeEditor;
+import jtraverser.editor.NodeEditor;
 
 @SuppressWarnings("serial")
 public class TreeDialog extends JFrame{

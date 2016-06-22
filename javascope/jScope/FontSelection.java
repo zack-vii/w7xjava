@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.BorderLayout;
@@ -165,7 +165,7 @@ public class FontSelection extends JDialog implements ActionListener, ItemListen
         buttonPanel.add(this.cancel);
         this.getContentPane().add(BorderLayout.SOUTH, buttonPanel);
         this.pack();
-        this.GetPropertiesValue();
+        this.getPropertiesValue();
     }
 
     @Override
@@ -173,13 +173,13 @@ public class FontSelection extends JDialog implements ActionListener, ItemListen
         final Object ob = e.getSource();
         if(ob == this.ok || ob == this.apply){
             if(this.waveform_i.isSelected()){
-                this.font = this.GetFont();
-                this.main_scope.UpdateFont();
-                this.main_scope.RepaintAllWaves();
+                this.font = this.getFont();
+                this.main_scope.updateFont();
+                this.main_scope.repaintAllWaves();
                 this.main_scope.setChange(true);
             }
             if(this.application_i.isSelected()){
-                this.main_scope.SetApplicationFonts(this.GetFont());
+                this.main_scope.setApplicationFonts(this.getFont());
                 // SwingUtilities.updateComponentTreeUI(main_scope);
             }
             if(ob == this.ok) this.setVisible(false);
@@ -192,7 +192,7 @@ public class FontSelection extends JDialog implements ActionListener, ItemListen
     public void fromFile(final Properties pr, final String prompt) throws IOException {
         String prop;
         if((prop = pr.getProperty(prompt)) != null){
-            this.font = this.StringToFont(prop);
+            this.font = this.stringToFont(prop);
         }
         if(this.font != null){
             this.setFontChoice();
@@ -200,27 +200,27 @@ public class FontSelection extends JDialog implements ActionListener, ItemListen
         }
     }
 
-    public Font GetFont() {
+    public Font getFont_() {
         this.fontchoice = (String)this.fonts.getSelectedItem();
         this.stChoice = this.styles.getSelectedIndex();
         this.siChoice = (String)this.sizes.getSelectedItem();
         final Integer newSize = new Integer(this.siChoice);
         final int size = newSize.intValue();
         Font f = new Font(this.fontchoice, this.stChoice, size);
-        f = this.StringToFont(f.toString());
+        f = this.stringToFont(f.toString());
         return f;
     }
 
-    private void GetPropertiesValue() {
+    private void getPropertiesValue() {
         final Properties js_prop = this.main_scope.js_prop;
         String prop;
         if(js_prop == null) return;
         if((prop = js_prop.getProperty("jScope.font.application")) != null){
-            this.main_scope.SetApplicationFonts(this.StringToFont(prop));
+            this.main_scope.setApplicationFonts(this.stringToFont(prop));
         }
         prop = js_prop.getProperty("jScope.font");
-        if(prop == null) this.font = this.StringToFont(this.getFont().toString());
-        else this.font = this.StringToFont(prop);
+        if(prop == null) this.font = this.stringToFont(this.getFont().toString());
+        else this.font = this.stringToFont(prop);
         if(this.font != null){
             this.setFontChoice();
             this.fontC.changeFont(this.font);
@@ -230,7 +230,7 @@ public class FontSelection extends JDialog implements ActionListener, ItemListen
     @Override
     public void itemStateChanged(final ItemEvent e) {
         if(e.getStateChange() != ItemEvent.SELECTED){ return; }
-        this.fontC.changeFont(this.GetFont());
+        this.fontC.changeFont(this.getFont());
     }
 
     private void setFontChoice() {
@@ -245,7 +245,7 @@ public class FontSelection extends JDialog implements ActionListener, ItemListen
         this.sizes.addItemListener(this);
     }
 
-    public Font StringToFont(final String f) {
+    public Font stringToFont(final String f) {
         String style;
         int pos, i;
         if(f.indexOf("java.awt.Font[") == -1) return null;

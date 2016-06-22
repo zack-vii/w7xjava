@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 import java.awt.Component;
 import java.awt.Window;
@@ -31,7 +31,7 @@ public final class ProfileDialog extends JDialog implements WaveformListener{
         this.profile_container.setPopupMenu(wp);
         for(int i = 0; i < 2; i++){
             this.wave[i] = new Waveform();
-            this.wave[i].SetTitle(ProfileDialog.TITLE[i]);
+            this.wave[i].setTitle(ProfileDialog.TITLE[i]);
         }
         this.profile_container.add(this.wave);
         this.getContentPane().add(this.profile_container);
@@ -45,14 +45,14 @@ public final class ProfileDialog extends JDialog implements WaveformListener{
                 ProfileDialog.this.dispose();
             }
         });
-        this.SetReversed(reversed);
+        this.setReversed(reversed);
         this.setAlwaysOnTop(true);
     }
 
     public final void addProfileLine() {
         this.w_profile_line = new Waveform();
         this.profile_container.add(this.w_profile_line, 3, 1);
-        this.w_profile_line.SetTitle("Line Profile");
+        this.w_profile_line.setTitle("Line Profile");
         this.profile_container.update();
     }
 
@@ -84,9 +84,9 @@ public final class ProfileDialog extends JDialog implements WaveformListener{
         this.profile_container.update();
     }
 
-    public final void SetReversed(final boolean reversed) {
+    public final void setReversed(final boolean reversed) {
         for(final Waveform w : this.wave)
-            w.SetReversed(reversed);
+            w.setReversed(reversed);
     }
 
     public final synchronized void updateProfileLine(final float values_line[]) {
@@ -94,7 +94,7 @@ public final class ProfileDialog extends JDialog implements WaveformListener{
         if(this.w_profile_line == null) this.addProfileLine();
         for(int i = 0; i < values_line.length; i++)
             xt[i] = i;
-        this.w_profile_line.Update(xt, values_line);
+        this.w_profile_line.update(xt, values_line);
     }
 
     public final synchronized void updateProfileLine(final int pixels_line[]) {
@@ -105,7 +105,7 @@ public final class ProfileDialog extends JDialog implements WaveformListener{
             x[i] = pixels_line[i] & 0xff;
             xt[i] = i;
         }
-        this.w_profile_line.Update(xt, x);
+        this.w_profile_line.update(xt, x);
     }
 
     public final synchronized void updateProfiles(final String name, final int x_pixel, final int y_pixel, final double time, final float values_x[], final int start_pixel_x, final float values_y[], final int start_pixel_y) {
@@ -115,14 +115,14 @@ public final class ProfileDialog extends JDialog implements WaveformListener{
             for(int i = 0; i < values_x.length; i++)
                 xt[i] = (float)start_pixel_x + i;
             this.wave[0].setProperties("expr=" + name + "\nx_pix=" + x_pixel + "\ny_pix=" + y_pixel + "\ntime=" + time + "\n");
-            this.wave[0].Update(xt, values_x);
+            this.wave[0].update(xt, values_x);
         }
         if(values_y != null && values_y.length > 0){
             final float yt[] = new float[values_y.length];
             for(int i = 0; i < values_y.length; i++)
                 yt[i] = (float)start_pixel_y + i;
             this.wave[1].setProperties("expr=" + name + "\nx_pix=" + x_pixel + "\ny_pix=" + y_pixel + "\ntime=" + time + "\n");
-            this.wave[1].Update(yt, values_y);
+            this.wave[1].update(yt, values_y);
         }
     }
 
@@ -136,7 +136,7 @@ public final class ProfileDialog extends JDialog implements WaveformListener{
                 xt[i] = (float)start_pixel_x + i;
             }
             this.wave[0].setProperties("expr=" + name + "\nx_pix=" + x_pixel + "\ny_pix=" + y_pixel + "\ntime=" + time + "\n");
-            this.wave[0].Update(xt, x);
+            this.wave[0].update(xt, x);
         }
         if(pixels_y != null && pixels_y.length > 0){
             final float y[] = new float[pixels_y.length];
@@ -146,7 +146,7 @@ public final class ProfileDialog extends JDialog implements WaveformListener{
                 yt[i] = (float)start_pixel_y + i;
             }
             this.wave[1].setProperties("expr=" + name + "\nx_pix=" + x_pixel + "\ny_pix=" + y_pixel + "\ntime=" + time + "\n");;
-            this.wave[1].Update(yt, y);
+            this.wave[1].update(yt, y);
         }
     }
 }

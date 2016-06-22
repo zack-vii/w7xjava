@@ -1,7 +1,7 @@
 /*
  * To change this template, choose Tools | Templates and open the template in the editor.
  */
-package jScope;
+package jscope;
 
 import java.util.Vector;
 
@@ -266,7 +266,7 @@ final public class XYWaveData implements WaveData{
     }
 
     @Override
-    public String GetTitle() {
+    public String getTitle() {
         return "Title";
     }
 
@@ -291,7 +291,7 @@ final public class XYWaveData implements WaveData{
      * @exception java.io.IOException
      */
     @Override
-    public String GetXLabel() {
+    public String getXLabel() {
         return "XLabel";
     }
 
@@ -324,7 +324,7 @@ final public class XYWaveData implements WaveData{
      * @exception java.io.IOException
      */
     @Override
-    public String GetYLabel() {
+    public String getYLabel() {
         return "YLabel";
     }
 
@@ -342,7 +342,7 @@ final public class XYWaveData implements WaveData{
      * @exception java.io.IOException
      */
     @Override
-    public String GetZLabel() {
+    public String getZLabel() {
         return "ZLabel";
     }
 

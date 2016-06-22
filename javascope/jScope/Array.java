@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 import java.awt.Color;
 import java.awt.Dimension;

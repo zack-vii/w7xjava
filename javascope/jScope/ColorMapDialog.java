@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import jScope.ColorMap.ColorProfile;
+import jscope.ColorMap.ColorProfile;
 
 @SuppressWarnings("serial")
 final public class ColorMapDialog extends JDialog{
@@ -204,7 +204,7 @@ final public class ColorMapDialog extends JDialog{
                 final FileInputStream bin = new FileInputStream(new File(cmap));
                 dis = new DataInputStream(bin);
             }catch(final IOException exc){
-                final InputStream pis = this.getClass().getClassLoader().getResourceAsStream("jScope/colors.tbl");
+                final InputStream pis = this.getClass().getClassLoader().getResourceAsStream("jscope/colors.tbl");
                 dis = new DataInputStream(pis);
             }
             final byte nColorTables = dis.readByte();

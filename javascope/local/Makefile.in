@@ -3,26 +3,26 @@ include @top_builddir@/Makefile.inc
 srcdir=@srcdir@
 builddir=@builddir@
 VPATH = @srcdir@
-@MINGW_TRUE@ DEF=${srcdir}/localDataProvider.def
+@MINGW_TRUE@ DEF=${srcdir}/LocalDataProvider.def
 
 CFLAGS += -I /media/sf_FedoraShared/include/ -I /media/sf_FedoraShared/include/win32 $(THREAD) @JDK_CFLAGS@
 
-SOURCES = localDataProvider.c
+SOURCES = LocalDataProvider.c
 OBJECTS = $(SOURCES:.c=.o)
-EXPORTS = localDataProvider.export
+EXPORTS = LocalDataProvider.export
 
-all: 	@MAKELIBDIR@ @MAKELIBDIR@@LIBPRE@localDataProvider@SHARETYPEJNI@
+all: 	@MAKELIBDIR@ @MAKELIBDIR@@LIBPRE@LocalDataProvider@SHARETYPEJNI@
 
 depend:
 	@makedepend -- $(CFLAGS) -- $(SOURCES)
 
 clean:
 	@ $(RM) $(OBJECTS)
-	@ $(RM) @MAKELIBDIR@@LIBPRE@localDataProvider@SHARETYPEJNI@
+	@ $(RM) @MAKELIBDIR@@LIBPRE@LocalDataProvider@SHARETYPEJNI@
 
 install: $(libdir)
-	$(INSTALL) -m 755  @MAKELIBDIR@@LIBPRE@localDataProvider@SHARETYPEJNI@ @libdir@
+	$(INSTALL) -m 755  @MAKELIBDIR@@LIBPRE@LocalDataProvider@SHARETYPEJNI@ @libdir@
 
-@MAKELIBDIR@@LIBPRE@localDataProvider@SHARETYPEJNI@ : $(OBJECTS) $(DEF)
+@MAKELIBDIR@@LIBPRE@LocalDataProvider@SHARETYPEJNI@ : $(OBJECTS) $(DEF)
 	$(LINK.c) $(OUTPUT_OPTION) @LINKJNI@ $(THREAD) $^ -L@MAKELIBDIR@ -lMdsShr -lMdsIpShr -lTreeShr -lTdiShr -lJavaMds $(LIBS)
 

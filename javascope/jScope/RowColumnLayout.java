@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.Component;
@@ -115,7 +115,7 @@ final public class RowColumnLayout implements LayoutManager{
      * @param c
      *            Component on which draw line/s
      */
-    private static void DrawXResize(final Component c, final int x) {
+    private static void drawXResize(final Component c, final int x) {
         // if(System.getProperty("java.version").indexOf("1.2") != -1 && !c.isDoubleBuffered())
         // return;
         // else
@@ -141,7 +141,7 @@ final public class RowColumnLayout implements LayoutManager{
      * @param c
      *            component on which draw line/s
      */
-    private static void DrawYResize(final Component c, final int y, final int n_line, final int space) {
+    private static void drawYResize(final Component c, final int y, final int n_line, final int space) {
         // if(System.getProperty("java.version").indexOf("1.2") != -1 && !c.isDoubleBuffered())
         // return;
         // else
@@ -266,7 +266,7 @@ final public class RowColumnLayout implements LayoutManager{
      *            row[i] define number of component in column i
      */
     public RowColumnLayout(final int[] row){
-        this.SetRowColumn(row, null, null);
+        this.setRowColumn(row, null, null);
     }
 
     /**
@@ -285,7 +285,7 @@ final public class RowColumnLayout implements LayoutManager{
      *            Vector of normalize width of the culomn. The sum of pw[x] must be 1
      */
     public RowColumnLayout(final int[] row, final float ph[], final float pw[]){
-        this.SetRowColumn(row, ph, pw);
+        this.setRowColumn(row, ph, pw);
     }
 
     /**
@@ -316,7 +316,7 @@ final public class RowColumnLayout implements LayoutManager{
      *            Canvas y position
      * @see RowColumnComponet
      */
-    public void DrawResize(final Component _b, final int x, final int y) {
+    public void drawResize(final Component _b, final int x, final int y) {
         Component c = null, b;
         int idx = 0, k;
         boolean found;
@@ -351,7 +351,7 @@ final public class RowColumnLayout implements LayoutManager{
                 start_pos = _b.getBounds().y;
                 k -= this.row[this.col_idx];
                 c = this.main_p.getComponent(this.b_comp + this.comp_idx + 1);
-                RowColumnLayout.DrawYResize(c, 0, 0, 0);
+                RowColumnLayout.drawYResize(c, 0, 0, 0);
                 for(j = 0, jj = 0, i = this.b_comp + this.comp_idx; i > this.b_comp + k - 1; i--, j++){
                     c = this.main_p.getComponent(i);
                     r = c.getBounds();
@@ -364,8 +364,8 @@ final public class RowColumnLayout implements LayoutManager{
                     if(n_draw > 0){
                         pos_y = (r.height + pos) - (-curr_height + r.height + (jj - n_draw) * this.MIN_SIZE_H);
                         // ((RowColumnComponent)c).DrawYResize(c, pos_y - 2, n_draw, -MIN_SIZE_H);
-                        RowColumnLayout.DrawYResize(c, pos_y - 2, n_draw, -this.MIN_SIZE_H);
-                    }else RowColumnLayout.DrawYResize(c, 0, 0, 0);
+                        RowColumnLayout.drawYResize(c, pos_y - 2, n_draw, -this.MIN_SIZE_H);
+                    }else RowColumnLayout.drawYResize(c, 0, 0, 0);
                 }
             }else{
                 pos_y = pos = y;
@@ -373,7 +373,7 @@ final public class RowColumnLayout implements LayoutManager{
                 start_pos = _b.getBounds().y;
                 c = this.main_p.getComponent(this.b_comp + this.comp_idx);
                 // ((RowColumnComponent)c).DrawYResize(0, 0, 0);
-                RowColumnLayout.DrawYResize(c, 0, 0, 0);
+                RowColumnLayout.drawYResize(c, 0, 0, 0);
                 for(j = 0, jj = 0, i = this.b_comp + this.comp_idx + 1; i < this.b_comp + k; i++, j++){
                     c = this.main_p.getComponent(i);
                     r = c.getBounds();
@@ -386,8 +386,8 @@ final public class RowColumnLayout implements LayoutManager{
                     if(n_draw > 0){
                         pos_y = pos - curr_height + r.height + (jj - n_draw) * this.MIN_SIZE_H;
                         // ((RowColumnComponent)c).DrawYResize(pos_y - 2, n_draw, MIN_SIZE_H);
-                        RowColumnLayout.DrawYResize(c, pos_y - 2, n_draw, this.MIN_SIZE_H);
-                    }else RowColumnLayout.DrawYResize(c, 0, 0, 0);
+                        RowColumnLayout.drawYResize(c, pos_y - 2, n_draw, this.MIN_SIZE_H);
+                    }else RowColumnLayout.drawYResize(c, 0, 0, 0);
                 }
             }
         }
@@ -401,7 +401,7 @@ final public class RowColumnLayout implements LayoutManager{
                 for(i = k; i < k + this.row[this.prev_col_idx]; i++){
                     c = this.main_p.getComponent(this.b_comp + i);
                     // ((RowColumnComponent)c).DrawXResize(0);
-                    RowColumnLayout.DrawXResize(c, 0);
+                    RowColumnLayout.drawXResize(c, 0);
                 }
             }
             this.prev_col_idx = idx;
@@ -420,7 +420,7 @@ final public class RowColumnLayout implements LayoutManager{
             for(i = k; i < k + this.row[idx]; i++){
                 c = this.main_p.getComponent(this.b_comp + i);
                 // ((RowColumnComponent)c).DrawXResize(pos - 2);
-                RowColumnLayout.DrawXResize(c, pos - 2);
+                RowColumnLayout.drawXResize(c, pos - 2);
             }
         }
     }
@@ -430,7 +430,7 @@ final public class RowColumnLayout implements LayoutManager{
      *
      * @return Integer number of column
      */
-    public int GetColumns() {
+    public int getColumns() {
         return this.column;
     }
 
@@ -471,7 +471,7 @@ final public class RowColumnLayout implements LayoutManager{
      *
      * @return Integer vector where i-th value is number of component in i-th column
      */
-    public int[] GetRows() {
+    public int[] getRows() {
         return this.row;
     }
 
@@ -499,10 +499,10 @@ final public class RowColumnLayout implements LayoutManager{
             this.setSizes(parent);
             this.sizeUnknown = false;
         }
-        this.ResizeColumns(parent);
+        this.resizeColumns(parent);
         for(int i = 0; i < this.row.length; i++)
             // column; i++)
-            this.ResizeColumn(parent, i);
+            this.resizeColumn(parent, i);
     }
 
     /**
@@ -567,7 +567,7 @@ final public class RowColumnLayout implements LayoutManager{
      * @param col
      *            Integer index of column
      */
-    private void ResetHeight(final int col) {
+    private void resetHeight(final int col) {
         if(this.row != null && col < this.row.length){
             int k = 0;
             for(int i = 0; i < col; i++)
@@ -584,7 +584,7 @@ final public class RowColumnLayout implements LayoutManager{
     /**
      * Set to all column to the same width, column portion of the parent width
      */
-    private void ResetWidth() {
+    private void resetWidth() {
         if(this.row != null && this.percent_width != null && this.percent_width.length >= this.row.length){
             for(int i = 0; i < this.row.length; i++){// column; i++)
                 if(this.row[i] == 0) continue;
@@ -601,7 +601,7 @@ final public class RowColumnLayout implements LayoutManager{
      * @param col_idx
      *            column index
      */
-    private void ResizeColumn(final Container parent, final int col_idx) {
+    private void resizeColumn(final Container parent, final int col_idx) {
         int k = 0, y = 0;
         int previousHeight = 0, currMaxHeight;
         for(int i = 0; i < col_idx; i++)
@@ -637,7 +637,7 @@ final public class RowColumnLayout implements LayoutManager{
      * @param parent
      *            component container
      */
-    private void ResizeColumns(final Container parent) {
+    private void resizeColumns(final Container parent) {
         int k = 0, x = 0;
         int previousWidth = 0, currMaxWidth, currWidth;
         currMaxWidth = this.maxWidth - (this.column - 1) * this.hgap;
@@ -683,7 +683,7 @@ final public class RowColumnLayout implements LayoutManager{
      *            canvas equal width culumn are performed if _b is component column resize
      *            all component in column are resized to equal height.
      */
-    public void ResizeRowColumn(final Component _b) {
+    public void resizeRowColumn(final Component _b) {
         Component b;
         int idx = 0;
         this.init_resize = true;
@@ -700,12 +700,12 @@ final public class RowColumnLayout implements LayoutManager{
             }
         }
         if(this.resize_mode == RowColumnLayout.VERTICAL){
-            this.ResetHeight(this.col_idx);
-            this.ResizeColumn(this.main_p, this.col_idx);
+            this.resetHeight(this.col_idx);
+            this.resizeColumn(this.main_p, this.col_idx);
         }
         if(this.resize_mode == RowColumnLayout.HORIZONTAL){
-            this.ResetWidth();
-            this.ResizeColumns(this.main_p);
+            this.resetWidth();
+            this.resizeColumns(this.main_p);
         }
     }
 
@@ -721,7 +721,7 @@ final public class RowColumnLayout implements LayoutManager{
      * @param y
      *            y position
      */
-    public void ResizeRowColumn(final Component _b, int x, int y) {
+    public void resizeRowColumn(final Component _b, int x, int y) {
         int k = 0, currHeight = 0, curr_y = 0, curr_x = 0;
         int currMaxHeight, currMaxWidth;
         int max_y, max_x, min_x;
@@ -778,7 +778,7 @@ final public class RowColumnLayout implements LayoutManager{
                 curr_y += currHeight + this.vgap;
                 new_y += (int)(currMaxHeight * this.percent_height[k]) + this.vgap;
             }
-            this.ResizeColumn(this.main_p, this.col_idx);
+            this.resizeColumn(this.main_p, this.col_idx);
         }
         if(this.resize_mode == RowColumnLayout.HORIZONTAL){
             if(this.maxWidth < this.column * (this.MIN_SIZE_W + this.hgap) - this.hgap) return;
@@ -793,7 +793,7 @@ final public class RowColumnLayout implements LayoutManager{
             this.percent_width[this.col_idx] = (float)(x - curr_x) / currMaxWidth;
             // percent_width[col_idx + 1] = (float)(max_x - x - hgap)/currMaxWidth;
             this.percent_width[this.nextColumn(this.col_idx)] = (float)(max_x - x - this.hgap) / currMaxWidth;
-            this.ResizeColumns(this.main_p);
+            this.resizeColumns(this.main_p);
         }
     }
 
@@ -806,10 +806,10 @@ final public class RowColumnLayout implements LayoutManager{
      * @param pw
      *            Vector of normalize width of the column. Sum of pw[x] must be 1
      */
-    public void SetPanelSize(final float ph[], final float pw[]) {
+    public void setPanelSize(final float ph[], final float pw[]) {
         if(ph != null && pw != null){
             if(ph.length < this.b_comp + 1 || pw.length < this.row.length) // column)
-                return; // define exception
+            return; // define exception
             this.percent_height = new float[this.b_comp + 1];
             this.percent_width = new float[this.row.length];
             // int MaxWidth = maxWidth - (column - 1) * hgap;
@@ -834,7 +834,7 @@ final public class RowColumnLayout implements LayoutManager{
      * @param row
      *            row[i] define number of component in column i
      */
-    public void SetRowColumn(final int[] row) {
+    public void setRowColumn(final int[] row) {
         this.b_comp = 0;
         this.column = 0;
         this.row = new int[row.length];
@@ -858,9 +858,9 @@ final public class RowColumnLayout implements LayoutManager{
      * @param pw
      *            Vector of normalize width of the column. Sum of pw[x] must be 1
      */
-    public void SetRowColumn(final int[] row, final float ph[], final float pw[]) {
-        this.SetRowColumn(row);
-        this.SetPanelSize(ph, pw);
+    public void setRowColumn(final int[] row, final float ph[], final float pw[]) {
+        this.setRowColumn(row);
+        this.setPanelSize(ph, pw);
     }
 
     /**

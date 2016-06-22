@@ -1,4 +1,4 @@
-package jScope;
+package jscope;
 
 /* $Id$ */
 import java.awt.FlowLayout;
@@ -246,25 +246,25 @@ final public class SetupWaveformParams extends JDialog implements ActionListener
             if(this.wave.ly_max != Float.POSITIVE_INFINITY) this.y_max.setText("" + this.wave.ly_max);
             if(this.wave.ly_min != Float.NEGATIVE_INFINITY) this.y_min.setText("" + this.wave.ly_min);
         }
-        SetupWaveformParams.setTextValue(this.title, this.wave.GetTitle());
-        SetupWaveformParams.setTextValue(this.x_label, this.wave.GetXLabel());
-        SetupWaveformParams.setTextValue(this.y_label, this.wave.GetYLabel());
-        this.grid_mode.setSelectedIndex(this.wave.GetGridMode());
+        SetupWaveformParams.setTextValue(this.title, this.wave.getTitle());
+        SetupWaveformParams.setTextValue(this.x_label, this.wave.getXLabel());
+        SetupWaveformParams.setTextValue(this.y_label, this.wave.getYLabel());
+        this.grid_mode.setSelectedIndex(this.wave.getGridMode());
         if(this.wave instanceof MultiWaveform){
             this.legend_mode.setVisible(true);
             this.legend_mode.setSelectedIndex(((MultiWaveform)this.wave).getLegendMode());
         }else this.legend_mode.setVisible(false);
-        SetupWaveformParams.setTextValue(this.x_grid_lines, "" + this.wave.GetGridStepX());
-        SetupWaveformParams.setTextValue(this.y_grid_lines, "" + this.wave.GetGridStepX());
-        this.reversed_b.setSelected(this.wave.IsReversed());
-        this.horizontal_offset.setText("" + Waveform.GetHorizontalOffset());
-        this.vertical_offset.setText("" + Waveform.GetVerticalOffset());
+        SetupWaveformParams.setTextValue(this.x_grid_lines, "" + this.wave.getGridStepX());
+        SetupWaveformParams.setTextValue(this.y_grid_lines, "" + this.wave.getGridStepX());
+        this.reversed_b.setSelected(this.wave.isReversed());
+        this.horizontal_offset.setText("" + Waveform.getHorizontalOffset());
+        this.vertical_offset.setText("" + Waveform.getVerticalOffset());
     }
 
     public void SaveParameters() {
-        this.wave.SetTitle(this.title.getText());
-        this.wave.SetXLabel(this.x_label.getText());
-        this.wave.SetYLabel(this.y_label.getText());
+        this.wave.setTitle(this.title.getText());
+        this.wave.setXLabel(this.x_label.getText());
+        this.wave.setYLabel(this.y_label.getText());
         if(this.wave instanceof MultiWaveform && ((MultiWaveform)this.wave).getWaveInterface() != null){
             final WaveInterface wi = ((MultiWaveform)this.wave).getWaveInterface();
             wi.in_xmax = this.x_max.getText();
@@ -272,7 +272,7 @@ final public class SetupWaveformParams extends JDialog implements ActionListener
             wi.in_ymax = this.y_max.getText();
             wi.in_ymin = this.y_min.getText();
             try{
-                wi.StartEvaluate();
+                wi.startEvaluate();
                 wi.setLimits();
             }catch(final Exception e){}
         }else{
@@ -282,25 +282,25 @@ final public class SetupWaveformParams extends JDialog implements ActionListener
             this.wave.ly_min = SetupWaveformParams.convertToFloat(this.y_min.getText(), true);
             this.wave.setFixedLimits();
         }
-        this.wave.SetGridMode(this.grid_mode.getSelectedIndex(), true, true);
+        this.wave.setGridMode(this.grid_mode.getSelectedIndex(), true, true);
         if(this.wave instanceof MultiWaveform){
             ((MultiWaveform)this.wave).setLegendMode(this.legend_mode.getSelectedIndex());
         }
-        this.wave.SetReversed(this.reversed_b.getModel().isSelected());
+        this.wave.setReversed(this.reversed_b.getModel().isSelected());
         int h_ofs = 0, v_ofs = 0;
         try{
             h_ofs = new Integer(this.horizontal_offset.getText().trim()).intValue();
         }catch(final NumberFormatException exc){
             h_ofs = 0;
         }
-        Waveform.SetHorizontalOffset(h_ofs);
+        Waveform.setHorizontalOffset(h_ofs);
         this.horizontal_offset.setText("" + h_ofs);
         try{
             v_ofs = new Integer(this.vertical_offset.getText().trim()).intValue();
         }catch(final NumberFormatException exc){
             v_ofs = 0;
         }
-        Waveform.SetVerticalOffset(v_ofs);
+        Waveform.setVerticalOffset(v_ofs);
         this.vertical_offset.setText("" + v_ofs);
         try{
             this.x_curr_lines_grid = new Integer(this.x_grid_lines.getText().trim()).intValue();
@@ -314,13 +314,13 @@ final public class SetupWaveformParams extends JDialog implements ActionListener
             this.y_curr_lines_grid = 3;
         }
         if(this.y_curr_lines_grid > Grid.MAX_GRID) this.y_curr_lines_grid = Grid.MAX_GRID;
-        this.wave.SetGridSteps(this.x_curr_lines_grid, this.y_curr_lines_grid);
-        this.wave.Update();
+        this.wave.setGridSteps(this.x_curr_lines_grid, this.y_curr_lines_grid);
+        this.wave.update();
     }
 
     public void Show(final Waveform w) {
         if(w == null) return;
-        if(w.IsImage()){
+        if(w.isImage()){
             JOptionPane.showMessageDialog(this.getParent(), "Not yet implemented", "alert", JOptionPane.WARNING_MESSAGE);
             return;
         }

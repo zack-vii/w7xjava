@@ -1,4 +1,4 @@
-package jTraverser.editor;
+package jtraverser.editor;
 
 import java.awt.BorderLayout;
 import javax.swing.JPanel;

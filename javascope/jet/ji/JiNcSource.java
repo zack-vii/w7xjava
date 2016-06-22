@@ -3,7 +3,7 @@ package jet.ji;
 /* $Id$ */
 import java.io.IOException;
 import java.io.PrintStream;
-import jScope.RandomAccessData;
+import jscope.RandomAccessData;
 
 public class JiNcSource implements JiDataSource{
     public static final boolean DEBUG       = false;
