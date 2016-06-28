@@ -1,107 +1,107 @@
-CLASSPATH = -classpath .;..\java\classes\mdsDataProvider.jar
-JAVAC = "$(JDK_DIR)\bin\javac.exe"
-JAR = "$(JDK_DIR)\bin\jar.exe"
-JARDIR = ..\java\classes
+JARDIR = ../java/classes
+CLASSPATH = -classpath .;$(JARDIR)/mdsDataProvider.jar
+JAVAC = "$(JDK_DIR)/bin/javac.exe"
+JAR = "$(JDK_DIR)/bin/jar.exe"
 
 .SUFFIXES: .class .java
 .java.class:
 	$(JAVAC) $*.java
 
 DEVICE_SRC= \
-  device/DeviceApply.java \
-  device/DeviceApplyBeanInfo.java \
-  device/DeviceButtons.java \
-  device/DeviceButtonsBeanInfo.java \
-  device/DeviceButtonsCustomizer.java \
-  device/DeviceCancel.java \
-  device/DeviceCancelBeanInfo.java \
-  device/DeviceChannel.java \
-  device/DeviceChannelBeanInfo.java \
-  device/DeviceChannelCustomizer.java \
-  device/DeviceChoice.java \
-  device/DeviceChoiceBeanInfo.java \
-  device/DeviceChoiceCustomizer.java \
-  device/DeviceCloseListener.java \
-  device/DeviceComponent.java \
-  device/DeviceControl.java \
-  device/DeviceCustomizer.java \
-  device/DeviceDispatch.java \
-  device/DeviceDispatchBeanInfo.java \
-  device/DeviceDispatchField.java \
-  device/DeviceField.java \
-  device/DeviceFieldBeanInfo.java \
-  device/DeviceFieldCustomizer.java \
-  device/DeviceLabel.java \
-  device/DeviceLabelBeanInfo.java \
-  device/DeviceLabelCustomizer.java \
-  device/DeviceMultiComponent.java \
-  device/DeviceOk.java \
-  device/DeviceOkBeanInfo.java \
-  device/DeviceParameters.java \
-  device/DeviceParametersBeanInfo.java \
-  device/DeviceReset.java \
-  device/DeviceResetBeanInfo.java \
-  device/DeviceSetup.java \
-  device/DeviceSetupBeanInfo.java \
-  device/DeviceTable.java \
-  device/DeviceTableBeanInfo.java \
-  device/DeviceTableCustomizer.java \
-  device/DeviceUpdateListener.java \
-  device/DeviceWave.java \
-  device/DeviceWaveBeanInfo.java \
-  device/DeviceWaveCustomizer.java \
-  device/DeviceWaveDisplay.java \
-  device/DeviceWaveDisplayBeanInfo.java \
-  device/DeviceWaveDisplayCustomizer.java \
-  device/DeviceWaveParameters.java \
-  device/DeviceWaveParametersBeanInfo.java
+  devicebeans/DeviceApply.java \
+  devicebeans/DeviceApplyBeanInfo.java \
+  devicebeans/DeviceButtons.java \
+  devicebeans/DeviceButtonsBeanInfo.java \
+  devicebeans/DeviceButtonsCustomizer.java \
+  devicebeans/DeviceCancel.java \
+  devicebeans/DeviceCancelBeanInfo.java \
+  devicebeans/DeviceChannel.java \
+  devicebeans/DeviceChannelBeanInfo.java \
+  devicebeans/DeviceChannelCustomizer.java \
+  devicebeans/DeviceChoice.java \
+  devicebeans/DeviceChoiceBeanInfo.java \
+  devicebeans/DeviceChoiceCustomizer.java \
+  devicebeans/DeviceCloseListener.java \
+  devicebeans/DeviceComponent.java \
+  devicebeans/DeviceControl.java \
+  devicebeans/DeviceCustomizer.java \
+  devicebeans/DeviceDispatch.java \
+  devicebeans/DeviceDispatchBeanInfo.java \
+  devicebeans/DeviceDispatchField.java \
+  devicebeans/DeviceField.java \
+  devicebeans/DeviceFieldBeanInfo.java \
+  devicebeans/DeviceFieldCustomizer.java \
+  devicebeans/DeviceLabel.java \
+  devicebeans/DeviceLabelBeanInfo.java \
+  devicebeans/DeviceLabelCustomizer.java \
+  devicebeans/DeviceMultiComponent.java \
+  devicebeans/DeviceOk.java \
+  devicebeans/DeviceOkBeanInfo.java \
+  devicebeans/DeviceParameters.java \
+  devicebeans/DeviceParametersBeanInfo.java \
+  devicebeans/DeviceReset.java \
+  devicebeans/DeviceResetBeanInfo.java \
+  devicebeans/DeviceSetup.java \
+  devicebeans/DeviceSetupBeanInfo.java \
+  devicebeans/DeviceTable.java \
+  devicebeans/DeviceTableBeanInfo.java \
+  devicebeans/DeviceTableCustomizer.java \
+  devicebeans/DeviceUpdateListener.java \
+  devicebeans/DeviceWave.java \
+  devicebeans/DeviceWaveBeanInfo.java \
+  devicebeans/DeviceWaveCustomizer.java \
+  devicebeans/DeviceWaveDisplay.java \
+  devicebeans/DeviceWaveDisplayBeanInfo.java \
+  devicebeans/DeviceWaveDisplayCustomizer.java \
+  devicebeans/DeviceWaveParameters.java \
+  devicebeans/DeviceWaveParametersBeanInfo.java
 
 JTRAVERSER_SRC= \
-  jTraverser/DataChangeEvent.java \
-  jTraverser/DataChangeListener.java \
-  jTraverser/Node.java \
-  jTraverser/NodeInfo.java \
-  jTraverser/Tree.java \
-  jTraverser/TreeManager.java \
-  jTraverser/TreeNodeLabel.java \
-  jTraverser/dialogs/AddNode.java \
-  jTraverser/dialogs/DialogSet.java \
-  jTraverser/dialogs/Dialogs.java \
-  jTraverser/dialogs/DisplayData.java \
-  jTraverser/dialogs/DisplayNci.java \
-  jTraverser/dialogs/DisplayTags.java \
-  jTraverser/dialogs/Flags.java \
-  jTraverser/dialogs/GraphPanel.java \
-  jTraverser/dialogs/ModifyData.java \
-  jTraverser/dialogs/ModifyTags.java \
-  jTraverser/dialogs/Rename.java \
-  jTraverser/dialogs/SubTrees.java \
-  jTraverser/dialogs/TreeDialog.java \
-  jTraverser/dialogs/TreeOpenDialog.java \
-  jTraverser/editor/ActionEditor.java \
-  jTraverser/editor/ArgEditor.java \
-  jTraverser/editor/AxisEditor.java \
-  jTraverser/editor/DataEditor.java \
-  jTraverser/editor/DispatchEditor.java \
-  jTraverser/editor/Editor.java \
-  jTraverser/editor/ExprEditor.java \
-  jTraverser/editor/LabeledExprEditor.java \
-  jTraverser/editor/MethodEditor.java \
-  jTraverser/editor/NodeEditor.java \
-  jTraverser/editor/ParameterEditor.java \
-  jTraverser/editor/ProcedureEditor.java \
-  jTraverser/editor/ProgramEditor.java \
-  jTraverser/editor/PythonEditor.java \
-  jTraverser/editor/RangeEditor.java \
-  jTraverser/editor/RoutineEditor.java \
-  jTraverser/editor/TaskEditor.java \
-  jTraverser/editor/WindowEditor.java \
-  jTraverser/jTraverserFacade.java \
+  jtraverser/DataChangeEvent.java \
+  jtraverser/DataChangeListener.java \
+  jtraverser/Node.java \
+  jtraverser/NodeInfo.java \
+  jtraverser/Tree.java \
+  jtraverser/TreeManager.java \
+  jtraverser/TreeNodeLabel.java \
+  jtraverser/dialogs/AddNode.java \
+  jtraverser/dialogs/DialogSet.java \
+  jtraverser/dialogs/Dialogs.java \
+  jtraverser/dialogs/DisplayData.java \
+  jtraverser/dialogs/DisplayNci.java \
+  jtraverser/dialogs/DisplayTags.java \
+  jtraverser/dialogs/Flags.java \
+  jtraverser/dialogs/GraphPanel.java \
+  jtraverser/dialogs/ModifyData.java \
+  jtraverser/dialogs/ModifyTags.java \
+  jtraverser/dialogs/Rename.java \
+  jtraverser/dialogs/SubTrees.java \
+  jtraverser/dialogs/TreeDialog.java \
+  jtraverser/dialogs/TreeOpenDialog.java \
+  jtraverser/editor/ActionEditor.java \
+  jtraverser/editor/ArgEditor.java \
+  jtraverser/editor/AxisEditor.java \
+  jtraverser/editor/DataEditor.java \
+  jtraverser/editor/DispatchEditor.java \
+  jtraverser/editor/Editor.java \
+  jtraverser/editor/ExprEditor.java \
+  jtraverser/editor/LabeledExprEditor.java \
+  jtraverser/editor/MethodEditor.java \
+  jtraverser/editor/NodeEditor.java \
+  jtraverser/editor/ParameterEditor.java \
+  jtraverser/editor/ProcedureEditor.java \
+  jtraverser/editor/ProgramEditor.java \
+  jtraverser/editor/PythonEditor.java \
+  jtraverser/editor/RangeEditor.java \
+  jtraverser/editor/RoutineEditor.java \
+  jtraverser/editor/TaskEditor.java \
+  jtraverser/editor/WindowEditor.java \
+  jtraverser/jTraverserFacade.java \
   jTraverser.java
 
 TOOLS_SRC= \
-  jTraverser/tools/CompileTree.java \
-  jTraverser/tools/DecompileTree.java
+  jtraverser/tools/CompileTree.java \
+  jtraverser/tools/DecompileTree.java
 
 MDSIP_SRC= \
   mds/data/descriptor/ARRAY.java \
@@ -186,35 +186,34 @@ MDSIP_SRC= \
   mds/mdsip/ConnectionEvent.java \
   mds/mdsip/ConnectionListener.java \
   mds/mdsip/Message.java \
-  mds/mdsip/SshTunneling.java \
   mds/mdsip/UpdateEvent.java \
   mds/mdsip/UpdateEventListener.java
 
 DEVICE_GIFS= \
-  device/DeviceApply.gif \
-  device/DeviceButtons.gif \
-  device/DeviceCancel.gif \
-  device/DeviceChannel.gif \
-  device/DeviceChoice.gif \
-  device/DeviceDispatch.gif \
-  device/DeviceField.gif \
-  device/DeviceOk.gif \
-  device/DeviceReset.gif \
-  device/DeviceSetup.gif
+  devicebeans/DeviceApply.gif \
+  devicebeans/DeviceButtons.gif \
+  devicebeans/DeviceCancel.gif \
+  devicebeans/DeviceChannel.gif \
+  devicebeans/DeviceChoice.gif \
+  devicebeans/DeviceDispatch.gif \
+  devicebeans/DeviceField.gif \
+  devicebeans/DeviceOk.gif \
+  devicebeans/DeviceReset.gif \
+  devicebeans/DeviceSetup.gif
 
 TRAV_GIFS= \
-  jTraverser/action.gif \
-  jTraverser/axis.gif \
-  jTraverser/compound.gif \
-  jTraverser/device.gif \
-  jTraverser/dispatch.gif \
-  jTraverser/numeric.gif \
-  jTraverser/signal.gif \
-  jTraverser/structure.gif \
-  jTraverser/subtree.gif \
-  jTraverser/task.gif \
-  jTraverser/text.gif \
-  jTraverser/window.gif
+  jtraverser/action.gif \
+  jtraverser/axis.gif \
+  jtraverser/compound.gif \
+  jtraverser/device.gif \
+  jtraverser/dispatch.gif \
+  jtraverser/numeric.gif \
+  jtraverser/signal.gif \
+  jtraverser/structure.gif \
+  jtraverser/subtree.gif \
+  jtraverser/task.gif \
+  jtraverser/text.gif \
+  jtraverser/window.gif
 
 MDSIP_CLS=$(MDSIP_SRC:.java=*.class)
 DEVICE_CLS=$(DEVICE_SRC:.java=*.class)
@@ -222,6 +221,6 @@ TRAV_CLS=$(TRAV_SRC:.java=*.class)
 
 all : $(MDSIP_SRC) $(DEVICE_SRC) $(TRAV_SRC)
 	$(JAVAC) $(CLASSPATH) $(MDSIP_SRC) $(DEVICE_SRC) $(TRAV_SRC)
-	$(JAR) -c0f ..\java\classes\MDSIP.jar $(MDSIP_SRC)
-	$(JAR) -c0mf DeviceBeans/MANIFEST.mf ..\java\classes\DeviceBeans.jar $(DEVICE_SRC) $(DEVICE_GIFS)
-	$(JAR) -c0mf jTraverser/MANIFEST.mf ..\java\classes\jTraverser.jar $(TRAV_SRC) $(TRAV_GIFS)
+	$(JAR) -c0f $(JARDIR)/MDSIP.jar $(MDSIP_SRC)
+	$(JAR) -c0mf devicebeans/MANIFEST.mf $(JARDIR)/devicebeans.jar $(DEVICE_SRC) $(DEVICE_GIFS)
+	$(JAR) -c0mf jtraverser/MANIFEST.mf $(JARDIR)/jTraverser.jar $(TRAV_SRC) $(TRAV_GIFS)

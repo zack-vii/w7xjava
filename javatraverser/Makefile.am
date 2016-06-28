@@ -192,7 +192,15 @@ DATA_SRC= \
   mds/data/arraydata/OctaArray.java \
   mds/data/arraydata/QuadArray.java \
   mds/data/arraydata/ShortArray.java \
-  mds/data/arraydata/StringArray.java
+  mds/data/arraydata/StringArray.java \
+  mds/Database.java \
+  mds/MdsException.java \
+  mds/mdsip/Connection.java \
+  mds/mdsip/ConnectionEvent.java \
+  mds/mdsip/ConnectionListener.java \
+  mds/mdsip/Message.java \
+  mds/mdsip/UpdateEvent.java \
+  mds/mdsip/UpdateEventListener.java
 
 _DEVICE_GIFS= \
   devicebeans/DeviceApply.gif \

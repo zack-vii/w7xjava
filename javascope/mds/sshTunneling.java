@@ -2,6 +2,7 @@ package mds;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -10,7 +11,6 @@ import java.io.IOException;
 import java.net.Socket;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,7 +28,7 @@ import com.mindbright.util.SecureRandomAndPad;
 import jscope.DataProvider;
 
 final public class SshTunneling extends Thread{
-    public static SecureRandomAndPad createSecureRandom() {
+    private static SecureRandomAndPad createSecureRandom() {
         /*
          * NOTE, this is how it should be done if you want good randomness, however good randomness takes time so we settle with just some low-entropy garbage here. RandomSeed seed = new RandomSeed("/dev/random", "/dev/urandom"); byte[] s =
          * seed.getBytesBlocking(20); return new SecureRandomAndPad(new SecureRandom(s));
@@ -36,33 +36,31 @@ final public class SshTunneling extends Thread{
         final byte[] seed = RandomSeed.getSystemStateHash();
         return new SecureRandomAndPad(new SecureRandom(seed));
     }
-    SSH2SimpleClient client;
-    DataProvider     da;
-    String           error_string = null;
-    JFrame           f;
-    JDialog          inquiry_dialog;
-    String           localPort;
-    int              login_status;
-    String           passwd;
-    JPasswordField   passwd_text;
-    String           remotePort;
-    String           server;
-    SSH2Listener     sshListener;
-    SSH2Transport    transport;
-    JTextField       user_text;
-    String           username;
+    private SSH2SimpleClient client;
+    private String           error_string = null;
+    private final Frame      frame;
+    private JDialog          inquiry_dialog;
+    private final String     localPort;
+    private int              login_status;
+    private String           passwd;
+    private JPasswordField   passwd_text;
+    private final String     remotePort;
+    private final String     server;
+    private SSH2Listener     sshListener;
+    private SSH2Transport    transport;
+    private JTextField       user_text;
+    private String           username;
 
-    public SshTunneling(final JFrame f, final DataProvider da, final String ip, final String remotePort, final String user, final String localPort) throws IOException{
-        this.da = da;
+    public SshTunneling(final Frame frame, final String ip, final String remotePort, final String user, final String localPort) throws IOException{
         this.server = ip;
         this.remotePort = remotePort;
         this.localPort = localPort;
-        this.f = f;
-        final int status = this.credentialsDialog(f, user);
+        this.frame = frame;
+        final int status = this.credentialsDialog(frame, user);
         if(status != DataProvider.LOGIN_OK) throw(new IOException("Login not successful"));
     }
 
-    boolean checkPasswd(final String server, final String username, final String passwd) {
+    private final boolean checkPasswd(final String server, final String username, final String passwd) {
         try{
             final Socket serverSocket = new Socket(server, 22);
             this.transport = new SSH2Transport(serverSocket, SshTunneling.createSecureRandom());
@@ -74,9 +72,9 @@ final public class SshTunneling extends Thread{
         return false;
     }
 
-    private int credentialsDialog(final JFrame f, final String user) {
+    private final int credentialsDialog(final Frame frame, final String user) {
         this.login_status = DataProvider.LOGIN_OK;
-        this.inquiry_dialog = new JDialog(f, "SSH login on node : " + this.server, true);
+        this.inquiry_dialog = new JDialog(frame, "SSH login on node : " + this.server, true);
         this.inquiry_dialog.getContentPane().setLayout(new BorderLayout());
         JPanel p = new JPanel();
         p.add(new JLabel("Username: "));
@@ -128,8 +126,8 @@ final public class SshTunneling extends Thread{
         p.add(cancel_b);
         this.inquiry_dialog.getContentPane().add(p, "South");
         this.inquiry_dialog.pack();
-        if(f != null){
-            final Rectangle r = f.getBounds();
+        if(frame != null){
+            final Rectangle r = frame.getBounds();
             this.inquiry_dialog.setLocation(r.x + r.width / 2 - this.inquiry_dialog.getBounds().width / 2, r.y + r.height / 2 - this.inquiry_dialog.getBounds().height / 2);
         }else{
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -139,24 +137,18 @@ final public class SshTunneling extends Thread{
         return this.login_status;
     }
 
-    public void Dispose() {
-        /*
-         * Disconnect the transport layer gracefully
-         */
+    /**
+     * Disconnect the transport layer gracefully
+     **/
+    public final void dispose() {
         this.transport.normalDisconnect("User disconnects");
         this.sshListener.stop();
     }
 
     @Override
-    public void finalize() {}
-
-    @Override
-    public void run() {
+    public final void run() {
         try{
             final SSH2Connection con = this.client.getConnection();
-            /*
-             * System.out.println("127.0.0.1:" + Integer.parseInt(localPort)+ " "+server+":"+ Integer.parseInt(remotePort));
-             */
             this.sshListener = con.newLocalForward("127.0.0.1", Integer.parseInt(this.localPort), this.server, Integer.parseInt(this.remotePort));
             con.setEventHandler(new SSH2ConnectionEventAdapter(){
                 @Override
@@ -165,7 +157,7 @@ final public class SshTunneling extends Thread{
                 }
             });
         }catch(final Exception e){
-            JOptionPane.showMessageDialog(this.f, "Exception starting ssh port forward process! " + e, "alert", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this.frame, "Exception starting ssh port forward process! " + e, "alert", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

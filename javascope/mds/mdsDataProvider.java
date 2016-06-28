@@ -24,6 +24,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import debug.DEBUG;
 import jscope.Array;
+import jscope.Array.AllFrames;
+import jscope.Array.ByteArray;
+import jscope.Array.RealArray;
 import jscope.AsynchDataSource;
 import jscope.ConnectionEvent;
 import jscope.ConnectionListener;
@@ -36,9 +39,6 @@ import jscope.WaveData;
 import jscope.WaveDataListener;
 import jscope.XYData;
 import jscope.jScopeFacade;
-import jscope.Array.AllFrames;
-import jscope.Array.ByteArray;
-import jscope.Array.RealArray;
 
 public class MdsDataProvider implements DataProvider{
     class SegmentedFrameData implements FrameData{
@@ -1036,21 +1036,21 @@ public class MdsDataProvider implements DataProvider{
 
     @Override
     public synchronized void addConnectionListener(final ConnectionListener l) {
-        if(DEBUG.M) System.out.println("MdsDataProvider.AddConnectionListener(" + l + ")");
+        if(DEBUG.M) System.out.println("MdsDataProvider.addConnectionListener(" + l + ")");
         if(this.mds == null){ return; }
         this.mds.addConnectionListener(l);
     }
 
     @Override
     public synchronized void addUpdateEventListener(final UpdateEventListener l, final String event_name) throws IOException {
-        if(DEBUG.M) System.out.println("MdsDataProvider.AddUpdateEventListener(" + l + "," + event_name + ")");
+        if(DEBUG.M) System.out.println("MdsDataProvider.addUpdateEventListener(" + l + "," + event_name + ")");
         if(event_name == null || event_name.trim().length() == 0) return;
         this.checkConnection();
         this.mds.mdsSetEvent(l, event_name);
     }
 
     protected synchronized void checkConnection() throws IOException {
-        if(DEBUG.M) System.out.println("MdsDataProvider.CheckConnection()");
+        if(DEBUG.M) System.out.println("MdsDataProvider.checkConnection()");
         if(!this.connected){
             if(!this.mds.ConnectToMds(this.use_compression)){
                 if(this.mds.error != null) throw new IOException(this.mds.error);
@@ -1068,7 +1068,7 @@ public class MdsDataProvider implements DataProvider{
     }
 
     public synchronized boolean checkOpen(final String experiment, final long shot) throws IOException {
-        if(DEBUG.M) System.out.println("MdsDataProvider.CheckOpen(\"" + experiment + "\", " + shot + ")");
+        if(DEBUG.M) System.out.println("MdsDataProvider.checkOpen(\"" + experiment + "\", " + shot + ")");
         if(!this.connected){
             if(!this.mds.ConnectToMds(this.use_compression)){
                 if(this.mds.error != null) throw new IOException("Cannot connect to data server : " + this.mds.error);
@@ -1122,15 +1122,15 @@ public class MdsDataProvider implements DataProvider{
     }
 
     protected void dispatchConnectionEvent(final ConnectionEvent e) {
-        if(DEBUG.M) System.out.println("MdsDataProvider.DispatchConnectionEvent(" + e + ")");
+        if(DEBUG.M) System.out.println("MdsDataProvider.dispatchConnectionEvent(" + e + ")");
         if(this.mds == null){ return; }
         this.mds.dispatchConnectionEvent(e);
     }
 
     @Override
     public synchronized void dispose() {
-        if(DEBUG.M) System.out.println("MdsDataProvider.Dispose()");
-        if(this.is_tunneling && this.ssh_tunneling != null) this.ssh_tunneling.Dispose();
+        if(DEBUG.M) System.out.println("MdsDataProvider.dispose()");
+        if(this.is_tunneling && this.ssh_tunneling != null) this.ssh_tunneling.dispose();
         if(this.connected){
             this.connected = false;
             this.mds.disconnectFromMds();
@@ -1559,23 +1559,22 @@ public class MdsDataProvider implements DataProvider{
     public int inquireCredentials(final JFrame f, final DataServerItem server_item) {
         if(DEBUG.M) System.out.println("MdsDataProvider.InquireCredentials(" + f + ", " + server_item + ")");
         this.mds.setUser(server_item.user);
-        this.is_tunneling = false;
         if(server_item.tunnel_port != null && server_item.tunnel_port.trim().length() != 0){
+            this.is_tunneling = true;
             final StringTokenizer st = new StringTokenizer(server_item.argument, ":");
             String ip;
             String remote_port = "" + MdsConnection.DEFAULT_PORT;
             ip = st.nextToken();
             if(st.hasMoreTokens()) remote_port = st.nextToken();
-            this.is_tunneling = true;
             try{
-                this.ssh_tunneling = new SshTunneling(f, this, ip, remote_port, server_item.user, server_item.tunnel_port);
+                this.ssh_tunneling = new SshTunneling(f, ip, remote_port, server_item.user, server_item.tunnel_port);
                 this.ssh_tunneling.start();
                 this.tunnel_provider = "127.0.0.1:" + server_item.tunnel_port;
             }catch(final Throwable exc){
                 if(exc instanceof NoClassDefFoundError) JOptionPane.showMessageDialog(f, "The MindTerm.jar library is required for ssh tunneling.You can download it from \nhttp://www.appgate.com/mindterm/download.php\n" + exc, "alert", JOptionPane.ERROR_MESSAGE);
                 return DataProvider.LOGIN_ERROR;
             }
-        }
+        }else this.is_tunneling = false;
         return DataProvider.LOGIN_OK;
     }
 

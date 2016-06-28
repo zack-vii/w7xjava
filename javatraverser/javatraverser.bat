@@ -204,7 +204,6 @@ SET MDSIP_SRC=^
   mds\mdsip\ConnectionEvent.java ^
   mds\mdsip\ConnectionListener.java ^
   mds\mdsip\Message.java ^
-  mds\mdsip\SshTunneling.java ^
   mds\mdsip\UpdateEvent.java ^
   mds\mdsip\UpdateEventListener.java
 
@@ -235,7 +234,8 @@ SET TRAV_GIFS=^
   jtraverser\text.gif ^
   jtraverser\window.gif
 
-SET CLASSPATH=-classpath ".;.\mds\mdsip\MindTerm.jar;..\java\classes\jScope.jar"
+SET JARDIR=%CD%\..\java\classes
+SET CLASSPATH=-classpath ".;%JARDIR%\jScope.jar"
 SET JAVAC="%JDK_HOME%\bin\javac.exe" ||rem -Xlint -deprecation
 SET JCFLAGS= -O -source 1.6 -target 1.6 -g:none||rem -Xlint -deprecation
 SET JAR="%JDK_HOME%\bin\jar.exe"
@@ -286,7 +286,7 @@ DEL /Q jtraverser\Tools* 2>NUL
 DEL /Q jtraverser\* 2>NUL
 DEL /Q jTraverser.class 2>NUL
 DEL /Q debug\* 2>NUL
-RMDIR /Q/S local
+rem RMDIR /Q/S local
 RMDIR /Q/S mds 
 RMDIR /Q/S jTraverser
 RMDIR /Q/S devicebeans
