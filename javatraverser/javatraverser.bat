@@ -235,13 +235,13 @@ SET TRAV_GIFS=^
   jtraverser\window.gif
 
 SET JARDIR=%CD%\..\java\classes
+SET SRCDIR=.\java
 SET CLASSPATH=-classpath ".;%JARDIR%\jScope.jar"
 SET JAVAC="%JDK_HOME%\bin\javac.exe" ||rem -Xlint -deprecation
 SET JCFLAGS= -O -source 1.6 -target 1.6 -g:none||rem -Xlint -deprecation
 SET JAR="%JDK_HOME%\bin\jar.exe"
 SET DBMANIFEST=devicebeans\MANIFEST.mf
 SET JTMANIFEST=jtraverser\MANIFEST.mf
-SET JARDIR=..\java\classes
 MKDIR %JARDIR% 2>NUL
 SET DEVICE_CLS=%DEVICE_SRC:.java=*.class%
 SET TRAV_CLS=%TRAV_SRC:.java=*.class%
@@ -250,17 +250,19 @@ SET MDSIP_CLS=%MDSIP_SRC:.java=*.class%
 SET LOCAL_CLS=%LOCAL_SRC:.java=*.class%
 
 ECHO compiling *.java to *.class . . .
+PUSHD %SRCDIR%
 %JAVAC% %JCFLAGS% -d %JARDIR% %CLASSPATH% %MDSIP_SRC% %TRAV_SRC% %TOOLS_SRC% %DEVICE_SRC% debug\DEBUG.java ||rem %LOCAL_SRC%
 SET /A ERROR=%ERRORLEVEL%
+POPD
 IF %ERROR% NEQ 0 GOTO:cleanup
 
 ECHO gathering data
 MKDIR %JARDIR%\devicebeans 2>NUL
 MKDIR %JARDIR%\jTraverser 2>NUL
-COPY /Y devicebeans\*.gif %JARDIR%\devicebeans >NUL
-COPY /Y jtraverser\*.gif %JARDIR%\jTraverser >NUL
-COPY /Y %DBMANIFEST% %JARDIR%\%DBMANIFEST% >NUL
-COPY /Y %JTMANIFEST% %JARDIR%\%JTMANIFEST% >NUL
+COPY /Y %SRCDIR%\devicebeans\*.gif %JARDIR%\devicebeans>NUL
+COPY /Y %SRCDIR%\jtraverser\*.gif  %JARDIR%\jtraverser>NUL
+COPY /Y %SRCDIR%\%DBMANIFEST% %JARDIR%\%DBMANIFEST% >NUL
+COPY /Y %SRCDIR%\%JTMANIFEST% %JARDIR%\%JTMANIFEST% >NUL
 ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>%JARDIR%\%JTMANIFEST%
 
 ECHO creating jar packages

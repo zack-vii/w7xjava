@@ -513,7 +513,7 @@ public class DeviceTable extends DeviceComponent{
                           table.repaint();
                       }
                   }
-
+                
                               }
                               else //refMode == NORMAL
                 */ {
