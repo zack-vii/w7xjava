@@ -156,7 +156,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
                     dimstr[i] = Integer.toString(this.dims[i]);
                 size = String.join(",", dimstr);
             }
-            pout.append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/))");
+            pout.append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/)");
         }else new AStringBuilder(pout, this.dims, this.getValue());
         if(this.format()) pout.append(')');
         return pout;
