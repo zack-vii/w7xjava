@@ -61,11 +61,8 @@ public final class Database{
     }
 
     public static final String getMinPath(final int nid) throws MdsException {
-        try{
-            return Database.mds.getString(String.format("GETNCI(%d,'MINPATH')", nid));
-        }catch(final MdsException e){
-            return String.format("<nid %d>", nid);
-        }
+        if(Database.mds == null) throw new MdsException("Offline");
+        return Database.mds.getString(String.format("GETNCI(%d,'MINPATH')", nid));
     }
 
     public static final String getPath(final int nid) throws MdsException {

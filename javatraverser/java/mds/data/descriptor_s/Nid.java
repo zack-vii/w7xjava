@@ -30,7 +30,10 @@ public final class Nid extends Int32{
         try{
             return pout.append(Database.getMinPath(this.getValue()));
         }catch(final MdsException e){
-            return pout.append('(').append(this.getValue()).append(')');
+            return pout.append("<nid ").append(this.getValue()).append('>');
+        }catch(final Exception e){
+            e.printStackTrace();
+            return pout.append(e.toString());
         }
     }
 
