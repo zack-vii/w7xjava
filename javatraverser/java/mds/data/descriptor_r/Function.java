@@ -8,7 +8,11 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
 import mds.data.descriptor.OPC;
+import mds.data.descriptor_s.CString;
+import mds.data.descriptor_s.Complex32;
+import mds.data.descriptor_s.Float32;
 import mds.data.descriptor_s.Missing;
+import mds.data.descriptor_s.Uint8;
 
 public final class Function extends Descriptor_R<Short>{
     public static final class op_rec{
@@ -528,20 +532,73 @@ public final class Function extends Descriptor_R<Short>{
 
     @Override
     public Descriptor getData() {
-        try{
-            switch(this.getOpCode()){
-                default:// TODO:more functions
-                    return this;
-                case OPC.Opc2Pi:
-                    return Descriptor.deserialize(ByteBuffer.wrap(new byte[]{4, 0, 52, 1, 8, 0, 0, 0, -37, 15, -55, 64}));
-                case OPC.OpcA0:
-                    return Descriptor.deserialize(ByteBuffer.wrap(new byte[]{0, 0, -45, -62, 0, 0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 64, 0, 0, 0, 0, 0, -43, -62, 0, 0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 32, 0, 0, 0, 4, 0, 52, 1, 8, 0, 0, 0, 16, -68, 104, 46, 4, 0, 52, 1, 8, 0, 0, 0, -72, 22, 49, 34, 1, 0, 14, 1, 8, 0, 0, 0, 109}));
-                case OPC.OpcPi:
-                    return Descriptor.deserialize(ByteBuffer.wrap(new byte[]{4, 0, 52, 1, 8, 0, 0, 0, -37, 15, 73, 64}));
-            }
-        }catch(final MdsException e){
-            e.printStackTrace();
-            return this;
+        switch(this.getOpCode()){
+            default:
+                return this;
+            case OPC.Opc2Pi:
+                return new Float32(6.2831853072f);
+            case OPC.OpcA0:
+                return new With_Units(new With_Error(new Float32(5.29177249e-11f), new Float32(0.00000024e-11f)), new CString("m"));
+            case OPC.OpcAmu:
+                return new With_Units(new With_Error(new Float32(1.6605402e-27f), new Float32(0.0000010e-27f)), new CString("kg"));
+            case OPC.OpcC:
+                return new With_Units(new Float32(299792458.f), new CString("m/s"));
+            case OPC.OpcCal:
+                return new With_Units(new Float32(4.1868f), new CString("J"));
+            case OPC.OpcDegree:
+                return new Float32(.01745329252f);
+            case OPC.OpcEpsilon0:
+                return new With_Units(new Float32(8.854187817e-12f), new CString("F/m"));
+            case OPC.OpcEv:
+                return new With_Units(new With_Error(new Float32(1.60217733e-19f), new Float32(0.00000049e-19f)), new CString("J/eV"));
+            case OPC.OpcFalse:
+                return new Uint8((byte)0);
+            case OPC.OpcFaraday:
+                return new With_Units(new With_Error(new Float32(9.6485309e4f), new Float32(0.0000029e4f)), new CString("C/mol"));
+            case OPC.OpcG:
+                return new With_Units(new With_Error(new Float32(6.67259e-11f), new Float32(0.00085f)), new CString("m^3/s^2/kg"));
+            case OPC.OpcGas:
+                return new With_Units(new With_Error(new Float32(8.314510f), new Float32(0.000070f)), new CString("J/K/mol"));
+            case OPC.OpcGn:
+                return new With_Units(new Float32(9.80665f), new CString("m/s^2"));
+            case OPC.OpcH:
+                return new With_Units(new With_Error(new Float32(6.6260755e-34f), new Float32(0.0000040f)), new CString("J*s"));
+            case OPC.OpcHbar:
+                return new With_Units(new With_Error(new Float32(1.05457266e-34f), new Float32(0.00000063f)), new CString("J*s"));
+            case OPC.OpcI:
+                return new Complex32(0.f, 1.f);
+            case OPC.OpcK:
+                return new With_Units(new With_Error(new Float32(1.380658e-23f), new Float32(0.000012e-23f)), new CString("J/K"));
+            case OPC.OpcMe:
+                return new With_Units(new With_Error(new Float32(9.1093897e-31f), new Float32(0.0000054e-31f)), new CString("kg"));
+            case OPC.OpcMissing:
+                return Missing.NEW;
+            case OPC.OpcMp:
+                return new With_Units(new With_Error(new Float32(1.6726231e-27f), new Float32(0.0000010e-27f)), new CString("kg"));
+            case OPC.OpcMu0:
+                return new With_Units(new Float32(12.566370614e-7f), new CString("N/A^2"));
+            case OPC.OpcN0:
+                return new With_Units(new With_Error(new Float32(2.686763e25f), new Float32(0.000023e25f)), new CString("/m^3"));
+            case OPC.OpcNa:
+                return new With_Units(new With_Error(new Float32(6.0221367e23f), new Float32(0.0000036e23f)), new CString("/mol"));
+            case OPC.OpcP0:
+                return new With_Units(new Float32(1.01325e5f), new CString("Pa"));
+            case OPC.OpcPi:
+                return new Float32(3.1415926536f);
+            case OPC.OpcQe:
+                return new With_Units(new With_Error(new Float32(1.60217733e-19f), new Float32(0.000000493e-19f)), new CString("C"));
+            case OPC.OpcRe:
+                return new With_Units(new With_Error(new Float32(2.81794092e-15f), new Float32(0.00000038e-15f)), new CString("m"));
+            case OPC.OpcRoprand:
+                return Missing.NEW;// TODO:set correct return value
+            case OPC.OpcRydberg:
+                return new With_Units(new With_Error(new Float32(1.0973731534e7f), new Float32(0.0000000013e7f)), new CString("/m"));
+            case OPC.OpcT0:
+                return new With_Units(new Float32(273.16f), new CString("K"));
+            case OPC.OpcTorr:
+                return new With_Units(new Float32(1.3332e2f), new CString("Pa"));
+            case OPC.OpcTrue:
+                return new Uint8((byte)1);
         }
     }
 

@@ -123,8 +123,39 @@ def reffun(filepath):
         print('new ref_fun("%s","%s",%s,%s,%s,DTYPE.%s,DTYPE.%s,DTYPE.%s,DTYPE.%s,%s,%s,%s),//'%(name,symbol,f1,f2,f3,i1,i2,o1,o2,m1,m2,token))
     print('};')
 
+def constant(filepath):
+    with file(filepath) as f:
+        lines = f.readlines()
+    for line in lines:
+        line = line.split('/*',2)[0].strip(' \t\n\r')
+        if line.startswith('DATUM('):
+            dtype,x,data = line[6:-1].split(', ')
+            if dtype=='FLOAT':
+                print("case OPC.Opc%s:return new Float32(%sf);"%(x,data[7:]))
+            elif dtype=='BU':
+                print("case OPC.Opc%s:return new Uint8((byte)%s);"%(x,data))
+            elif dtype=='FLOAT_COMPLEX':
+                print("case OPC.Opc%s:return new Complex32(0.f, 1.f);"%(x,))
+            elif dtype=='MISSING':
+                print("case OPC.Opc%s:return Missing.NEW;"%(x,))
+            else:
+                print("case OPC.Opc%s:return Missing.NEW;//TODO:set correct return value"%(x,))
+        if line.startswith('UNITS('):
+            dtype,x,data,units = line[6:-1].split(', ')
+            if dtype=='FLOAT':
+                print('case OPC.Opc%s:return new With_Units(new Float32(%sf),new CString(%s));'%(x,data[7:],units))
+            else:
+                print("case OPC.Opc%s:return Missing.NEW;//TODO:set correct return value"%(x,))
+        if line.startswith('UERR('):
+            dtype,x,data,error,units = line[5:-1].split(', ')
+            if dtype=='FLOAT':
+                print('case OPC.Opc%s:return new With_Units(new With_Error( new Float32(%sf), new Float32(%sf)),new CString(%s));'%(x,data[7:],error[7:],units))
+            else:
+                print("case OPC.Opc%s:return Missing.NEW;//TODO:set correct return value"%(x,))
+
 #reffun('I:/Git/mdsplus/include/opcbuiltins.h')
 opc('I:/Git/mdsplus/include/opcbuiltins.h')
 binary('I:/Git/mdsplus/tdishr/TdiDecompileR.c')
 unary('I:/Git/mdsplus/tdishr/TdiDecompileR.c')
 defcat('I:/Git/mdsplus/tdishr/TdiDefCat.c')
+constant('I:/Git/mdsplus/tdishr/TdiConstant.c')
