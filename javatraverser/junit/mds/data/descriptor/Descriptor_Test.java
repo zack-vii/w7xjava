@@ -6,15 +6,25 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import mds.AllTests;
 import mds.MdsException;
+import mds.data.descriptor_a.Int32Array;
+import mds.data.descriptor_s.Nid;
+import mds.data.descriptor_s.Path;
 import mds.mdsip.Connection;
 
 public class Descriptor_Test{
+    private static Connection mds;
+
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception {}
+    public static void setUpBeforeClass() throws Exception {
+        Descriptor_Test.mds = AllTests.setUpBeforeClass();
+    }
 
     @AfterClass
-    public static void tearDownAfterClass() throws Exception {}
+    public static void tearDownAfterClass() throws Exception {
+        Descriptor_Test.mds.disconnect();
+    }
 
     @Before
     public void setUp() throws Exception {}
@@ -25,13 +35,16 @@ public class Descriptor_Test{
     @SuppressWarnings("static-method")
     @Test
     public void test() throws MdsException {
-        final Connection m = new Connection("mds-data-1");
-        if(m.error != null) throw new MdsException(m.error);
-        final String tree = "w7x";
-        final int shot = 0;
-        final int nid = 7;
-        m.mdsValue(String.format("treeopen('%s',%d)", tree, shot));
-        final Descriptor D = m.mdsValue(String.format("COMMA(TreeShr->TreeGetRecord(val(%d),xd(_ans)),MdsShr->MdsSerializeDscOut(xd(_ans),xd(_ans)),_ans)", nid), Descriptor.class);
-        Assert.assertNotNull(D);
+        final int shot = -1;
+        final String node = "TEST";
+        final Nid nid;
+        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("treeopennew('%s',%d)", AllTests.tree, shot)).toInt()[0]);
+        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("tcl('add node %s/usage=any')", node)).toInt()[0]);
+        Assert.assertEquals(1, Descriptor_Test.mds.mdsValue(String.format("tcl('write')")).toInt()[0]);
+        Assert.assertEquals(134348817, Descriptor_Test.mds.mdsValue(String.format("tcl('quit')")).toInt()[0]);
+        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("treeopen('%s',%d)", AllTests.tree, shot)).toInt()[0]);
+        Assert.assertNotNull(nid = (Nid)Descriptor_Test.mds.mdsValue(String.format("GetNci(%s,'NID_NUMBER')", node), Nid.class));
+        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue("TreePutRecord", new Descriptor[]{nid, new Int32Array(new int[]{1, 2, 3, 4, 5, 6})}).toInt()[0]);
+        Assert.assertEquals("Long([1,2,3,4,5,6])", Descriptor_Test.mds.mdsValue("$", new Descriptor[]{new Path(node)}).decompile());
     }
 }

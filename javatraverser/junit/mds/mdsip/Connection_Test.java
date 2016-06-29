@@ -1,0 +1,58 @@
+package mds.mdsip;
+
+import java.io.IOException;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import mds.AllTests;
+import mds.MdsException;
+import mds.data.descriptor.Descriptor;
+import mds.data.descriptor_a.Int16Array;
+import mds.data.descriptor_s.CString;
+
+public class Connection_Test{
+    private static Connection mds;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        Connection_Test.mds = AllTests.setUpBeforeClass();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+        Connection_Test.mds.disconnect();
+    }
+
+    @SuppressWarnings("static-method")
+    // @Test
+    public void connect() throws IOException {
+        Connection mds;
+        final int port = 8888;
+        mds = new Connection("localhost:" + port);
+        if(!mds.isConnected()){
+            System.out.println("Started new local mdsip server");
+            final Process prc = new ProcessBuilder("mdsip", "-m", "-p", String.valueOf(port)).inheritIO().start();
+            Assert.assertTrue(mds.connect());
+            prc.destroy();
+        }else Assert.fail("already connected");
+    }
+
+    @SuppressWarnings("static-method")
+    @Test
+    public void mdsValue() throws MdsException {
+        Assert.assertEquals("Set_Range(1,2,2,1.1F0 /*** etc. ***/)", Connection_Test.mds.mdsValue("[[[1.1],[2.1]],[[3.1],[4.1]]]").toString());
+        final Descriptor array = new Int16Array(new short[]{1, 2, 3, 4, 5});
+        Assert.assertEquals(Connection_Test.mds.compile("WORD([1, 2, 3, 4, 5])").decompile(), array.decompile());
+        Assert.assertEquals("Word([1,2,3,4,5])", Connection_Test.mds.mdsValue("$", new Descriptor[]{array}).decompile());
+        Assert.assertEquals("\"123456789\"", Connection_Test.mds.mdsValue("concat", new Descriptor[]{new CString("123"), new CString("456"), new CString("789")}).decompile());
+    }
+
+    @Before
+    public void setUp() throws Exception {}
+
+    @After
+    public void tearDown() throws Exception {}
+}
