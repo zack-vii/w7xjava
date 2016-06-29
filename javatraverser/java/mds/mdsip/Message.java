@@ -39,7 +39,7 @@ public final class Message extends Object{
             listener.processConnectionEvent(e);
     }
 
-    protected static boolean IsRoprand(final byte arr[], final int idx) {
+    protected static boolean isRoprand(final byte arr[], final int idx) {
         return(arr[idx] == 0 && arr[idx + 1] == 0 && arr[idx + 2] == -128 && arr[idx + 3] == 0);
     }
 
@@ -57,7 +57,7 @@ public final class Message extends Object{
         return buf;
     }
 
-    protected static final byte[] ReadCompressedBuf(final InputStream dis, final int msglen, final Vector<ConnectionListener> listeners) throws IOException {
+    protected static final byte[] readCompressedBuf(final InputStream dis, final int msglen, final Vector<ConnectionListener> listeners) throws IOException {
         final int bytes_to_read = msglen - Message.HEADER_SIZE;
         final InflaterInputStream zis = new InflaterInputStream(dis);
         final byte[] buf = Message.readBuf(bytes_to_read, zis, listeners);
@@ -66,14 +66,14 @@ public final class Message extends Object{
         return buf;
     }
 
-    public final static Message Receive(final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
+    public final static Message receive(final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
         final ByteBuffer header = ByteBuffer.wrap(Message.readBuf(Message.HEADER_SIZE, dis, null));
         final byte c_type = header.get(Message._clntB);
         if((c_type & Message.BIG_ENDIAN_MASK) == 0) header.order(ByteOrder.LITTLE_ENDIAN);
         final int msglen = header.getInt(Message._mlenI);
         final ByteBuffer body;
         if(msglen > Message.HEADER_SIZE){
-            if((c_type & Message.COMPRESSED) != 0) body = ByteBuffer.wrap(Message.ReadCompressedBuf(dis, msglen, listeners));
+            if((c_type & Message.COMPRESSED) != 0) body = ByteBuffer.wrap(Message.readCompressedBuf(dis, msglen, listeners));
             else{
                 body = ByteBuffer.wrap(Message.readBuf(msglen - Message.HEADER_SIZE, dis, listeners));
             }
@@ -232,7 +232,7 @@ public final class Message extends Object{
         return((this.client_type & Message.BIG_ENDIAN_MASK) != 0);
     }
 
-    public final void Send(final DataOutputStream dos) throws IOException {
+    public final void send(final DataOutputStream dos) throws IOException {
         dos.writeInt(this.msglen);
         dos.writeInt(this.status);
         dos.writeShort(this.length);

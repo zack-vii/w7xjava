@@ -107,7 +107,7 @@ public class Connection{
         public void run() {
             try{
                 while(true){
-                    final Message message = Message.Receive(Connection.this.dis, Connection.this.connection_listener);
+                    final Message message = Message.receive(Connection.this.dis, Connection.this.connection_listener);
                     if(DEBUG.A) System.out.println(String.format("%s received %s", this.getName(), message.toString()));
                     if(message.dtype == DTYPE.EVENT){
                         final PMET PmdsEvent = new PMET();
@@ -334,9 +334,9 @@ public class Connection{
         this.connectToServer();
         final Message message = new Message(this.provider.user);
         message.useCompression(use_compression);
-        message.Send(this.dos);
+        message.send(this.dos);
         this.sock.setSoTimeout(3000);
-        Message.Receive(this.dis, null);
+        Message.receive(this.dis, null);
         this.sock.setSoTimeout(0);
         this.receiveThread = new MRT();
         this.receiveThread.start();
@@ -496,7 +496,7 @@ public class Connection{
             if(serialize) message = new Message(String.format("COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((%s)),xd(_ans)),_ans)", expr));
             else message = new Message(expr);
             this.pending_count++;
-            message.Send(this.dos);
+            message.send(this.dos);
             return this.getAnswer();
         }catch(final MdsException exc){
             throw exc;
@@ -619,7 +619,7 @@ public class Connection{
     public final void sendArg(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte body[]) throws MdsException {
         final Message msg = new Message(descr_idx, dtype, nargs, dims, body);
         try{
-            msg.Send(this.dos);
+            msg.send(this.dos);
         }catch(final IOException e){
             throw new MdsException("Connection.sendArg", e);
         }
