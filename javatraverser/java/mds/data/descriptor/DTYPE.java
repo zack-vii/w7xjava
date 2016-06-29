@@ -51,11 +51,11 @@ public final class DTYPE{
     public static final byte      EVENT      = -46;            // 210
     public static final byte      WITH_UNITS = -45;            // 211
     public static final byte      CALL       = -44;            // 212
-    public static final byte      OPAQUE     = -43;            // 213
+    public static final byte      WITH_ERROR = -43;            // 213
     public static final byte      LIST       = -42;            // 214
     public static final byte      TUPLE      = -41;            // 215
     public static final byte      DICTIONARY = -40;            // 216
-    public static final byte      WITH_ERROR = -39;            // 217
+    public static final byte      OPAQUE     = -39;            // 217
 
     static{
         DTYPE._name[Byte.toUnsignedInt(DTYPE.B)] = "Byte";

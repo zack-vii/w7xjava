@@ -10,8 +10,8 @@ public final class With_Error extends BUILD{
         super(b);
     }
 
-    public With_Error(final Descriptor data, final Descriptor opaque_type){
-        super(DTYPE.WITH_ERROR, null, new Descriptor[]{data, opaque_type});
+    public With_Error(final Descriptor data, final Descriptor error){
+        super(DTYPE.WITH_ERROR, null, new Descriptor[]{data, error});
     }
 
     @Override
@@ -19,7 +19,7 @@ public final class With_Error extends BUILD{
         return this.getDescriptor(0);
     }
 
-    public final Descriptor getOpaqueType() {
+    public final Descriptor getError() {
         return this.getDescriptor(1);
     }
 

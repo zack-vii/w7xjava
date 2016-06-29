@@ -2,6 +2,7 @@ package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
 import mds.MdsException;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 
 public final class Opaque extends BUILD{
@@ -9,18 +10,16 @@ public final class Opaque extends BUILD{
         super(b);
     }
 
-    /*
-    public Opaque(final Descriptor data, final Descriptor error){
-        super(Opaque.DTYPE, (byte)2);
-        this.dscptrs[0] = data;
-        this.dscptrs[1] = error;
+    public Opaque(final Descriptor data, final Descriptor opaque_type){
+        super(DTYPE.OPAQUE, null, new Descriptor[]{data,});
     }
-    */
+
+    @Override
     public final Descriptor getData() {
         return this.getDescriptor(0);
     }
 
-    public final Descriptor getError() {
+    public final Descriptor getOpaqueType() {
         return this.getDescriptor(1);
     }
 }
