@@ -49,22 +49,22 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
 
     @Override
     public final double toDouble(final Descriptor t) {
-        return t.toDouble()[0];
+        return t.toDouble();
     }
 
     @Override
     public final float toFloat(final Descriptor t) {
-        return t.toFloat()[0];
+        return t.toFloat();
     }
 
     @Override
     public final int toInt(final Descriptor t) {
-        return t.toInt()[0];
+        return t.toInt();
     }
 
     @Override
     public final long toLong(final Descriptor t) {
-        return t.toLong()[0];
+        return t.toLong();
     }
 
     @Override

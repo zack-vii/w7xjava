@@ -26,7 +26,7 @@ import mds.data.descriptor_s.Missing;
 
 /** Fixed-Length (static) Descriptor (-62 : 194) **/
 @SuppressWarnings("deprecation")
-public class Descriptor_R<T extends Number>extends Descriptor<T>{
+public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
     public static final byte _dscoff = 12;
     public static final byte _ndesc  = 8;
     public static final int  BYTES   = Descriptor.BYTES + 24;
@@ -152,22 +152,27 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
     }
 
     @Override
-    public double[] toDouble() {
-        return null;
+    public double toDouble() {
+        return (Double)this.getValue();
     }
 
     @Override
-    public float[] toFloat() {
-        return null;
+    public double[] toDoubles() {
+        return this.getData().toDoubles();
     }
 
     @Override
-    public int[] toInt() {
-        return null;
+    public float[] toFloats() {
+        return this.getData().toFloats();
     }
 
     @Override
-    public long[] toLong() {
-        return null;
+    public int[] toInts() {
+        return this.getData().toInts();
+    }
+
+    @Override
+    public long[] toLongs() {
+        return this.getData().toLongs();
     }
 }

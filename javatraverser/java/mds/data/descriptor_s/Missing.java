@@ -27,22 +27,22 @@ public final class Missing extends Descriptor_S{
     }
 
     @Override
-    public double[] toDouble() {
-        return null;
+    public double toDouble() {
+        return Double.NaN;
     }
 
     @Override
-    public float[] toFloat() {
-        return null;
+    public float toFloat() {
+        return Float.NaN;
     }
 
     @Override
-    public int[] toInt() {
-        return null;
+    public int toInt() {
+        return 0;
     }
 
     @Override
-    public long[] toLong() {
-        return null;
+    public long toLong() {
+        return 0;
     }
 }

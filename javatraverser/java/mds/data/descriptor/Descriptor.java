@@ -234,13 +234,29 @@ public abstract class Descriptor<T>{
         return ByteBuffer.allocate(8).order(this.getBuffer().order()).putShort(this.length).put(this.dtype).put(this.dclass).putInt(this.pointer);
     }
 
-    public abstract double[] toDouble();
+    public double toDouble() {
+        return this.toLongs()[0];
+    }
 
-    public abstract float[] toFloat();
+    public abstract double[] toDoubles();
 
-    public abstract int[] toInt();
+    public float toFloat() {
+        return this.toFloats()[0];
+    }
 
-    public abstract long[] toLong();
+    public abstract float[] toFloats();
+
+    public int toInt() {
+        return this.toInts()[0];
+    }
+
+    public abstract int[] toInts();
+
+    public long toLong() {
+        return this.toLongs()[0];
+    }
+
+    public abstract long[] toLongs();
 
     public Message toMessage(final byte descr_idx, final byte n_args) {
         final Descriptor data = this.getData();

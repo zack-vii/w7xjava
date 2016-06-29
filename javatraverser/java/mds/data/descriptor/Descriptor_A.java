@@ -208,8 +208,10 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
 
     protected abstract T[] initArray(int size);
 
+    public abstract double toDouble(T t);
+
     @Override
-    public final double[] toDouble() {
+    public final double[] toDoubles() {
         final T[] val = this.getValue();
         final double[] out = new double[val.length];
         for(int i = 0; i < out.length; i++)
@@ -217,10 +219,10 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         return out;
     }
 
-    public abstract double toDouble(T t);
+    public abstract float toFloat(T t);
 
     @Override
-    public final float[] toFloat() {
+    public final float[] toFloats() {
         final T[] val = this.getValue();
         final float[] out = new float[val.length];
         for(int i = 0; i < out.length; i++)
@@ -228,10 +230,10 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         return out;
     }
 
-    public abstract float toFloat(T t);
+    public abstract int toInt(T t);
 
     @Override
-    public final int[] toInt() {
+    public final int[] toInts() {
         final T[] val = this.getValue();
         final int[] out = new int[val.length];
         for(int i = 0; i < out.length; i++)
@@ -239,18 +241,16 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         return out;
     }
 
-    public abstract int toInt(T t);
+    public abstract long toLong(T t);
 
     @Override
-    public final long[] toLong() {
+    public final long[] toLongs() {
         final T[] val = this.getValue();
         final long[] out = new long[val.length];
         for(int i = 0; i < out.length; i++)
             out[i] = this.toLong(val[i]);
         return out;
     }
-
-    public abstract long toLong(T t);
 
     public String toString(final int idx) {
         return this.getValue(idx).toString();

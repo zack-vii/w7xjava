@@ -419,7 +419,7 @@ public class Connection{
     }
 
     public final double[] getDoubleArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toDouble();
+        return this.getNumberArray(in).toDoubles();
     }
 
     private final int getEventId() {
@@ -435,7 +435,7 @@ public class Connection{
     }
 
     public final float[] getFloatArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toFloat();
+        return this.getNumberArray(in).toFloats();
     }
 
     public final String getHost() {
@@ -447,7 +447,7 @@ public class Connection{
     }
 
     public final int[] getIntegerArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toInt();
+        return this.getNumberArray(in).toInts();
     }
 
     public final long getLong(final String in) throws MdsException {
@@ -455,7 +455,7 @@ public class Connection{
     }
 
     public final long[] getLongArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toLong();
+        return this.getNumberArray(in).toLongs();
     }
 
     private final String getName(final String classname) {

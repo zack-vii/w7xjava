@@ -189,7 +189,7 @@ public final class Function extends Descriptor_R<Short>{
     public final static void popValue() {
         Function.$value.pop();
     }
-
+    
     public final static void pushValue(final Descriptor descpr) {
         Function.$value.push(descpr);
     }
@@ -630,22 +630,42 @@ public final class Function extends Descriptor_R<Short>{
     }
 
     @Override
-    public double[] toDouble() {
+    public double toDouble() {
         return this.evaluate().toDouble();
     }
 
     @Override
-    public float[] toFloat() {
+    public double[] toDoubles() {
+        return this.evaluate().toDoubles();
+    }
+
+    @Override
+    public float toFloat() {
         return this.evaluate().toFloat();
     }
 
     @Override
-    public int[] toInt() {
+    public float[] toFloats() {
+        return this.evaluate().toFloats();
+    }
+
+    @Override
+    public int toInt() {
         return this.evaluate().toInt();
     }
 
     @Override
-    public long[] toLong() {
+    public int[] toInts() {
+        return this.evaluate().toInts();
+    }
+
+    @Override
+    public long toLong() {
         return this.evaluate().toLong();
+    }
+
+    @Override
+    public long[] toLongs() {
+        return this.evaluate().toLongs();
     }
 }

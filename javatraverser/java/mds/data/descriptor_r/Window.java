@@ -20,7 +20,7 @@ public final class Window extends BUILD{
 
     @Override
     public final int[] getShape() {
-        return new int[]{this.getEndingIdx().toInt()[0] - this.getStartingIdx().toInt()[0]};
+        return new int[]{this.getEndingIdx().toInt() - this.getStartingIdx().toInt()};
     }
 
     public final Descriptor getStartingIdx() {

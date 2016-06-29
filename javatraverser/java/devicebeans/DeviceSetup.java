@@ -217,7 +217,7 @@ public class DeviceSetup extends JDialog{
         }
         for(idx = 0; idx < num_expr; idx++){
             try{
-                if(Database.tdiEvaluate(varExpr + expressions[idx]).toInt()[0] == 0){
+                if(Database.tdiEvaluate(varExpr + expressions[idx]).toInt() == 0){
                     JOptionPane.showMessageDialog(this, messages[idx], "Error in device configuration", JOptionPane.WARNING_MESSAGE);
                     return false;
                 }

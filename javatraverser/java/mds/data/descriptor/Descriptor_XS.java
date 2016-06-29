@@ -46,23 +46,23 @@ public class Descriptor_XS extends Descriptor<Descriptor>{
     }
 
     @Override
-    public double[] toDouble() {
-        return this.payload.toDouble();
+    public double[] toDoubles() {
+        return this.payload.toDoubles();
     }
 
     @Override
-    public float[] toFloat() {
-        return this.payload.toFloat();
+    public float[] toFloats() {
+        return this.payload.toFloats();
     }
 
     @Override
-    public int[] toInt() {
-        return this.payload.toInt();
+    public int[] toInts() {
+        return this.payload.toInts();
     }
 
     @Override
-    public long[] toLong() {
-        return this.payload.toLong();
+    public long[] toLongs() {
+        return this.payload.toLongs();
     }
 
     @Override

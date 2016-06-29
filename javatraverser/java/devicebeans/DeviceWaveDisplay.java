@@ -20,8 +20,8 @@ public class DeviceWaveDisplay extends DeviceComponent{
         try{
             final Descriptor xData = this.subtree.evaluate("DIM_OF(" + data + ")");
             final Descriptor yData = this.subtree.evaluate(data);
-            this.x = xData.toFloat();
-            this.y = yData.toFloat();
+            this.x = xData.toFloats();
+            this.y = yData.toFloats();
             this.wave.update(this.x, this.y);
         }catch(final Exception exc){}
     }

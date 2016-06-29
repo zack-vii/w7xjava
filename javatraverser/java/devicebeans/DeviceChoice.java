@@ -87,7 +87,7 @@ public class DeviceChoice extends DeviceComponent{
         if(this.showState) this.checkB.setSelected(is_on);
         if(this.convert){
             try{
-                data_value = data.toInt()[0];
+                data_value = data.toInt();
             }catch(final Exception e){
                 data_value = 0;
             }
@@ -103,19 +103,19 @@ public class DeviceChoice extends DeviceComponent{
                 if(curr_idx < this.choiceItems.length) this.comboB.setSelectedIndex(curr_idx);
             }else if(this.choiceIntValues != null){
                 try{
-                    data_value = data.toInt()[0];
+                    data_value = data.toInt();
                     for(curr_idx = 0; curr_idx < this.choiceIntValues.length && data_value != this.choiceIntValues[curr_idx]; curr_idx++);
                     if(curr_idx < this.choiceIntValues.length) this.comboB.setSelectedIndex(curr_idx);
                 }catch(final Exception e){}
             }else if(this.choiceFloatValues != null){
                 try{
-                    data_float = data.toFloat()[0];
+                    data_float = data.toFloat();
                     for(curr_idx = 0; curr_idx < this.choiceFloatValues.length && data_float != this.choiceFloatValues[curr_idx]; curr_idx++);
                     if(curr_idx < this.choiceFloatValues.length) this.comboB.setSelectedIndex(curr_idx);
                 }catch(final Exception e){}
             }else if(this.choiceDoubleValues != null){
                 try{
-                    data_double = data.toDouble()[0];
+                    data_double = data.toDouble();
                     for(curr_idx = 0; curr_idx < this.choiceDoubleValues.length && data_double != this.choiceDoubleValues[curr_idx]; curr_idx++);
                     if(curr_idx < this.choiceDoubleValues.length) this.comboB.setSelectedIndex(curr_idx);
                 }catch(final Exception e){}

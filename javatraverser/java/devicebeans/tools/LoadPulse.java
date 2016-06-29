@@ -122,7 +122,7 @@ public class LoadPulse{
             final Nid rootNid = this.tree.resolve(new Path("\\P_CONFIG"));
             final Nid rTransferNid = new Nid(rootNid, +20);
             final Descriptor rTransferData = this.tree.evaluate(rTransferNid);
-            this.rTransfer = rTransferData.toFloat()[0];
+            this.rTransfer = rTransferData.toFloat();
         }catch(final Exception exc){
             System.out.println("Error getting R transfer: " + exc);
         }

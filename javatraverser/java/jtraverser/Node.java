@@ -486,7 +486,7 @@ public class Node{
 
     public final boolean isSegmented() {
         try{
-            return this.database.evaluate(new StringBuilder(32).append("GetNumSegments(").append(this.nid.getValue()).append(')').toString()).toInt()[0] > 0;
+            return this.database.evaluate(new StringBuilder(32).append("GetNumSegments(").append(this.nid.getValue()).append(')').toString()).toInt() > 0;
         }catch(final MdsException e){
             return false;
         }

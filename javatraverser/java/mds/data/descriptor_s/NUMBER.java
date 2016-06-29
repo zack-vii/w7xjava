@@ -93,22 +93,42 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     }
 
     @Override
-    public double[] toDouble() {
-        return new double[]{this.getValue().doubleValue()};
+    public double toDouble() {
+        return this.getValue().doubleValue();
     }
 
     @Override
-    public float[] toFloat() {
-        return new float[]{this.getValue().floatValue()};
+    public double[] toDoubles() {
+        return new double[]{this.toDouble()};
     }
 
     @Override
-    public int[] toInt() {
-        return new int[]{this.getValue().intValue()};
+    public float toFloat() {
+        return this.getValue().floatValue();
     }
 
     @Override
-    public long[] toLong() {
-        return new long[]{this.getValue().longValue()};
+    public float[] toFloats() {
+        return new float[]{this.toFloat()};
+    }
+
+    @Override
+    public int toInt() {
+        return this.getValue().intValue();
+    }
+
+    @Override
+    public int[] toInts() {
+        return new int[]{this.toInt()};
+    }
+
+    @Override
+    public long toLong() {
+        return this.getValue().longValue();
+    }
+
+    @Override
+    public long[] toLongs() {
+        return new long[]{this.toLong()};
     }
 }

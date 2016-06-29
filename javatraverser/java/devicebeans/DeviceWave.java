@@ -394,7 +394,7 @@ public class DeviceWave extends DeviceComponent{
                 this.master.updateIdentifiers();
                 // Compute new Max
                 final Descriptor newData = this.subtree.evaluate(newExprStr);
-                this.maxY = newData.toFloat()[0];
+                this.maxY = newData.toFloat();
                 // System.out.println(""+maxY);
                 if(this.maxYVisible) this.maxYField.setText("" + this.maxY);
                 this.waveEditor.setWaveform(this.waveX, this.waveY, this.minY, this.maxY);
@@ -469,7 +469,7 @@ public class DeviceWave extends DeviceComponent{
         try{
             currNid = new Nid(this.nidData.getValue() + 1);
             currData = this.subtree.evaluate(currNid);
-            this.minX = this.minXOld = currData.toFloat()[0];
+            this.minX = this.minXOld = currData.toFloat();
         }catch(final Exception exc){
             this.minX = this.minXOld = 0;
         }
@@ -477,7 +477,7 @@ public class DeviceWave extends DeviceComponent{
         try{
             currNid = new Nid(this.nidData.getValue() + 2);
             currData = this.subtree.evaluate(currNid);
-            this.maxX = this.maxXOld = currData.toFloat()[0];
+            this.maxX = this.maxXOld = currData.toFloat();
         }catch(final Exception exc){
             this.maxX = this.maxXOld = 1;
         }
@@ -485,7 +485,7 @@ public class DeviceWave extends DeviceComponent{
         try{
             currNid = new Nid(this.nidData.getValue() + 3);
             currData = this.subtree.evaluate(currNid);
-            this.minY = this.minYOld = currData.toFloat()[0];
+            this.minY = this.minYOld = currData.toFloat();
         }catch(final Exception exc){
             this.minY = this.minYOld = 0;
         }
@@ -493,7 +493,7 @@ public class DeviceWave extends DeviceComponent{
         try{
             currNid = new Nid(this.nidData.getValue() + 4);
             currData = this.subtree.evaluate(currNid);
-            this.maxY = this.maxYOld = currData.toFloat()[0];
+            this.maxY = this.maxYOld = currData.toFloat();
         }catch(final Exception exc){
             this.maxY = this.maxYOld = 1;
         }
@@ -501,9 +501,9 @@ public class DeviceWave extends DeviceComponent{
         Descriptor xData, yData;
         try{
             yData = this.subtree.compile("FLOAT(" + this.subtree.evaluate(data) + ")");
-            currY = yData.toFloat();
+            currY = yData.toFloats();
             xData = this.subtree.evaluate("FLOAT(DIM_OF(" + this.subtree.decompile(data) + "))");
-            currX = xData.toFloat();
+            currX = xData.toFloats();
         }catch(final Exception exc){
             currX = new float[]{this.minX, this.maxX};
             currY = new float[]{0, 0};

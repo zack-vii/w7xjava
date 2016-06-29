@@ -36,6 +36,6 @@ public final class Range extends Descriptor_R{
 
     @Override
     public final int[] getShape() {
-        return new int[]{(int)((this.getEnding().toFloat()[0] - this.getBegin().toFloat()[0]) / this.getDelta().toFloat()[0])};
+        return new int[]{(int)((this.getEnding().toFloat() - this.getBegin().toFloat()) / this.getDelta().toFloat())};
     }
 }

@@ -34,17 +34,18 @@ public class Descriptor_Test{
 
     @SuppressWarnings("static-method")
     @Test
-    public void test() throws MdsException {
-        final int shot = -1;
+    public void test() throws MdsException, InterruptedException {
+        final int shot = 1;
         final String node = "TEST";
         final Nid nid;
-        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("treeopennew('%s',%d)", AllTests.tree, shot)).toInt()[0]);
-        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("tcl('add node %s/usage=any')", node)).toInt()[0]);
-        Assert.assertEquals(1, Descriptor_Test.mds.mdsValue(String.format("tcl('write')")).toInt()[0]);
-        Assert.assertEquals(134348817, Descriptor_Test.mds.mdsValue(String.format("tcl('quit')")).toInt()[0]);
-        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("treeopen('%s',%d)", AllTests.tree, shot)).toInt()[0]);
+        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("treeopennew('%s',%d)", AllTests.tree, shot)).toInt());
+        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("tcl('add node %s/usage=any')", node)).toInt());
+        Assert.assertEquals(1, Descriptor_Test.mds.mdsValue(String.format("tcl('write')")).toInt());
+        Assert.assertEquals(134348817, Descriptor_Test.mds.mdsValue(String.format("tcl('quit')")).toInt());
+        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("treeopen('%s',%d)", AllTests.tree, shot)).toInt());
         Assert.assertNotNull(nid = (Nid)Descriptor_Test.mds.mdsValue(String.format("GetNci(%s,'NID_NUMBER')", node), Nid.class));
-        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue("TreePutRecord", new Descriptor[]{nid, new Int32Array(new int[]{1, 2, 3, 4, 5, 6})}).toInt()[0]);
+        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue("TreePutRecord", new Descriptor[]{nid, new Int32Array(new int[]{1, 2, 3, 4, 5, 6})}).toInt());
+        Thread.sleep(100);
         Assert.assertEquals("Long([1,2,3,4,5,6])", Descriptor_Test.mds.mdsValue("$", new Descriptor[]{new Path(node)}).decompile());
     }
 }
