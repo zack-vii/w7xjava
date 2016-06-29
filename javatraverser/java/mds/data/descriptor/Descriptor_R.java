@@ -80,15 +80,15 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
     private final Descriptor[] dscptrs;
     public final byte          ndesc;
 
-    public Descriptor_R(final byte dtype, final byte[] data, final Descriptor[] args){
-        super((short)(data == null ? 0 : data.length), dtype, Descriptor_R.CLASS, data);
+    public Descriptor_R(final byte dtype, final ByteBuffer data, final Descriptor[] args){
+        super((short)(data == null ? 0 : data.limit()), dtype, Descriptor_R.CLASS, data, Byte.BYTES + (args == null ? 0 : args.length) * Integer.BYTES);
         this.ndesc = (byte)(args == null ? 0 : args.length);
         this.dscptrs = new Descriptor[this.ndesc];
         if(args != null) System.arraycopy(args, 0, this.dscptrs, 0, args.length);
     }
 
-    protected Descriptor_R(final byte dtype, final byte[] data, final Descriptor[] args0, final Descriptor[] args1){
-        super((short)(data == null ? 0 : data.length), dtype, Descriptor_R.CLASS, data);
+    protected Descriptor_R(final byte dtype, final ByteBuffer data, final Descriptor[] args0, final Descriptor[] args1){
+        super((short)(data == null ? 0 : data.limit()), dtype, Descriptor_R.CLASS, data, Byte.BYTES + (args0.length + (args1 == null ? 0 : args1.length)) * Integer.BYTES);
         this.ndesc = (byte)(args0.length + (args1 == null ? 0 : args1.length));
         this.dscptrs = new Descriptor[this.ndesc];
         System.arraycopy(args0, 0, this.dscptrs, 0, args0.length);

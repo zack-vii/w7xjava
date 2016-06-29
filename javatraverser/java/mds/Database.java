@@ -47,7 +47,7 @@ public final class Database{
     }
 
     public static final String getDatabase() throws MdsException {
-        if(!Database.mds.connected) return "Not connected.";
+        if(!Database.mds.isConnected()) return "Not connected.";
         final String result = Database.mds.getString("COMMA(_ans=*,TCL('show db',_ans),_ans)");
         return result.trim();
     }
@@ -182,7 +182,7 @@ public final class Database{
 
     private final void _connect() throws MdsException {
         if(Database.mds != this.con) Database.mds = this.con;
-        if(!Database.mds.connected) throw new MdsException("Not connected");
+        if(!Database.mds.isConnected()) throw new MdsException("Not connected");
         Database.updateCurrent();
     }
 

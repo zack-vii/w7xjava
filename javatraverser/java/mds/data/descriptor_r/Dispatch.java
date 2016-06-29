@@ -1,6 +1,7 @@
 package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
@@ -12,7 +13,7 @@ public final class Dispatch extends BUILD<Byte>{
     public static final byte SCHED_SEQ   = 2;
 
     public Dispatch(final byte type, final Descriptor ident, final Descriptor phase, final Descriptor when, final Descriptor completion){
-        super(DTYPE.DISPATCH, new byte[]{type}, new Descriptor[]{ident, phase, when, completion});
+        super(DTYPE.DISPATCH, ByteBuffer.allocate(Byte.BYTES).order(ByteOrder.LITTLE_ENDIAN).put(type), new Descriptor[]{ident, phase, when, completion});
     }
 
     public Dispatch(final ByteBuffer b) throws MdsException{

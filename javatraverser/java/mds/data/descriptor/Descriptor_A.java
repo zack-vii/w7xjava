@@ -45,7 +45,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
             int j = 0;
             final int len = this.shape[l - 1];
             for(; j < len && this.i < 1000; j++){
-                if(j > 0) this.pout.append(", ");
+                if(j > 0) this.pout.append(',');
                 this.level(l - 1);
             }
             j = len - j;
@@ -133,8 +133,8 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         return Descriptor_A.deserialize(b);
     }
 
-    public Descriptor_A(final byte dtype, final byte[] buf, final int nelements){
-        super(dtype, Descriptor_A.CLASS, buf, nelements);
+    public Descriptor_A(final byte dtype, final ByteBuffer byteBuffer, final int nelements){
+        super(dtype, Descriptor_A.CLASS, byteBuffer, nelements);
     }
 
     protected Descriptor_A(final ByteBuffer b){

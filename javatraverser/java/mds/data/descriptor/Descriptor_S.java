@@ -80,21 +80,17 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
         }
         throw new MdsException(String.format("Unsupported dtype %s for class %s", Descriptor.getDTypeName(b.get(Descriptor._typB)), Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
-    /*
-    public static final void main(final String[] args) {//TODO:main
-    }
-    */
 
-    public Descriptor_S(final byte dtype, final byte[] data){
-        this((short)data.length, dtype, data);
+    public Descriptor_S(final byte dtype, final ByteBuffer data){
+        this((short)data.limit(), dtype, data);
     }
 
     public Descriptor_S(final ByteBuffer b){
         super(b);
     }
 
-    public Descriptor_S(final short length, final byte dtype, final byte[] value){
-        super(length, dtype, Descriptor_S.CLASS, value);
+    public Descriptor_S(final short length, final byte dtype, final ByteBuffer value){
+        super(length, dtype, Descriptor_S.CLASS, value, 0);
     }
 
     @Override

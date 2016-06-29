@@ -1,6 +1,7 @@
 package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import debug.DEBUG;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
@@ -237,22 +238,6 @@ public final class Function extends Descriptor_R<Short>{
         pout.setLength(fin + 1);
     }
 
-    /*
-    public static final void main(final String[] args) throws MdsException {//TODO:main
-        final Database db = new Database(null, "test", -1, Database.READONLY);
-        System.out.println(db.compile("public fun myfun(in _R, out _out) STATEMENT(_out = _R+1,return(_out))").decompile());
-        System.out.println(db.compile("out _R").decompile());
-        System.out.println(db.compile("private _R").decompile());
-        System.out.println(db.compile("public _R").decompile());
-        System.out.println(db.compile("_r=sqrt((1+5)*6)/(3-1)").decompile());
-        System.out.println(db.compile("for(_i=1;_i<5;_i++) write(*,text(_i))").decompile());
-        System.out.println(db.compile("TreeShr->TreeCtx($SHOT,(5/2)^2)").decompile());
-        System.out.println(db.compile("[cmplx(1.e2,3.e4)]").decompile());
-        System.out.println(db.compile("build_call(9,'TreeShr','TreeCtx')").decompile());
-        System.out.println(db.compile("TreeOpen('test',1)").decompile());
-        System.exit(0);
-    }
-    */
     public Function(final ByteBuffer b) throws MdsException{
         super(b);
     }
@@ -262,7 +247,7 @@ public final class Function extends Descriptor_R<Short>{
     }
 
     public Function(final short mode, final Descriptor[] args){
-        super(DTYPE.FUNCTION, ByteBuffer.allocate(Short.BYTES).putShort(mode).array(), args);
+        super(DTYPE.FUNCTION, ByteBuffer.allocate(Short.BYTES).order(ByteOrder.LITTLE_ENDIAN).putShort(mode), args);
     }
 
     @Override

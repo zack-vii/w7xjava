@@ -42,27 +42,36 @@ public class Connection{
 
         public MdsConnect(){
             super(Connection.this.getName("MdsConnect"));
+            this.setDaemon(true);
         }
 
-        public synchronized final void close() {
+        synchronized public final void close() {
             this.close = true;
             this.notify();
         }
 
+        synchronized public void retry() {
+            this.tried = false;
+            this.notify();
+        }
+
         @Override
-        synchronized public final void run() {
+        public final void run() {
             try{
                 while(!this.close)
                     try{
-                        this.setTried(false);
                         Connection.this.connectToMds(Connection.this.use_compression);
                         this.setTried(true);
-                        this.wait();
-                    }catch(final ConnectException e){
+                        synchronized(this){
+                            this.wait();
+                        }
+                    }catch(final ConnectException ce){
                         this.setTried(true);
-                        Thread.sleep(3000);
+                        try{
+                            Thread.sleep(3000);
+                        }catch(final InterruptedException ie){}
                     }
-            }catch(final InterruptedException e){
+            }catch(final InterruptedException ie){
                 this.close = true;
             }catch(final IOException e){
                 Connection.this.error = e.getMessage();
@@ -85,16 +94,19 @@ public class Connection{
 
         public MRT(){
             super(Connection.this.getName("MRT"));
+            this.setDaemon(true);
         }
 
-        public synchronized Message GetMessage() {
+        public Message getMessage() {
             if(DEBUG.D) System.out.println("GetMessage()");
             long time;
             if(DEBUG.D) time = System.nanoTime();
-            while(!this.killed && this.message == null)
-                try{
-                    this.wait();
-                }catch(final InterruptedException e){}
+            synchronized(this){
+                while(!this.killed && this.message == null)
+                    try{
+                        this.wait();
+                    }catch(final InterruptedException e){}
+            }
             if(this.killed) return null;
             if(DEBUG.D) time = System.nanoTime() - time;
             final Message msg = this.message;
@@ -111,7 +123,7 @@ public class Connection{
                     if(DEBUG.A) System.out.println(String.format("%s received %s", this.getName(), message.toString()));
                     if(message.dtype == DTYPE.EVENT){
                         final PMET PmdsEvent = new PMET();
-                        PmdsEvent.SetEventid(message.body.get(12));
+                        PmdsEvent.setEventid(message.body.get(12));
                         PmdsEvent.start();
                     }else{
                         Connection.this.pending_count--;
@@ -156,6 +168,7 @@ public class Connection{
 
         public PMET(){
             super(Connection.this.getName("PMET"));
+            this.setDaemon(true);
         }
 
         @Override
@@ -164,7 +177,7 @@ public class Connection{
             else if(this.eventId != -1) Connection.this.dispatchUpdateEvent(this.eventId);
         }
 
-        public void SetEventid(final int id) {
+        public void setEventid(final int id) {
             if(DEBUG.M){
                 System.out.println("Received Event ID " + id);
             }
@@ -172,7 +185,7 @@ public class Connection{
             this.eventName = null;
         }
 
-        public void SetEventName(final String name) {
+        public void setEventName(final String name) {
             if(DEBUG.M){
                 System.out.println("Received Event Name " + name);
             }
@@ -231,28 +244,9 @@ public class Connection{
             throw new MdsException(cls.getSimpleName(), e);
         }
     }
-    /*
-    public static void main(final String[] args) throws Exception {// TODO:main
-        final ConnectionListener cl = new ConnectionListener(){
-            @Override
-            public void processConnectionEvent(final ConnectionEvent e) {
-                System.out.println(e.getInfo());
-                if(e.getInfo().equals("connected")) try{
-                    System.out.println(((Connection)e.getSource()).mdsValue("[[[1.0],[2.0]],[[3.0],[4.0]]]"));
-                }catch(final MdsException e1){
-                    e1.printStackTrace();
-                }// BYTE([1,2,3,4,5,6,7,8,9,0])
-            }
-        };
-        final Connection mds1 = new Connection("localhost", true, cl);
-        final Connection mds2 = new Connection("localhost", cl);
-        final Descriptor d = mds1.mdsValue("[[[1.1],[2.1]],[[3.1],[4.1]]]");// BYTE([1,2,3,4,5,6,7,8,9,0])
-        System.out.println(d);
-    }
-    */
-    public boolean                          connected           = false;
+    private boolean                         connected           = false;
     transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
-    private final MdsConnect                connectThread;
+    private MdsConnect                      connectThread       = null;
     protected InputStream                   dis                 = null;
     protected DataOutputStream              dos                 = null;
     public String                           error               = null;
@@ -278,9 +272,7 @@ public class Connection{
         this.addConnectionListener(cl);
         this.use_compression = use_compression;
         this.provider = provider;
-        this.connectThread = new MdsConnect();
-        this.connectThread.start();
-        this.waitTried();
+        this.connect();
     }
 
     public Connection(final Provider provider, final ConnectionListener cl){
@@ -327,6 +319,16 @@ public class Connection{
         return this.mdsValue("COMPILE($)", new Descriptor[]{new CString(expr)}, Descriptor.class);
     }
 
+    public final boolean connect() {
+        if(this.connectThread == null || !this.connectThread.isAlive()){
+            this.connectThread = new MdsConnect();
+            this.connectThread.start();
+        }
+        this.connectThread.retry();
+        this.waitTried();
+        return this.connected;
+    }
+
     private final void connectToMds(final boolean use_compression) throws IOException {
         this.use_compression = use_compression;
         this.connectToServer();
@@ -350,15 +352,17 @@ public class Connection{
         this.dos = new DataOutputStream(new BufferedOutputStream(this.sock.getOutputStream()));
     }
 
-    public final int disconnectFromMds() {
+    public final int disconnect() {
         try{
-            if(this.connection_listener.size() > 0) this.connection_listener.removeAllElements();
             this.connected = false;
-            this.dos.close();
-            this.dis.close();
-            this.receiveThread.waitExited();
+            if(this.connection_listener.size() > 0) this.connection_listener.removeAllElements();
+            if(this.connectThread != null) this.connectThread.close();
+            if(this.dos != null) this.dos.close();
+            if(this.dis != null) this.dis.close();
+            if(this.receiveThread != null) this.receiveThread.waitExited();
             this.dos = null;
             this.dis = null;
+            this.receiveThread = null;
         }catch(final IOException e){
             this.error.concat("Could not get IO for " + this.provider.host + e);
             return 0;
@@ -397,15 +401,14 @@ public class Connection{
     @Override
     protected void finalize() throws Throwable {
         try{
-            this.disconnectFromMds();
-            this.connectThread.close();
+            this.disconnect();
         }finally{
             super.finalize();
         }
     }
 
-    public final synchronized Message getAnswer() throws MdsException {
-        final Message message = this.receiveThread.GetMessage();
+    public final Message getAnswer() throws MdsException {
+        final Message message = this.receiveThread.getMessage();
         if(message == null) throw new MdsException("Null response from server", 0);
         if((message.status & 1) == 0 && message.status != 0 && message.dtype == DTYPE.T) throw new MdsException(message.asString(), message.status);
         return message;
@@ -482,6 +485,10 @@ public class Connection{
 
     public final String getUser() {
         return this.provider.user;
+    }
+
+    public final boolean isConnected() {
+        return this.connected;
     }
 
     public final synchronized Message mdsIO(String expr, final boolean serialize) throws MdsException {
@@ -579,7 +586,7 @@ public class Connection{
         this.notifyAll();
     }
 
-    public final void QuitFromMds() {
+    public final void quitFromMds() {
         try{
             if(this.connection_listener.size() > 0) this.connection_listener.removeAllElements();
             this.dos.close();

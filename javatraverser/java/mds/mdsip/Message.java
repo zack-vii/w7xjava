@@ -28,8 +28,8 @@ public final class Message extends Object{
     protected static final String EVENTCANREQUEST      = "---EVENTCAN---REQUEST---";
     public static final int       HEADER_SIZE          = 48;
     public static final byte      JAVA_CLIENT          = (byte)(Message.JAVA_CLIENT_LITTLE | Message.BIG_ENDIAN_MASK);// | Message.SWAP_ENDIAN_ON_SERVER_MASK);
-    private static final byte     JAVA_CLIENT_LITTLE   = (byte)3;
-    private static int            msgid                = 1;
+    private static final byte     JAVA_CLIENT_LITTLE   = (byte)0x3;
+    private static byte           msgid                = 1;
     // private static final byte SENDCAPABILITIES = (byte)0xF;
     private static final int      SUPPORTS_COMPRESSION = 0x8000;
     // private static final byte SWAP_ENDIAN_ON_SERVER_MASK = (byte)0x40;
@@ -87,8 +87,8 @@ public final class Message extends Object{
     private final int       dims[];
     protected final byte    dtype;
     public final ByteBuffer header;
-    protected final int     length;
-    protected final int     message_id;
+    protected final short   length;
+    protected final byte    message_id;
     protected final int     msglen;
     private final byte      nargs;
     private final byte      ndims;
@@ -107,14 +107,13 @@ public final class Message extends Object{
         this(descr_idx, dtype, nargs, dims, (dims == null) ? (byte)0 : (byte)dims.length, body, Message.JAVA_CLIENT, 0, Message.msgid);
     }
 
-    public Message(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte ndims, final byte body[], final byte client_type, final int status, final int msgid){
-        this.header = ByteBuffer.allocate(Message.HEADER_SIZE);
-        this.header.put(14, this.client_type = client_type);
+    public Message(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte ndims, final byte body[], final byte client_type, final int status, final byte msgid){
         final int body_size = body == null ? 0 : body.length;
         this.msglen = Message.HEADER_SIZE + body_size;
         this.status = status;
         this.message_id = msgid;
         this.length = Descriptor.getDataSize(dtype, body_size);
+        this.client_type = client_type;
         this.nargs = nargs;
         this.descr_idx = descr_idx;
         this.ndims = (ndims > Descriptor_A.MAX_DIM) ? Descriptor_A.MAX_DIM : ndims;
@@ -125,11 +124,10 @@ public final class Message extends Object{
         this.dtype = dtype;
         this.body = ByteBuffer.wrap(body);
         if(this.isLittleEndian()) this.body.order(ByteOrder.LITTLE_ENDIAN);
+        this.header = this.getHeader();
     }
 
-    public Message(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte ndims, final ByteBuffer body, final int status, final int msgid){
-        this.header = ByteBuffer.allocate(Message.HEADER_SIZE);
-        this.header.put(14, this.client_type = body.order() == ByteOrder.LITTLE_ENDIAN ? Message.JAVA_CLIENT_LITTLE : Message.JAVA_CLIENT);
+    public Message(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte ndims, final ByteBuffer body, final int status, final byte msgid){
         final int body_size = body == null ? 0 : body.limit();
         this.msglen = Message.HEADER_SIZE + body_size;
         this.status = status;
@@ -144,6 +142,8 @@ public final class Message extends Object{
         }else this.dims = dims;
         this.dtype = dtype;
         this.body = body;
+        this.client_type = (body == null || body.order() == ByteOrder.BIG_ENDIAN) ? Message.JAVA_CLIENT : Message.JAVA_CLIENT_LITTLE;
+        this.header = this.getHeader();
     }
 
     public Message(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final ByteBuffer body){
@@ -243,26 +243,32 @@ public final class Message extends Object{
         return out;
     }
 
+    private final ByteBuffer getHeader() {
+        final ByteBuffer header = ByteBuffer.allocate(Message.HEADER_SIZE).order(this.body.order());
+        header.putInt(this.msglen);
+        header.putInt(this.status);
+        header.putShort(this.length);
+        header.put(this.getNargs());
+        header.put(this.descr_idx);
+        header.put(this.message_id);
+        header.put(this.dtype);
+        header.put(this.client_type);
+        header.put(this.ndims);
+        for(final int dm : this.dims)
+            header.putInt(dm);
+        return header;
+    }
+
     public final byte getNargs() {
         return this.nargs;
     }
 
     public final boolean isLittleEndian() {
-        return((this.client_type & Message.BIG_ENDIAN_MASK) != 0);
+        return((this.client_type & Message.BIG_ENDIAN_MASK) == 0);
     }
 
     public final void send(final DataOutputStream dos) throws IOException {
-        dos.writeInt(this.msglen);
-        dos.writeInt(this.status);
-        dos.writeShort(this.length);
-        dos.writeByte(this.getNargs());
-        dos.writeByte(this.descr_idx);
-        dos.writeByte(this.message_id);
-        dos.writeByte(this.dtype);
-        dos.writeByte(this.client_type);
-        dos.writeByte(this.ndims);
-        for(int i = 0; i < Descriptor_A.MAX_DIM; i++)
-            dos.writeInt(this.dims[i]);
+        dos.write(this.header.array());
         final ByteBuffer buf = this.body.duplicate();
         while(buf.hasRemaining())
             dos.write(buf.get());

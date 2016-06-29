@@ -10,19 +10,20 @@ import mds.mdsip.Message;
 
 /** DSC (24) **/
 public abstract class Descriptor<T>{
-    protected static final int  _clsB     = 3;
-    protected static final int  _lenS     = 0;
-    protected static final int  _ptrI     = 4;
-    protected static final int  _typB     = 2;
-    public static final short   BYTES     = 8;
-    protected static final int  DECO_NRM  = 0;
-    protected static final int  DECO_STR  = 1;
-    protected static final int  DECO_STRX = Descriptor.DECO_X | Descriptor.DECO_STR;
-    protected static final int  DECO_X    = 2;
-    public static final boolean isatomic  = false;
-    protected static final byte P_ARG     = 88;
-    protected static final byte P_STMT    = 96;
-    protected static final byte P_SUBS    = 0;
+    protected static final int       _clsB     = 3;
+    protected static final int       _lenS     = 0;
+    protected static final int       _ptrI     = 4;
+    protected static final int       _typB     = 2;
+    public static final short        BYTES     = 8;
+    protected static final int       DECO_NRM  = 0;
+    protected static final int       DECO_STR  = 1;
+    protected static final int       DECO_STRX = Descriptor.DECO_X | Descriptor.DECO_STR;
+    protected static final int       DECO_X    = 2;
+    public static final boolean      isatomic  = false;
+    protected static final byte      P_ARG     = 88;
+    protected static final byte      P_STMT    = 96;
+    protected static final byte      P_SUBS    = 0;
+    protected static final ByteOrder BYTEORDER = Descriptor.BYTEORDER;
 
     private static final ByteBuffer Buffer(final byte[] buf, final boolean swap_little) {
         return Descriptor.Buffer(buf, swap_little ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
@@ -66,10 +67,10 @@ public abstract class Descriptor<T>{
         throw new MdsException(String.format("Unsupported class %s", Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
 
-    public static final int getDataSize(final byte type, final int length) {
+    public static final short getDataSize(final byte type, final int length) {
         switch(type){
             case DTYPE.T:
-                return length;
+                return (short)length;
             case DTYPE.BU:
             case DTYPE.B:
                 return 1;
@@ -128,19 +129,6 @@ public abstract class Descriptor<T>{
         return "DTYPE_" + (dtype & 0xFF);
     }
 
-    /*
-    public static void main(final String[] a) throws IOException {//TODO:main
-        final Connection m = new Connection("localhost");
-        if(m.error != null) throw new MdsException(m.error);
-        final String tree = "test";
-        final int shot = -1;
-        final int nid = 7;
-        m.mdsValue(String.format("treeopen('%s',%d)", tree, shot));
-        final Descriptor D = m.mdsValue(String.format("COMMA(TreeShr->TreeGetRecord(val(%d),xd(_ans)),MdsShr->MdsSerializeDscOut(xd(_ans),xd(_ans)),_ans)", nid), Descriptor.class);
-        System.out.println(D);
-        System.exit(0);
-    }
-    */
     public static Descriptor readMessage(final Message msg) throws MdsException {
         if(msg.header.get(Message._typB) == DTYPE.T) return new CString(msg.body.array());
         return Descriptor_A.readMessage(msg);
@@ -151,12 +139,12 @@ public abstract class Descriptor<T>{
     }
     protected final boolean isserial;
     public final ByteBuffer b;
-    /** (3,b) descriptor class code **/
-    public final byte       dclass;
-    /** (2,b) data type code **/
-    public final byte       dtype;
     /** (0,s) specific length typically a 16-bit (unsigned) length **/
     public final short      length;
+    /** (2,b) data type code **/
+    public final byte       dtype;
+    /** (3,b) descriptor class code **/
+    public final byte       dclass;
     /** (4,i) address of first byte of data element **/
     public final int        pointer;
 
@@ -169,15 +157,16 @@ public abstract class Descriptor<T>{
         this.pointer = b.getInt();
     }
 
-    public Descriptor(final short length, final byte dtype, final byte dclass, final byte[] value){
-        this.isserial = false;
-        this.b = ByteBuffer.allocate(Descriptor.BYTES + (value == null ? 0 : value.length));
+    public Descriptor(final short length, final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int offset){
+        this.isserial = true;
+        if(byteBuffer == null) this.b = ByteBuffer.allocate(Descriptor.BYTES + offset + (byteBuffer == null ? 0 : byteBuffer.limit())).order(Descriptor.BYTEORDER);
+        else this.b = ByteBuffer.allocate(Descriptor.BYTES + offset + byteBuffer.limit()).order(byteBuffer.order());
         this.b.putShort(this.length = length);
         this.b.put(this.dtype = dtype);
         this.b.put(this.dclass = dclass);
-        this.b.putInt(this.pointer = Descriptor.BYTES);
-        if(value == null) return;
-        this.b.put(value);
+        this.b.putInt(this.pointer = Descriptor.BYTES + offset);
+        if(byteBuffer == null) return;
+        ((ByteBuffer)this.b.duplicate().position(this.pointer)).put((ByteBuffer)byteBuffer.rewind());
     }
 
     public final String decompile() {
@@ -240,8 +229,9 @@ public abstract class Descriptor<T>{
         return Descriptor.isatomic;
     }
 
-    public byte[] serialize() {
-        return ByteBuffer.allocate(8).putShort(this.length).put(this.dclass).put(this.dtype).putInt(this.pointer).array();
+    public ByteBuffer serialize() {
+        if(this.isserial) return this.b.duplicate().order(this.b.order());
+        return ByteBuffer.allocate(8).order(this.getBuffer().order()).putShort(this.length).put(this.dtype).put(this.dclass).putInt(this.pointer);
     }
 
     public abstract double[] toDouble();
@@ -253,8 +243,8 @@ public abstract class Descriptor<T>{
     public abstract long[] toLong();
 
     public Message toMessage(final byte descr_idx, final byte n_args) {
-        final ByteBuffer buf = this.getData().getBuffer();
-        return new Message(descr_idx, this.getData().dtype, n_args, this.getShape(), buf);
+        final Descriptor data = this.getData();
+        return new Message(descr_idx, data.dtype, n_args, data.getShape(), data.getBuffer());
     }
 
     @Override

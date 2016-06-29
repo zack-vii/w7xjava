@@ -2,20 +2,21 @@ package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 
 public final class CStringArray extends Descriptor_A<String>{
-    private static final byte[] toBytes(final String[] lines) {
+    private static final ByteBuffer toBytes(final String[] lines) {
         int max = 0;
         for(final String line : lines)
             if(max < line.length()) max = line.length();
-        final ByteBuffer b = ByteBuffer.allocate(max * lines.length);
+        final ByteBuffer b = ByteBuffer.allocate(max * lines.length).order(Descriptor.BYTEORDER);
         for(final String line : lines){
             b.put(line.getBytes());
             for(int i = line.length(); i < max; i++)
                 b.put((byte)32);
         }
-        return b.array();
+        return b;
     }
 
     public CStringArray(final ByteBuffer b){

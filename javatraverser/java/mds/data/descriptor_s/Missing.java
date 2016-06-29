@@ -2,13 +2,14 @@ package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_S;
 
 public final class Missing extends Descriptor_S{
     public static final Missing NEW = new Missing();
 
     public Missing(){
-        super(DTYPE.MISSING, new byte[0]);
+        super(DTYPE.MISSING, ByteBuffer.allocate(0).order(Descriptor.BYTEORDER));
     }
 
     public Missing(final ByteBuffer b){

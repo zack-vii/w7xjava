@@ -2,6 +2,7 @@ package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_S;
 
 public final class Path extends Descriptor_S<String>{
@@ -10,7 +11,7 @@ public final class Path extends Descriptor_S<String>{
     }
 
     public Path(final String path){
-        super(DTYPE.PATH, path.getBytes());
+        super(DTYPE.PATH, ByteBuffer.wrap(path.getBytes()).order(Descriptor.BYTEORDER));
     }
 
     @Override

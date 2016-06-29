@@ -51,44 +51,44 @@ public abstract class ARRAY<T>extends Descriptor<T>{
             this.u = u;
         }
     }
-    public static final int       _a0I     = 16;
-    public static final int       _afsB    = 10;
-    public static final int       _aszI    = 12;
-    public static final int       _dgtsB   = 9;
-    public static final int       _dmctB   = 11;
-    public static final int       _dmsI    = 20;
     public static final int       _sclB    = 8;
+    public static final int       _dgtsB   = 9;
+    public static final int       _afsB    = 10;
+    public static final int       _dmctB   = 11;
+    public static final int       _aszI    = 12;
+    public static final int       _a0I     = 16;
+    public static final int       _dmsI    = 20;
     public static final byte      CLASS    = 4;
     protected static final aflags f_array  = new aflags(false, true, true, false, false);
     protected static final aflags f_bounds = new aflags(false, true, true, true, true);
     protected static final aflags f_coeff  = new aflags(false, true, true, true, false);
     public static final byte      MAX_DIM  = 8;
-    /** (16,i) a0 **/
-    public final int              a0;
-    /** (10,b) array flags **/
-    public final aflags           aflags;
-    /** (12,i) array size **/
-    public final int              arsize;
-    /** (20+dimct*4,2i) bounds **/
-    public final bounds[]         bounds;
-    /** (9,b) digits **/
-    public final byte             digits;
-    /** (11,b) dim count **/
-    public final byte             dimct;
-    /** (20,i) dimensions **/
-    public final int[]            dims;
     /** (8,b) scale **/
     public final byte             scale;
+    /** (9,b) digits **/
+    public final byte             digits;
+    /** (10,b) array flags **/
+    public final aflags           aflags;
+    /** (11,b) dim count **/
+    public final byte             dimct;
+    /** (12,i) array size **/
+    public final int              arsize;
+    /** (16,i) a0 **/
+    public final int              a0;
+    /** (20,i) dimensions **/
+    public final int[]            dims;
+    /** (20+dimct*4,2i) bounds **/
+    public final bounds[]         bounds;
 
-    public ARRAY(final byte dtype, final byte dclass, final byte[] buf, final int nelements){
-        super((short)(buf.length / nelements), dtype, dclass, buf);
+    public ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int nelements){
+        super((short)(byteBuffer.limit() / nelements), dtype, dclass, byteBuffer, 8);
         this.scale = (byte)0;
         this.digits = (byte)0;
-        this.aflags = nelements > 1 ? ARRAY.f_coeff : ARRAY.f_array;
+        this.aflags = ARRAY.f_array;
         this.dimct = nelements > 1 ? (byte)1 : (byte)0;
-        this.arsize = buf.length;
+        this.arsize = byteBuffer.limit();
         this.a0 = this.pointer;
-        this.dims = (this.dimct > 0) ? new int[]{nelements} : null;
+        this.dims = (this.dimct > 0) ? new int[]{nelements} : new int[0];
         this.bounds = null;
     }
 
@@ -118,5 +118,21 @@ public abstract class ARRAY<T>extends Descriptor<T>{
     @Override
     public final int[] getShape() {
         return this.dims;
+    }
+
+    @Override
+    public ByteBuffer serialize() {
+        if(this.isserial) return this.b.duplicate().order(this.b.order());
+        final ByteBuffer b = ByteBuffer.allocate(this.pointer + this.arsize).order(this.getBuffer().order()).put(super.serialize().array());
+        b.put(this.scale).put(this.digits).put(this.aflags.toByte()).put(this.dimct).putInt(this.arsize);
+        if(this.aflags.coeff || this.aflags.bounds){
+            b.putInt(this.a0);
+            for(final int dm : this.dims)
+                b.putInt(dm);
+        }
+        if(this.aflags.bounds && this.bounds != null) for(final bounds bnds : this.bounds)
+            b.putInt(bnds.l).putInt(bnds.u);
+        b.put(this.getBuffer());
+        return b;
     }
 }

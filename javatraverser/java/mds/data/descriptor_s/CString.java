@@ -19,7 +19,7 @@ public final class CString extends Descriptor_S<String>{
     }
 
     public CString(final byte[] array){
-        super(DTYPE.T, array);
+        super(DTYPE.T, ByteBuffer.wrap(array).order(Descriptor.BYTEORDER));
     }
 
     public CString(final ByteBuffer b){
