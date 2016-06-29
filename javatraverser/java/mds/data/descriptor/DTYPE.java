@@ -58,59 +58,59 @@ public final class DTYPE{
     public static final byte      WITH_ERROR = -39;            // 217
 
     static{
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.B)] = "BYTE";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.W)] = "WORD";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.L)] = "LONG";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.Q)] = "QUADWORD";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.O)] = "OCTAWORD";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.BU)] = "BYTE_UNSIGNED";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.WU)] = "WORD_UNSIGNED";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.LU)] = "LONG_UNSIGNED";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.QU)] = "QUADWORD_UNSIGNED";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.OU)] = "OCTAWORD_UNSIGNED";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.D)] = "D_FLOAT";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.DC)] = "D_COMPLEX";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.F)] = "F_FLOAT";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.FC)] = "F_COMPLEX";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.FS)] = "FS_FLOAT";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.FSC)] = "FSC_COMPLEX";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.FT)] = "FT_FLOAT";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.FTC)] = "FT_COMPLEX";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.G)] = "G_FLOAT";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.GC)] = "G_COMPLEX";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.H)] = "H_FLOAT";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.HC)] = "H_COMPLEX";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.T)] = "TEXT";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.IDENT)] = "IDENT";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.POINTER)] = "POINTER";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.EVENT)] = "EVENT";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.NID)] = "NID";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.PATH)] = "PATH";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.DSC)] = "DSC";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.DICTIONARY)] = "DICTIONARY";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.TUPLE)] = "TUPLE";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.LIST)] = "LIST";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.ACTION)] = "ACTION";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.CALL)] = "CALL";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.CONDITION)] = "CONDITION";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.CONGLOM)] = "CONGLOM";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.DEPENDENCY)] = "DEPENDENCY";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.DIMENSION)] = "DIM";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.DISPATCH)] = "DISPATCH";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.FUNCTION)] = "FUNCTION";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.METHOD)] = "METHOD";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.MISSING)] = "$MISSING";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.OPAQUE)] = "OPAQUE";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.PARAM)] = "PARAM";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.PROCEDURE)] = "PROCEDURE";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.PROGRAM)] = "PROGRAM";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.RANGE)] = "RANGE";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.ROUTINE)] = "ROUTINE";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.SIGNAL)] = "SIGNAL";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.SLOPE)] = "SLOPE";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.WINDOW)] = "WINDOW";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.WITH_ERROR)] = "WITH_ERROR";
-        DTYPE._name[Byte.toUnsignedInt(DTYPE.WITH_UNITS)] = "WITH_UNITS";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.B)] = "Byte";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.W)] = "Word";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.L)] = "Long";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.Q)] = "Quadword";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.O)] = "Octaword";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.BU)] = "Byte_Unsigned";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.WU)] = "Word_Unsigned";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.LU)] = "Long_Unsigned";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.QU)] = "Quadword_Unsigned";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.OU)] = "Octaword_Unsigned";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.D)] = "D_Float";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.DC)] = "D_Complex";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.F)] = "F_Float";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.FC)] = "F_Complex";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.FS)] = "FS_Float";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.FSC)] = "FSC_Complex";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.FT)] = "FT_Float";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.FTC)] = "FT_Complex";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.G)] = "G_Float";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.GC)] = "G_Complex";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.H)] = "H_Float";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.HC)] = "H_Complex";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.T)] = "Text";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.IDENT)] = "Ident";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.POINTER)] = "Pointer";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.EVENT)] = "Event";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.NID)] = "Nid";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.PATH)] = "Path";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.DSC)] = "Dsc";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.DICTIONARY)] = "Dictionary";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.TUPLE)] = "Tuple";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.LIST)] = "List";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.ACTION)] = "Action";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.CALL)] = "Call";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.CONDITION)] = "Condition";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.CONGLOM)] = "Conglom";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.DEPENDENCY)] = "Dependency";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.DIMENSION)] = "Dim";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.DISPATCH)] = "Dispatch";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.FUNCTION)] = "Function";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.METHOD)] = "Method";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.MISSING)] = "$Missing";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.OPAQUE)] = "Opaque";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.PARAM)] = "Param";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.PROCEDURE)] = "Procedure";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.PROGRAM)] = "Program";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.RANGE)] = "Range";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.ROUTINE)] = "Routine";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.SIGNAL)] = "Signal";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.SLOPE)] = "Slope";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.WINDOW)] = "Window";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.WITH_ERROR)] = "With_Error";
+        DTYPE._name[Byte.toUnsignedInt(DTYPE.WITH_UNITS)] = "With_Units";
     }
 
     static{
@@ -145,9 +145,4 @@ public final class DTYPE{
     public static final String getSuffix(final byte dtype) {
         return DTYPE._suffix[Byte.toUnsignedInt(dtype)];
     }
-    /*
-    public static void main(final String[] a) throws Exception {//TODO:main
-        System.out.println(DTYPE.getName((byte)1));
-    }
-    */
 }
