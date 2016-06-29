@@ -37,7 +37,7 @@ public class GraphPanel extends JPanel{
     */
     public static final JFrame newPlot(final Descriptor sig, final Component parent, final String title) {
         final JFrame frame = new JFrame(title);
-        frame.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(parent);
         frame.getContentPane().add(GraphPanel.plotDescriptor(sig));
         frame.pack();
