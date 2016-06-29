@@ -324,9 +324,7 @@ public class Connection{
     }
 
     public Descriptor compile(final String expr) throws MdsException {
-        final Vector<Descriptor> args = new Vector<Descriptor>(1);
-        args.add(new CString(expr));
-        return this.mdsValue("COMPILE($)", args, Descriptor.class);
+        return this.mdsValue("COMPILE($)", new Descriptor[]{new CString(expr)}, Descriptor.class);
     }
 
     private final void connectToMds(final boolean use_compression) throws IOException {
@@ -389,9 +387,7 @@ public class Connection{
     }
 
     public final Descriptor evaluate(final Descriptor desc) throws MdsException {
-        final Vector<Descriptor> args = new Vector<Descriptor>(1);
-        args.add(desc);
-        return this.mdsValue("EVALUATE($)", args);
+        return this.mdsValue("EVALUATE($)", new Descriptor[]{desc});
     }
 
     public final Descriptor evaluate(final String expr) throws MdsException {
@@ -488,13 +484,13 @@ public class Connection{
         return this.provider.user;
     }
 
-    public final synchronized Message mdsIO(final String expr, final boolean serialize) throws MdsException {
+    public final synchronized Message mdsIO(String expr, final boolean serialize) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\"," + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
         try{
             final Message message;
-            if(serialize) message = new Message(String.format("COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((%s)),xd(_ans)),_ans)", expr));
-            else message = new Message(expr);
+            if(serialize) expr = new StringBuilder(expr.length() + 64).append("COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((").append(expr).append(")),xd(_ans)),_ans)").toString();
+            message = new Message(expr);
             this.pending_count++;
             message.send(this.dos);
             return this.getAnswer();
@@ -505,33 +501,31 @@ public class Connection{
         }
     }
 
-    public final synchronized Message mdsIO(final String expr, Vector<Descriptor> args, final boolean serialize) throws MdsException {
+    public final synchronized Message mdsIO(final String expr, Descriptor[] args, final boolean serialize) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
-        if(args == null) args = new Vector<Descriptor>();
-        final StringBuffer cmd = new StringBuffer(expr);
-        final int n_args = args.size();
+        if(args == null) args = new Descriptor[]{};
         byte idx = 0;
-        final byte totalarg = (byte)(n_args + 1);
+        final byte totalarg = (byte)(args.length + 1);
         Message msg;
-        if(expr.indexOf("($") == -1) // If no $ args specified, build argument list
-        {
-            if(n_args > 0){
-                cmd.append("(");
-                for(int i = 0; i < n_args - 1; i++)
-                    cmd.append("$,");
-                cmd.append("$)");
+        final StringBuffer cmd = new StringBuffer(expr.length() + 64);
+        if(serialize) cmd.append("COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((");
+        cmd.append(expr);
+        if(expr.indexOf("$") == -1){ // If no $ args specified, build argument list
+            cmd.append('(');
+            if(args.length > 0){
+                cmd.append('$');
+                for(int i = 1; i < args.length; i++)
+                    cmd.append(",$");
             }
+            cmd.append(')');
         }
+        if(serialize) cmd.append(")),xd(_ans)),_ans)");
         try{
-            if(serialize) this.sendArg(idx++, DTYPE.T, totalarg, null, String.format("COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((%s)),xd(_ans)),_ans)", cmd.toString()).getBytes());
-            else this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
-            Descriptor p;
-            for(int i = 0; i < n_args; i++){
-                p = args.elementAt(i);
-                p.toMessage(idx++, totalarg).Send(this.dos);
-            }
             this.pending_count++;
+            this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
+            for(final Descriptor d : args)
+                d.toMessage(idx++, totalarg).send(this.dos);
             msg = this.getAnswer();
             if(msg == null) throw new MdsException("Could not get IO for " + this.provider.host, 0);
         }catch(final IOException e){
@@ -572,11 +566,11 @@ public class Connection{
         return Connection.bufferToClass(b, cls);
     }
 
-    public final Descriptor mdsValue(final String expr, final Vector<Descriptor> args) throws MdsException {
+    public final Descriptor mdsValue(final String expr, final Descriptor[] args) throws MdsException {
         return Descriptor.readMessage(this.mdsIO(expr, args, false));
     }
 
-    public final <D extends Descriptor> Descriptor mdsValue(final String expr, final Vector<Descriptor> args, final Class<D> cls) throws MdsException {
+    public final <D extends Descriptor> Descriptor mdsValue(final String expr, final Descriptor[] args, final Class<D> cls) throws MdsException {
         final ByteBuffer b = this.mdsIO(expr, args, true).body;
         return Connection.bufferToClass(b, cls);
     }
