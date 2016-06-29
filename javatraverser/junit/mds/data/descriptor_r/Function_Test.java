@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import mds.AllTests;
 import mds.MdsException;
+import mds.data.descriptor.Descriptor;
 import mds.mdsip.Connection;
 
 public class Function_Test{
@@ -44,5 +45,7 @@ public class Function_Test{
         Assert.assertEquals("\"test\"", Function_Test.mds.compile("'test'").decompile());
         Assert.assertEquals("\"test\" // TEXT(1) // \"test\"", Function_Test.mds.compile("'test'//text(1)//\"test\"").decompile());
         Assert.assertEquals("'\"test\"'", Function_Test.mds.compile("'\\\"test\\\"'").decompile());
+        final Descriptor D = Function_Test.mds.compile("$P0");
+        Assert.assertEquals("Build_With_Units(101325., \"Pa\")", D.evaluate().decompile());
     }
 }

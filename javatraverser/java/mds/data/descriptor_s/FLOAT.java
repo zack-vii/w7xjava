@@ -44,6 +44,10 @@ public abstract class FLOAT<T extends Number>extends NUMBER<T>{
         super(dtype, value);
     }
 
+    protected FLOAT(final byte dtype, final float value){
+        super(dtype, value);
+    }
+
     protected FLOAT(final ByteBuffer b){
         super(b);
     }

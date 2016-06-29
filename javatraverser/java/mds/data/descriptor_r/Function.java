@@ -519,22 +519,11 @@ public final class Function extends Descriptor_R<Short>{
         return pout;
     }
 
-    public final Descriptor getArgument(final int idx) {
-        return this.getDescriptor(idx);
-    }
-
-    public final Descriptor[] getArguments() {
-        final Descriptor[] desc = new Descriptor[this.ndesc];
-        for(int i = 0; i < this.ndesc; i++)
-            desc[i] = this.getDescriptor(i);
-        return desc;
-    }
-
     @Override
-    public Descriptor getData() {
+    public Descriptor evaluate() {
         switch(this.getOpCode()){
             default:
-                return this;
+                return super.evaluate();
             case OPC.Opc2Pi:
                 return new Float32(6.2831853072f);
             case OPC.OpcA0:
@@ -600,6 +589,22 @@ public final class Function extends Descriptor_R<Short>{
             case OPC.OpcTrue:
                 return new Uint8((byte)1);
         }
+    }
+
+    public final Descriptor getArgument(final int idx) {
+        return this.getDescriptor(idx);
+    }
+
+    public final Descriptor[] getArguments() {
+        final Descriptor[] desc = new Descriptor[this.ndesc];
+        for(int i = 0; i < this.ndesc; i++)
+            desc[i] = this.getDescriptor(i);
+        return desc;
+    }
+
+    @Override
+    public Descriptor getData() {
+        return this.evaluate().getData();
     }
 
     private final String getName() {

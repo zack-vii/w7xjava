@@ -192,7 +192,7 @@ public abstract class Descriptor<T>{
         return false;
     }
 
-    public final Descriptor evaluate() {
+    public Descriptor evaluate() {
         try{
             return Database.tdiEvaluate(this);
         }catch(final MdsException e){
