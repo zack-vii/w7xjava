@@ -15,8 +15,13 @@ public abstract class FLOAT<T extends Number>extends NUMBER<T>{
         String tmp = String.format(Locale.US, "%s", value);
         if(preview && tmp.length() > 5) tmp = String.format(Locale.US, "%1.3G", value);
         tmp.replace("+", "");
+        if(DTYPE.FS == dtype){
+            if(tmp.endsWith("E0")) tmp = tmp.substring(0, tmp.length() - 2);
+            else if(tmp.contains("E")) return tmp.replaceAll("^0*", "");
+            return tmp.replaceAll("(^0*|0*$)", "");
+        }
         if(tmp.contains("E")) return tmp.replace("E", DTYPE.getSuffix(dtype));
-        return preview & Descriptor.DECO_STR != 0 ? tmp : tmp.concat(DTYPE.getSuffix(dtype)).concat("0");
+        return preview ? tmp : tmp.concat(DTYPE.getSuffix(dtype)).concat("0");
     }
 
     public static final Float32 F(final float value) {
