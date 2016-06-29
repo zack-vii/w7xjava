@@ -179,6 +179,16 @@ public final class Function extends Descriptor_R<Short>{
     public static final Function $VALUE() {
         return new Function((short)27);
     }
+    /*
+    private static final Stack<Descriptor> $value    = new Stack<Descriptor>();
+    public final static void popValue() {
+        Function.$value.pop();
+    }
+
+    public final static void pushValue(final Descriptor descpr) {
+        Function.$value.push(descpr);
+    }
+    */
 
     private static final void addCompoundStatement(final int nstmt, final Descriptor_R pin, final int offset, final StringBuilder pout, final int mode) {
         pout.append('{');
