@@ -26,6 +26,7 @@ public final class Signal extends BUILD{
         super(DTYPE.ROUTINE, null, new Descriptor[]{data, raw}, dims);
     }
 
+    @Override
     public final Descriptor getData() {
         return this.getDescriptor(0);
     }
@@ -41,6 +42,10 @@ public final class Signal extends BUILD{
     public final Descriptor getRaw() {
         return this.getDescriptor(1);
     }
+
+    @Override
+    public final int[] getShape() {
+        return this.getData().getShape();
     }
 
     @Override

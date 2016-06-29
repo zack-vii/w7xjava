@@ -114,4 +114,9 @@ public abstract class ARRAY<T>extends Descriptor<T>{
                 this.bounds[i] = new bounds(b.getInt(), b.getInt());
         }else this.bounds = null;
     }
+
+    @Override
+    public final int[] getShape() {
+        return this.dims;
+    }
 }

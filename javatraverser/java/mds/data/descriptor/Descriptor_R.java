@@ -23,7 +23,6 @@ import mds.data.descriptor_r.Window;
 import mds.data.descriptor_r.With_Error;
 import mds.data.descriptor_r.With_Units;
 import mds.data.descriptor_s.Missing;
-import mds.mdsip.Message;
 
 /** Fixed-Length (static) Descriptor (-62 : 194) **/
 @SuppressWarnings("deprecation")
@@ -143,6 +142,11 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
     }
 
     @Override
+    public int[] getShape() {
+        return new int[0];
+    }
+
+    @Override
     public T getValue(final ByteBuffer b) {
         return null;
     }
@@ -165,17 +169,5 @@ public class Descriptor_R<T extends Number>extends Descriptor<T>{
     @Override
     public long[] toLong() {
         return null;
-    }
-
-    @Override
-    public Message toMessage(final byte descr_idx, final byte n_args) {
-        final String[] args = new String[this.ndesc];
-        for(int i = 0; i < this.ndesc; i++)
-            args[i] = "$";
-        final T val = this.getValue();
-        final StringBuilder sb = new StringBuilder(256).append("Build_").append(this.getClass().getSimpleName()).append('(');
-        if(val != null) sb.append(val.toString()).append(',');
-        final byte[] body = sb.append(String.join(",", args)).append(')').toString().getBytes();
-        return new Message(descr_idx, this.dtype, n_args, null, body);
     }
 }

@@ -18,6 +18,10 @@ public final class Slope extends BUILD{
     public final Descriptor getEnding() {
         return this.getDescriptor(2);
     }
+
+    @Override
+    public final int[] getShape() {
+        return new int[]{(int)((this.getEnding().toFloat()[0] - this.getBegin().toFloat()[0]) / this.getSlope().toFloat()[0])};
     }
 
     public final Descriptor getSlope() {

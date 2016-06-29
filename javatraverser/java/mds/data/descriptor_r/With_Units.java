@@ -14,9 +14,14 @@ public final class With_Units extends BUILD{
         super(DTYPE.WITH_UNITS, null, new Descriptor[]{data, units});
     }
 
+    @Override
     public final Descriptor getData() {
         return this.getDescriptor(0);
     }
+
+    @Override
+    public final int[] getShape() {
+        return this.getData().getShape();
     }
 
     public final Descriptor getUnits() {

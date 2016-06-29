@@ -1,7 +1,6 @@
 package mds.data.descriptor;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import mds.MdsException;
 import mds.data.descriptor_a.CStringArray;
 import mds.data.descriptor_a.Complex32Array;
@@ -252,14 +251,6 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     }
 
     public abstract long toLong(T t);
-
-    @Override
-    public final Message toMessage(final byte descr_idx, final byte n_args) {
-        final byte[] body = new byte[this.arsize];
-        this.getBuffer().get(body);
-        final boolean little = this.b.order() != ByteOrder.BIG_ENDIAN;
-        return new Message(descr_idx, this.dtype, n_args, this.dims, body, little);
-    }
 
     public String toString(final int idx) {
         return this.getValue(idx).toString();

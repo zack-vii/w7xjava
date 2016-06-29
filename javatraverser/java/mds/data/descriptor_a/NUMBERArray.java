@@ -100,11 +100,17 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
 
     @Override
     protected StringBuilder decompileT(final StringBuilder pout, final T t) {
-        return pout.append(t);// new StringBuilder(32).append(this.TtoString(t)).append(this.getSuffix()).toString();
+        return pout.append(t);
     }
 
     protected final String getSuffix() {
         return DTYPE.getSuffix(this.dtype);
+    }
+
+    @Override
+    public byte[] serialize() {
+        final byte[] header = super.serialize();
+        return ByteBuffer.allocate(header.length + this.arsize).put(header).put(this.getBuffer()).array();
     }
 
     @Override

@@ -107,10 +107,6 @@ public final class Message extends Object{
         this(descr_idx, dtype, nargs, dims, (dims == null) ? (byte)0 : (byte)dims.length, body, Message.JAVA_CLIENT, 0, Message.msgid);
     }
 
-    public Message(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte body[], final boolean little){
-        this(descr_idx, dtype, nargs, dims, (dims == null) ? (byte)0 : (byte)dims.length, body, little ? Message.JAVA_CLIENT_LITTLE : Message.JAVA_CLIENT, 0, Message.msgid);
-    }
-
     public Message(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte ndims, final byte body[], final byte client_type, final int status, final int msgid){
         this.header = ByteBuffer.allocate(Message.HEADER_SIZE);
         this.header.put(14, this.client_type = client_type);
@@ -118,7 +114,7 @@ public final class Message extends Object{
         this.msglen = Message.HEADER_SIZE + body_size;
         this.status = status;
         this.message_id = msgid;
-        this.length = Descriptor.getDataSize(dtype, body);
+        this.length = Descriptor.getDataSize(dtype, body_size);
         this.nargs = nargs;
         this.descr_idx = descr_idx;
         this.ndims = (ndims > Descriptor_A.MAX_DIM) ? Descriptor_A.MAX_DIM : ndims;
@@ -129,6 +125,29 @@ public final class Message extends Object{
         this.dtype = dtype;
         this.body = ByteBuffer.wrap(body);
         if(this.isLittleEndian()) this.body.order(ByteOrder.LITTLE_ENDIAN);
+    }
+
+    public Message(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte ndims, final ByteBuffer body, final int status, final int msgid){
+        this.header = ByteBuffer.allocate(Message.HEADER_SIZE);
+        this.header.put(14, this.client_type = body.order() == ByteOrder.LITTLE_ENDIAN ? Message.JAVA_CLIENT_LITTLE : Message.JAVA_CLIENT);
+        final int body_size = body == null ? 0 : body.limit();
+        this.msglen = Message.HEADER_SIZE + body_size;
+        this.status = status;
+        this.message_id = msgid;
+        this.length = Descriptor.getDataSize(dtype, body_size);
+        this.nargs = nargs;
+        this.descr_idx = descr_idx;
+        this.ndims = (ndims > Descriptor_A.MAX_DIM) ? Descriptor_A.MAX_DIM : ndims;
+        if(dims == null || dims.length != Descriptor_A.MAX_DIM){
+            this.dims = new int[Descriptor_A.MAX_DIM];
+            if(dims != null) System.arraycopy(dims, 0, this.dims, 0, this.ndims < dims.length ? this.ndims : dims.length);
+        }else this.dims = dims;
+        this.dtype = dtype;
+        this.body = body;
+    }
+
+    public Message(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final ByteBuffer body){
+        this(descr_idx, dtype, nargs, dims, (dims == null) ? (byte)0 : (byte)dims.length, body, 0, Message.msgid);
     }
 
     public Message(final ByteBuffer header, final ByteBuffer body){
@@ -244,7 +263,9 @@ public final class Message extends Object{
         dos.writeByte(this.ndims);
         for(int i = 0; i < Descriptor_A.MAX_DIM; i++)
             dos.writeInt(this.dims[i]);
-        dos.write(this.body.array());
+        final ByteBuffer buf = this.body.duplicate();
+        while(buf.hasRemaining())
+            dos.write(buf.get());
         dos.flush();
         if(this.descr_idx == (this.getNargs() - 1)) Message.msgid++;
         if(Message.msgid == 0) Message.msgid = 1;

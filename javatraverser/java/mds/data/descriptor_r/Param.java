@@ -14,6 +14,7 @@ public final class Param extends BUILD{
         super(DTYPE.PARAM, null, new Descriptor[]{data, help, valid});
     }
 
+    @Override
     public final Descriptor getData() {
         return this.getDescriptor(0);
     }
@@ -21,6 +22,10 @@ public final class Param extends BUILD{
     public final Descriptor getHelp() {
         return this.getDescriptor(1);
     }
+
+    @Override
+    public final int[] getShape() {
+        return this.getData().getShape();
     }
 
     public final Descriptor getValidation() {

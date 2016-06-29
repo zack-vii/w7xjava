@@ -66,10 +66,10 @@ public abstract class Descriptor<T>{
         throw new MdsException(String.format("Unsupported class %s", Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
 
-    public static final int getDataSize(final byte type, final byte[] body) {
+    public static final int getDataSize(final byte type, final int length) {
         switch(type){
             case DTYPE.T:
-                return body.length;
+                return length;
             case DTYPE.BU:
             case DTYPE.B:
                 return 1;
@@ -149,6 +149,7 @@ public abstract class Descriptor<T>{
     public static final String toString(final Descriptor t) {
         return t == null ? "*" : t.toString();
     }
+    protected final boolean isserial;
     public final ByteBuffer b;
     /** (3,b) descriptor class code **/
     public final byte       dclass;
@@ -160,6 +161,7 @@ public abstract class Descriptor<T>{
     public final int        pointer;
 
     public Descriptor(final ByteBuffer b){
+        this.isserial = true;
         this.b = b.slice().order(b.order());
         this.length = b.getShort();
         this.dtype = b.get();
@@ -168,6 +170,7 @@ public abstract class Descriptor<T>{
     }
 
     public Descriptor(final short length, final byte dtype, final byte dclass, final byte[] value){
+        this.isserial = false;
         this.b = ByteBuffer.allocate(Descriptor.BYTES + (value == null ? 0 : value.length));
         this.b.putShort(this.length = length);
         this.b.put(this.dtype = dtype);
@@ -209,8 +212,11 @@ public abstract class Descriptor<T>{
     }
 
     protected ByteBuffer getBuffer() {
-        final ByteBuffer b = ((ByteBuffer)this.b.duplicate().position(this.pointer)).slice().order(this.b.order());
-        return b;
+        return ((ByteBuffer)this.b.duplicate().position(this.pointer)).slice().order(this.b.order());
+    }
+
+    public Descriptor getData() {
+        return this;
     }
 
     public final Descriptor getDescriptor() throws MdsException {
@@ -220,6 +226,8 @@ public abstract class Descriptor<T>{
     protected String getDName() {
         return DTYPE.getName(this.dtype);
     }
+
+    public abstract int[] getShape();
 
     public final T getValue() {
         return this.getValue(this.getBuffer());
@@ -232,6 +240,10 @@ public abstract class Descriptor<T>{
         return Descriptor.isatomic;
     }
 
+    public byte[] serialize() {
+        return ByteBuffer.allocate(8).putShort(this.length).put(this.dclass).put(this.dtype).putInt(this.pointer).array();
+    }
+
     public abstract double[] toDouble();
 
     public abstract float[] toFloat();
@@ -240,7 +252,10 @@ public abstract class Descriptor<T>{
 
     public abstract long[] toLong();
 
-    public abstract Message toMessage(byte descr_idx, byte n_args);
+    public Message toMessage(final byte descr_idx, final byte n_args) {
+        final ByteBuffer buf = this.getData().getBuffer();
+        return new Message(descr_idx, this.getData().dtype, n_args, this.getShape(), buf);
+    }
 
     @Override
     public final String toString() {

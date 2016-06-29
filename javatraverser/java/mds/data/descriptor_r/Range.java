@@ -33,5 +33,9 @@ public final class Range extends Descriptor_R{
     public final Descriptor getEnding() {
         return this.getDescriptor(1);
     }
+
+    @Override
+    public final int[] getShape() {
+        return new int[]{(int)((this.getEnding().toFloat()[0] - this.getBegin().toFloat()[0]) / this.getDelta().toFloat()[0])};
     }
 }

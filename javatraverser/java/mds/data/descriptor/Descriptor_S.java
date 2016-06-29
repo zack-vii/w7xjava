@@ -1,7 +1,6 @@
 package mds.data.descriptor;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import mds.MdsException;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Complex32;
@@ -23,7 +22,6 @@ import mds.data.descriptor_s.Uint16;
 import mds.data.descriptor_s.Uint32;
 import mds.data.descriptor_s.Uint64;
 import mds.data.descriptor_s.Uint8;
-import mds.mdsip.Message;
 
 /** Fixed-Length (static) Descriptor (1) **/
 @SuppressWarnings("deprecation")
@@ -102,11 +100,16 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     @Override
     public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         final T val = this.getValue();
-        return pout.append(val == null ? "*" : val);
+        return pout.append(val == null ? "*" : val.toString());
     }
 
     public boolean equals(final Descriptor_S dsca) {
         return this.getValue().equals(dsca.getValue());
+    }
+
+    @Override
+    public int[] getShape() {
+        return new int[0];
     }
 
     @Override
@@ -153,13 +156,5 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
         else if(val instanceof float[]) return new long[]{(long)((float[])val)[0]};
         else if(val instanceof double[]) return new long[]{(long)((double[])val)[0]};
         else return new long[]{0l};
-    }
-
-    @Override
-    public Message toMessage(final byte descr_idx, final byte n_args) {
-        final byte[] body = new byte[this.length];
-        this.getBuffer().get(body);
-        final boolean little = this.b.order() != ByteOrder.BIG_ENDIAN;
-        return new Message(descr_idx, this.dtype, n_args, null, body, little);
     }
 }

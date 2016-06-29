@@ -17,6 +17,10 @@ public final class Window extends BUILD{
     public final Descriptor getEndingIdx() {
         return this.getDescriptor(1);
     }
+
+    @Override
+    public final int[] getShape() {
+        return new int[]{this.getEndingIdx().toInt()[0] - this.getStartingIdx().toInt()[0]};
     }
 
     public final Descriptor getStartingIdx() {

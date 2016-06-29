@@ -36,6 +36,11 @@ public class Descriptor_XS extends Descriptor<Descriptor>{
     }
 
     @Override
+    public int[] getShape() {
+        return new int[0];
+    }
+
+    @Override
     public Descriptor getValue(final ByteBuffer b) {
         return this.payload;
     }

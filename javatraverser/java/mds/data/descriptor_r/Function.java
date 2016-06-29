@@ -531,6 +531,25 @@ public final class Function extends Descriptor_R<Short>{
         return desc;
     }
 
+    @Override
+    public Descriptor getData() {
+        try{
+            switch(this.getOpCode()){
+                default:// TODO:more functions
+                    return this;
+                case OPC.Opc2Pi:
+                    return Descriptor.deserialize(ByteBuffer.wrap(new byte[]{4, 0, 52, 1, 8, 0, 0, 0, -37, 15, -55, 64}));
+                case OPC.OpcA0:
+                    return Descriptor.deserialize(ByteBuffer.wrap(new byte[]{0, 0, -45, -62, 0, 0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 64, 0, 0, 0, 0, 0, -43, -62, 0, 0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 32, 0, 0, 0, 4, 0, 52, 1, 8, 0, 0, 0, 16, -68, 104, 46, 4, 0, 52, 1, 8, 0, 0, 0, -72, 22, 49, 34, 1, 0, 14, 1, 8, 0, 0, 0, 109}));
+                case OPC.OpcPi:
+                    return Descriptor.deserialize(ByteBuffer.wrap(new byte[]{4, 0, 52, 1, 8, 0, 0, 0, -37, 15, 73, 64}));
+            }
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return this;
+        }
+    }
+
     private final String getName() {
         return OPC.Names[this.getValue()];
     }
