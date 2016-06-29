@@ -1,6 +1,7 @@
 package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor_s.Uint16.UShort;
 
 @SuppressWarnings("serial")
@@ -43,6 +44,10 @@ public final class Uint16 extends NUMBER<UShort>{
 
     public Uint16(final ByteBuffer b){
         super(b);
+    }
+
+    public Uint16(final short value){
+        super(DTYPE.WU, value);
     }
 
     @Override

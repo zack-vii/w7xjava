@@ -1,6 +1,7 @@
 package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor_s.Uint32.UInteger;
 
 @SuppressWarnings("serial")
@@ -43,6 +44,10 @@ public final class Uint32 extends NUMBER<UInteger>{
 
     public Uint32(final ByteBuffer b){
         super(b);
+    }
+
+    public Uint32(final int value){
+        super(DTYPE.LU, value);
     }
 
     @Override

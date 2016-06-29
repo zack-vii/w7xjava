@@ -1,6 +1,7 @@
 package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor_s.Uint8.UByte;
 
 @SuppressWarnings("serial")
@@ -39,6 +40,10 @@ public final class Uint8 extends NUMBER<UByte>{
         public final String toString() {
             return Integer.toString(Byte.toUnsignedInt(this.value));
         }
+    }
+
+    public Uint8(final byte value){
+        super(DTYPE.BU, value);
     }
 
     public Uint8(final ByteBuffer b){

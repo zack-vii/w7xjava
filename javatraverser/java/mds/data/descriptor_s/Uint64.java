@@ -2,6 +2,7 @@ package mds.data.descriptor_s;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor_s.Uint64.ULong;
 
 @SuppressWarnings("serial")
@@ -48,6 +49,10 @@ public final class Uint64 extends NUMBER<ULong>{
 
     public Uint64(final ByteBuffer b){
         super(b);
+    }
+
+    public Uint64(final long value){
+        super(DTYPE.QU, value);
     }
 
     @Override
