@@ -10,38 +10,34 @@ public final class Routine extends BUILD{
         super(b);
     }
 
-    public Routine(final Descriptor time_out, final Descriptor image, final Descriptor routine, final byte nargs){
-        super(DTYPE.ROUTINE, (byte)(3 + nargs), null);
-        this.dscptrs[0] = time_out;
-        this.dscptrs[1] = image;
-        this.dscptrs[2] = routine;
+    public Routine(final Descriptor time_out, final Descriptor image, final Descriptor routine){
+        super(DTYPE.ROUTINE, null, new Descriptor[]{time_out, image, routine});
     }
 
     public Routine(final Descriptor time_out, final Descriptor image, final Descriptor routine, final Descriptor[] args){
-        this(time_out, image, routine, (byte)(args == null ? 0 : args.length));
-        if(args == null) return;
-        System.arraycopy(args, 0, this.dscptrs, 3, args.length);
+        super(DTYPE.ROUTINE, null, new Descriptor[]{time_out, image, routine}, args);
     }
 
     public final Descriptor getArgument(final int idx) {
-        return this.dscptrs[3 + idx];
+        return this.getDescriptor(3 + idx);
     }
 
     public final Descriptor[] getArguments() {
-        final Descriptor[] args = new Descriptor[this.dscptrs.length - 3];
-        System.arraycopy(this.dscptrs, 3, args, 0, args.length);
-        return args;
+        final Descriptor[] desc = new Descriptor[this.ndesc - 3];
+        for(int i = 0; i < desc.length; i++)
+            desc[i] = this.getDescriptor(i + 3);
+        return desc;
     }
 
     public final Descriptor getImage() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
     }
 
     public final Descriptor getRoutine() {
-        return this.dscptrs[2];
+        return this.getDescriptor(2);
     }
 
     public final Descriptor getTimeOut() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 }

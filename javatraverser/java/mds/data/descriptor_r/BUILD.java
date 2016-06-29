@@ -6,8 +6,12 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
 
 public abstract class BUILD<T extends Number>extends Descriptor_R<T>{
-    public BUILD(final byte dtype, final byte ndesc, final byte[] data){
-        super(dtype, ndesc, data);
+    public BUILD(final byte dtype, final byte[] data, final Descriptor[] args){
+        super(dtype, data, args);
+    }
+
+    public BUILD(final byte dtype, final byte[] data, final Descriptor[] args0, final Descriptor[] args1){
+        super(dtype, data, args0, args1);
     }
 
     public BUILD(final ByteBuffer b) throws MdsException{

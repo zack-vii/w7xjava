@@ -11,21 +11,19 @@ public final class Window extends BUILD{
     }
 
     public Window(final Descriptor startingidx, final Descriptor endingidx, final Descriptor valueat0){
-        super(DTYPE.WINDOW, (byte)3, null);
-        this.dscptrs[0] = startingidx;
-        this.dscptrs[1] = endingidx;
-        this.dscptrs[2] = valueat0;
+        super(DTYPE.WINDOW, null, new Descriptor[]{startingidx, endingidx, valueat0});
     }
 
     public final Descriptor getEndingIdx() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
+    }
     }
 
     public final Descriptor getStartingIdx() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
     public final Descriptor getValueAtIdx0() {
-        return this.dscptrs[2];
+        return this.getDescriptor(2);
     }
 }

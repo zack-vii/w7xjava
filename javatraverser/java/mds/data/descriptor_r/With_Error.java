@@ -11,17 +11,16 @@ public final class With_Error extends BUILD{
     }
 
     public With_Error(final Descriptor data, final Descriptor opaque_type){
-        super(DTYPE.WITH_ERROR, (byte)2, null);
-        this.dscptrs[0] = data;
-        this.dscptrs[1] = opaque_type;
+        super(DTYPE.WITH_ERROR, null, new Descriptor[]{data, opaque_type});
     }
 
     public final Descriptor getData() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
     public final Descriptor getOpaqueType() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
+    }
     }
 
     @Override

@@ -12,11 +12,11 @@ public final class Dependency extends BUILD<Byte>{
     }
 
     public final Descriptor getArg1() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
     public final Descriptor getArg2() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
     }
 
     public final byte getOpCode() {

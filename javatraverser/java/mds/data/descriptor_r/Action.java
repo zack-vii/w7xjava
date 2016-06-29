@@ -11,12 +11,7 @@ public final class Action extends BUILD{
     }
 
     public Action(final Descriptor dispatch, final Descriptor task, final Descriptor errorlogs, final Descriptor completion_message, final Descriptor performance){
-        super(DTYPE.ACTION, (byte)5, null);
-        this.dscptrs[0] = dispatch;
-        this.dscptrs[1] = task;
-        this.dscptrs[2] = errorlogs;
-        this.dscptrs[3] = completion_message;
-        this.dscptrs[4] = performance;
+        super(DTYPE.ACTION, null, new Descriptor[]{dispatch, task, errorlogs, completion_message, performance});
     }
 
     public final Descriptor getCompletionMessage() {

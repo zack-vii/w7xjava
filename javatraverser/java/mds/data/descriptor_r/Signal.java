@@ -10,35 +10,24 @@ public final class Signal extends BUILD{
         super(b);
     }
 
-    public Signal(final Descriptor data, final Descriptor raw, final byte ndims){
-        super(DTYPE.SIGNAL, (byte)(2 + ndims), null);
-        this.dscptrs[0] = data == null ? Function.$VALUE() : data;
-        this.dscptrs[1] = raw;
+    public Signal(final Descriptor data, final Descriptor raw){
+        super(DTYPE.ROUTINE, null, new Descriptor[]{data, raw});
     }
 
     public Signal(final Descriptor data, final Descriptor raw, final Descriptor dim){
-        this(data, raw, (byte)1);
-        this.dscptrs[2] = dim;
+        this(data, raw, new Descriptor[]{dim});
     }
 
-    public Signal(final Descriptor data, final Descriptor raw, final Descriptor dim1, final Descriptor dim2){
-        this(data, raw, (byte)2);
-        this.dscptrs[2] = dim1;
-        this.dscptrs[3] = dim2;
+    public Signal(final Descriptor data, final Descriptor raw, final Descriptor dim0, final Descriptor dim1){
+        this(data, raw, new Descriptor[]{dim0, dim1});
     }
 
     public Signal(final Descriptor data, final Descriptor raw, final Descriptor[] dims){
-        this(data, raw, (byte)(dims == null ? 0 : dims.length));
-        if(dims == null) return;
-        System.arraycopy(dims, 0, this.dscptrs, 2, dims.length);
-    }
-
-    public final Descriptor getArgument(final int idx) {
-        return this.dscptrs[3 + idx];
+        super(DTYPE.ROUTINE, null, new Descriptor[]{data, raw}, dims);
     }
 
     public final Descriptor getData() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
     public final Descriptor getDimension() {
@@ -46,11 +35,12 @@ public final class Signal extends BUILD{
     }
 
     public final Descriptor getDimension(final int idx) {
-        return this.dscptrs[2 + idx];
+        return this.getDimension(2 + idx);
     }
 
     public final Descriptor getRaw() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
+    }
     }
 
     @Override

@@ -17,10 +17,10 @@ public final class Opaque extends BUILD{
     }
     */
     public final Descriptor getData() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
     public final Descriptor getError() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
     }
 }

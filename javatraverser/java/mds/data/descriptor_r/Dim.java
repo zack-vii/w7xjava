@@ -2,25 +2,30 @@ package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
 import mds.MdsException;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
+import mds.data.descriptor_s.Missing;
 
 public final class Dim extends BUILD{
     public Dim(final ByteBuffer b) throws MdsException{
         super(b);
     }
 
-    /*
-    public Dimension(final Descriptor window, final Descriptor axis){
-        super(Dimension.DTYPE, (byte)2);
-        this.dscptrs[0] = window;
-        this.dscptrs[1] = axis;
+    public Dim(final Descriptor window, final Descriptor axis){
+        super(DTYPE.DIMENSION, null, new Descriptor[]{window, axis});
     }
-    */
+
     public final Descriptor getAxis() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
+    }
+
+    @Override
+    public Descriptor getData() {
+        if(this.getDescriptor(0) == Missing.NEW) return this.getAxis();
+        return this;// TODO getData
     }
 
     public final Descriptor getWindow() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 }

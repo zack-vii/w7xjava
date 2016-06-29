@@ -12,10 +12,7 @@ public final class Range extends Descriptor_R{
     }
 
     public Range(final Descriptor begin, final Descriptor ending, final Descriptor delta){
-        super(DTYPE.RANGE, (byte)3, null);
-        this.dscptrs[0] = begin;
-        this.dscptrs[1] = ending;
-        this.dscptrs[2] = delta;
+        super(DTYPE.RANGE, null, new Descriptor[]{begin, ending, delta});
     }
 
     @Override
@@ -26,14 +23,15 @@ public final class Range extends Descriptor_R{
     }
 
     public final Descriptor getBegin() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
     public final Descriptor getDelta() {
-        return this.dscptrs[2];
+        return this.getDescriptor(2);
     }
 
     public final Descriptor getEnding() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
+    }
     }
 }

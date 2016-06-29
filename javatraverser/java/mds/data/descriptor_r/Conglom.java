@@ -11,26 +11,22 @@ public final class Conglom extends BUILD{
     }
 
     public Conglom(final Descriptor image, final Descriptor model, final Descriptor name, final Descriptor qualifiers){
-        super(DTYPE.CONGLOM, (byte)4, null);
-        this.dscptrs[0] = image;
-        this.dscptrs[1] = model;
-        this.dscptrs[2] = name;
-        this.dscptrs[3] = qualifiers;
+        super(DTYPE.CONGLOM, null, new Descriptor[]{image, model, name, qualifiers});
     }
 
     public final Descriptor getImage() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
     public final Descriptor getModel() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
     }
 
     public final Descriptor getName() {
-        return this.dscptrs[2];
+        return this.getDescriptor(2);
     }
 
     public final Descriptor getQualifiers() {
-        return this.dscptrs[3];
+        return this.getDescriptor(3);
     }
 }

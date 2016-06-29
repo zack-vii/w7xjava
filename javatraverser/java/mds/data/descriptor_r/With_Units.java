@@ -11,17 +11,16 @@ public final class With_Units extends BUILD{
     }
 
     public With_Units(final Descriptor data, final Descriptor units){
-        super(DTYPE.WITH_UNITS, (byte)2, null);
-        this.dscptrs[0] = data;
-        this.dscptrs[1] = units;
+        super(DTYPE.WITH_UNITS, null, new Descriptor[]{data, units});
     }
 
     public final Descriptor getData() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
+    }
     }
 
     public final Descriptor getUnits() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
     }
 
     @Override

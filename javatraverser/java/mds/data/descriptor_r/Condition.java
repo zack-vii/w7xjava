@@ -15,7 +15,7 @@ public final class Condition extends BUILD<Byte>{
     public static final byte NEGATE_CONDITION = 7;
 
     public Condition(final byte mode, final Descriptor cond){
-        super(DTYPE.CONDITION, (byte)1, new byte[]{mode});
+        super(DTYPE.CONDITION, new byte[]{mode}, new Descriptor[]{cond});
     }
 
     public Condition(final ByteBuffer b) throws MdsException{
@@ -23,7 +23,7 @@ public final class Condition extends BUILD<Byte>{
     }
 
     public final Descriptor getCondition() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
     public final byte getModifier() {

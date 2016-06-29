@@ -11,30 +11,20 @@ public final class Param extends BUILD{
     }
 
     public Param(final Descriptor data, final Descriptor help, final Descriptor valid){
-        super(DTYPE.PARAM, (byte)3, null);
-        this.dscptrs[0] = data;
-        this.dscptrs[1] = help;
-        this.dscptrs[2] = valid;
+        super(DTYPE.PARAM, null, new Descriptor[]{data, help, valid});
     }
 
     public final Descriptor getData() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
-    /*
-    public Param(final Descriptor value, final Descriptor help, final Descriptor validation){
-        super(Param.DTYPE, (byte)3);
-        this.dscptrs[0] = value;
-        this.dscptrs[1] = help;
-        this.dscptrs[2] = validation;
-    }
-    */
     public final Descriptor getHelp() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
+    }
     }
 
     public final Descriptor getValidation() {
-        return this.dscptrs[2];
+        return this.getDescriptor(2);
     }
 
     @Override

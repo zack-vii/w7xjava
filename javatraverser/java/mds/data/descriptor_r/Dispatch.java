@@ -12,11 +12,7 @@ public final class Dispatch extends BUILD<Byte>{
     public static final byte SCHED_SEQ   = 2;
 
     public Dispatch(final byte type, final Descriptor ident, final Descriptor phase, final Descriptor when, final Descriptor completion){
-        super(DTYPE.DISPATCH, (byte)4, new byte[]{type});
-        this.dscptrs[0] = ident;
-        this.dscptrs[1] = phase;
-        this.dscptrs[2] = when;
-        this.dscptrs[3] = completion;
+        super(DTYPE.DISPATCH, new byte[]{type}, new Descriptor[]{ident, phase, when, completion});
     }
 
     public Dispatch(final ByteBuffer b) throws MdsException{

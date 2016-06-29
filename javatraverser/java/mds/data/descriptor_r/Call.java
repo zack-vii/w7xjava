@@ -96,15 +96,11 @@ public final class Call extends BUILD<Short>{
     }
 
     public Call(final short type, final Descriptor image, final Descriptor routine, final byte nargs){
-        super(DTYPE.CALL, (byte)(2 + nargs), ByteBuffer.allocate(Short.BYTES).putShort(type).array());
-        this.dscptrs[0] = image;
-        this.dscptrs[1] = routine;
+        super(DTYPE.CALL, ByteBuffer.allocate(Short.BYTES).putShort(type).array(), new Descriptor[]{image, routine});
     }
 
-    public Call(final short dtype, final Descriptor image, final Descriptor routine, final Descriptor[] args){
-        this(dtype, image, routine, (byte)(args == null ? 0 : args.length));
-        if(args == null) return;
-        System.arraycopy(args, 0, this.dscptrs, 2, args.length);
+    public Call(final short type, final Descriptor image, final Descriptor routine, final Descriptor[] args){
+        super(DTYPE.CALL, ByteBuffer.allocate(Short.BYTES).putShort(type).array(), new Descriptor[]{image, routine}, args);
     }
 
     @Override
@@ -124,15 +120,15 @@ public final class Call extends BUILD<Short>{
     }
 
     public final Descriptor getArguments(final int idx) {
-        return this.dscptrs[2 + idx];
+        return this.getDescriptor(2 + idx);
     }
 
     public final Descriptor getImage() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 
     public final Descriptor getRoutine() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
     }
 
     @Override

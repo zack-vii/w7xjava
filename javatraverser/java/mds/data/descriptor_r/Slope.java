@@ -12,14 +12,15 @@ public final class Slope extends BUILD{
     }
 
     public final Descriptor getBegin() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
     }
 
     public final Descriptor getEnding() {
-        return this.dscptrs[2];
+        return this.getDescriptor(2);
+    }
     }
 
     public final Descriptor getSlope() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 }

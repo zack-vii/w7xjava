@@ -13,16 +13,14 @@ public final class Program extends BUILD{
     }
 
     public Program(final Descriptor time_out, final Descriptor program){
-        super(DTYPE.PROGRAM, (byte)2, null);
-        this.dscptrs[0] = time_out;
-        this.dscptrs[1] = program;
+        super(DTYPE.PROGRAM, null, new Descriptor[]{time_out, program});
     }
 
     public final Descriptor getProgram() {
-        return this.dscptrs[1];
+        return this.getDescriptor(1);
     }
 
     public final Descriptor getTimeOut() {
-        return this.dscptrs[0];
+        return this.getDescriptor(0);
     }
 }

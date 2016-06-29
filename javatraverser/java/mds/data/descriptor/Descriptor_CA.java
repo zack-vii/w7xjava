@@ -40,7 +40,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
 
         public DECOMPRESS(final Descriptor_CA ca) throws MdsException{
             if(DEBUG.D) System.out.println("DECOMPRESS: " + ca.getDName() + ca.arsize);
-            this.out_dsc = this.mdsXpand(ca.arsize / ca.length, (ARRAY)ca.payload.dscptrs[3], ca);
+            this.out_dsc = this.mdsXpand(ca.arsize / ca.length, (ARRAY)ca.payload.getDescriptor(3), ca);
         }
 
         /** MdsUnpk expects LittleEndian buffers **/
