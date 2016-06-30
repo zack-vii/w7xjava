@@ -615,7 +615,7 @@ public class Node{
                         ds.addDataChangeListener(this.tree);
                         ds.configure(this.database, this.nid.getValue(), this);
                         if(ds.getContentPane().getLayout() != null) ds.pack();
-                        ds.setLocation(this.tree.dialogLocation());
+                        ds.setLocation(this.tree.treeman.dialogLocation());
                         ds.setSize(prevDim);
                         ds.setVisible(true);
                     }else ds.setVisible(true);

@@ -2,7 +2,6 @@ package jtraverser;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Point;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -212,7 +211,7 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
         this.add_device_name.setText("");
         this.add_device_type.setText("");
         this.add_device_dialog.setTitle("Add device to: " + currnode.getFullPath());
-        this.add_device_dialog.setLocation(this.dialogLocation());
+        this.add_device_dialog.setLocation(this.treeman.dialogLocation());
         this.add_device_dialog.setVisible(true);
     }
 
@@ -359,10 +358,6 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
             final DefaultTreeModel tree_model = (DefaultTreeModel)this.getModel();
             tree_model.removeNodeFromParent(delNode.getTreeNode());
         }
-    }
-
-    public final Point dialogLocation() {
-        return new Point(this.treeman.getLocation().x + 32, this.treeman.getLocation().y + 32);
     }
 
     public final DefaultMutableTreeNode findNid(final Nid nid) {
