@@ -24,7 +24,7 @@ public final class Database{
         public final String toString() {
             final StringBuilder str = new StringBuilder(this.size() * 64);
             for(final Entry<String, Nid> entry : this.entrySet())
-                str.append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
+                str.append(entry.getKey()).append("  =>  ").append(entry.getValue()).append("\n");
             return str.toString();
         }
     }
@@ -385,36 +385,29 @@ public final class Database{
     }
 
     public final String[] getTags(final Nid nid) throws MdsException {
-        if(nid != null) return this.getTags(nid, "***", 255);
-        final Map<String, Nid> taglist = this.getTagsWild("***", 255);
-        final String[] str = new String[taglist.size()];
-        final String[] key = taglist.keySet().toArray(str);
-        for(int i = 0; i < str.length; i++)
-            str[i] = String.format("%s -> %s", key[i], taglist.get(key[i]));
-        return str;
+        return this.getTags(nid, "***", 255);
     }
 
     public final String[] getTags(final Nid nid, final String search, final int max) throws MdsException {
         this._checkContext();
-        final String str = Database.mds.getString(String.format("_c=0Q;_a='';_tag='';_n=0;_i=0;WHILE(AND(TreeShr->TreeFindTagWildDsc(ref('%s'),ref(_n),ref(_c),xd(_tag)),_i<%d)) IF(_n==%d) _a=COMMA(_i++,_a//','//_tag);_a", search, max, nid.getValue()));
-        if(str == null || str.length() == 0) return new String[0];
-        if(str.charAt(0) == '%') throw new MdsException(str, 0);
-        final String[] strs = str.substring(1).split(",");
-        for(int i = 0; i < strs.length; i++)
-            strs[i] = strs[i].split("::", 2)[1];
-        return strs;
+        this.treeshr.treeFindTagWildDscReset();
+        final List<String> tags = new ArrayList<String>(max);
+        String tag;
+        while(tags.size() < max && (tag = this.treeshr.treeFindTagWildDsc(search)) != null)
+            if(nid.getValue() == this.treeshr.treeFindTagWildDscNid()){
+                final String[] parts = tag.split("\\.|:");
+                tags.add(parts[parts.length - 1]);
+            }
+        return tags.toArray(new String[0]);
     }
 
     public final TagList getTagsWild(final String search, final int max) throws MdsException {
         this._checkContext();
-        final String str = Database.mds.getString(String.format("_c=0Q;_a='';_tag='';_n=0;_nids='[';_i=0;WHILE(AND(TreeShr->TreeFindTagWildDsc(ref('%s'),ref(_n),ref(_c),xd(_tag)),_i<%d)) STATEMENT(_i++,_a=_a//','//_tag,_nids=_nids//TEXT(_n)//',');_a", search, max));
-        if(str == null) return null;
-        if(str.charAt(0) == '%') throw new MdsException(str, 0);
-        final String[] tags = str.substring(1).split(",");
-        final Nid[] nids = Nid.getArrayOfNids(Database.mds.getIntegerArray("_a=COMPILE(_nids//'*]');_nids=*;_a"));
-        final TagList taglist = new TagList(nids.length);
-        for(int i = 0; i < nids.length & i < tags.length; i++)
-            taglist.put(tags[i], nids[i]);
+        this.treeshr.treeFindTagWildDscReset();
+        final TagList taglist = new TagList(max);
+        String tag;
+        while(taglist.size() < max && (tag = this.treeshr.treeFindTagWildDsc(search)) != null)
+            taglist.put(tag, new Nid(this.treeshr.treeFindTagWildDscNid()));
         return taglist;
     }
 

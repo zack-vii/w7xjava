@@ -46,7 +46,7 @@ public final class ModifyTags extends JDialog{
                 if(idx != -1) ModifyTags.this.curr_tag_selection.setText(ModifyTags.this.curr_taglist_model.getElementAt(idx));
             }
         });
-        final JScrollPane scroll_list = new JScrollPane(this);
+        final JScrollPane scroll_list = new JScrollPane(this.modify_tags_list);
         jp1.add(new JLabel("Tag List:"), BorderLayout.NORTH);
         jp1.add(scroll_list, BorderLayout.CENTER);
         final JPanel jp2 = new JPanel();
@@ -82,7 +82,7 @@ public final class ModifyTags extends JDialog{
         jp5.add(new JLabel("Current Selection: "));
         jp5.add(this.curr_tag_selection);
         jp1.add(jp5, BorderLayout.SOUTH);
-        jp.add(jp1, BorderLayout.NORTH);
+        jp.add(jp1, BorderLayout.CENTER);
         final JPanel jp3 = new JPanel();
         final JButton ok_b = new JButton("Ok");
         ok_b.addActionListener(new ActionListener(){
@@ -119,7 +119,6 @@ public final class ModifyTags extends JDialog{
                 if(e.getKeyCode() == KeyEvent.VK_ENTER) ModifyTags.this.addTag();
             }
         });
-        this.pack();
     }
 
     public final void addTag() {
@@ -139,25 +138,21 @@ public final class ModifyTags extends JDialog{
     public final void open(final Node currnode) {
         this.currnode = currnode;
         if(currnode == null) return;
-        final String[] tags;
-        {
-            String[] tmptags;
-            try{
-                tmptags = currnode.getTags();
-            }catch(final Exception exc){
-                jTraverserFacade.stderr("Error getting tags", exc);
-                tmptags = new String[0];
-            }
-            tags = tmptags;
+        String[] tags;
+        try{
+            tags = currnode.getTags();
+        }catch(final Exception exc){
+            jTraverserFacade.stderr("Error getting tags", exc);
+            tags = new String[0];
         }
         this.curr_taglist_model.clear();
-        for(final String tag : tags){
+        for(final String tag : tags)
             this.curr_taglist_model.addElement(tag);
-        }
         this.setTitle("Modify tags of " + currnode.getFullPath());
         this.modify_tags_list.setModel(this.curr_taglist_model);
         this.curr_tag_selection.setText("");
         this.setLocation(this.treeman.dialogLocation());
+        this.pack();
         this.setVisible(true);
     }
 }
