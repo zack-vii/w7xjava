@@ -83,6 +83,10 @@ public class Node{
         return "XXXXXXX"; // Dummy name, hopefully will never reach this
     }
 
+    public final static boolean isCopied() {
+        return Node.copied != null;
+    }
+
     private static final ImageIcon loadIcon(final String gifname) {
         final String base = System.getProperty("icon_base");
         if(base == null) return new ImageIcon(Node.class.getClassLoader().getResource(gifname));

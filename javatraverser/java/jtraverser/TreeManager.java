@@ -180,7 +180,7 @@ public class TreeManager extends JScrollPane{
             if(node != null){
                 final int usage = node.getUsage();
                 final boolean isst = usage == NodeInfo.USAGE_SUBTREE;
-                mask = new boolean[]{!isst || node.nid.getValue() == 0, node.nid.getValue() != 0, !isst, !isst, node.nid.getValue() > 0, true};
+                mask = new boolean[]{!isst || node.nid.getValue() == 0, node.nid.getValue() != 0, !isst, !isst, node.nid.getValue() > 0, Node.isCopied()};
             }
             for(int i = 0; i < mask.length; i++)
                 this.items.get(i).setEnabled(mask[i]);
