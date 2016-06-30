@@ -18,6 +18,7 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_s.CString;
+import mds.data.descriptor_s.Missing;
 
 public class Connection{
     static class EventItem{
@@ -418,7 +419,7 @@ public class Connection{
     }
 
     public final double getDouble(final String in) throws MdsException {
-        return this.getDoubleArray(in)[0];
+        return this.getNumberArray(in).toDouble();
     }
 
     public final double[] getDoubleArray(final String in) throws MdsException {
@@ -434,7 +435,7 @@ public class Connection{
     }
 
     public final float getFloat(final String in) throws MdsException {
-        return this.getFloatArray(in)[0];
+        return this.getNumberArray(in).toFloat();
     }
 
     public final float[] getFloatArray(final String in) throws MdsException {
@@ -446,7 +447,7 @@ public class Connection{
     }
 
     public final int getInteger(final String in) throws MdsException {
-        return this.getIntegerArray(in)[0];
+        return this.getNumberArray(in).toInt();
     }
 
     public final int[] getIntegerArray(final String in) throws MdsException {
@@ -454,7 +455,7 @@ public class Connection{
     }
 
     public final long getLong(final String in) throws MdsException {
-        return this.getLongArray(in)[0];
+        return this.getNumberArray(in).toLong();
     }
 
     public final long[] getLongArray(final String in) throws MdsException {
@@ -468,7 +469,10 @@ public class Connection{
 
     private final Descriptor getNumberArray(final String in) throws MdsException {
         final Descriptor desc = this.mdsValue(in);
-        if(desc instanceof CString) throw new MdsException(desc.toString(), 0);
+        if(desc instanceof CString){
+            if(desc.length > 0) throw new MdsException(desc.toString(), 0);
+            return Missing.NEW;
+        }
         return desc;
     }
 
