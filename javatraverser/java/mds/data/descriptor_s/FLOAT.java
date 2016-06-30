@@ -15,7 +15,7 @@ public abstract class FLOAT<T extends Number>extends NUMBER<T>{
         String tmp = String.format(Locale.US, "%s", value);
         if(preview && tmp.length() > 5) tmp = String.format(Locale.US, "%1.3G", value);
         tmp.replace("+", "");
-        if(DTYPE.FS == dtype){
+        if(DTYPE.FLOAT == dtype){
             if(tmp.endsWith("E0")) tmp = tmp.substring(0, tmp.length() - 2);
             else if(tmp.contains("E")) return tmp.replaceAll("^0*", "");
             return tmp.replaceAll("(^0*|0*$)", "");

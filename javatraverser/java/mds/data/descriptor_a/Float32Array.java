@@ -9,7 +9,7 @@ public final class Float32Array extends FLOATArray<Float>{
     }
 
     public Float32Array(final float[] values){
-        super(DTYPE.FS, values);
+        super(DTYPE.FLOAT, values);
     }
 
     @Override

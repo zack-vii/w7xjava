@@ -56,6 +56,8 @@ public final class DTYPE{
     public static final byte      TUPLE      = -41;            // 215
     public static final byte      DICTIONARY = -40;            // 216
     public static final byte      OPAQUE     = -39;            // 217
+    public static final byte      FLOAT      = DTYPE.FS;
+    public static final byte      DOUBLE     = DTYPE.FT;
 
     static{
         DTYPE._name[Byte.toUnsignedInt(DTYPE.B)] = "Byte";

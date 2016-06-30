@@ -29,10 +29,10 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         private final int[]         shape;
         private final T[]           t;
 
-        public AStringBuilder(final StringBuilder pout, final int[] shape, final T[] t){
+        public AStringBuilder(final StringBuilder pout){
             this.pout = pout;
-            this.shape = shape;
-            this.t = t;
+            this.shape = Descriptor_A.this.dims;
+            this.t = Descriptor_A.this.getValue();
             this.level(this.shape.length);
         }
 
@@ -145,7 +145,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         if(pout.capacity() < 4096) pout.ensureCapacity(4096);
         if(this.format()) pout.append(this.getDName()).append('(');
-        if((mode & Descriptor.DECO_STR) != 0){
+        if((mode & Descriptor.DECO_STR) != 0 && this.arsize > 1024){
             String size;
             if(this.dimct == 0 || ((this.dims != null) && (this.dims.length == 0))) size = "0";
             else if(this.dims == null) size = Integer.toString(this.arsize / this.length);
@@ -156,7 +156,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
                 size = String.join(",", dimstr);
             }
             pout.append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/)");
-        }else new AStringBuilder(pout, this.dims, this.getValue());
+        }else new AStringBuilder(pout);
         if(this.format()) pout.append(')');
         return pout;
     }
