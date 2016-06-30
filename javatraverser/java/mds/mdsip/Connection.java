@@ -382,11 +382,11 @@ public class Connection{
             eventListener.elementAt(i).processUpdateEvent(e);
     }
 
-    public final synchronized void dispatchUpdateEvent(final int eventid) {
+    private final synchronized void dispatchUpdateEvent(final int eventid) {
         if(this.hashEventId.containsKey(eventid)) this.dispatchUpdateEvent(this.hashEventId.get(eventid));
     }
 
-    public final synchronized void dispatchUpdateEvent(final String eventName) {
+    private final synchronized void dispatchUpdateEvent(final String eventName) {
         if(this.hashEventName.containsKey(eventName)) this.dispatchUpdateEvent(this.hashEventName.get(eventName));
     }
 
@@ -407,7 +407,10 @@ public class Connection{
         }
     }
 
-    public final Message getAnswer() throws MdsException {
+    private final Message getAnswer() throws MdsException {
+        synchronized(this){
+            this.pending_count++;
+        }
         final Message message = this.receiveThread.getMessage();
         if(message == null) throw new MdsException("Null response from server", 0);
         if((message.status & 1) == 0 && message.status != 0 && message.dtype == DTYPE.T) throw new MdsException(message.asString(), message.status);
@@ -491,15 +494,14 @@ public class Connection{
         return this.connected;
     }
 
-    public final synchronized Message mdsIO(String expr, final boolean serialize) throws MdsException {
+    public final Message mdsIO(String expr, final boolean serialize) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\"," + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
         try{
-            final Message message;
-            if(serialize) expr = new StringBuilder(expr.length() + 64).append("COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((").append(expr).append(")),xd(_ans)),_ans)").toString();
-            message = new Message(expr);
-            this.pending_count++;
-            message.send(this.dos);
+            final String pre = "COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((";
+            final String post = ")),xd(_ans)),_ans)";
+            if(serialize) expr = new StringBuilder(pre.length() + expr.length() + post.length()).append(pre).append(expr).append(post).toString();
+            new Message(expr).send(this.dos);
             return this.getAnswer();
         }catch(final MdsException exc){
             throw exc;
@@ -508,7 +510,7 @@ public class Connection{
         }
     }
 
-    public final synchronized Message mdsIO(final String expr, Descriptor[] args, final boolean serialize) throws MdsException {
+    public final Message mdsIO(final String expr, Descriptor[] args, final boolean serialize) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
         if(args == null) args = new Descriptor[]{};
@@ -529,7 +531,6 @@ public class Connection{
         }
         if(serialize) cmd.append(")),xd(_ans)),_ans)");
         try{
-            this.pending_count++;
             this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
             for(final Descriptor d : args)
                 d.toMessage(idx++, totalarg).send(this.dos);

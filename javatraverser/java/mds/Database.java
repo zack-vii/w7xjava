@@ -248,7 +248,7 @@ public final class Database{
 
     public final void create(final long shot) throws MdsException {
         this._checkContext();
-        final int status = Database.mds.getInteger(String.format("TreeShr->TreeCreateTreeFiles(ref('%s'),val(%d),val(%d))", this.expt, shot, this.shot));
+        final int status = Database.mds.getInteger(String.format("TreeShr->TreeCreateTreeFiles(ref('%s'),val(%d),val(%d))", this.expt, this.shot, shot));
         this.handleStatus(status);
     }
 
@@ -282,14 +282,14 @@ public final class Database{
         return Database.tdiEvaluate(expr);
     }
 
-    public void executeDelete() throws MdsException {
+    public final void executeDelete() throws MdsException {
         this._checkContext();
         final int status = Database.mds.getInteger("TreeShr->TreeDeleteNodeExecute()");
         this.handleStatus(status);
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    protected final void finalize() throws Throwable {
         try{
             this.close();
         }finally{
@@ -297,29 +297,29 @@ public final class Database{
         }
     }
 
-    public long getCurrentShot() throws MdsException {
+    public final long getCurrentShot() throws MdsException {
         return this.getCurrentShot(this.expt);
     }
 
-    public long getCurrentShot(final String expt) throws MdsException {
+    public final long getCurrentShot(final String expt) throws MdsException {
         return Database.mds.getInteger(String.format("TreeShr->TreeGetCurrentShotId('%s')", expt));
     }
 
-    public Descriptor getData(final Nid nid) throws MdsException {
+    public final Descriptor getData(final Nid nid) throws MdsException {
         return Database.mds.mdsValue(String.format("COMMA(_ans=*,TreeShr->TreeGetRecord(val(%d),xd(_ans)),_ans)", nid.getValue()), Descriptor.class);
     }
 
-    public Nid getDefault() throws MdsException {
+    public final Nid getDefault() throws MdsException {
         this._checkContext();
         return new Nid(Database.mds.getInteger("COMMA(_ans=-1L,TreeShr->TreeGetDefaultNid(ref(_ans)),_ans)"));
     }
 
-    public int getFlags(final Nid nid) throws MdsException {
+    public final int getFlags(final Nid nid) throws MdsException {
         this._checkContext();
         return Database.mds.getInteger(String.format("LONG(GETNCI(%d,'GET_FLAGS'))", nid.getValue()));
     }
 
-    public NodeInfo getInfo(final Nid nid) throws MdsException {
+    public final NodeInfo getInfo(final Nid nid) throws MdsException {
         this._checkContext();
         final int[] I = Database.mds.getIntegerArray(String.format("_ans=%d;LONG([GETNCI(_ans,'CLASS'),GETNCI(_ans,'DTYPE'),GETNCI(_ans,'USAGE'),GETNCI(_ans,'GET_FLAGS'),GETNCI(_ans,'OWNER_ID'),GETNCI(_ans,'LENGTH'),IF_ERROR(SHAPE(GETNCI(GETNCI(_ans,'CONGLOMERATE_NID'),'NID_NUMBER'))[0],0),GETNCI(_ans,'CONGLOMERATE_ELT')])", nid.getValue()));
         final String date = Database.mds.getString(String.format("DATE_TIME(GETNCI(%d,'TIME_INSERTED'))", nid.getValue())).substring(0, 23).trim(); // TODO: only to compensate issue in DATA_TIME build-in
