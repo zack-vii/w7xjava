@@ -9,7 +9,7 @@ public final class Complex32 extends COMPLEX<Float>{
     }
 
     public Complex32(final float real, final float imag){
-        super(DTYPE.FSC, real, imag);
+        super(DTYPE.COMPLEX_FLOAT, real, imag);
     }
 
     public Complex32(final float[] value){

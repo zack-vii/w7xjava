@@ -13,7 +13,7 @@ public final class Float64 extends FLOAT<Double>{
     }
 
     public Float64(final double value){
-        this(DTYPE.FT, value);
+        this(DTYPE.DOUBLE, value);
     }
 
     @Override

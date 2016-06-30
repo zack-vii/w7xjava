@@ -13,7 +13,7 @@ public final class Float32 extends FLOAT<Float>{
     }
 
     public Float32(final float value){
-        this(DTYPE.FS, value);
+        this(DTYPE.FLOAT, value);
     }
 
     @Override

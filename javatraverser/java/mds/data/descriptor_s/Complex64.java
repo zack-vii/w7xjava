@@ -9,7 +9,7 @@ public final class Complex64 extends COMPLEX<Double>{
     }
 
     public Complex64(final double real, final double imag){
-        super(DTYPE.FTC, real, imag);
+        super(DTYPE.COMPLEX_DOUBLE, real, imag);
     }
 
     public Complex64(final double[] value){

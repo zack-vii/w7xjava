@@ -9,7 +9,7 @@ public final class Float64Array extends FLOATArray<Double>{
     }
 
     public Float64Array(final double[] values){
-        super(DTYPE.FT, values);
+        super(DTYPE.DOUBLE, values);
     }
 
     @Override

@@ -143,9 +143,9 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
 
     @Override
     public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
-        if(pout.capacity() < 4096) pout.ensureCapacity(4096);
+        if(pout.capacity() < 1024) pout.ensureCapacity(1024);
         if(this.format()) pout.append(this.getDName()).append('(');
-        if((mode & Descriptor.DECO_STR) != 0 && this.arsize > 1024){
+        if((mode & Descriptor.DECO_STR) != 0 && this.arsize > 255){
             String size;
             if(this.dimct == 0 || ((this.dims != null) && (this.dims.length == 0))) size = "0";
             else if(this.dims == null) size = Integer.toString(this.arsize / this.length);
@@ -155,7 +155,9 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
                     dimstr[i] = Integer.toString(this.dims[i]);
                 size = String.join(",", dimstr);
             }
-            pout.append("Set_Range(").append(size).append(',').append(this.decompileT(this.getValue(0))).append(" /*** etc. ***/)");
+            pout.append("Set_Range(").append(size).append(',');
+            this.decompileT(pout, this.getValue(0));
+            pout.append(" /*** etc. ***/)");
         }else new AStringBuilder(pout);
         if(this.format()) pout.append(')');
         return pout;
