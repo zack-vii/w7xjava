@@ -214,7 +214,7 @@ public final class Database{
         return new Nid(res[1]);
     }
 
-    public final Nid addNode(final String path, final int usage) throws MdsException {
+    public final Nid addNode(final String path, final byte usage) throws MdsException {
         this._checkContext();
         final int[] res = this.treeshr.treeAddNode(path, usage);
         this.handleStatus(res[0]);

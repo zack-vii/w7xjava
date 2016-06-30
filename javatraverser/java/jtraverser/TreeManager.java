@@ -49,9 +49,9 @@ public class TreeManager extends JScrollPane{
             }
         }
         public class AddNodeAL implements ActionListener{
-            private final int usage;
+            private final byte usage;
 
-            public AddNodeAL(final int usage){
+            public AddNodeAL(final byte usage){
                 this.usage = usage;
             }
 
@@ -61,7 +61,7 @@ public class TreeManager extends JScrollPane{
             }
         }
         private final String[] name  = new String[]{"Structure", "Subtree", "Action", "Any", "Axis", "Dispatch", "Numeric", "Signal", "Task", "Text", "Window"};
-        private final int[]    usage = new int[]{NodeInfo.USAGE_STRUCTURE, NodeInfo.USAGE_SUBTREE, NodeInfo.USAGE_ACTION, NodeInfo.USAGE_ANY, NodeInfo.USAGE_AXIS, NodeInfo.USAGE_DISPATCH, NodeInfo.USAGE_NUMERIC, NodeInfo.USAGE_SIGNAL, NodeInfo.USAGE_TASK, NodeInfo.USAGE_TEXT, NodeInfo.USAGE_WINDOW};
+        private final byte[]   usage = new byte[]{NodeInfo.USAGE_STRUCTURE, NodeInfo.USAGE_SUBTREE, NodeInfo.USAGE_ACTION, NodeInfo.USAGE_ANY, NodeInfo.USAGE_AXIS, NodeInfo.USAGE_DISPATCH, NodeInfo.USAGE_NUMERIC, NodeInfo.USAGE_SIGNAL, NodeInfo.USAGE_TASK, NodeInfo.USAGE_TEXT, NodeInfo.USAGE_WINDOW};
 
         public AddNodeMenu(final TreeManager treeman, final JComponent menu){
             super(treeman);

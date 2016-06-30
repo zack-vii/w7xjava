@@ -20,7 +20,7 @@ public final class AddNode extends JDialog{
     private Node              currnode;
     private final JTextField  e_name, e_tag;
     private final TreeManager treeman;
-    private int               usage;
+    private byte              usage;
 
     public AddNode(final TreeManager treeman){
         super(treeman.getFrame());
@@ -83,7 +83,7 @@ public final class AddNode extends JDialog{
         this.setVisible(false);
     }
 
-    public final void open(final Node currnode, final int usage) {
+    public final void open(final Node currnode, final byte usage) {
         this.currnode = currnode;
         if(this.currnode == null) return;
         this.usage = usage;

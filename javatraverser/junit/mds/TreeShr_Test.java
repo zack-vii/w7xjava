@@ -68,7 +68,9 @@ public class TreeShr_Test{
     @Test
     public final void test101TreeAddNode() throws MdsException {
         Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 1}, TreeShr_Test.treeshr.treeAddNode("\\TEST::TOP.A", NodeInfo.USAGE_SIGNAL));
-        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 2}, TreeShr_Test.treeshr.treeAddNode("\\TEST::TOP.B", NodeInfo.USAGE_SIGNAL));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 2}, TreeShr_Test.treeshr.treeAddNode("\\TEST::TOP.B", NodeInfo.USAGE_AXIS));
+        Assert.assertEquals(NodeInfo.USAGE_SIGNAL, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP.A,'USAGE')"));
+        Assert.assertEquals(NodeInfo.USAGE_AXIS, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP.B,'USAGE')"));
     }
 
     @Test

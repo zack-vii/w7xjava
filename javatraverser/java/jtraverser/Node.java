@@ -176,7 +176,7 @@ public class Node{
         return newNode;
     }
 
-    public final Node addNode(final String name, final int usage) throws MdsException {
+    public final Node addNode(final String name, final byte usage) throws MdsException {
         Nid new_nid;
         final Nid prev_default = this.database.getDefault();
         this.database.setDefault(this.nid);

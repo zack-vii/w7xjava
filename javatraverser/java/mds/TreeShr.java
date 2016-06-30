@@ -18,7 +18,7 @@ public final class TreeShr{
         return this.connection.getIntegerArray(String.format("_i=-1;_s=TreeShr->TreeAddConglom(ref('%s'),ref('%s'),ref(_i));[_s,_i]", path.replace("\\", "\\\\"), model));
     }
 
-    public final int[] treeAddNode(final String path, final int usage) throws MdsException {
+    public final int[] treeAddNode(final String path, final byte usage) throws MdsException {
         return this.connection.getIntegerArray(String.format("_i=-1;_s=TreeShr->TreeAddNode(ref('%s'),ref(_i),val(%d));[_s,_i]", path.replace("\\", "\\\\"), usage));
     }
 

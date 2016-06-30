@@ -124,7 +124,7 @@ public class CompileTree extends Thread{
                     System.err.println("Error adding member " + name + " : " + e);
                 }
             }else if(type.equals("member")){
-                int usage = NodeInfo.USAGE_NONE;
+                byte usage = NodeInfo.USAGE_NONE;
                 if(usageStr.equals("NONE")) usage = NodeInfo.USAGE_NONE;
                 if(usageStr.equals("ACTION")) usage = NodeInfo.USAGE_ACTION;
                 if(usageStr.equals("NUMERIC")) usage = NodeInfo.USAGE_NUMERIC;

@@ -253,11 +253,11 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
         return new_node;
     }
 
-    public Node addNode(final int usage, final String name) {
+    public Node addNode(final byte usage, final String name) {
         return this.addNode(usage, name, this.getCurrentNode());
     }
 
-    public Node addNode(final int usage, final String name, final Node toNode) {
+    public Node addNode(final byte usage, final String name, final Node toNode) {
         Node new_node;
         DefaultMutableTreeNode new_tree_node;
         // final DefaultMutableTreeNode toTreeNode = toNode.getTreeNode();
@@ -347,14 +347,14 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     public void deleteNode(final Node delNode) {
         if(delNode == null) return;
         final Node del_node = delNode;
-        final int n_children = del_node.startDelete();
+        final int n_children = del_node.deleteStart();
         if(n_children < 0) return;
         String msg = "You are about to delete node " + del_node.getName().trim();
         if(n_children > 0) msg += " which has " + n_children + " descendents.\n Please confirm";
         else msg += "\n Please confirm";
         final int n = JOptionPane.showConfirmDialog(this.treeman.getFrame(), msg, "Delete node(s)", JOptionPane.YES_NO_OPTION);
         if(n == JOptionPane.YES_OPTION){
-            if(!del_node.executeDelete()) return;
+            if(!del_node.deleteExecute()) return;
             final DefaultTreeModel tree_model = (DefaultTreeModel)this.getModel();
             tree_model.removeNodeFromParent(delNode.getTreeNode());
         }
