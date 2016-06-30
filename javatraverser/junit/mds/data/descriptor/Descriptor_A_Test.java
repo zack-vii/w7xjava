@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import mds.AllTests;
 import mds.MdsException;
+import mds.data.descriptor_a.Uint64Array;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -22,6 +23,11 @@ public final class Descriptor_A_Test{
     @AfterClass
     public static final void tearDownAfterClass() throws Exception {
         Descriptor_A_Test.mds.disconnect();
+    }
+
+    @Test
+    public final void quadword() throws MdsException {
+        Assert.assertEquals("[0X462d53c8abac0QU,0X462d53c8abac1QU]", new Uint64Array(new long[]{1234567890123456l, 1234567890123457l}).decompile());
     }
 
     @Before
