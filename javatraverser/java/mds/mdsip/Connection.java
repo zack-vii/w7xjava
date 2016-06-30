@@ -396,7 +396,7 @@ public class Connection{
     }
 
     public final Descriptor evaluate(final String expr) throws MdsException {
-        return this.mdsValue(String.format("EVALUATE((%s))", expr), Descriptor.class);
+        return this.mdsValue(String.format("EVALUATE((%s;))", expr), Descriptor.class);
     }
 
     @Override
@@ -502,8 +502,8 @@ public class Connection{
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\"," + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
         try{
-            final String pre = "COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((";
-            final String post = ")),xd(_ans)),_ans)";
+            final String pre = "_ans=*;MdsShr->MdsSerializeDscOut(xd((";
+            final String post = ";)),xd(_ans));_ans";
             if(serialize) expr = new StringBuilder(pre.length() + expr.length() + post.length()).append(pre).append(expr).append(post).toString();
             new Message(expr).send(this.dos);
             return this.getAnswer();
@@ -522,7 +522,7 @@ public class Connection{
         final byte totalarg = (byte)(args.length + 1);
         Message msg;
         final StringBuffer cmd = new StringBuffer(expr.length() + 64);
-        if(serialize) cmd.append("COMMA(_ans=*,MdsShr->MdsSerializeDscOut(xd((");
+        if(serialize) cmd.append("_a=*;MdsShr->MdsSerializeDscOut(xd((");
         cmd.append(expr);
         if(expr.indexOf("$") == -1){ // If no $ args specified, build argument list
             cmd.append('(');
@@ -533,7 +533,7 @@ public class Connection{
             }
             cmd.append(')');
         }
-        if(serialize) cmd.append(")),xd(_ans)),_ans)");
+        if(serialize) cmd.append(";)),xd(_a));_a");
         try{
             this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
             for(final Descriptor d : args)

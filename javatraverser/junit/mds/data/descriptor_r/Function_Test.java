@@ -8,7 +8,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import mds.AllTests;
 import mds.MdsException;
-import mds.data.descriptor.Descriptor;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -32,8 +31,7 @@ public final class Function_Test{
 
     @Test
     public final void $p0() throws MdsException {
-        final Descriptor D = Function_Test.mds.compile("$P0");
-        Assert.assertEquals("Build_With_Units(101325., \"Pa\")", D.evaluate().decompile());
+        Assert.assertEquals("Build_With_Units(101325., \"Pa\")", Function_Test.mds.compile("$P0").evaluate().decompile());
     }
 
     @Test

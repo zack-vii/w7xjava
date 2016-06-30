@@ -1,6 +1,5 @@
 package mds.mdsip;
 
-import java.io.IOException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -13,6 +12,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_a.Int16Array;
 import mds.data.descriptor_s.CString;
 
+@SuppressWarnings("static-method")
 public class Connection_Test{
     private static Connection mds;
 
@@ -26,24 +26,10 @@ public class Connection_Test{
         Connection_Test.mds.disconnect();
     }
 
-    @SuppressWarnings("static-method")
-    // @Test
-    public void connect() throws IOException {
-        Connection mds;
-        final int port = 8888;
-        mds = new Connection("localhost:" + port);
-        if(!mds.isConnected()){
-            System.out.println("Started new local mdsip server");
-            final Process prc = new ProcessBuilder("mdsip", "-m", "-p", String.valueOf(port)).inheritIO().start();
-            Assert.assertTrue(mds.connect());
-            prc.destroy();
-        }else Assert.fail("already connected");
-    }
-
-    @SuppressWarnings("static-method")
     @Test
     public void mdsValue() throws MdsException {
-        Assert.assertEquals("Set_Range(1,2,2,1.1F0 /*** etc. ***/)", Connection_Test.mds.mdsValue("[[[1.1],[2.1]],[[3.1],[4.1]]]").toString());
+        Assert.assertEquals("Set_Range(1000,0. /*** etc. ***/)", Connection_Test.mds.mdsValue("Array([1000],0.)").toString());
+        Assert.assertEquals("[[[1.1],[2.1]],[[3.1],[4.1]]]", Connection_Test.mds.mdsValue("[[[1.1],[2.1]],[[3.1],[4.1]]]").toString());
         final Descriptor array = new Int16Array(new short[]{1, 2, 3, 4, 5});
         Assert.assertEquals(Connection_Test.mds.compile("WORD([1, 2, 3, 4, 5])").decompile(), array.decompile());
         Assert.assertEquals("Word([1,2,3,4,5])", Connection_Test.mds.mdsValue("$", new Descriptor[]{array}).decompile());

@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import jtraverser.NodeInfo;
 import mds.data.descriptor_a.Float32Array;
-import mds.data.descriptor_a.Uint32Array;
 import mds.data.descriptor_a.Uint64Array;
 import mds.mdsip.Connection;
 
@@ -69,11 +68,12 @@ public class TreeShr_Test{
     @Test
     public final void test101TreeAddNode() throws MdsException {
         Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 1}, TreeShr_Test.treeshr.treeAddNode("\\TEST::TOP.A", NodeInfo.USAGE_SIGNAL));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 2}, TreeShr_Test.treeshr.treeAddNode("\\TEST::TOP.B", NodeInfo.USAGE_SIGNAL));
     }
 
     @Test
     public final void test102TreeAddConglom() throws MdsException {
-        Assert.fail("Not yet implemented"); // TODO
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 3}, TreeShr_Test.treeshr.treeAddConglom("C", "E1429"));
     }
 
     @Test
@@ -82,28 +82,33 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test110TreeAddTag() throws MdsException {
+    public final void test120TreeDeleteNodeInitialize() throws MdsException {
         Assert.fail("Not yet implemented"); // TODO
     }
 
     @Test
-    public final void test111TreeRemoveNodesTags() throws MdsException {
+    public final void test121TreeDeleteNodeGetNid() throws MdsException {
         Assert.fail("Not yet implemented"); // TODO
     }
 
     @Test
-    public final void test120TreeDeleteNode0Initialize() throws MdsException {
+    public final void test122TreeDeleteNodeExecute() throws MdsException {
         Assert.fail("Not yet implemented"); // TODO
     }
 
     @Test
-    public final void test121TreeDeleteNode1GetNid() throws MdsException {
-        Assert.fail("Not yet implemented"); // TODO
+    public final void test130TreeSetDefault() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetDefault(1));
     }
 
     @Test
-    public final void test122TreeDeleteNode2Execute() throws MdsException {
-        Assert.fail("Not yet implemented"); // TODO
+    public final void test131TreeGetDefaultNid() throws MdsException {
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 1}, TreeShr_Test.treeshr.treeGetDefaultNid());
+    }
+
+    @Test
+    public final void test149TreeAddTag() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeAddTag(2, "DEVICE"));
     }
 
     @Test
@@ -112,13 +117,16 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test151TreeSetDefault() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetDefault(1));
+    public final void test151TreeFindTagWildDsc() throws MdsException {
+        Assert.assertEquals("\\TEST::DEVICE", TreeShr_Test.treeshr.treeFindTagWildDsc("DEVICE"));
+        Assert.assertEquals(2, TreeShr_Test.treeshr.treeFindTagWildDscNid());
+        Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWildDsc("***"));
+        Assert.assertEquals("\\TEST::TOP", TreeShr_Test.treeshr.treeFindTagWildDsc("***"));
     }
 
     @Test
-    public final void test152TreeGetDefaultNid() throws MdsException {
-        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 1}, TreeShr_Test.treeshr.treeGetDefaultNid());
+    public final void test152TreeRemoveNodesTags() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeRemoveNodesTags(2));
     }
 
     @Test
@@ -133,32 +141,32 @@ public class TreeShr_Test{
 
     @Test
     public final void test160TreeBeginTimestampedSegment() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeBeginTimestampedSegment(1, new Uint32Array(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,}), -1));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeBeginTimestampedSegment(1, new Float32Array(new float[]{0, 0, 0}), -1));
     }
 
     @Test
-    public final void test161TreePutRecord() throws MdsException {
+    public final void test161TreePutTimestampedSegment() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutTimestampedSegment(1, System.nanoTime(), new Float32Array(new float[]{1.f, 2.f, 3.f})));
+    }
+
+    @Test
+    public final void test163TreePutRecord() throws MdsException {
         Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRecord(1, null, 0));
     }
 
     @Test
-    public final void test162TreeMakeTimestampedSegment() throws MdsException {
+    public final void test165TreeMakeTimestampedSegment() throws MdsException {
         Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(new long[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}), new Float32Array(new float[]{.0f, .0f, .0f, .0f, .0f, .0f, .0f, .0f, .0f, .0f}), -1, 0));
     }
 
     @Test
-    public final void test163TreePutRow() throws MdsException {
+    public final void test166TreePutRow() throws MdsException {
         Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRow(1, 1 << 20, System.nanoTime(), new Float32Array(new float[]{7.f})));
     }
 
     @Test
-    public final void test164TreePutTimestampedSegment() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutTimestampedSegment(1, System.nanoTime(), new Float32Array(new float[]{9.f})));
-    }
-
-    @Test
     public final void test170TreeGetRecord() throws MdsException {
-        System.out.println(TreeShr_Test.treeshr.treeGetRecord(1).decompile());
+        Assert.assertEquals(7f, TreeShr_Test.treeshr.treeGetRecord(1).toFloat(), 1e-9f);
     }
 
     @Test
@@ -173,7 +181,7 @@ public class TreeShr_Test{
 
     @Test
     public final void test190TreeRenameNode() throws MdsException {
-        Assert.fail("Not yet implemented"); // TODO
+        Assert.assertEquals(1, TreeShr_Test.treeshr.treeRenameNode(2, "newB"));
     }
 
     @Test
