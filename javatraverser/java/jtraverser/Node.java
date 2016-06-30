@@ -249,21 +249,30 @@ public class Node{
         else jTraverserFacade.stdout("Cannot delete " + this + ". Tree not in edit mode.");
     }
 
+    public final boolean deleteExecute() {
+        try{
+            this.database.deleteExecute();
+            return true;
+        }catch(final Exception exc){
+            jTraverserFacade.stderr("Error executing delete", exc);
+            return false;
+        }
+    }
+
+    public final int deleteStart() {
+        try{
+            return this.database.deleteStart(this.nid);
+        }catch(final Exception exc){
+            jTraverserFacade.stderr("Error starting delete", exc);
+        }
+        return -1;
+    }
+
     public final void doAction() throws MdsException {
         try{
             this.database.doAction(this.nid);
         }catch(final Exception e){
             JOptionPane.showMessageDialog(this.tree, e.getMessage(), "Error executing message", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
-    public final boolean executeDelete() {
-        try{
-            this.database.executeDelete();
-            return true;
-        }catch(final Exception exc){
-            jTraverserFacade.stderr("Error executing delete", exc);
-            return false;
         }
     }
 
@@ -632,16 +641,6 @@ public class Node{
             }
         }
         JOptionPane.showMessageDialog(this.tree, "Missing model in descriptor", "Error in device setup 3", JOptionPane.WARNING_MESSAGE);
-    }
-
-    public final int startDelete() {
-        final Nid[] nids = {this.nid};
-        try{
-            return this.database.startDelete(nids).length;
-        }catch(final Exception exc){
-            jTraverserFacade.stderr("Error starting delete", exc);
-        }
-        return -1;
     }
 
     public final void toggle() throws MdsException {

@@ -46,12 +46,20 @@ public final class TreeShr{
         return this.connection.getInteger("TreeShr->TreeDeleteNodeExecute()");
     }
 
-    public final int[] treeDeleteNodeGetNid(final String path, final String model) throws MdsException {
-        return this.connection.getIntegerArray("_i=-1,_s=TreeShr->TreeDeleteNodeGetNid(ref(_i)));[_s,_i]");
+    public final int[] treeDeleteNodeGetNid(final int idx) throws MdsException {
+        return this.connection.getIntegerArray(String.format("_i=%d;_s=TreeShr->TreeDeleteNodeGetNid(ref(_i));[_s,_i]", idx));
     }
 
-    public final long[] treeDeleteNodeInitialize(final int nid, final long ref, final boolean init) throws MdsException {
-        return this.connection.getLongArray(String.format("_q=%dQ;_s=TreeShr->TreeDeleteNodeInitialize(val(%d),ref(_q),val(%d));[_s,_q]", ref, nid, init ? 1 : 0));
+    public final int[] treeDeleteNodeInitialize(final int nid) throws MdsException {
+        return this.treeDeleteNodeInitialize(nid, 0, true);
+    }
+
+    public final int[] treeDeleteNodeInitialize(final int nid, final int count, final boolean init) throws MdsException {
+        return this.connection.getIntegerArray(String.format("_i=%d;_s=TreeShr->TreeDeleteNodeInitialize(val(%d),ref(_i),val(1));[_s,_i]", count, nid, init ? 1 : 0));
+    }
+
+    public final int treeEndConglomerate() throws MdsException {
+        return this.connection.getInteger("TreeShr->TreeEndConglomerate()");
     }
 
     public final String treeFindTagWildDsc(final String searchstr) throws MdsException {
@@ -75,6 +83,10 @@ public final class TreeShr{
 
     public final int treeGetCurrentShotId(final String expt) throws MdsException {
         return this.connection.getInteger(String.format("TreeShr->TreeGetCurrentShotId('%s')", expt));
+    }
+
+    public final long treeGetDatafileSize() throws MdsException {
+        return this.connection.getLong("TreeShr->TreeGetDatafileSize()");
     }
 
     public final int[] treeGetDefaultNid() throws MdsException {
@@ -145,8 +157,16 @@ public final class TreeShr{
         return this.connection.getInteger(String.format("_s=TreeShr->TreeSetNciItm(val(%d),val(%d),val(%d))", nid, state ? 1 : 2, flags));
     }
 
+    public final int treeSetNoSubtree(final int nid) throws MdsException {
+        return this.connection.getInteger(String.format("_s=TreeShr->TreeSetNoSubtree(val(%d))", nid));
+    }
+
     public final int treeSetSubtree(final int nid) throws MdsException {
         return this.connection.getInteger(String.format("_s=TreeShr->TreeSetSubtree(val(%d))", nid));
+    }
+
+    public final int treeStartConglomerate(final int size) throws MdsException {
+        return this.connection.getInteger(String.format("TreeShr->TreeStartConglomerate(%d)", size));
     }
 
     /** 265392050 : TreeLock-Failure but does the change of state **/

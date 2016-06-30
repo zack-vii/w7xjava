@@ -1,8 +1,9 @@
 package mds;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import jtraverser.NodeInfo;
 import jtraverser.jTraverserFacade;
@@ -78,10 +79,6 @@ public final class Database{
         return Database.mds.getInteger("TreeShr->TreeCtx()");
     }
 
-    /*
-    public static final void main(final String[] args) {// TODO:main
-    }
-    */
     private static final Connection setupConnection(final String provider_in) {
         final Connection.Provider provider = new Connection.Provider(provider_in);
         if(Database.connections.containsKey(provider)) return Database.mds = Database.connections.get(provider);
@@ -264,6 +261,32 @@ public final class Database{
         return Database.mds.getString(String.format("_a=*;TreeShr->TreeGetRecord(val(%d),xd(_a));TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a", nid.getValue()));
     }
 
+    public final void deleteExecute() throws MdsException {
+        this._checkContext();
+        final int status = this.treeshr.treeDeleteNodeExecute();
+        this.handleStatus(status);
+    }
+
+    public final Nid[] deleteGetNids() throws MdsException {
+        final List<Nid> nids = new ArrayList<Nid>(256);
+        int last = 0;
+        for(;;){
+            final int[] res = this.treeshr.treeDeleteNodeGetNid(last);
+            if(res[0] == 265388128) break;
+            this.handleStatus(res[0]);
+            nids.add(new Nid(last = res[1]));
+        }
+        return nids.toArray(new Nid[0]);
+    }
+
+    public final int deleteStart(final Nid nid) throws MdsException {
+        this._checkContext();
+        final int nidnum = nid.getValue();
+        final int[] res = this.treeshr.treeDeleteNodeInitialize(nidnum);
+        this.handleStatus(res[0]);
+        return res[1];
+    }
+
     public final int doAction(final Nid nid) throws MdsException {
         this._checkContext();
         return Database.mds.getInteger(String.format("TCL('dispatch/nowait '//GETNCI(%d,'FULL_PATH'))", nid.getValue()));
@@ -283,12 +306,6 @@ public final class Database{
     public final Descriptor evaluate(final String expr) throws MdsException {
         this._checkContext();
         return Database.tdiEvaluate(expr);
-    }
-
-    public final void executeDelete() throws MdsException {
-        this._checkContext();
-        final int status = this.treeshr.treeDeleteNodeExecute();
-        this.handleStatus(status);
     }
 
     @Override
@@ -328,7 +345,7 @@ public final class Database{
     public final NodeInfo getInfo(final Nid nid) throws MdsException {
         this._checkContext();
         final int[] I = Database.mds.getIntegerArray(String.format("_i=%d;LONG([GETNCI(_i,'CLASS'),GETNCI(_i,'DTYPE'),GETNCI(_i,'USAGE'),GETNCI(_i,'GET_FLAGS'),GETNCI(_i,'OWNER_ID'),GETNCI(_i,'LENGTH'),IF_ERROR(SHAPE(GETNCI(GETNCI(_i,'CONGLOMERATE_NID'),'NID_NUMBER'))[0],0),GETNCI(_i,'CONGLOMERATE_ELT')])", nid.getValue()));
-        final String date = Database.mds.getString(String.format("DATE_TIME(GETNCI(%d,'TIME_INSERTED'))", nid.getValue())).substring(0, 23).trim(); // TODO: only to compensate issue in DATA_TIME build-in
+        final String date = Database.mds.getString(String.format("DATE_TIME(GETNCI(%d,'TIME_INSERTED'))", nid.getValue()));
         final String node_name = Database.mds.getString(String.format("GETNCI(%d,'NODE_NAME')", nid.getValue()));
         final String fullpath = Database.mds.getString(String.format("GETNCI(%d,'FULLPATH')", nid.getValue()));
         final String minpath = Database.mds.getString(String.format("GETNCI(%d,'MINPATH')", nid.getValue()));
@@ -549,22 +566,11 @@ public final class Database{
     }
 
     public final void setTags(final Nid nid, final String tags[]) throws MdsException {
+        this._checkContext();
+        this.treeshr.treeRemoveNodesTags(nid.getValue());
         if(tags == null) return;
-        this._checkContext();
-        final String tagsexpr = (tags.length == 0) ? "[]" : new StringBuilder("[\"").append(String.join("\",\"", tags)).append("\"]").toString();
-        final String cmd = String.format("_n=%d;_a=%s;_s=TreeShr->TreeRemoveNodesTags(val(_n));_i=0;WHILE(IAND(_s,1)==1,_i<%d)_s=TreeShr->TreeAddTag(val(_n),ref(_a[_i++]));_s", nid.getValue(), tagsexpr, tags.length);
-        final int status = Database.mds.getInteger(cmd);
-        this.handleStatus(status);
-    }
-
-    public final Nid[] startDelete(final Nid[] nids) throws MdsException {
-        this._checkContext();
-        final int[] nidnum = new int[nids.length];
-        for(int i = 0; i < nids.length; i++)
-            nidnum[i] = nids[i].getValue();
-        final String array = Arrays.toString(nidnum);
-        final int[] nid_nums = Database.mds.getIntegerArray(String.format("_a=%s;_ntd=0;FOR(_i=0,_i<1,_i++,TreeShr->TreeDeleteNodeInitialize(val(_a[_i]),ref(_ntd),val(_i==0)));_a=ZERO(_ntd-=1,0);FOR(_i=0,_i<_ntd,_i++,TreeShr->TreeDeleteNodeGetNid(ref(_a[_i])));_a", array, nids.length, nids.length));
-        return Nid.getArrayOfNids(nid_nums);
+        for(final String tag : tags)
+            this.handleStatus(this.treeshr.treeAddTag(nid.getValue(), tag));
     }
 
     @Override
