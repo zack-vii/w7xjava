@@ -32,10 +32,10 @@ public class DecompileTree{
         }
         final String provider = args[0];
         final String expt = args[1];
-        long shot = -1;
+        int shot = -1;
         if(args.length > 1){
             try{
-                shot = Long.parseLong(args[2]);
+                shot = Integer.parseInt(args[2]);
             }catch(final Exception exc){
                 System.err.println("Invalid shot number");
                 System.exit(-1);
@@ -128,7 +128,7 @@ public class DecompileTree{
         return 0;
     }
 
-    public final int decompile(final String provider, final String expt, final long shot, final String filename, final boolean isFull) throws MdsException {
+    public final int decompile(final String provider, final String expt, final int shot, final String filename, final boolean isFull) throws MdsException {
         final Database database;
         database = new Database(provider, expt, shot, Database.READONLY);
         final int result = this.decompile(database, filename, isFull);

@@ -443,7 +443,7 @@ public class TreeManager extends JScrollPane{
         return this.frame;
     }
 
-    public final void openTree(final String provider, final String expt, long shot, final int mode) {
+    public final void openTree(final String provider, final String expt, int shot, final int mode) {
         this.open_dialog.setFields(provider, expt, shot);
         // first we need to check if the tree is already open
         for(final Tree tree : this.trees){

@@ -29,7 +29,7 @@ public final class Database{
     }
     private static String                                     cexpt       = null;
     private static final Map<Connection.Provider, Connection> connections = new HashMap<Connection.Provider, Connection>(16);
-    private static long                                       cshot       = 0;
+    private static int                                        cshot       = 0;
     public static final int                                   EDITABLE    = 2;
     private static Connection                                 mds;
     public static final int                                   NEW         = 3;
@@ -132,7 +132,7 @@ public final class Database{
 
     private static final void updateCurrent() throws MdsException {
         try{
-            Database.cshot = Database.mds.getLong("$SHOT");
+            Database.cshot = Database.mds.getInteger("$SHOT");
             // if(Database.cshot < -1) Database.cshot &= 0xFFFFFFFFl;
             Database.cexpt = Database.mds.getString("$EXPT").trim();
         }catch(final MdsException de){
@@ -144,7 +144,7 @@ public final class Database{
     private final String     expt;
     private boolean          is_open = false;
     private final int        mode;
-    private final long       shot;
+    private final int        shot;
 
     public Database(final String provider) throws MdsException{
         this.con = Database.setupConnection(provider);
@@ -153,15 +153,15 @@ public final class Database{
         this.mode = 0;
     }
 
-    public Database(final String expt, final long shot) throws MdsException{
+    public Database(final String expt, final int shot) throws MdsException{
         this(Database.extractProvider(expt), expt, shot, 0);
     }
 
-    public Database(final String expt, final long shot, final int mode) throws MdsException{
+    public Database(final String expt, final int shot, final int mode) throws MdsException{
         this(Database.extractProvider(expt), expt, shot, mode);
     }
 
-    public Database(final String provider, final String expt, final long shot, final int mode) throws MdsException{
+    public Database(final String provider, final String expt, final int shot, final int mode) throws MdsException{
         this.con = Database.setupConnection(provider);
         this.expt = expt.toUpperCase();
         this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
@@ -246,7 +246,7 @@ public final class Database{
         return Database.tdiCompile(expr);
     }
 
-    public final void create(final long shot) throws MdsException {
+    public final void create(final int shot) throws MdsException {
         this._checkContext();
         final int status = Database.mds.getInteger(String.format("TreeShr->TreeCreateTreeFiles(ref('%s'),val(%d),val(%d))", this.expt, this.shot, shot));
         this.handleStatus(status);
@@ -297,7 +297,7 @@ public final class Database{
         }
     }
 
-    public final long getCurrentShot() throws MdsException {
+    public final int getCurrentShot() throws MdsException {
         return this.getCurrentShot(this.expt);
     }
 

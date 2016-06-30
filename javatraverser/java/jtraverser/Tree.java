@@ -101,7 +101,7 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     private DefaultMutableTreeNode top;
     public final TreeManager       treeman;
 
-    public Tree(final TreeManager treeman, final String provider, final String expt, final long shot, final int mode) throws MdsException{
+    public Tree(final TreeManager treeman, final String provider, final String expt, final int shot, final int mode) throws MdsException{
         super();
         this.treeman = treeman;
         Database database;
