@@ -20,7 +20,7 @@ public class AllTests{
     public static Connection setUpBeforeClass() throws Exception {
         final Connection mds = new Connection("localhost:" + AllTests.port);
         if(!mds.isConnected()){
-            System.out.println("Started new loacal mdsip server");
+            System.out.println("Started new local mdsip server");
             final ProcessBuilder pb = new ProcessBuilder("mdsip", "-m", "-p", String.valueOf(AllTests.port)).inheritIO();
             final Map<String, String> env = pb.environment();
             env.put(AllTests.tree + "_path", System.getenv("TMP"));
