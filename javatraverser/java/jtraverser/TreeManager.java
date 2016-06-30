@@ -102,13 +102,13 @@ public class TreeManager extends JScrollPane{
 
         public DisplayMenu(final TreeManager treeman, final JComponent menu){
             super(treeman);
-            menu.add(this.addMenuItem("Set Default", new DisplayMenu.setDefault()));
-            if(menu instanceof JPopupMenu) ((JPopupMenu)menu).addSeparator();
             menu.add(this.addMenuItem("Display Data", new Menu.NodeEditorAL(DisplayData.class)));
+            menu.add(this.addMenuItem("Display Signal", new DisplaySignal()));
             menu.add(this.addMenuItem("Display Nci", new Menu.NodeEditorAL(DisplayNci.class)));
             menu.add(this.addMenuItem("Display Flags", new modifyFlags()));
             menu.add(this.addMenuItem("Display Tags", new Menu.NodeEditorAL(DisplayTags.class)));
-            menu.add(this.addMenuItem("Display Signal", new DisplaySignal()));
+            if(menu instanceof JPopupMenu) ((JPopupMenu)menu).addSeparator();
+            menu.add(this.addMenuItem("Set Default", new DisplayMenu.setDefault()));
         };
 
         @Override
@@ -119,7 +119,7 @@ public class TreeManager extends JScrollPane{
                 final int usage = node.getUsage();
                 final boolean enable = !(usage == NodeInfo.USAGE_STRUCTURE || usage == NodeInfo.USAGE_SUBTREE);
                 final boolean enable2 = (usage == NodeInfo.USAGE_SIGNAL);
-                mask = new boolean[]{true, enable, true, true, enable, enable2};
+                mask = new boolean[]{enable, enable2, true, true, true, true};
             }
             for(int i = 0; i < mask.length; i++)
                 this.items.get(i).setEnabled(mask[i]);
