@@ -24,8 +24,9 @@ public final class Database{
         @Override
         public final String toString() {
             final StringBuilder str = new StringBuilder(this.size() * 64);
+            final String root = new StringBuilder(Database.this.expt.length() + 3).append("\\").append(Database.this.expt).append("::").toString();
             for(final Entry<String, Nid> entry : this.entrySet())
-                str.append(entry.getKey().replace("\\" + Database.this.expt + "::", "\\")).append("  =>  ").append(entry.getValue()).append("\n");
+                str.append(entry.getKey().replace(root, "\\")).append("  =>  ").append(entry.getValue()).append("\n");
             return str.toString();
         }
     }
@@ -339,12 +340,12 @@ public final class Database{
 
     public final int getFlags(final Nid nid) throws MdsException {
         this._checkContext();
-        return Database.mds.getInteger(String.format("LONG(GETNCI(%d,'GET_FLAGS'))", nid.getValue()));
+        return Database.mds.getInteger(String.format("GETNCI(%d,'GET_FLAGS')", nid.getValue()));
     }
 
     public final NodeInfo getInfo(final Nid nid) throws MdsException {
         this._checkContext();
-        final int[] I = Database.mds.getIntegerArray(String.format("_i=%d;LONG([GETNCI(_i,'CLASS'),GETNCI(_i,'DTYPE'),GETNCI(_i,'USAGE'),GETNCI(_i,'GET_FLAGS'),GETNCI(_i,'OWNER_ID'),GETNCI(_i,'LENGTH'),IF_ERROR(SHAPE(GETNCI(GETNCI(_i,'CONGLOMERATE_NID'),'NID_NUMBER'))[0],0),GETNCI(_i,'CONGLOMERATE_ELT')])", nid.getValue()));
+        final int[] I = Database.mds.getIntegerArray(String.format("_i=%d;[GETNCI(_i,'CLASS'),GETNCI(_i,'DTYPE'),GETNCI(_i,'USAGE'),GETNCI(_i,'GET_FLAGS'),GETNCI(_i,'OWNER_ID'),GETNCI(_i,'LENGTH'),IF_ERROR(SHAPE(GETNCI(GETNCI(_i,'CONGLOMERATE_NID'),'NID_NUMBER'))[0],0),GETNCI(_i,'CONGLOMERATE_ELT')]", nid.getValue()));
         final String date = Database.mds.getString(String.format("DATE_TIME(GETNCI(%d,'TIME_INSERTED'))", nid.getValue()));
         final String node_name = Database.mds.getString(String.format("GETNCI(%d,'NODE_NAME')", nid.getValue()));
         final String fullpath = Database.mds.getString(String.format("GETNCI(%d,'FULLPATH')", nid.getValue()));
