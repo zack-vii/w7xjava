@@ -30,8 +30,16 @@ public final class TreeShr{
         return this.connection.mdsValue(String.format("_s=TreeShr->TreeBeginTimestampedSegment(val(%d),xd($),val(%d))", nid, idx), new Descriptor[]{initialValue}).toInt();
     }
 
+    public final int treeCleanDatafile(final String expt, final int shot) throws MdsException {
+        return this.connection.getInteger(String.format("_s=TreeShr->TreeCleanDatafile(ref('%s'),val(%d))", expt, shot));
+    }
+
     public final int treeClose(final String expt, final int shot) throws MdsException {
         return this.connection.getInteger(String.format("_s=TreeShr->TreeClose(ref('%s'),val(%d))", expt, shot));
+    }
+
+    public final int treeCompressDatafile(final String expt, final int shot) throws MdsException {
+        return this.connection.getInteger(String.format("_s=TreeShr->TreeCompressDatafile(ref('%s'),val(%d))", expt, shot));
     }
 
     public final int treeCreateTreeFiles(final String expt, final int newshot, final int fromshot) throws MdsException {

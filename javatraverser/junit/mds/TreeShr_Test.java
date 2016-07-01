@@ -67,10 +67,10 @@ public class TreeShr_Test{
 
     @Test
     public final void test101TreeAddNode() throws MdsException {
-        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 1}, TreeShr_Test.treeshr.treeAddNode("\\TEST::TOP.A", NodeInfo.USAGE_SIGNAL));
-        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 2}, TreeShr_Test.treeshr.treeAddNode("\\TEST::TOP.B", NodeInfo.USAGE_AXIS));
-        Assert.assertEquals(NodeInfo.USAGE_SIGNAL, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP.A,'USAGE')"));
-        Assert.assertEquals(NodeInfo.USAGE_AXIS, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP.B,'USAGE')"));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 1}, TreeShr_Test.treeshr.treeAddNode("A", NodeInfo.USAGE_SIGNAL));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 2}, TreeShr_Test.treeshr.treeAddNode("B", NodeInfo.USAGE_SUBTREE));
+        Assert.assertEquals(NodeInfo.USAGE_SIGNAL, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP:A,'USAGE')"));
+        Assert.assertEquals(NodeInfo.USAGE_SUBTREE, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP:B,'USAGE')"));
     }
 
     @Test
@@ -84,42 +84,33 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test120TreeDeleteNodeInitialize() throws MdsException {
-        Assert.fail("Not yet implemented"); // TODO
-    }
-
-    @Test
-    public final void test121TreeDeleteNodeGetNid() throws MdsException {
-        Assert.fail("Not yet implemented"); // TODO
-    }
-
-    @Test
-    public final void test122TreeDeleteNodeExecute() throws MdsException {
-        Assert.fail("Not yet implemented"); // TODO
-    }
-
-    @Test
-    public final void test130TreeSetDefault() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetDefault(1));
-    }
-
-    @Test
-    public final void test131TreeGetDefaultNid() throws MdsException {
-        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 1}, TreeShr_Test.treeshr.treeGetDefaultNid());
-    }
-
-    @Test
-    public final void test149TreeAddTag() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeAddTag(2, "DEVICE"));
-    }
-
-    @Test
-    public final void test150TreeWriteTree() throws MdsException {
+    public final void test120TreeWriteTree() throws MdsException {
         Assert.assertEquals(1, TreeShr_Test.treeshr.treeWriteTree(TreeShr_Test.expt, TreeShr_Test.shot));
     }
 
     @Test
-    public final void test151TreeFindTagWildDsc() throws MdsException {
+    public final void test121TreeDeleteNodeInitialize() throws MdsException {
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 37}, TreeShr_Test.treeshr.treeDeleteNodeInitialize(3));
+    }
+
+    @Test
+    public final void test122TreeDeleteNodeGetNid() throws MdsException {
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 3}, TreeShr_Test.treeshr.treeDeleteNodeGetNid(0));
+    }
+
+    @Test
+    public final void test123TreeDeleteNodeExecute() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeDeleteNodeExecute());
+    }
+
+    @Test
+    public final void test130TreeAddTag() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeAddTag(2, "DEVICE"));
+        Assert.assertEquals("B", TreeShr_Test.mds.getString("Trim(GetNci(\\DEVICE,'NODE_NAME'))"));
+    }
+
+    @Test
+    public final void test131TreeFindTagWildDsc() throws MdsException {
         Assert.assertEquals("\\TEST::DEVICE", TreeShr_Test.treeshr.treeFindTagWildDsc("DEVICE"));
         Assert.assertEquals(2, TreeShr_Test.treeshr.treeFindTagWildDscNid());
         Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWildDsc("***"));
@@ -127,8 +118,19 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test152TreeRemoveNodesTags() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeRemoveNodesTags(2));
+    public final void test132TreeRemoveNodesTags() throws MdsException {
+        Assert.assertEquals(265388152, TreeShr_Test.treeshr.treeRemoveNodesTags(2));
+        Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWildDsc("DEVICE"));
+    }
+
+    @Test
+    public final void test140TreeSetDefault() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetDefault(1));
+    }
+
+    @Test
+    public final void test141TreeGetDefaultNid() throws MdsException {
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 1}, TreeShr_Test.treeshr.treeGetDefaultNid());
     }
 
     @Test
@@ -173,12 +175,20 @@ public class TreeShr_Test{
 
     @Test
     public final void test180TreeSetSubtree() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetSubtree(1));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetSubtree(2));
+    }
+
+    @Test
+    public final void test181TreeSetNoSubtree() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetNoSubtree(2));
     }
 
     @Test
     public final void test185TreeSetNciItm() throws MdsException {
-        Assert.fail("Not yet implemented"); // TODO
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetNciItm(1, true, 0x7FFFFFFF));
+        Assert.assertEquals(0x7FFFFFFF, TreeShr_Test.mds.getInteger("GetNci(1,'GET_FLAGS')"));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetNciItm(1, false, 0x77777777));
+        Assert.assertEquals(0x08888888, TreeShr_Test.mds.getInteger("GetNci(1,'GET_FLAGS')"));
     }
 
     @Test
@@ -197,7 +207,22 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test201TreeOpen() throws MdsException {
+    public final void test210TreeCleanDatafile() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeCleanDatafile(TreeShr_Test.expt, TreeShr_Test.shot));
+    }
+
+    @Test
+    public final void test211TreeCompressDatafile() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeCompressDatafile(TreeShr_Test.expt, TreeShr_Test.shot + 1));
+    }
+
+    @Test
+    public final void test220TreeOpen() throws MdsException {
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeOpen(TreeShr_Test.expt, TreeShr_Test.shot + 1, true));
+    }
+
+    @Test
+    public final void test222TreeGetDatafileSize() throws MdsException {
+        Assert.assertEquals(8428, TreeShr_Test.treeshr.treeGetDatafileSize());
     }
 }
