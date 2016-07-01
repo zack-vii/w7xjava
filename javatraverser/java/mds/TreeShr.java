@@ -7,8 +7,8 @@ import mds.mdsip.Connection;
 
 public final class TreeShr{
     private final Connection connection;
-    private long             treeFindTagWildDscRef = 0;
-    private int              treeFindTagWildDscNid = -1;
+    private long             treeFindTagWildRef = 0;
+    private int              treeFindTagWildNid = -1;
 
     public TreeShr(final Connection connection){
         this.connection = connection;
@@ -70,23 +70,23 @@ public final class TreeShr{
         return this.connection.getInteger("TreeShr->TreeEndConglomerate()");
     }
 
-    public final String treeFindTagWildDsc(final String searchstr) throws MdsException {
-        if(this.connection.getInteger(String.format("_t='';_q=%dQ;_i=-1;_s=TreeShr->TreeFindTagWildDsc(ref('%s'),ref(_i),ref(_q),xd(_t))", this.treeFindTagWildDscRef, searchstr)) == 0){
-            this.treeFindTagWildDscReset();
+    public final String treeFindTagWild(final String searchstr) throws MdsException {
+        if(this.connection.getInteger(String.format("_t='';_q=%dQ;_i=-1;_s=TreeShr->TreeFindTagWildDsc(ref('%s'),ref(_i),ref(_q),xd(_t))", this.treeFindTagWildRef, searchstr)) == 0){
+            this.treeFindTagWildReset();
             return null;
         }
-        this.treeFindTagWildDscNid = this.connection.getInteger("_i");
-        this.treeFindTagWildDscRef = this.connection.getLong("_q");
+        this.treeFindTagWildNid = this.connection.getInteger("_i");
+        this.treeFindTagWildRef = this.connection.getLong("_q");
         return this.connection.getString("_t");
     }
 
-    public final int treeFindTagWildDscNid() {
-        return this.treeFindTagWildDscNid;
+    public final int treeFindTagWildNid() {
+        return this.treeFindTagWildNid;
     }
 
-    public final void treeFindTagWildDscReset() {
-        this.treeFindTagWildDscRef = 0;
-        this.treeFindTagWildDscNid = -1;
+    public final void treeFindTagWildReset() {
+        this.treeFindTagWildRef = 0;
+        this.treeFindTagWildNid = -1;
     }
 
     public final int treeGetCurrentShotId(final String expt) throws MdsException {

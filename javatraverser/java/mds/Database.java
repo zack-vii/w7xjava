@@ -407,11 +407,11 @@ public final class Database{
 
     public final String[] getTags(final Nid nid, final String search, final int max) throws MdsException {
         this._checkContext();
-        this.treeshr.treeFindTagWildDscReset();
+        this.treeshr.treeFindTagWildReset();
         final List<String> tags = new ArrayList<String>(max);
         String tag;
-        while(tags.size() < max && (tag = this.treeshr.treeFindTagWildDsc(search)) != null)
-            if(nid.getValue() == this.treeshr.treeFindTagWildDscNid()){
+        while(tags.size() < max && (tag = this.treeshr.treeFindTagWild(search)) != null)
+            if(nid.getValue() == this.treeshr.treeFindTagWildNid()){
                 final String[] parts = tag.split("\\.|:");
                 tags.add(parts[parts.length - 1]);
             }
@@ -420,11 +420,11 @@ public final class Database{
 
     public final TagList getTagsWild(final String search, final int max) throws MdsException {
         this._checkContext();
-        this.treeshr.treeFindTagWildDscReset();
+        this.treeshr.treeFindTagWildReset();
         final TagList taglist = new TagList(max);
         String tag;
-        while(taglist.size() < max && (tag = this.treeshr.treeFindTagWildDsc(search)) != null)
-            taglist.put(tag, new Nid(this.treeshr.treeFindTagWildDscNid()));
+        while(taglist.size() < max && (tag = this.treeshr.treeFindTagWild(search)) != null)
+            taglist.put(tag, new Nid(this.treeshr.treeFindTagWildNid()));
         return taglist;
     }
 

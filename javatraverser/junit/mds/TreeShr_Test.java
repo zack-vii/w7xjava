@@ -111,16 +111,16 @@ public class TreeShr_Test{
 
     @Test
     public final void test131TreeFindTagWildDsc() throws MdsException {
-        Assert.assertEquals("\\TEST::DEVICE", TreeShr_Test.treeshr.treeFindTagWildDsc("DEVICE"));
-        Assert.assertEquals(2, TreeShr_Test.treeshr.treeFindTagWildDscNid());
-        Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWildDsc("***"));
-        Assert.assertEquals("\\TEST::TOP", TreeShr_Test.treeshr.treeFindTagWildDsc("***"));
+        Assert.assertEquals("\\TEST::DEVICE", TreeShr_Test.treeshr.treeFindTagWild("DEVICE"));
+        Assert.assertEquals(2, TreeShr_Test.treeshr.treeFindTagWildNid());
+        Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWild("***"));
+        Assert.assertEquals("\\TEST::TOP", TreeShr_Test.treeshr.treeFindTagWild("***"));
     }
 
     @Test
     public final void test132TreeRemoveNodesTags() throws MdsException {
         Assert.assertEquals(265388152, TreeShr_Test.treeshr.treeRemoveNodesTags(2));
-        Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWildDsc("DEVICE"));
+        Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWild("DEVICE"));
     }
 
     @Test
