@@ -1,4 +1,4 @@
-package devicebeans;
+package devicebeans.devicewave;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.beans.Customizer;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import devicebeans.DeviceCustomizer;
 
 @SuppressWarnings("serial")
 public class DeviceWaveDisplayCustomizer extends DeviceCustomizer implements Customizer{

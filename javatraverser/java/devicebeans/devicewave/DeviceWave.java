@@ -1,4 +1,4 @@
-package devicebeans;
+package devicebeans.devicewave;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -27,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import devicebeans.DeviceComponent;
 import jscope.Waveform;
 import jscope.WaveformEditor;
 import jscope.WaveformEditorListener;

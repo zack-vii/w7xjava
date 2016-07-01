@@ -18,22 +18,22 @@ public abstract class DeviceComponent extends JPanel{
     protected static Object copyData() {
         return null;
     }
-    protected Nid        baseNid;
-    protected int        baseNidNum     = 0;
-    protected Descriptor curr_data, init_data;
-    protected boolean    curr_on, init_on;
-    protected boolean    editable       = true;
-    private boolean      enabled        = true;
-    protected String     identifier;
-    private boolean      is_initialized = false;
-    protected boolean    isHighlighted  = false;
+    protected Nid         baseNid;
+    protected int         baseNidNum     = 0;
+    protected Descriptor  curr_data, init_data;
+    protected boolean     curr_on, init_on;
+    protected boolean     editable       = true;
+    private boolean       enabled        = true;
+    protected String      identifier;
+    private boolean       is_initialized = false;
+    protected boolean     isHighlighted  = false;
     // Event handling in DW setup
-    DeviceSetup          master         = null;
-    public int           mode           = DeviceComponent.DATA;
-    protected Nid        nidData;
-    public int           offsetNid      = 0;
-    Database             subtree;
-    protected String     updateIdentifier;
+    protected DeviceSetup master         = null;
+    public int            mode           = DeviceComponent.DATA;
+    protected Nid         nidData;
+    public int            offsetNid      = 0;
+    protected Database    subtree;
+    protected String      updateIdentifier;
 
     public void apply() throws Exception {
         if(!this.enabled) return;
@@ -254,7 +254,7 @@ public abstract class DeviceComponent extends JPanel{
         this.offsetNid = nid;
     }
 
-    void setSubtree(final Database subtree) {
+    public void setSubtree(final Database subtree) {
         this.subtree = subtree;
     }
 

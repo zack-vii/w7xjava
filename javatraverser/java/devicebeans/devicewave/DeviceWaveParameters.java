@@ -1,8 +1,10 @@
-package devicebeans;
+package devicebeans.devicewave;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import devicebeans.DeviceField;
+import devicebeans.DeviceParameters;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 

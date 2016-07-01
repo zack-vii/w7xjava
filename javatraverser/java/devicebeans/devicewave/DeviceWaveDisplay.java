@@ -1,8 +1,9 @@
-package devicebeans;
+package devicebeans.devicewave;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import devicebeans.DeviceComponent;
 import jscope.Waveform;
 import mds.data.descriptor.Descriptor;
 
@@ -55,7 +56,6 @@ public class DeviceWaveDisplay extends DeviceComponent{
         return false;
     }
 
-    @Override
     void postApply() {
         this.displayData(this.oldData, true);
     }

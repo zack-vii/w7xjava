@@ -1,4 +1,4 @@
-package devicebeans;
+package devicebeans.devicewave;
 
 import java.awt.Image;
 import java.beans.BeanDescriptor;

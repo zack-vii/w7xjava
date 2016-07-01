@@ -46,15 +46,17 @@ DEVICE_SRC= \
   devicebeans/DeviceTable.java \
   devicebeans/DeviceTableBeanInfo.java \
   devicebeans/DeviceTableCustomizer.java \
-  devicebeans/DeviceUpdateListener.java \
-  devicebeans/DeviceWave.java \
-  devicebeans/DeviceWaveBeanInfo.java \
-  devicebeans/DeviceWaveCustomizer.java \
-  devicebeans/DeviceWaveDisplay.java \
-  devicebeans/DeviceWaveDisplayBeanInfo.java \
-  devicebeans/DeviceWaveDisplayCustomizer.java \
-  devicebeans/DeviceWaveParameters.java \
-  devicebeans/DeviceWaveParametersBeanInfo.java
+  devicebeans/DeviceUpdateListener.java
+  
+DEVWAV_SRC= \
+  devicebeans/devicewave/DeviceWave.java \
+  devicebeans/devicewave/DeviceWaveBeanInfo.java \
+  devicebeans/devicewave/DeviceWaveCustomizer.java \
+  devicebeans/devicewave/DeviceWaveDisplay.java \
+  devicebeans/devicewave/DeviceWaveDisplayBeanInfo.java \
+  devicebeans/devicewave/DeviceWaveDisplayCustomizer.java \
+  devicebeans/devicewave/DeviceWaveParameters.java \
+  devicebeans/devicewave/DeviceWaveParametersBeanInfo.java
 
 JTRAVERSER_SRC= \
   jtraverser/DataChangeEvent.java \
@@ -192,7 +194,7 @@ MDSIP_SRC= \
   mds/mdsip/UpdateEvent.java \
   mds/mdsip/UpdateEventListener.java
 
-DEVICE_GIFS= \
+DEVICE_GIF= \
   devicebeans/DeviceApply.gif \
   devicebeans/DeviceButtons.gif \
   devicebeans/DeviceCancel.gif \
@@ -204,7 +206,10 @@ DEVICE_GIFS= \
   devicebeans/DeviceReset.gif \
   devicebeans/DeviceSetup.gif
 
-TRAV_GIFS= \
+DEVICE_GIF= \
+  devicebeans/devicewave/DeviceWave.gif
+
+TRAV_GIF= \
   jtraverser/action.gif \
   jtraverser/axis.gif \
   jtraverser/compound.gif \
@@ -220,10 +225,11 @@ TRAV_GIFS= \
 
 MDSIP_CLS=$(MDSIP_SRC:.java=*.class)
 DEVICE_CLS=$(DEVICE_SRC:.java=*.class)
+DEVWAV_CLS=$(DEVWAV_SRC:.java=*.class)
 TRAV_CLS=$(TRAV_SRC:.java=*.class)
 
 all : $(MDSIP_SRC) $(DEVICE_SRC) $(TRAV_SRC)
 	$(JAVAC) $(CLASSPATH) $(MDSIP_SRC) $(DEVICE_SRC) $(TRAV_SRC)
 	$(JAR) -c0f $(JARDIR)/MDSIP.jar $(MDSIP_SRC)
-	$(JAR) -c0mf devicebeans/MANIFEST.mf $(JARDIR)/devicebeans.jar $(DEVICE_SRC) $(DEVICE_GIFS)
-	$(JAR) -c0mf jtraverser/MANIFEST.mf $(JARDIR)/jTraverser.jar $(TRAV_SRC) $(TRAV_GIFS)
+	$(JAR) -c0mf devicebeans/MANIFEST.mf $(JARDIR)/devicebeans.jar $(DEVICE_SRC) $(DEVICE_GIF)
+	$(JAR) -c0mf jtraverser/MANIFEST.mf $(JARDIR)/jTraverser.jar $(TRAV_SRC) $(TRAV_GIF)

@@ -1,10 +1,11 @@
-package devicebeans;
+package devicebeans.devicewave;
 
 import java.awt.Image;
 import java.beans.BeanDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+import devicebeans.DeviceChannel;
 
 public class DeviceWaveDisplayBeanInfo extends SimpleBeanInfo{
     public static PropertyDescriptor property(final String name, final String description) throws IntrospectionException {

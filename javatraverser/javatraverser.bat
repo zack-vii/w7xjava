@@ -55,14 +55,6 @@ SET DEVICE_SRC=^
   devicebeans\DeviceTableBeanInfo.java ^
   devicebeans\DeviceTableCustomizer.java ^
   devicebeans\DeviceUpdateListener.java ^
-  devicebeans\DeviceWave.java ^
-  devicebeans\DeviceWaveBeanInfo.java ^
-  devicebeans\DeviceWaveCustomizer.java ^
-  devicebeans\DeviceWaveDisplay.java ^
-  devicebeans\DeviceWaveDisplayBeanInfo.java ^
-  devicebeans\DeviceWaveDisplayCustomizer.java ^
-  devicebeans\DeviceWaveParameters.java ^
-  devicebeans\DeviceWaveParametersBeanInfo.java ^
   devicebeans\FloatArrayEditor.java ^
   devicebeans\IntArrayEditor.java ^
   devicebeans\NodeDataPropertyEditor.java ^
@@ -70,6 +62,16 @@ SET DEVICE_SRC=^
   devicebeans\tools\LoadFile.java ^
   devicebeans\tools\LoadPulse.java ^
   devicebeans\tools\StoreFile.java
+
+SET DEVWAVE_SCR=^
+  devicebeans\devicewave\DeviceWave.java ^
+  devicebeans\devicewave\DeviceWaveBeanInfo.java ^
+  devicebeans\devicewave\DeviceWaveCustomizer.java ^
+  devicebeans\devicewave\DeviceWaveDisplay.java ^
+  devicebeans\devicewave\DeviceWaveDisplayBeanInfo.java ^
+  devicebeans\devicewave\DeviceWaveDisplayCustomizer.java ^
+  devicebeans\devicewave\DeviceWaveParameters.java ^
+  devicebeans\devicewave\DeviceWaveParametersBeanInfo.java
 
 SET TRAV_SRC=^
   jtraverser\DataChangeEvent.java ^
@@ -210,7 +212,7 @@ SET MDSIP_SRC=^
   mds\mdsip\UpdateEvent.java ^
   mds\mdsip\UpdateEventListener.java
 
-SET DEVICE_GIFS=^
+SET DEVICE_GIF=^
   devicebeans\DeviceApply.gif ^
   devicebeans\DeviceButtons.gif ^
   devicebeans\DeviceCancel.gif ^
@@ -222,7 +224,11 @@ SET DEVICE_GIFS=^
   devicebeans\DeviceReset.gif ^
   devicebeans\DeviceSetup.gif
 
-SET TRAV_GIFS=^
+SET DEVWAVE_GIF=^
+  devicebeans\devicewave\DeviceWave.gif
+  
+
+SET TRAV_GIF=^
   jtraverser\action.gif ^
   jtraverser\any.gif ^
   jtraverser\axis.gif ^
@@ -239,7 +245,7 @@ SET TRAV_GIFS=^
 
 SET JARDIR=%CD%\..\java\classes
 SET SRCDIR=.\java
-SET CLASSPATH=-classpath ".;%JARDIR%\jScope.jar"
+SET CLASSPATH=-classpath "." ||rem ;%JARDIR%\jScope.jar"
 SET JAVAC="%JDK_HOME%\bin\javac.exe" ||rem -Xlint -deprecation
 SET JCFLAGS= -O -source 1.6 -target 1.6 -g:none||rem -Xlint -deprecation
 SET JAR="%JDK_HOME%\bin\jar.exe"
@@ -251,10 +257,11 @@ SET TRAV_CLS=%TRAV_SRC:.java=*.class%
 SET TOOLS_CLS=%TOOLS_SRC:.java=*.class%
 SET MDSIP_CLS=%MDSIP_SRC:.java=*.class%
 SET LOCAL_CLS=%LOCAL_SRC:.java=*.class%
+SET DEVWAV_CLS=%DEVWAV_SRC:.java=*.class%
 
 ECHO compiling *.java to *.class . . .
 PUSHD %SRCDIR%
-%JAVAC% %JCFLAGS% -d %JARDIR% %CLASSPATH% %MDSIP_SRC% %TRAV_SRC% %TOOLS_SRC% %DEVICE_SRC% debug\DEBUG.java ||rem %LOCAL_SRC%
+%JAVAC% %JCFLAGS% -d %JARDIR% %CLASSPATH% %MDSIP_SRC% %TRAV_SRC% %TOOLS_SRC% %DEVICE_SRC% debug\DEBUG.java ||rem %LOCAL_SRC% %DEVWAV_SRC%
 SET /A ERROR=%ERRORLEVEL%
 POPD
 IF %ERROR% NEQ 0 GOTO:cleanup
@@ -263,6 +270,7 @@ ECHO gathering data
 MKDIR %JARDIR%\devicebeans 2>NUL
 MKDIR %JARDIR%\jTraverser 2>NUL
 COPY /Y %SRCDIR%\devicebeans\*.gif %JARDIR%\devicebeans>NUL
+rem COPY /Y %SRCDIR%\devicebeans\devicewave\*.gif %JARDIR%\devicebeans\devicewave>NUL
 COPY /Y %SRCDIR%\jtraverser\*.gif  %JARDIR%\jtraverser>NUL
 COPY /Y %SRCDIR%\%DBMANIFEST% %JARDIR%\%DBMANIFEST% >NUL
 COPY /Y %SRCDIR%\%JTMANIFEST% %JARDIR%\%JTMANIFEST% >NUL
@@ -270,8 +278,8 @@ ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>%JARDIR%\%JTM
 
 ECHO creating jar packages
 PUSHD %JARDIR%
-%JAR% -cmf %DBMANIFEST% devicebeans.jar %DEVICE_CLS% %DEVICE_GIFS%
-%JAR% -cmf %JTMANIFEST% jTraverser.jar %TRAV_CLS% %TRAV_GIFS% %MDSIP_CLS% %TOOLS_CLS% %DEVICE_CLS% %DEVICE_GIFS%
+%JAR% -cmf %DBMANIFEST% devicebeans.jar %DEVICE_CLS% %DEVICE_GIF%
+%JAR% -cmf %JTMANIFEST% jTraverser.jar %TRAV_CLS% %TRAV_GIF% %MDSIP_CLS% %TOOLS_CLS% %DEVICE_CLS% %DEVICE_GIF% ||rem %DEVWAV_CLS% %DEVWAV_GIF%
 rem %JAR% -cf localDatabase.jar %LOCAL_CLS%
 %JAR% -cf MDSIP.jar %MDSIP_CLS%
 rem %JAR% -cf jTraverserTools.jar %TOOLS_CLS%
