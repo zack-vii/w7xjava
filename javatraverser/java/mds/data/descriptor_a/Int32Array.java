@@ -13,7 +13,7 @@ public final class Int32Array extends NUMBERArray<Integer>{
     }
 
     @Override
-    public StringBuilder decompileT(final StringBuilder pout, final Integer value) {
+    protected StringBuilder decompileT(final StringBuilder pout, final Integer value) {
         return pout.append(value);
     }
 

@@ -100,7 +100,7 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
     }
 
     @Override
-    public StringBuilder decompileT(final StringBuilder pout, final T value) {
+    protected StringBuilder decompileT(final StringBuilder pout, final T value) {
         pout.append(value);
         if(!this.format()) pout.append(this.getSuffix());
         return pout;
