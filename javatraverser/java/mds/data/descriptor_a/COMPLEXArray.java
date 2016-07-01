@@ -15,11 +15,6 @@ public abstract class COMPLEXArray<T extends Number>extends NUMBERArray<Complex<
         return COMPLEX.decompile(pout, t, this.dtype, Descriptor.DECO_NRM);
     }
 
-    @Override
-    protected final boolean format() {
-        return false;
-    }
-
     public final T getImag(final int idx) {
         return this.getValue(idx).imag;
     }

@@ -13,6 +13,11 @@ public final class Int32Array extends NUMBERArray<Integer>{
     }
 
     @Override
+    public StringBuilder decompileT(final StringBuilder pout, final Integer value) {
+        return pout.append(value);
+    }
+
+    @Override
     protected final Integer getElement(final ByteBuffer b) {
         return b.getInt();
     }

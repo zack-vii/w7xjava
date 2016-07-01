@@ -173,7 +173,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
 
     @SuppressWarnings("static-method")
     protected boolean format() {
-        return true;
+        return false;
     }
 
     @Override

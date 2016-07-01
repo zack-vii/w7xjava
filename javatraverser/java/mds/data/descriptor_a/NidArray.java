@@ -8,11 +8,6 @@ public final class NidArray extends NUMBERArray<Integer>{
     }
 
     @Override
-    protected final boolean format() {
-        return false;
-    }
-
-    @Override
     protected final Integer getElement(final ByteBuffer b) {
         return b.getInt();
     }

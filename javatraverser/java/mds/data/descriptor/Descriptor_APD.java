@@ -22,11 +22,6 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     }
 
     @Override
-    protected final boolean format() {
-        return false;
-    }
-
-    @Override
     protected final String getDName() {
         return Descriptor_APD.name;
     }

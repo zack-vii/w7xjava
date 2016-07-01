@@ -14,6 +14,11 @@ public final class Uint32Array extends NUMBERArray<UInteger>{
     }
 
     @Override
+    protected final boolean format() {
+        return true;
+    }
+
+    @Override
     protected final UInteger getElement(final ByteBuffer b) {
         return UInteger.fromBuffer(b);
     }

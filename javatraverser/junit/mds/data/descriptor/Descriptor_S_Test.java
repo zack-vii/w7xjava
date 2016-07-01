@@ -8,6 +8,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import mds.AllTests;
 import mds.MdsException;
+import mds.data.descriptor_s.Int64;
+import mds.data.descriptor_s.Uint64;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -38,6 +40,12 @@ public final class Descriptor_S_Test{
     @Test
     public final void testFloat32() throws MdsException {
         Assert.assertEquals("7.", Descriptor_S_Test.mds.compile("7.0").decompile());
+    }
+
+    @Test
+    public final void testInt64() throws MdsException {
+        Assert.assertEquals("-123456789012345Q", new Int64(-123456789012345l).decompile());
+        Assert.assertEquals("123456789012345QU", new Uint64(123456789012345l).decompile());
     }
 
     @Test

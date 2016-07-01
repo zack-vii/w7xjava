@@ -18,13 +18,8 @@ public abstract class FLOATArray<T extends Number>extends NUMBERArray<T>{
     }
 
     @Override
-    public final String decompileT(final T value) {
-        return FLOAT.decompile(value, this.dtype, Descriptor.DECO_NRM);
-    }
-
-    @Override
-    protected final boolean format() {
-        return false;
+    public final StringBuilder decompileT(final StringBuilder pout, final T value) {
+        return pout.append(FLOAT.decompile(value, this.dtype, Descriptor.DECO_NRM));
     }
 
     @Override

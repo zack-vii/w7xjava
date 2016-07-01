@@ -13,6 +13,11 @@ public final class Int8Array extends NUMBERArray<Byte>{
     }
 
     @Override
+    protected final boolean format() {
+        return true;
+    }
+
+    @Override
     public final Byte getElement(final ByteBuffer b) {
         return b.get();
     }

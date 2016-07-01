@@ -14,6 +14,11 @@ public final class Uint16Array extends NUMBERArray<UShort>{
     }
 
     @Override
+    protected final boolean format() {
+        return true;
+    }
+
+    @Override
     protected final UShort getElement(final ByteBuffer b) {
         return UShort.fromBuffer(b);
     }

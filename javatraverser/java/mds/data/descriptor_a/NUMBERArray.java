@@ -99,6 +99,13 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
         super(b);
     }
 
+    @Override
+    public StringBuilder decompileT(final StringBuilder pout, final T value) {
+        pout.append(value);
+        if(!this.format()) pout.append(this.getSuffix());
+        return pout;
+    }
+
     protected final String getSuffix() {
         return DTYPE.getSuffix(this.dtype);
     }

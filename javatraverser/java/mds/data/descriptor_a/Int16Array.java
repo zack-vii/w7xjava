@@ -13,6 +13,11 @@ public final class Int16Array extends NUMBERArray<Short>{
     }
 
     @Override
+    protected final boolean format() {
+        return true;
+    }
+
+    @Override
     protected final Short getElement(final ByteBuffer b) {
         return b.getShort();
     }

@@ -14,6 +14,11 @@ public final class Uint8Array extends NUMBERArray<UByte>{
     }
 
     @Override
+    protected final boolean format() {
+        return true;
+    }
+
+    @Override
     protected final UByte getElement(final ByteBuffer b) {
         return UByte.fromBuffer(b);
     }
