@@ -11,6 +11,7 @@ import org.junit.runners.MethodSorters;
 import jtraverser.NodeInfo;
 import mds.data.descriptor_a.Float32Array;
 import mds.data.descriptor_a.Uint64Array;
+import mds.data.descriptor_r.Function;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -56,8 +57,13 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test099TreeClose() throws MdsException {
+    public final void test090TreeClose() throws MdsException {
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeClose(AllTests.tree, TreeShr_Test.shot));
+    }
+
+    @Test
+    public final void test091TreeCleanDatafile() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeCleanDatafile(TreeShr_Test.expt, TreeShr_Test.shot));
     }
 
     @Test
@@ -79,13 +85,18 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test105TreeCtx() throws MdsException {
-        Assert.assertTrue(0 < TreeShr_Test.treeshr.treeCtx());
+    public final void test110TreeWriteTree() throws MdsException {
+        Assert.assertEquals(1, TreeShr_Test.treeshr.treeWriteTree(TreeShr_Test.expt, TreeShr_Test.shot));
     }
 
     @Test
-    public final void test120TreeWriteTree() throws MdsException {
-        Assert.assertEquals(1, TreeShr_Test.treeshr.treeWriteTree(TreeShr_Test.expt, TreeShr_Test.shot));
+    public final void test112TreeCreateTreeFiles() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeCreateTreeFiles(AllTests.tree, TreeShr_Test.shot + 1, TreeShr_Test.shot));
+    }
+
+    @Test
+    public final void test115TreeCtx() throws MdsException {
+        Assert.assertTrue(0 < TreeShr_Test.treeshr.treeCtx());
     }
 
     @Test
@@ -134,6 +145,16 @@ public class TreeShr_Test{
     }
 
     @Test
+    public final void test150TreeSetXNci() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeSetXNci(1, "myattr", Function.$HBAR()));
+    }
+
+    @Test
+    public final void test151TreeGetXNci() throws MdsException {
+        Assert.assertEquals("myattr", TreeShr_Test.treeshr.treeGetXNci(1).toString());
+    }
+
+    @Test
     public final void test153TreeTurnOff() throws MdsException {
         Assert.assertEquals(265392050, TreeShr_Test.treeshr.treeTurnOff(1));
     }
@@ -145,11 +166,11 @@ public class TreeShr_Test{
 
     @Test
     public final void test160TreeBeginTimestampedSegment() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeBeginTimestampedSegment(1, new Float32Array(new float[]{0, 0, 0}), -1));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeBeginTimestampedSegment(1, new Float32Array(new float[3]), -1));
     }
 
     @Test
-    public final void test161TreePutTimestampedSegment() throws MdsException {
+    public final void test162TreePutTimestampedSegment() throws MdsException {
         Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutTimestampedSegment(1, System.nanoTime(), new Float32Array(new float[]{1.f, 2.f, 3.f})));
     }
 
@@ -160,7 +181,7 @@ public class TreeShr_Test{
 
     @Test
     public final void test165TreeMakeTimestampedSegment() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(new long[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}), new Float32Array(new float[]{.0f, .0f, .0f, .0f, .0f, .0f, .0f, .0f, .0f, .0f}), -1, 0));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(new long[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}), new Float32Array(new float[10]), -1, 0));
     }
 
     @Test
@@ -202,16 +223,6 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test200TreeCreateTreeFiles() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeCreateTreeFiles(AllTests.tree, TreeShr_Test.shot + 1, TreeShr_Test.shot));
-    }
-
-    @Test
-    public final void test210TreeCleanDatafile() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeCleanDatafile(TreeShr_Test.expt, TreeShr_Test.shot));
-    }
-
-    @Test
     public final void test211TreeCompressDatafile() throws MdsException {
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeCompressDatafile(TreeShr_Test.expt, TreeShr_Test.shot + 1));
     }
@@ -222,7 +233,7 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test222TreeGetDatafileSize() throws MdsException {
-        Assert.assertEquals(8428, TreeShr_Test.treeshr.treeGetDatafileSize());
+    public final void test221TreeGetDatafileSize() throws MdsException {
+        Assert.assertEquals(1303, TreeShr_Test.treeshr.treeGetDatafileSize());
     }
 }
