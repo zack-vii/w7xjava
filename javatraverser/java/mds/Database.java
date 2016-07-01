@@ -16,7 +16,7 @@ import mds.mdsip.Connection;
 @SuppressWarnings("static-method")
 public final class Database{
     @SuppressWarnings("serial")
-    public static class TagList extends HashMap<String, Nid>{
+    public final class TagList extends HashMap<String, Nid>{
         public TagList(final int cap){
             super(cap);
         }
@@ -25,7 +25,7 @@ public final class Database{
         public final String toString() {
             final StringBuilder str = new StringBuilder(this.size() * 64);
             for(final Entry<String, Nid> entry : this.entrySet())
-                str.append(entry.getKey()).append("  =>  ").append(entry.getValue()).append("\n");
+                str.append(entry.getKey().replace("\\" + Database.this.expt + "::", "\\")).append("  =>  ").append(entry.getValue()).append("\n");
             return str.toString();
         }
     }
