@@ -122,6 +122,11 @@ SET LOCAL_SRC=^
   local\localDatabase.java
 
 SET MDSIP_SRC=^
+  mds\Database.java ^
+  mds\MdsException.java ^
+  mds\MdsShr.java ^
+  mds\TdiShr.java ^
+  mds\TreeShr.java ^
   mds\data\descriptor\ARRAY.java ^
   mds\data\descriptor\DTYPE.java ^
   mds\data\descriptor\OPC.java ^
@@ -198,8 +203,6 @@ SET MDSIP_SRC=^
   mds\data\descriptor_s\Uint32.java ^
   mds\data\descriptor_s\Uint64.java ^
   mds\data\descriptor_s\Uint8.java ^
-  mds\Database.java ^
-  mds\MdsException.java ^
   mds\mdsip\Connection.java ^
   mds\mdsip\ConnectionEvent.java ^
   mds\mdsip\ConnectionListener.java ^

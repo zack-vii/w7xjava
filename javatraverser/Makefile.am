@@ -142,6 +142,11 @@ TRAV_SRC= \
 
 DATA_SRC= \
   mds/Database.java \
+  mds/MdsException.java \
+  mds/MdsShr.java \
+  mds/TdiShr.java \
+  mds/TreeShr.java \
+  mds/Database.java \
   mds/DatabaseException.java \
   mds/data/ActionData.java \
   mds/data/ApdData.java \
@@ -193,8 +198,6 @@ DATA_SRC= \
   mds/data/arraydata/QuadArray.java \
   mds/data/arraydata/ShortArray.java \
   mds/data/arraydata/StringArray.java \
-  mds/Database.java \
-  mds/MdsException.java \
   mds/mdsip/Connection.java \
   mds/mdsip/ConnectionEvent.java \
   mds/mdsip/ConnectionListener.java \
