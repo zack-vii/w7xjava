@@ -61,6 +61,7 @@ public class Connection{
             try{
                 while(!this.close)
                     try{
+                        Connection.this.connectToServer();
                         Connection.this.connectToMds(Connection.this.use_compression);
                         this.setTried(true);
                         synchronized(this){
@@ -75,7 +76,7 @@ public class Connection{
             }catch(final InterruptedException ie){
                 this.close = true;
             }catch(final IOException e){
-                Connection.this.error = e.getMessage();
+                System.err.print("MdsConnect - No IO for " + Connection.this.provider.host + ":\n" + e.getMessage());
             }
         }
 
@@ -245,21 +246,19 @@ public class Connection{
             throw new MdsException(cls.getSimpleName(), e);
         }
     }
-    private boolean                         connected           = false;
-    transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
-    private MdsConnect                      connectThread       = null;
-    protected InputStream                   dis                 = null;
-    protected DataOutputStream              dos                 = null;
-    public String                           error               = null;
-    transient boolean                       event_flags[]       = new boolean[Connection.MAX_NUM_EVENTS];
-    transient Vector<EventItem>             event_list          = new Vector<EventItem>();
-    transient Hashtable<Integer, EventItem> hashEventId         = new Hashtable<Integer, EventItem>();
-    transient Hashtable<String, EventItem>  hashEventName       = new Hashtable<String, EventItem>();
-    int                                     pending_count       = 0;
-    protected final Provider                provider;
-    private MRT                             receiveThread       = null;
-    protected Socket                        sock                = null;
-    private boolean                         use_compression     = false;
+    private boolean                                 connected           = false;
+    private transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
+    private MdsConnect                              connectThread       = null;
+    private InputStream                             dis                 = null;
+    private DataOutputStream                        dos                 = null;
+    private transient boolean[]                     event_flags         = new boolean[Connection.MAX_NUM_EVENTS];
+    private transient Hashtable<Integer, EventItem> hashEventId         = new Hashtable<Integer, EventItem>();
+    private transient Hashtable<String, EventItem>  hashEventName       = new Hashtable<String, EventItem>();
+    private int                                     pending_count       = 0;
+    private final Provider                          provider;
+    private MRT                                     receiveThread       = null;
+    private Socket                                  sock                = null;
+    private boolean                                 use_compression     = false;
 
     public Connection(final Provider provider){
         this(provider, false, null);
@@ -296,12 +295,12 @@ public class Connection{
         this(new Provider(provider), cl);
     }
 
-    public final synchronized void addConnectionListener(final ConnectionListener l) {
+    synchronized public final void addConnectionListener(final ConnectionListener l) {
         if(l == null) return;
         this.connection_listener.addElement(l);
     }
 
-    public final synchronized int AddEvent(final UpdateEventListener l, final String eventName) {
+    synchronized private final int addEvent(final UpdateEventListener l, final String eventName) {
         int eventid = -1;
         EventItem eventItem;
         if(this.hashEventName.containsKey(eventName)){
@@ -332,7 +331,6 @@ public class Connection{
 
     private final void connectToMds(final boolean use_compression) throws IOException {
         this.use_compression = use_compression;
-        this.connectToServer();
         final Message message = new Message(this.provider.user);
         message.useCompression(use_compression);
         message.send(this.dos);
@@ -353,22 +351,30 @@ public class Connection{
         this.dos = new DataOutputStream(new BufferedOutputStream(this.sock.getOutputStream()));
     }
 
-    public final int disconnect() {
+    public final boolean disconnect() {
         try{
-            this.connected = false;
-            if(this.connection_listener.size() > 0) this.connection_listener.removeAllElements();
+            this.disconnectFromServer();
             if(this.connectThread != null) this.connectThread.close();
-            if(this.dos != null) this.dos.close();
-            if(this.dis != null) this.dis.close();
+            this.connectThread = null;
             if(this.receiveThread != null) this.receiveThread.waitExited();
+            this.receiveThread = null;
             this.dos = null;
             this.dis = null;
-            this.receiveThread = null;
         }catch(final IOException e){
-            this.error.concat("Could not get IO for " + this.provider.host + e);
-            return 0;
+            return false;
         }
-        return 1;
+        return true;
+    }
+
+    private final void disconnectFromServer() throws IOException {
+        this.dos.close();
+        try{
+            this.dis.close();
+        }catch(final IOException e){
+            System.err.println("The output stream has been closed but closing the input stream failed:\n" + e.getMessage());
+        }
+        if(!this.connection_listener.isEmpty()) this.connection_listener.removeAllElements();
+        this.connected = false;
     }
 
     protected final void dispatchConnectionEvent(final ConnectionEvent e) {
@@ -383,11 +389,11 @@ public class Connection{
             eventListener.elementAt(i).processUpdateEvent(e);
     }
 
-    private final synchronized void dispatchUpdateEvent(final int eventid) {
+    synchronized private final void dispatchUpdateEvent(final int eventid) {
         if(this.hashEventId.containsKey(eventid)) this.dispatchUpdateEvent(this.hashEventId.get(eventid));
     }
 
-    private final synchronized void dispatchUpdateEvent(final String eventName) {
+    synchronized private final void dispatchUpdateEvent(final String eventName) {
         if(this.hashEventName.containsKey(eventName)) this.dispatchUpdateEvent(this.hashEventName.get(eventName));
     }
 
@@ -414,7 +420,10 @@ public class Connection{
         }
         final Message message = this.receiveThread.getMessage();
         if(message == null) throw new MdsException("Null response from server", 0);
-        if((message.status & 1) == 0 && message.status != 0 && message.dtype == DTYPE.T) throw new MdsException(message.asString(), message.status);
+        if((message.status & 1) == 0 && message.status != 0 && message.dtype == DTYPE.T){
+            final String msg = message.asString();
+            throw new MdsException((msg == null || msg.isEmpty()) ? "<empty>" : msg, message.status);
+        }
         return message;
     }
 
@@ -521,8 +530,8 @@ public class Connection{
         byte idx = 0;
         final byte totalarg = (byte)(args.length + 1);
         Message msg;
-        final StringBuffer cmd = new StringBuffer(expr.length() + 64);
-        if(serialize) cmd.append("_a=*;MdsShr->MdsSerializeDscOut(xd((");
+        final StringBuffer cmd = new StringBuffer(expr.length() + 128);
+        if(serialize) cmd.append("_ans=*;MdsShr->MdsSerializeDscOut(xd((");
         cmd.append(expr);
         if(expr.indexOf("$") == -1){ // If no $ args specified, build argument list
             cmd.append('(');
@@ -533,7 +542,7 @@ public class Connection{
             }
             cmd.append(')');
         }
-        if(serialize) cmd.append(";)),xd(_a));_a");
+        if(serialize) cmd.append(";)),xd(_ans));_ans");
         try{
             this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
             for(final Descriptor d : args)
@@ -546,26 +555,26 @@ public class Connection{
         return msg;
     }
 
-    public final synchronized void mdsRemoveEvent(final UpdateEventListener l, final String event) {
+    synchronized public final void mdsRemoveEvent(final UpdateEventListener l, final String event) {
         int eventid;
-        if((eventid = this.RemoveEvent(l, event)) == -1) return;
+        if((eventid = this.removeEvent(l, event)) == -1) return;
         try{
             this.sendArg((byte)0, DTYPE.T, (byte)2, null, Message.EVENTCANREQUEST.getBytes());
             this.sendArg((byte)1, DTYPE.T, (byte)2, null, new byte[]{(byte)eventid});
         }catch(final IOException e){
-            this.error = new String("Could not get IO for " + this.provider.host + e);
+            System.err.print("Could not get IO for " + this.provider.host + ":\n" + e.getMessage());
         }
     }
 
-    public final synchronized void mdsSetEvent(final UpdateEventListener l, final String event) {
+    synchronized public final void mdsSetEvent(final UpdateEventListener l, final String event) {
         int eventid;
-        if((eventid = this.AddEvent(l, event)) == -1) return;
+        if((eventid = this.addEvent(l, event)) == -1) return;
         try{
             this.sendArg((byte)0, DTYPE.T, (byte)3, null, Message.EVENTASTREQUEST.getBytes());
             this.sendArg((byte)1, DTYPE.T, (byte)3, null, event.getBytes());
             this.sendArg((byte)2, DTYPE.BU, (byte)3, null, new byte[]{(byte)(eventid)});
         }catch(final IOException e){
-            this.error = new String("Could not get IO for " + this.provider.host + e);
+            System.err.print("Could not get IO for " + this.provider.host + ":\n" + e.getMessage());
         }
     }
 
@@ -591,23 +600,12 @@ public class Connection{
         this.notifyAll();
     }
 
-    public final void quitFromMds() {
-        try{
-            if(this.connection_listener.size() > 0) this.connection_listener.removeAllElements();
-            this.dos.close();
-            this.dis.close();
-            this.connected = false;
-        }catch(final IOException e){
-            this.error.concat("Could not get IO for " + this.provider.host + e);
-        }
-    }
-
-    public final synchronized void removeConnectionListener(final ConnectionListener l) {
+    synchronized public final void removeConnectionListener(final ConnectionListener l) {
         if(l == null) return;
         this.connection_listener.removeElement(l);
     }
 
-    public final synchronized int RemoveEvent(final UpdateEventListener l, final String eventName) {
+    synchronized private final int removeEvent(final UpdateEventListener l, final String eventName) {
         int eventid = -1;
         if(this.hashEventName.containsKey(eventName)){
             final EventItem eventItem = this.hashEventName.get(eventName);
@@ -622,7 +620,7 @@ public class Connection{
         return eventid;
     }
 
-    public final void sendArg(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte body[]) throws MdsException {
+    private final void sendArg(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte body[]) throws MdsException {
         final Message msg = new Message(descr_idx, dtype, nargs, dims, body);
         try{
             msg.send(this.dos);

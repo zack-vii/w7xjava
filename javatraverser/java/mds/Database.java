@@ -132,7 +132,6 @@ public final class Database{
     private static final void updateCurrent() throws MdsException {
         try{
             Database.cshot = Database.mds.getInteger("$SHOT");
-            // if(Database.cshot < -1) Database.cshot &= 0xFFFFFFFFl;
             Database.cexpt = Database.mds.getString("$EXPT").trim();
         }catch(final MdsException de){
             Database.cshot = 0;
