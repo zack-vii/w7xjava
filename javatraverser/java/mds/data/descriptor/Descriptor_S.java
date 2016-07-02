@@ -17,6 +17,7 @@ import mds.data.descriptor_s.Int8;
 import mds.data.descriptor_s.Missing;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
+import mds.data.descriptor_s.Pointer;
 import mds.data.descriptor_s.Uint128;
 import mds.data.descriptor_s.Uint16;
 import mds.data.descriptor_s.Uint32;
@@ -69,6 +70,8 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
                 return new Complex64(b);
             case DTYPE.T:
                 return new CString(b);
+            case DTYPE.POINTER:
+                return new Pointer(b);
             case DTYPE.IDENT:
                 return new Ident(b);
             case DTYPE.PATH:
