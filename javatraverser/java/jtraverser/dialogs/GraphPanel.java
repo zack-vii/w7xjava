@@ -52,7 +52,7 @@ public class GraphPanel extends JPanel{
 
     public static final GraphPanel plotDescriptor(final Descriptor sig) {
         if(sig == null) return new GraphPanel();
-        final float[] fl = sig.toFloats();
+        final float[] fl = sig.toFloatArray();
         if(fl == null) return new GraphPanel();
         final GraphPanel mainPanel = new GraphPanel();
         final int imax = (int)mainPanel.getPreferredSize().getWidth();

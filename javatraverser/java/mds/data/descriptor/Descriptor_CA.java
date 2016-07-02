@@ -236,27 +236,27 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     }
 
     @Override
-    public double[] toDoubles() {
+    public double[] toDoubleArray() {
         if(this.payload == null) return null;
-        return this.resolve().toDoubles();
+        return this.resolve().toDoubleArray();
     }
 
     @Override
-    public float[] toFloats() {
+    public float[] toFloatArray() {
         if(this.payload == null) return null;
-        return this.resolve().toFloats();
+        return this.resolve().toFloatArray();
     }
 
     @Override
-    public int[] toInts() {
+    public int[] toIntArray() {
         if(this.payload == null) return null;
-        return this.resolve().toInts();
+        return this.resolve().toIntArray();
     }
 
     @Override
-    public long[] toLongs() {
+    public long[] toLongArray() {
         if(this.payload == null) return null;
-        return this.resolve().toLongs();
+        return this.resolve().toLongArray();
     }
 
     @Override

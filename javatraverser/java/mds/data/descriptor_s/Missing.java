@@ -27,22 +27,22 @@ public final class Missing extends Descriptor_S{
     }
 
     @Override
-    public double[] toDoubles() {
+    public double[] toDoubleArray() {
         return new double[0];
     }
 
     @Override
-    public float[] toFloats() {
+    public float[] toFloatArray() {
         return new float[0];
     }
 
     @Override
-    public int[] toInts() {
+    public int[] toIntArray() {
         return new int[0];
     }
 
     @Override
-    public long[] toLongs() {
+    public long[] toLongArray() {
         return new long[0];
     }
 }

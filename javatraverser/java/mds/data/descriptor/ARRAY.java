@@ -135,24 +135,4 @@ public abstract class ARRAY<T>extends Descriptor<T>{
         b.put(this.getBuffer());
         return b;
     }
-
-    @Override
-    public final double toDouble() {
-        return this.toLongs()[0];
-    }
-
-    @Override
-    public final float toFloat() {
-        return this.toFloats()[0];
-    }
-
-    @Override
-    public final int toInt() {
-        return this.toInts()[0];
-    }
-
-    @Override
-    public final long toLong() {
-        return this.toLongs()[0];
-    }
 }

@@ -20,7 +20,7 @@ public class DeviceParameters extends DeviceMultiComponent{
             currNid = this.subtree.resolve(new Path(":TYPE"));
             final String typeStr = this.subtree.evaluate(currNid).toString();
             currNid = this.subtree.resolve(new Path(":DIMS"));
-            final int[] dims = this.subtree.evaluate(currNid).toInts();
+            final int[] dims = this.subtree.evaluate(currNid).toIntArray();
             currNid = this.subtree.resolve(new Path(":DATA"));
             if(dims[0] == 0) // Scalar
             {

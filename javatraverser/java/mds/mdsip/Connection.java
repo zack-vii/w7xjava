@@ -432,7 +432,7 @@ public class Connection{
     }
 
     public final double[] getDoubleArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toDoubles();
+        return this.getNumberArray(in).toDoubleArray();
     }
 
     private final int getEventId() {
@@ -448,7 +448,7 @@ public class Connection{
     }
 
     public final float[] getFloatArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toFloats();
+        return this.getNumberArray(in).toFloatArray();
     }
 
     public final String getHost() {
@@ -459,16 +459,32 @@ public class Connection{
         return this.getNumberArray(in).toInt();
     }
 
+    public final int getInteger(final String in, final Descriptor[] args) throws MdsException {
+        return this.getNumberArray(in, args).toInt();
+    }
+
     public final int[] getIntegerArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toInts();
+        return this.getNumberArray(in).toIntArray();
+    }
+
+    public final int[] getIntegerArray(final String in, final Descriptor[] args) throws MdsException {
+        return this.getNumberArray(in, args).toIntArray();
     }
 
     public final long getLong(final String in) throws MdsException {
         return this.getNumberArray(in).toLong();
     }
 
+    public final long getLong(final String in, final Descriptor[] args) throws MdsException {
+        return this.getNumberArray(in, args).toLong();
+    }
+
     public final long[] getLongArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toLongs();
+        return this.getNumberArray(in).toLongArray();
+    }
+
+    public final long[] getLongArray(final String in, final Descriptor[] args) throws MdsException {
+        return this.getNumberArray(in, args).toLongArray();
     }
 
     private final String getName(final String classname) {
@@ -478,6 +494,15 @@ public class Connection{
 
     private final Descriptor getNumberArray(final String in) throws MdsException {
         final Descriptor desc = this.mdsValue(in);
+        if(desc instanceof CString){
+            if(desc.length > 0) throw new MdsException(desc.toString(), 0);
+            return Missing.NEW;
+        }
+        return desc;
+    }
+
+    private final Descriptor getNumberArray(final String in, final Descriptor[] args) throws MdsException {
+        final Descriptor desc = this.mdsValue(in, args);
         if(desc instanceof CString){
             if(desc.length > 0) throw new MdsException(desc.toString(), 0);
             return Missing.NEW;

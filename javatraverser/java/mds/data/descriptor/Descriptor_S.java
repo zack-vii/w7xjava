@@ -114,7 +114,7 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     }
 
     @Override
-    public double[] toDoubles() {
+    public double[] toDoubleArray() {
         final T val = this.getValue();
         if(val instanceof Number) return new double[]{((Number)val).doubleValue()};
         else if(val instanceof String) return new double[]{Double.parseDouble((String)val)};
@@ -124,7 +124,7 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     }
 
     @Override
-    public float[] toFloats() {
+    public float[] toFloatArray() {
         final T val = this.getValue();
         if(val instanceof Number) return new float[]{((Number)val).floatValue()};
         else if(val instanceof String) return new float[]{Float.parseFloat((String)val)};
@@ -135,7 +135,7 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     }
 
     @Override
-    public int[] toInts() {
+    public int[] toIntArray() {
         final T val = this.getValue();
         if(val instanceof Number) return new int[]{((Number)val).intValue()};
         else if(val instanceof String) return new int[]{Integer.parseInt((String)val)};
@@ -145,12 +145,12 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     }
 
     @Override
-    public long[] toLongs() {
+    public long[] toLongArray() {
         final T val = this.getValue();
         if(val instanceof Number) return new long[]{((Number)val).longValue()};
         else if(val instanceof String) return new long[]{Long.parseLong((String)val)};
         else if(val instanceof float[]) return new long[]{(long)((float[])val)[0]};
         else if(val instanceof double[]) return new long[]{(long)((double[])val)[0]};
-        else return new long[]{0l};
+        else return new long[]{0};
     }
 }

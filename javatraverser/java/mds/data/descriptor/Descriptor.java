@@ -235,28 +235,28 @@ public abstract class Descriptor<T>{
     }
 
     public double toDouble() {
-        return this.toLongs()[0];
+        return this.toDoubleArray()[0];
     }
 
-    public abstract double[] toDoubles();
+    public abstract double[] toDoubleArray();
 
     public float toFloat() {
-        return this.toFloats()[0];
+        return this.toFloatArray()[0];
     }
 
-    public abstract float[] toFloats();
+    public abstract float[] toFloatArray();
 
     public int toInt() {
-        return this.toInts()[0];
+        return this.toIntArray()[0];
     }
 
-    public abstract int[] toInts();
+    public abstract int[] toIntArray();
 
     public long toLong() {
-        return this.toLongs()[0];
+        return this.toLongArray()[0];
     }
 
-    public abstract long[] toLongs();
+    public abstract long[] toLongArray();
 
     public Message toMessage(final byte descr_idx, final byte n_args) {
         final Descriptor data = this.getData();

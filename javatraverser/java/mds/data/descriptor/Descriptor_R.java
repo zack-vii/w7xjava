@@ -157,22 +157,22 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
     }
 
     @Override
-    public double[] toDoubles() {
-        return this.getData().toDoubles();
+    public double[] toDoubleArray() {
+        return this.getData().toDoubleArray();
     }
 
     @Override
-    public float[] toFloats() {
-        return this.getData().toFloats();
+    public float[] toFloatArray() {
+        return this.getData().toFloatArray();
     }
 
     @Override
-    public int[] toInts() {
-        return this.getData().toInts();
+    public int[] toIntArray() {
+        return this.getData().toIntArray();
     }
 
     @Override
-    public long[] toLongs() {
-        return this.getData().toLongs();
+    public long[] toLongArray() {
+        return this.getData().toLongArray();
     }
 }

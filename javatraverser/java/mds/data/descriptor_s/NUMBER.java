@@ -98,7 +98,7 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     }
 
     @Override
-    public double[] toDoubles() {
+    public double[] toDoubleArray() {
         return new double[]{this.toDouble()};
     }
 
@@ -108,7 +108,7 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     }
 
     @Override
-    public float[] toFloats() {
+    public float[] toFloatArray() {
         return new float[]{this.toFloat()};
     }
 
@@ -118,7 +118,7 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     }
 
     @Override
-    public int[] toInts() {
+    public int[] toIntArray() {
         return new int[]{this.toInt()};
     }
 
@@ -128,7 +128,7 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     }
 
     @Override
-    public long[] toLongs() {
+    public long[] toLongArray() {
         return new long[]{this.toLong()};
     }
 }

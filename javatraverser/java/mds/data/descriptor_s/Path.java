@@ -27,22 +27,22 @@ public final class Path extends Descriptor_S<String>{
     }
 
     @Override
-    public double[] toDoubles() {
-        return this.evaluate().toDoubles();
+    public double[] toDoubleArray() {
+        return this.evaluate().toDoubleArray();
     }
 
     @Override
-    public float[] toFloats() {
-        return this.evaluate().toFloats();
+    public float[] toFloatArray() {
+        return this.evaluate().toFloatArray();
     }
 
     @Override
-    public int[] toInts() {
-        return this.evaluate().toInts();
+    public int[] toIntArray() {
+        return this.evaluate().toIntArray();
     }
 
     @Override
-    public long[] toLongs() {
-        return this.evaluate().toLongs();
+    public long[] toLongArray() {
+        return this.evaluate().toLongArray();
     }
 }
