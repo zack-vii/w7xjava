@@ -177,7 +177,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     }
 
     @Override
-    protected final ByteBuffer getBuffer() {
+    public final ByteBuffer getBuffer() {
         final ByteBuffer bo = super.getBuffer();
         bo.limit(bo.capacity() < this.arsize ? bo.capacity() : this.arsize);
         return bo;

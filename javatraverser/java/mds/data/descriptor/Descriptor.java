@@ -200,8 +200,8 @@ public abstract class Descriptor<T>{
         }
     }
 
-    protected ByteBuffer getBuffer() {
-        return ((ByteBuffer)this.b.duplicate().position(this.pointer)).slice().order(this.b.order());
+    public ByteBuffer getBuffer() {
+        return ((ByteBuffer)this.b.asReadOnlyBuffer().position(this.pointer)).slice().order(this.b.order());
     }
 
     public Descriptor getData() {

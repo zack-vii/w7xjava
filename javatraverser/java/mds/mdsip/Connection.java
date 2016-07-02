@@ -427,6 +427,10 @@ public class Connection{
         return message;
     }
 
+    public ByteBuffer getByteBuffer(final String in) throws MdsException {
+        return this.mdsIO(in, false).body;
+    }
+
     public final double getDouble(final String in) throws MdsException {
         return this.getNumberArray(in).toDouble();
     }
