@@ -57,25 +57,28 @@ public class GraphPanel extends JPanel{
         final GraphPanel mainPanel = new GraphPanel();
         final int imax = (int)mainPanel.getPreferredSize().getWidth();
         final int len;
-        final double p = (fl.length) / imax * 2.;
+        final double p = (fl.length) / (imax * 2.);
         double v = p;
         if(fl.length > imax){
             len = imax;
         }else len = fl.length;
         final List<Float> scores = new ArrayList<Float>(len);
-        int i = 0;
-        float max = Float.NEGATIVE_INFINITY, min = Float.POSITIVE_INFINITY;
-        for(final float f : fl){
-            if(min > f) min = f;
-            if(max < f) max = f;
-            if(i++ >= v){
-                v += p;
-                scores.add(min);
-                scores.add(max);
-                max = Float.NEGATIVE_INFINITY;
-                min = Float.POSITIVE_INFINITY;
+        if(p > 10){
+            int i = 0;
+            float max = Float.NEGATIVE_INFINITY, min = Float.POSITIVE_INFINITY;
+            for(final float f : fl){
+                if(min > f) min = f;
+                if(max < f) max = f;
+                if(++i >= v - Double.MIN_VALUE){
+                    v += p;
+                    scores.add(min);
+                    scores.add(max);
+                    max = Float.NEGATIVE_INFINITY;
+                    min = Float.POSITIVE_INFINITY;
+                }
             }
-        }
+        }else for(final float f : fl)
+            scores.add(f);
         mainPanel.setScores(scores);
         return mainPanel;
     }
