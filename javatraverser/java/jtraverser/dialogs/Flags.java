@@ -18,14 +18,20 @@ import jtraverser.jTraverserFacade;
 
 @SuppressWarnings("serial")
 public final class Flags extends JDialog{
+    private final static boolean[] intToBool(final int iflags) {
+        final boolean[] bflags = new boolean[32];
+        for(byte i = 0; i < 32; i++)
+            bflags[i] = (iflags & (1 << i)) != 0;
+        return bflags;
+    }
     /*
     public static final void main(final String[] args) {// TODO:main
         new Flags(null, null).open();
     }
     */
     private final JButton     close_b;
-    private final JCheckBox[] flag;
-    private final boolean[]   settable_flag = new boolean[]{true, false, true, true, false, false, true, true, false, true, true, true, true, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false};;
+    private final JCheckBox[] flag;;
+    private final boolean[]   settable_flag = new boolean[]{true, false, true, true, false, false, true, true, false, true, true, true, true, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false};
     private final TreeManager treeman;
     private final JButton     update_b;
 
@@ -138,31 +144,25 @@ public final class Flags extends JDialog{
         this.update();
     }
 
-    private boolean[] readFlags() throws Exception {
-        int iflags = 0;
-        final boolean[] bflags = new boolean[32];
+    private int readFlags() throws Exception {
         final Node currnode = Flags.this.treeman.getCurrentTree().getCurrentNode();
-        if(currnode == null){
-            bflags[31] = true;
-            return bflags;
-        }
-        iflags = currnode.getFlags();
+        if(currnode == null) return Integer.MIN_VALUE;
+        final int iflags = currnode.getFlags();
         if(iflags < 0) jTraverserFacade.stderr("MdsJava returned -1.", null);
-        for(byte i = 0; i < 32; i++)
-            bflags[i] = (iflags & (1 << i)) != 0;
-        return bflags;
+        return iflags;
     }
 
     public final void update() {
         if(!this.isVisible()) return;
-        boolean[] bflags;
+        int iflags;
         try{
-            bflags = this.readFlags();
+            iflags = this.readFlags();
         }catch(final Exception exc){
             jTraverserFacade.stderr("Error getting flags", exc);
             this.close();
             return;
         }
+        final boolean[] bflags = Flags.intToBool(iflags);
         final Node currnode = Flags.this.treeman.getCurrentTree().getCurrentNode();
         final boolean is_ok = !(Flags.this.treeman.getCurrentTree().isReadOnly() || (currnode == null));
         for(int i = 0; i < 32; i++){
@@ -170,6 +170,7 @@ public final class Flags extends JDialog{
             this.flag[i].setEnabled(is_ok && this.settable_flag[i]);
         }
         if(currnode == null) this.setTitle("Flags of <none selected>");
-        else this.setTitle("Flags of " + currnode.getFullPath());
+        else this.setTitle(new StringBuilder(128).append("Flags of ").append(currnode.getFullPath())//
+        .append(" (0x").append(Integer.toHexString(iflags)).append(')').toString());
     }
 }
