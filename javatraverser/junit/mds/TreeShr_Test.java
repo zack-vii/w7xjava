@@ -96,7 +96,8 @@ public class TreeShr_Test{
 
     @Test
     public final void test115TreeCtx() throws MdsException {
-        Assert.assertTrue(0 < TreeShr_Test.treeshr.treeCtx());
+        final String deco = TreeShr_Test.treeshr.treeCtx().decompile();
+        Assert.assertTrue(deco, deco.matches("Pointer\\([A-F0-9]{16}\\)"));
     }
 
     @Test
@@ -165,13 +166,21 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test160TreeBeginTimestampedSegment() throws MdsException {
+    public final void test155TreeSetNciItm() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetNciItm(1, true, 0x7FFFFFFF));
+        Assert.assertEquals(0x7FFFFFFF, TreeShr_Test.mds.getInteger("GetNci(1,'GET_FLAGS')"));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetNciItm(1, false, -0x10400 - 1));
+        Assert.assertEquals(66560, TreeShr_Test.mds.getInteger("GetNci(1,'GET_FLAGS')"));
+    }
+
+    @Test
+    public final void test161TreeBeginTimestampedSegment() throws MdsException {
         Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeBeginTimestampedSegment(1, new Float32Array(new float[3]), -1));
     }
 
     @Test
     public final void test162TreePutTimestampedSegment() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutTimestampedSegment(1, System.nanoTime(), new Float32Array(new float[]{1.f, 2.f, 3.f})));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutTimestampedSegment(1, System.nanoTime(), new Float32Array(new float[]{.1f, .2f, .3f})));
     }
 
     @Test
@@ -180,18 +189,25 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test165TreeMakeTimestampedSegment() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(new long[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}), new Float32Array(new float[10]), -1, 0));
+    public final void test164TreeMakeTimestampedSegment() throws MdsException {
+        final long t0 = 1000000000000l;
+        final long[] dim = new long[10];
+        for(int i = 0; i < 10; i++)
+            dim[i] = t0 + i * 1000000l;
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(dim), new Float32Array(new float[]{.0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, Float.NaN}), -1, 9));
     }
 
     @Test
-    public final void test166TreePutRow() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRow(1, 1 << 20, System.nanoTime(), new Float32Array(new float[]{7.f})));
+    public final void test165TreePutRow() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRow(1, 1 << 10, 1000010000000l, new Float32Array(new float[]{.9f})));
     }
 
     @Test
-    public final void test170TreeGetRecord() throws MdsException {
-        Assert.assertEquals(7f, TreeShr_Test.treeshr.treeGetRecord(1).toFloat(), 1e-9f);
+    public final void test170TreeSetTimeContext_TreeGetRecord() throws MdsException {
+        Assert.assertEquals(1, TreeShr_Test.treeshr.treeSetTimeContext(1000001000000l, 1000007000000l, 2000000l));
+        Assert.assertArrayEquals(new float[]{.3f, .5f, .7f}, TreeShr_Test.treeshr.treeGetRecord(1).toFloatArray(), 1e-9f);
+        Assert.assertEquals(1, TreeShr_Test.treeshr.treeSetTimeContext());
+        Assert.assertArrayEquals(new float[]{.0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f}, TreeShr_Test.treeshr.treeGetRecord(1).toFloatArray(), 1e-9f);
     }
 
     @Test
@@ -202,14 +218,6 @@ public class TreeShr_Test{
     @Test
     public final void test181TreeSetNoSubtree() throws MdsException {
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetNoSubtree(2));
-    }
-
-    @Test
-    public final void test185TreeSetNciItm() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetNciItm(1, true, 0x7FFFFFFF));
-        Assert.assertEquals(0x7FFFFFFF, TreeShr_Test.mds.getInteger("GetNci(1,'GET_FLAGS')"));
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetNciItm(1, false, 0x77777777));
-        Assert.assertEquals(0x08888888, TreeShr_Test.mds.getInteger("GetNci(1,'GET_FLAGS')"));
     }
 
     @Test

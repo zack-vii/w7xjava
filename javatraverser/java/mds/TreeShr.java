@@ -1,9 +1,12 @@
 package mds;
 
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_a.Uint64Array;
+import mds.data.descriptor_s.Int32;
 import mds.data.descriptor_s.NUMBER;
+import mds.data.descriptor_s.Pointer;
 import mds.mdsip.Connection;
 
 public final class TreeShr{
@@ -47,8 +50,8 @@ public final class TreeShr{
         return this.connection.getInteger(String.format("_s=TreeShr->TreeCreateTreeFiles(ref('%s'),val(%d),val(%d))", expt, newshot, fromshot));
     }
 
-    public final int treeCtx() throws MdsException {
-        return this.connection.getInteger("TreeShr->TreeCtx()");
+    public final Descriptor treeCtx() throws MdsException {
+        return this.connection.mdsValue("TreeShr->TreeCtx:P()", Descriptor.class);
     }
 
     public final int treeDeleteNodeExecute() throws MdsException {
@@ -151,7 +154,7 @@ public final class TreeShr{
 
     /** adds row to segmented node **/
     public final int treePutTimestampedSegment(final int nid, final long timestamp, final Descriptor_A data) throws MdsException {
-        return this.connection.getInteger(String.format("_s=TreeShr->TreePutTimestampedSegment(val(%d),ref(%dQU),xd(%s))", nid, timestamp, data.decompile()));
+        return (Integer)this.connection.mdsValue(String.format("_s=TreeShr->TreePutTimestampedSegment(val(%d),ref(%dQU),xd($))", nid, timestamp), new Descriptor[]{data}, Int32.class).getValue();
     }
 
     public final int treeQuitTree(final String expt, final int shot) throws MdsException {
@@ -164,6 +167,14 @@ public final class TreeShr{
 
     public final int treeRenameNode(final int nid, final String name) throws MdsException {
         return this.connection.getInteger(String.format("_s=TreeShr->TreeRenameNode(val(%d),ref('%s'))", nid, name));
+    }
+
+    public final int treeRestoreContext(final Pointer treectx) throws MdsException {
+        return this.connection.getInteger(String.format("TreeShr->TreeRestoreContext(val(%dQ))", treectx.getValue()));
+    }
+
+    public final Pointer treeSaveContext() throws MdsException {
+        return (Pointer)this.connection.mdsValue("TreeShr->TreeSaveContext:P()", Pointer.class);
     }
 
     public final int treeSetCurrentShotId(final String expt, final int shot) throws MdsException {
@@ -186,8 +197,25 @@ public final class TreeShr{
         return this.connection.getInteger(String.format("_s=TreeShr->TreeSetSubtree(val(%d))", nid));
     }
 
-    public final int treeSetTimeContext(final NUMBER start, final NUMBER end, final NUMBER delta) throws MdsException {// TODO verify and allow null->val(0)
-        return this.connection.mdsValue("_s=TreeShr->TreeSetTimeContext(descr($),descr($),descr($))", new Descriptor[]{start, end, delta}).toInt();
+    public final int treeSetTimeContext() throws MdsException {
+        return this.treeSetTimeContext((NUMBER)null, (NUMBER)null, (NUMBER)null);
+    }
+
+    public final int treeSetTimeContext(final Number start, final Number end, final Number delta) throws MdsException {
+        return this.treeSetTimeContext(NUMBER.make(start), NUMBER.make(end), NUMBER.make(delta));
+    }
+
+    public final int treeSetTimeContext(final NUMBER start, final NUMBER end, final NUMBER delta) throws MdsException {
+        final StringBuilder cmd = new StringBuilder(128).append("_s=TreeShr->TreeSetTimeContext(");
+        if(start == null || start.dtype == DTYPE.MISSING) cmd.append("val(0)");
+        else cmd.append("descr(").append(start.decompile()).append(')');
+        cmd.append(',');
+        if(end == null || end.dtype == DTYPE.MISSING) cmd.append("val(0)");
+        else cmd.append("descr(").append(end.decompile()).append(')');
+        cmd.append(',');
+        if(delta == null || delta.dtype == DTYPE.MISSING) cmd.append("val(0)");
+        else cmd.append("descr(").append(delta.decompile()).append(')');
+        return this.connection.getInteger(cmd.append(')').toString());
     }
 
     public final int treeSetXNci(final int nid, final String name, final Descriptor value) throws MdsException {
@@ -206,6 +234,14 @@ public final class TreeShr{
     /** 265392050 : TreeLock-Failure but does the change of state **/
     public final int treeTurnOn(final int nid) throws MdsException {
         return this.connection.getInteger(String.format("_s=TreeShr->TreeTurnOn(val(%d))", nid));
+    }
+
+    public final boolean treeUsePrivateCtx(final boolean state) throws MdsException {
+        return this.connection.getInteger(String.format("TreeShr->TreeUsePrivateCtx(%d)", state ? 1 : 0)) == 1;
+    }
+
+    public final boolean treeUsingPrivateCtx(final boolean state) throws MdsException {
+        return this.connection.getInteger("TreeShr->TreeUseingPrivateCtx()") == 1;
     }
 
     public final int treeWriteTree(final String expt, final int shot) throws MdsException {
