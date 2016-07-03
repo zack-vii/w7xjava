@@ -10,6 +10,18 @@ import mds.data.descriptor_s.COMPLEX.Complex;
 public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     public static final BigInteger max128 = BigInteger.ONE.shiftLeft(128);
 
+    public static NUMBER make(final Number value) {
+        if(value == null) return null;
+        if(value instanceof Integer) return new Int32(value.intValue());
+        if(value instanceof Long) return new Int64(value.longValue());
+        if(value instanceof Float) return new Float32(value.floatValue());
+        if(value instanceof Double) return new Float64(value.doubleValue());
+        if(value instanceof Short) return new Int16(value.shortValue());
+        if(value instanceof Byte) return new Int8(value.byteValue());
+        if(value instanceof BigInteger) return new Int128((BigInteger)value);
+        return new Float32(value.floatValue());// default
+    }
+
     private static ByteBuffer toByteBuffer(final BigInteger value) {
         return ByteBuffer.allocate(16).order(Descriptor.BYTEORDER).put(value.or(NUMBER.max128).toByteArray(), 1, 16);
     }
