@@ -12,16 +12,16 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 
 public final class Message extends Object{
+    public static final int       _mlenI               = 0;
+    public static final int       _statI               = 4;
+    public static final int       _lenS                = 8;
+    public static final int       _nargsB              = 10;
+    public static final int       _idxB                = 11;
+    public static final int       _midB                = 12;
+    public static final int       _typB                = 13;
     public static final int       _clntB               = 14;
     public static final int       _dmctB               = 15;
     public static final int       _dmsI                = 16;
-    public static final int       _idxB                = 11;
-    public static final int       _lenS                = 8;
-    public static final int       _midB                = 12;
-    public static final int       _mlenI               = 0;
-    public static final int       _nargsB              = 10;
-    public static final int       _statI               = 4;
-    public static final int       _typB                = 13;
     public static final byte      BIG_ENDIAN_MASK      = (byte)0x80;
     private static final byte     COMPRESSED           = (byte)0x20;
     protected static final String EVENTASTREQUEST      = "---EVENTAST---REQUEST---";
