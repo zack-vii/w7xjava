@@ -351,6 +351,10 @@ public class Connection{
         this.dos = new DataOutputStream(new BufferedOutputStream(this.sock.getOutputStream()));
     }
 
+    public String decompile(final Descriptor dsc) throws MdsException {
+        return this.getString("DECOMPILE($)", new Descriptor[]{dsc});
+    }
+
     public final boolean disconnect() {
         try{
             this.disconnectFromServer();
@@ -528,6 +532,12 @@ public class Connection{
         return desc.toString();
     }
 
+    public final String getString(final String in, final Descriptor[] args) throws MdsException {
+        final Descriptor desc = this.mdsValue(in, args);
+        if(desc instanceof CString) return ((CString)desc).getValue();
+        return desc.toString();
+    }
+
     public final String getUser() {
         return this.provider.user;
     }
@@ -536,51 +546,37 @@ public class Connection{
         return this.connected;
     }
 
-    public final Message mdsIO(String expr, final boolean serialize) throws MdsException {
-        if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\"," + serialize + ")");
-        if(!this.connected) throw new MdsException("Not connected");
-        try{
-            final String pre = "_ans=*;MdsShr->MdsSerializeDscOut(xd((";
-            final String post = ";)),xd(_ans));_ans";
-            if(serialize) expr = new StringBuilder(pre.length() + expr.length() + post.length()).append(pre).append(expr).append(post).toString();
-            new Message(expr).send(this.dos);
-            return this.getAnswer();
-        }catch(final MdsException exc){
-            throw exc;
-        }catch(final IOException exc){
-            throw new MdsException(String.format("Could not get IO for %s: %s", this.provider.host, exc.getMessage()), 0);
-        }
+    public final Message mdsIO(final String expr, final boolean serialize) throws MdsException {
+        return this.mdsIO(expr, null, serialize);
     }
 
-    public final Message mdsIO(final String expr, Descriptor[] args, final boolean serialize) throws MdsException {
+    public final Message mdsIO(final String expr, final Descriptor[] args, final boolean serialize) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
-        if(args == null) args = new Descriptor[]{};
         byte idx = 0;
-        final byte totalarg = (byte)(args.length + 1);
         Message msg;
         final StringBuffer cmd = new StringBuffer(expr.length() + 128);
         if(serialize) cmd.append("_ans=*;MdsShr->MdsSerializeDscOut(xd((");
         cmd.append(expr);
-        if(expr.indexOf("$") == -1){ // If no $ args specified, build argument list
-            cmd.append('(');
-            if(args.length > 0){
-                cmd.append('$');
-                for(int i = 1; i < args.length; i++)
-                    cmd.append(",$");
-            }
+        if(args != null && args.length > 0 && expr.indexOf("$") == -1){ // If no $ args specified, build argument list
+            cmd.append("($");
+            for(int i = 1; i < args.length; i++)
+                cmd.append(",$");
             cmd.append(')');
         }
         if(serialize) cmd.append(";)),xd(_ans));_ans");
         try{
-            this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
-            for(final Descriptor d : args)
-                d.toMessage(idx++, totalarg).send(this.dos);
+            if(args != null && args.length > 0){
+                final byte totalarg = (byte)(args.length + 1);
+                this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
+                for(final Descriptor d : args)
+                    d.toMessage(idx++, totalarg).send(this.dos);
+            }else new Message(cmd.toString()).send(this.dos);
             msg = this.getAnswer();
-            if(msg == null) throw new MdsException("Could not get IO for " + this.provider.host, 0);
         }catch(final IOException e){
-            throw new MdsException("Connection.mdsValue", e);
+            throw new MdsException("Connection.mdsIO", e);
         }
+        if(msg == null) throw new MdsException("Could not get IO for " + this.provider.host, 0);
         return msg;
     }
 
