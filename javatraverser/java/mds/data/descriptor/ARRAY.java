@@ -122,17 +122,6 @@ public abstract class ARRAY<T>extends Descriptor<T>{
 
     @Override
     public ByteBuffer serialize() {
-        if(this.isserial) return this.b.duplicate().order(this.b.order());
-        final ByteBuffer b = ByteBuffer.allocate(this.pointer + this.arsize).order(this.getBuffer().order()).put(super.serialize().array());
-        b.put(this.scale).put(this.digits).put(this.aflags.toByte()).put(this.dimct).putInt(this.arsize);
-        if(this.aflags.coeff || this.aflags.bounds){
-            b.putInt(this.a0);
-            for(final int dm : this.dims)
-                b.putInt(dm);
-        }
-        if(this.aflags.bounds && this.bounds != null) for(final bounds bnds : this.bounds)
-            b.putInt(bnds.l).putInt(bnds.u);
-        b.put(this.getBuffer());
-        return b;
+        return this.b.duplicate().order(this.b.order());
     }
 }

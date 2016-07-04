@@ -27,6 +27,11 @@ public final class Path extends Descriptor_S<String>{
     }
 
     @Override
+    public byte[] toByteArray() {
+        return this.evaluate().toByteArray();
+    }
+
+    @Override
     public double[] toDoubleArray() {
         return this.evaluate().toDoubleArray();
     }

@@ -117,6 +117,16 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     }
 
     @Override
+    public byte[] toByteArray() {
+        final T val = this.getValue();
+        if(val instanceof Number) return new byte[]{((Number)val).byteValue()};
+        else if(val instanceof String) return new byte[]{Byte.parseByte((String)val)};
+        else if(val instanceof float[]) return new byte[]{(byte)((float[])val)[0]};
+        else if(val instanceof double[]) return new byte[]{(byte)((double[])val)[0]};
+        else return new byte[]{0};
+    }
+
+    @Override
     public double[] toDoubleArray() {
         final T val = this.getValue();
         if(val instanceof Number) return new double[]{((Number)val).doubleValue()};

@@ -27,6 +27,11 @@ public final class Missing extends Descriptor_S{
     }
 
     @Override
+    public byte[] toByteArray() {
+        return new byte[0];
+    }
+
+    @Override
     public double[] toDoubleArray() {
         return new double[0];
     }

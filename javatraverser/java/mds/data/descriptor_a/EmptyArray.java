@@ -30,6 +30,11 @@ public final class EmptyArray extends Descriptor_A{
     }
 
     @Override
+    public final byte toByte(final Object t) {
+        return 0;
+    }
+
+    @Override
     public final double toDouble(final Object t) {
         return 0.;
     }

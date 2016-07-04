@@ -7,6 +7,7 @@ package devicebeans.tools;
 // 3) shot
 // 4) Node name
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import mds.Database;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
@@ -45,16 +46,18 @@ public class LoadFile{
             System.exit(0);
             return;
         }
-        byte[] serialized = null;
+        ByteBuffer serialized;
         try{
-            serialized = tree.getData(nid).b.array();
+            serialized = tree.getData(nid).serialize();
         }catch(final Exception exc){
             System.err.println("Error reading data in" + nodeName + ": " + exc);
             System.exit(0);
+            return;
         }
         try{
             final RandomAccessFile raf = new RandomAccessFile(fileName, "rw");
-            raf.write(serialized);
+            while(serialized.hasRemaining())
+                raf.write(serialized.get());
             raf.close();
         }catch(final Exception exc){
             System.err.println("Cannot read file " + fileName + ": " + exc);

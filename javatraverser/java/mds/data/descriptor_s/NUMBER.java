@@ -105,6 +105,16 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     }
 
     @Override
+    public byte toByte() {
+        return this.getValue().byteValue();
+    }
+
+    @Override
+    public byte[] toByteArray() {
+        return new byte[]{this.toByte()};
+    }
+
+    @Override
     public double toDouble() {
         return this.getValue().doubleValue();
     }

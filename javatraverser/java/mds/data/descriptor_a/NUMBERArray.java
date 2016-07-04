@@ -111,6 +111,11 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
     }
 
     @Override
+    public byte toByte(final T t) {
+        return t.byteValue();
+    }
+
+    @Override
     public double toDouble(final T t) {
         return t.doubleValue();
     }

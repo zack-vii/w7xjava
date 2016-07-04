@@ -152,6 +152,11 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
     }
 
     @Override
+    public byte[] toByteArray() {
+        return this.getData().toByteArray();
+    }
+
+    @Override
     public double toDouble() {
         return (Double)this.getValue();
     }

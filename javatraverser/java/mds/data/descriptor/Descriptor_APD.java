@@ -43,6 +43,11 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     }
 
     @Override
+    public final byte toByte(final Descriptor t) {
+        return t.toByte();
+    }
+
+    @Override
     public final double toDouble(final Descriptor t) {
         return t.toDouble();
     }

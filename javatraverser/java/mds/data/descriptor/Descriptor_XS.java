@@ -46,6 +46,11 @@ public class Descriptor_XS extends Descriptor<Descriptor>{
     }
 
     @Override
+    public byte[] toByteArray() {
+        return this.payload.toByteArray();
+    }
+
+    @Override
     public double[] toDoubleArray() {
         return this.payload.toDoubleArray();
     }

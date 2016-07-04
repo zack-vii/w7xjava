@@ -236,6 +236,12 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     }
 
     @Override
+    public byte[] toByteArray() {
+        if(this.payload == null) return null;
+        return this.resolve().toByteArray();
+    }
+
+    @Override
     public double[] toDoubleArray() {
         if(this.payload == null) return null;
         return this.resolve().toDoubleArray();

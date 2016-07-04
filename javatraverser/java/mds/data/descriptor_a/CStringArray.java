@@ -45,6 +45,11 @@ public final class CStringArray extends Descriptor_A<String>{
     }
 
     @Override
+    public final byte toByte(final String t) {
+        return Byte.parseByte(t);
+    }
+
+    @Override
     public final double toDouble(final String t) {
         return Double.parseDouble(t);
     }

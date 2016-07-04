@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import mds.Database;
 import mds.MdsException;
+import mds.data.descriptor_a.Int8Array;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Missing;
 import mds.mdsip.Message;
@@ -69,6 +70,7 @@ public abstract class Descriptor<T>{
 
     public static final short getDataSize(final byte type, final int length) {
         switch(type){
+            default:
             case DTYPE.T:
                 return (short)length;
             case DTYPE.BU:
@@ -97,7 +99,6 @@ public abstract class Descriptor<T>{
             case DTYPE.GC:
                 return 16;
         }
-        return 0;
     }
 
     public static final String getDClassName(final byte dclass) {
@@ -137,19 +138,17 @@ public abstract class Descriptor<T>{
     public static final String toString(final Descriptor t) {
         return t == null ? "*" : t.toString();
     }
-    protected final boolean isserial;
-    public final ByteBuffer b;
+    protected final ByteBuffer b;
     /** (0,s) specific length typically a 16-bit (unsigned) length **/
-    public final short      length;
+    public final short         length;
     /** (2,b) data type code **/
-    public final byte       dtype;
+    public final byte          dtype;
     /** (3,b) descriptor class code **/
-    public final byte       dclass;
+    public final byte          dclass;
     /** (4,i) address of first byte of data element **/
-    public final int        pointer;
+    public final int           pointer;
 
     public Descriptor(final ByteBuffer b){
-        this.isserial = true;
         this.b = b.slice().order(b.order());
         this.length = b.getShort();
         this.dtype = b.get();
@@ -158,7 +157,6 @@ public abstract class Descriptor<T>{
     }
 
     public Descriptor(final short length, final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int offset){
-        this.isserial = true;
         if(byteBuffer == null) this.b = ByteBuffer.allocate(Descriptor.BYTES + offset + (byteBuffer == null ? 0 : byteBuffer.limit())).order(Descriptor.BYTEORDER);
         else this.b = ByteBuffer.allocate(Descriptor.BYTES + offset + byteBuffer.limit()).order(byteBuffer.order());
         this.b.putShort(this.length = length);
@@ -230,9 +228,23 @@ public abstract class Descriptor<T>{
     }
 
     public ByteBuffer serialize() {
-        if(this.isserial) return this.b.duplicate().order(this.b.order());
-        return ByteBuffer.allocate(8).order(this.getBuffer().order()).putShort(this.length).put(this.dtype).put(this.dclass).putInt(this.pointer);
+        return this.b.asReadOnlyBuffer().order(this.b.order());
     }
+
+    public final byte[] serializeArray() {
+        final ByteBuffer b = this.serialize();
+        return ByteBuffer.allocate(b.limit()).put(b).array();
+    }
+
+    public final Int8Array serializeDsc() {
+        return new Int8Array(this.serializeArray());
+    }
+
+    public byte toByte() {
+        return this.toByteArray()[0];
+    }
+
+    public abstract byte[] toByteArray();
 
     public double toDouble() {
         return this.toDoubleArray()[0];

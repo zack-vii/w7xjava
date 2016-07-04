@@ -210,6 +210,17 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
 
     protected abstract T[] initArray(int size);
 
+    public abstract byte toByte(T t);
+
+    @Override
+    public final byte[] toByteArray() {
+        final T[] val = this.getValue();
+        final byte[] out = new byte[val.length];
+        for(int i = 0; i < out.length; i++)
+            out[i] = this.toByte(val[i]);
+        return out;
+    }
+
     public abstract double toDouble(T t);
 
     @Override
