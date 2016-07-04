@@ -9,9 +9,11 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import jtraverser.NodeInfo;
+import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_a.Float32Array;
 import mds.data.descriptor_a.Uint64Array;
 import mds.data.descriptor_r.Function;
+import mds.data.descriptor_s.Pointer;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -20,7 +22,7 @@ public class TreeShr_Test{
     private static Connection   mds;
     private static TreeShr      treeshr;
     private static final String expt    = AllTests.tree;
-    private static final int    shot    = 7357;
+    private static final int    shot    = 1;
     private static final int    normal  = 265388041;
     private static final int    success = 265389633;
 
@@ -95,9 +97,22 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test115TreeCtx() throws MdsException {
+    public final void test115TreeContext() throws MdsException {
         final String deco = TreeShr_Test.treeshr.treeCtx().decompile();
-        Assert.assertTrue(deco, deco.matches("Pointer\\([A-F0-9]{16}\\)"));
+        Assert.assertTrue(deco, deco.matches("Pointer\\(0x[a-f0-9]+\\)"));
+        final Pointer save = TreeShr_Test.treeshr.treeSaveContext();
+        // Assert.assertEquals(TreeShr_Test.mds.decompile(save), save.decompile()); //TODO: inconsistency between unix and windows mdsip server
+        Assert.assertTrue(save.decompile().matches("Pointer\\(0x[a-f0-9]+\\)"));
+        Assert.assertArrayEquals(save.serializeArray(), TreeShr_Test.mds.mdsValue("_b=*;_s=MdsShr->MdsSerializeDscOut(xd((_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_a;)),xd(_b));_b", new Descriptor[]{save.serializeDsc()}, Descriptor.class).toByteArray());
+        // Assert.assertArrayEquals(TreeShr_Test.mds.mdsValue("$", new Descriptor[]{save}, Descriptor.class).serializeArray(), save.serializeArray());// TODO: works with fix in ProcessMessage.c (#559 zack-vii:zck_mdsip_processmessage_pointer)
+        String line0, line1;
+        System.out.println(line0 = TreeShr_Test.mds.getString("_t='';_s=TCL('show db',_t);_t"));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeOpen(AllTests.tree, TreeShr_Test.shot + 1, true));
+        System.out.println(line1 = TreeShr_Test.mds.getString("_t='';_s=TCL('show db',_t);_t"));
+        Assert.assertTrue(line1, line1.endsWith("001" + line0.substring(3, line0.length())));
+        Assert.assertTrue(0 != TreeShr_Test.treeshr.treeRestoreContext(save));
+        System.out.println(line1 = TreeShr_Test.mds.getString("_t='';_s=TCL('show db',_t);_t"));
+        Assert.assertTrue(line1, line0.startsWith(line0));
     }
 
     @Test
