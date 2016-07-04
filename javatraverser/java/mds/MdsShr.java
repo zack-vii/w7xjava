@@ -24,7 +24,11 @@ public final class MdsShr{
     }
 
     public final Int8Array mdsSerializeDscOut(final String expr) throws MdsException {
+        return this.mdsSerializeDscOut(expr, null);
+    }
+
+    public final Int8Array mdsSerializeDscOut(final String expr, final Descriptor[] args) throws MdsException {
         return (Int8Array)this.connection.mdsValue(new StringBuffer(expr.length() + 64)//
-        .append("_a=*;_s=MdsShr->MdsSerializeDscOut(xd((").append(expr).append(";)),xd(_a));_a").toString(), Int8Array.class);
+        .append("_a=*;_s=MdsShr->MdsSerializeDscOut(xd((").append(expr).append(";)),xd(_a));_a").toString(), args, Int8Array.class);
     }
 }
