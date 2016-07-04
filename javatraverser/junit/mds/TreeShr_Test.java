@@ -22,7 +22,7 @@ public class TreeShr_Test{
     private static Connection   mds;
     private static TreeShr      treeshr;
     private static final String expt    = AllTests.tree;
-    private static final int    shot    = 1;
+    private static final int    shot    = 7357;
     private static final int    normal  = 265388041;
     private static final int    success = 265389633;
 

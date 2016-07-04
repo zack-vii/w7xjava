@@ -18,8 +18,9 @@ public final class Pointer extends NUMBER<Number>{
 
     @Override
     public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
-        return pout.append(this.getDName()).append("(0x")//
-        .append(this.length == 4 ? Integer.toHexString(this.toInt()) : Long.toHexString(this.toLong())).append(')');
+        pout.append(this.getDName());
+        if(this.toLong() == 0) return pout.append("(0)");
+        return pout.append("(0x").append(this.length == 4 ? Integer.toHexString(this.toInt()) : Long.toHexString(this.toLong())).append(')');
     }
 
     @Override
