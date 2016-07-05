@@ -22,20 +22,20 @@ import mds.data.descriptor_s.Nid;
 public class Node{
     private static Node              copied;
     private static boolean           cut;
-    private static final ImageIcon[] ICONS = new ImageIcon[]{                                     //
-                                                   Node.loadIcon("jtraverser/numeric.gif"),       // any
-                                                   Node.loadIcon("jtraverser/structure.gif"),     //
-                                                   Node.loadIcon("jtraverser/action.gif"),        //
-                                                   Node.loadIcon("jtraverser/device.gif"),        //
-                                                   Node.loadIcon("jtraverser/dispatch.gif"),      //
-                                                   Node.loadIcon("jtraverser/numeric.gif"),       //
-                                                   Node.loadIcon("jtraverser/signal.gif"),        //
-                                                   Node.loadIcon("jtraverser/task.gif"),          //
-                                                   Node.loadIcon("jtraverser/text.gif"),          //
-                                                   Node.loadIcon("jtraverser/window.gif"),        //
-                                                   Node.loadIcon("jtraverser/axis.gif"),          //
-                                                   Node.loadIcon("jtraverser/subtree.gif"),       //
-                                                   Node.loadIcon("jtraverser/compound.gif")       //
+    private static final ImageIcon[] ICONS = new ImageIcon[]{                                   //
+                                                   Node.loadIcon("jtraverser/any.gif"),         // any
+                                                   Node.loadIcon("jtraverser/structure.gif"),   //
+                                                   Node.loadIcon("jtraverser/action.gif"),      //
+                                                   Node.loadIcon("jtraverser/device.gif"),      //
+                                                   Node.loadIcon("jtraverser/dispatch.gif"),    //
+                                                   Node.loadIcon("jtraverser/numeric.gif"),     //
+                                                   Node.loadIcon("jtraverser/signal.gif"),      //
+                                                   Node.loadIcon("jtraverser/task.gif"),        //
+                                                   Node.loadIcon("jtraverser/text.gif"),        //
+                                                   Node.loadIcon("jtraverser/window.gif"),      //
+                                                   Node.loadIcon("jtraverser/axis.gif"),        //
+                                                   Node.loadIcon("jtraverser/subtree.gif"),     //
+                                                   Node.loadIcon("jtraverser/compound.gif")     //
                                              };
 
     public static void copySubtreeContent(final Node fromNode, final Node toNode) {
@@ -99,6 +99,7 @@ public class Node{
     private NodeInfo               info;
     private final boolean          is_member;
     private boolean                is_on;
+    private TreeNodeLabel          label;
     private Node[]                 members;
     private boolean                needsOnCheck = true;
     public final Nid               nid;
@@ -108,7 +109,6 @@ public class Node{
     private long                   ToolTipLife  = 0;
     private String                 ToolTipText  = null;
     public final Tree              tree;
-    private TreeNodeLabel          label;
     private DefaultMutableTreeNode treenode;
 
     public Node(final Database database, final Tree tree, final Node parent, final boolean is_member, final Nid nid){
