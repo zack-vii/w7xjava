@@ -24,7 +24,7 @@ public class TreeShr_Test{
     private static Connection   mds;
     private static TreeShr      treeshr;
     private static final String expt    = AllTests.tree;
-    private static final int    shot    = 7357;
+    private static final int    shot    = -1, shot1 = 7357;
     private static final int    normal  = 265388041;
     private static final int    success = 265389633;
 
@@ -52,12 +52,12 @@ public class TreeShr_Test{
 
     @Test
     public final void test001TreeSetCurrentShotId() throws MdsException {
-        Assert.assertEquals(1, TreeShr_Test.treeshr.treeSetCurrentShotId(TreeShr_Test.expt, TreeShr_Test.shot));
+        Assert.assertEquals(1, TreeShr_Test.treeshr.treeSetCurrentShotId(TreeShr_Test.expt, TreeShr_Test.shot1));
     }
 
     @Test
     public final void test002TreeGetCurrentShotId() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.shot, TreeShr_Test.treeshr.treeGetCurrentShotId(TreeShr_Test.expt));
+        Assert.assertEquals(TreeShr_Test.shot1, TreeShr_Test.treeshr.treeGetCurrentShotId(TreeShr_Test.expt));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class TreeShr_Test{
 
     @Test
     public final void test112TreeCreateTreeFiles() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeCreateTreeFiles(AllTests.tree, TreeShr_Test.shot + 1, TreeShr_Test.shot));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeCreateTreeFiles(AllTests.tree, TreeShr_Test.shot1, TreeShr_Test.shot));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class TreeShr_Test{
         // Assert.assertArrayEquals(TreeShr_Test.mds.mdsValue("$", new Descriptor[]{save}, Descriptor.class).serializeArray(), save.serializeArray());// TODO: works with fix in ProcessMessage.c (#559 zack-vii:zck_mdsip_processmessage_pointer)
         String line0, line1;
         System.out.println(line0 = TreeShr_Test.mds.getString("_t='';_s=TCL('show db',_t);_t"));
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeOpen(AllTests.tree, TreeShr_Test.shot + 1, true));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeOpen(AllTests.tree, TreeShr_Test.shot1, true));
         System.out.println(line1 = TreeShr_Test.mds.getString("_t='';_s=TCL('show db',_t);_t"));
         Assert.assertTrue(line1, line1.endsWith("001" + line0.substring(3, line0.length())));
         Assert.assertTrue(0 != TreeShr_Test.treeshr.treeRestoreContext(save));
@@ -214,8 +214,8 @@ public class TreeShr_Test{
 
     @Test
     public final void test163TreePutRecord() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRecord(1, null, 0));
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treePutRecord(41, new Action(new Nid(45), new Nid(49), null, null, null), 0));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRecord(1, null));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treePutRecord(41, new Action(new Nid(45), new Nid(49), null, null, null)));
     }
 
     @Test
@@ -262,12 +262,12 @@ public class TreeShr_Test{
 
     @Test
     public final void test211TreeCompressDatafile() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeCompressDatafile(TreeShr_Test.expt, TreeShr_Test.shot + 1));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeCompressDatafile(TreeShr_Test.expt, TreeShr_Test.shot1));
     }
 
     @Test
     public final void test220TreeOpen() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeOpen(TreeShr_Test.expt, TreeShr_Test.shot + 1, true));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeOpen(TreeShr_Test.expt, TreeShr_Test.shot1, true));
     }
 
     @Test
