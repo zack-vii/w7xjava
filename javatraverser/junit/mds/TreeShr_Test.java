@@ -12,7 +12,9 @@ import jtraverser.NodeInfo;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_a.Float32Array;
 import mds.data.descriptor_a.Uint64Array;
+import mds.data.descriptor_r.Action;
 import mds.data.descriptor_r.Function;
+import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Pointer;
 import mds.mdsip.Connection;
 
@@ -65,7 +67,8 @@ public class TreeShr_Test{
 
     @Test
     public final void test091TreeCleanDatafile() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeCleanDatafile(TreeShr_Test.expt, TreeShr_Test.shot));
+        final int status = TreeShr_Test.treeshr.treeCleanDatafile(TreeShr_Test.expt, TreeShr_Test.shot);
+        Assert.assertEquals(TreeShr_Test.mds.getString(String.format("GetMsg(%d)", status)), TreeShr_Test.normal, status);
     }
 
     @Test
@@ -84,6 +87,27 @@ public class TreeShr_Test{
     @Test
     public final void test102TreeAddConglom() throws MdsException {
         Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 3}, TreeShr_Test.treeshr.treeAddConglom("C", "E1429"));
+    }
+
+    @Test
+    public final void test103TreeManualConglomerate() throws MdsException {
+        final int nid = 40;
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeStartConglomerate(11));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid}, TreeShr_Test.treeshr.treeAddNode("D", NodeInfo.USAGE_DEVICE));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetDefault(nid));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid}, TreeShr_Test.treeshr.treeGetDefaultNid());
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 1}, TreeShr_Test.treeshr.treeAddNode("ACTION", NodeInfo.USAGE_ACTION));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 2}, TreeShr_Test.treeshr.treeAddNode("ANY", NodeInfo.USAGE_ANY));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 3}, TreeShr_Test.treeshr.treeAddNode("AXIS", NodeInfo.USAGE_AXIS));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 4}, TreeShr_Test.treeshr.treeAddNode("COMPOUND", NodeInfo.USAGE_COMPOUND_DATA));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 5}, TreeShr_Test.treeshr.treeAddNode("DISPATCH", NodeInfo.USAGE_DISPATCH));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 6}, TreeShr_Test.treeshr.treeAddNode("NUMERIC", NodeInfo.USAGE_NUMERIC));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 7}, TreeShr_Test.treeshr.treeAddNode("SIGNAL", NodeInfo.USAGE_SIGNAL));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 8}, TreeShr_Test.treeshr.treeAddNode("STRUCTURE", NodeInfo.USAGE_STRUCTURE));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 9}, TreeShr_Test.treeshr.treeAddNode("TASK", NodeInfo.USAGE_TASK));
+        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, nid + 10}, TreeShr_Test.treeshr.treeAddNode("TEXT", NodeInfo.USAGE_TEXT));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeEndConglomerate());
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetDefault(0));
     }
 
     @Test
@@ -151,16 +175,6 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test140TreeSetDefault() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetDefault(1));
-    }
-
-    @Test
-    public final void test141TreeGetDefaultNid() throws MdsException {
-        Assert.assertArrayEquals(new int[]{TreeShr_Test.normal, 1}, TreeShr_Test.treeshr.treeGetDefaultNid());
-    }
-
-    @Test
     public final void test150TreeSetXNci() throws MdsException {
         Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeSetXNci(1, "myattr", Function.$HBAR()));
     }
@@ -201,6 +215,7 @@ public class TreeShr_Test{
     @Test
     public final void test163TreePutRecord() throws MdsException {
         Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRecord(1, null, 0));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treePutRecord(41, new Action(new Nid(45), new Nid(49), null, null, null), 0));
     }
 
     @Test
