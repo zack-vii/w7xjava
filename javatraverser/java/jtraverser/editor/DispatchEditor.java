@@ -82,10 +82,10 @@ public class DispatchEditor extends JPanel implements ActionListener, Editor{
         this.dialog = dialog;
         this.data = data;
         if(data == null) this.mode_idx = 0;
-        else{
+        else if(data instanceof Dispatch){
             final Dispatch ddata = (Dispatch)data;
             this.mode_idx = ddata.getType() > 4 ? 4 : ddata.getType();
-        }
+        }else this.mode_idx = 4;
         this.curr_mode_idx = this.mode_idx;
         final String[] names = {"Undefined", "Asynchron", "Sequential", "Conditional", "Expression"};
         this.combo = new JComboBox(names);
