@@ -119,8 +119,8 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         b.putInt(header_size);
         b.put((byte)0);
         b.put((byte)0);
-        if(shape > 0) b.put(Descriptor_A.f_coeff.toByte());
-        else b.put(Descriptor_A.f_array.toByte());
+        if(shape > 0) b.put(ARRAY.f_coeff.toByte());
+        else b.put(ARRAY.f_array.toByte());
         b.put(msgh.get(Message._dmctB));
         b.putInt(arsize);
         if(shape > 0){
@@ -129,7 +129,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
             for(int i = 0; i < dmct; i++)
                 b.putInt(msgh.getInt());
         }
-        b.put(msg.body).position(0);
+        b.put(msg.body).rewind();
         return Descriptor_A.deserialize(b);
     }
 

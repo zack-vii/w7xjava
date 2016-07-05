@@ -1,7 +1,6 @@
 package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
-import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
 
@@ -14,7 +13,7 @@ public abstract class BUILD<T extends Number>extends Descriptor_R<T>{
         super(dtype, data, args0, args1);
     }
 
-    public BUILD(final ByteBuffer b) throws MdsException{
+    public BUILD(final ByteBuffer b){
         super(b);
     }
 

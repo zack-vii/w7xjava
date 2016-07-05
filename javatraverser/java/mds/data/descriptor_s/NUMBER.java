@@ -23,11 +23,11 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     }
 
     private static ByteBuffer toByteBuffer(final BigInteger value) {
-        return ByteBuffer.allocate(16).order(Descriptor.BYTEORDER).put(value.or(NUMBER.max128).toByteArray(), 1, 16);
+        return ByteBuffer.allocate(16).order(Descriptor.BYTEORDER).put(value.or(NUMBER.max128).toByteArray(), 0, 16);
     }
 
     private static final ByteBuffer toByteBuffer(final byte value) {
-        return ByteBuffer.allocate(Double.BYTES).order(Descriptor.BYTEORDER).put(value);
+        return ByteBuffer.allocate(Double.BYTES).order(Descriptor.BYTEORDER).put(0, value);
     }
 
     private static ByteBuffer toByteBuffer(final Complex value) {
@@ -36,27 +36,27 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     }
 
     private static final ByteBuffer toByteBuffer(final double value) {
-        return ByteBuffer.allocate(Double.BYTES).order(Descriptor.BYTEORDER).putDouble(value);
+        return ByteBuffer.allocate(Double.BYTES).order(Descriptor.BYTEORDER).putDouble(0, value);
     }
 
     private static final ByteBuffer toByteBuffer(final double real, final double imag) {
-        return ByteBuffer.allocate(Double.BYTES * 2).order(Descriptor.BYTEORDER).putDouble(real).putDouble(imag);
+        return ByteBuffer.allocate(Double.BYTES * 2).order(Descriptor.BYTEORDER).putDouble(0, real).putDouble(Double.BYTES, imag);
     }
 
     private static final ByteBuffer toByteBuffer(final float value) {
-        return ByteBuffer.allocate(Float.BYTES).order(Descriptor.BYTEORDER).putFloat(value);
+        return ByteBuffer.allocate(Float.BYTES).order(Descriptor.BYTEORDER).putFloat(0, value);
     }
 
     private static final ByteBuffer toByteBuffer(final float real, final float imag) {
-        return ByteBuffer.allocate(Float.BYTES * 2).order(Descriptor.BYTEORDER).putFloat(real).putFloat(imag);
+        return ByteBuffer.allocate(Float.BYTES * 2).order(Descriptor.BYTEORDER).putFloat(0, real).putFloat(Float.BYTES, imag);
     }
 
     private static final ByteBuffer toByteBuffer(final int value) {
-        return ByteBuffer.allocate(Integer.BYTES).order(Descriptor.BYTEORDER).putInt(value);
+        return ByteBuffer.allocate(Integer.BYTES).order(Descriptor.BYTEORDER).putInt(0, value);
     }
 
     private static final ByteBuffer toByteBuffer(final long value) {
-        return ByteBuffer.allocate(Long.BYTES).order(Descriptor.BYTEORDER).putLong(value);
+        return ByteBuffer.allocate(Long.BYTES).order(Descriptor.BYTEORDER).putLong(0, value);
     }
 
     protected NUMBER(final byte dtype, final BigInteger value){

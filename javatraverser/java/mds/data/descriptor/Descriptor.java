@@ -11,20 +11,20 @@ import mds.mdsip.Message;
 
 /** DSC (24) **/
 public abstract class Descriptor<T>{
-    protected static final int       _clsB     = 3;
-    protected static final int       _lenS     = 0;
-    protected static final int       _ptrI     = 4;
-    protected static final int       _typB     = 2;
-    public static final short        BYTES     = 8;
-    protected static final int       DECO_NRM  = 0;
-    protected static final int       DECO_STR  = 1;
-    protected static final int       DECO_STRX = Descriptor.DECO_X | Descriptor.DECO_STR;
-    protected static final int       DECO_X    = 2;
-    public static final boolean      isatomic  = false;
-    protected static final byte      P_ARG     = 88;
-    protected static final byte      P_STMT    = 96;
-    protected static final byte      P_SUBS    = 0;
-    protected static final ByteOrder BYTEORDER = Descriptor.BYTEORDER;
+    protected static final int    _lenS     = 0;
+    protected static final int    _typB     = 2;
+    protected static final int    _clsB     = 3;
+    protected static final int    _ptrI     = 4;
+    public static final ByteOrder BYTEORDER = Descriptor.BYTEORDER;
+    public static final short     BYTES     = 8;
+    protected static final int    DECO_NRM  = 0;
+    protected static final int    DECO_STR  = 1;
+    protected static final int    DECO_STRX = Descriptor.DECO_X | Descriptor.DECO_STR;
+    protected static final int    DECO_X    = 2;
+    public static final boolean   isatomic  = false;
+    protected static final byte   P_ARG     = 88;
+    protected static final byte   P_STMT    = 96;
+    protected static final byte   P_SUBS    = 0;
 
     private static final ByteBuffer Buffer(final byte[] buf, final boolean swap_little) {
         return Descriptor.Buffer(buf, swap_little ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
@@ -44,7 +44,6 @@ public abstract class Descriptor<T>{
     }
 
     public static Descriptor deserialize(final ByteBuffer bi) throws MdsException {
-        if(bi.capacity() == 0) return null;
         if(!bi.hasRemaining()) return Missing.NEW;
         final ByteBuffer b = bi.slice().order(bi.order());
         switch(b.get(Descriptor._clsB)){
@@ -156,15 +155,19 @@ public abstract class Descriptor<T>{
         this.pointer = b.getInt();
     }
 
-    public Descriptor(final short length, final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int offset){
-        if(byteBuffer == null) this.b = ByteBuffer.allocate(Descriptor.BYTES + offset + (byteBuffer == null ? 0 : byteBuffer.limit())).order(Descriptor.BYTEORDER);
-        else this.b = ByteBuffer.allocate(Descriptor.BYTES + offset + byteBuffer.limit()).order(byteBuffer.order());
+    public Descriptor(final short length, final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int pointer, int size){
+        size += pointer;
+        if(byteBuffer != null) size += byteBuffer.limit();
+        this.b = ByteBuffer.allocate(size).order(Descriptor.BYTEORDER);
         this.b.putShort(this.length = length);
         this.b.put(this.dtype = dtype);
         this.b.put(this.dclass = dclass);
-        this.b.putInt(this.pointer = Descriptor.BYTES + offset);
-        if(byteBuffer == null) return;
-        ((ByteBuffer)this.b.duplicate().position(this.pointer)).put((ByteBuffer)byteBuffer.rewind());
+        if(byteBuffer == null) this.b.putInt(this.pointer = 0);
+        else{
+            this.b.putInt(this.pointer = pointer);
+            ((ByteBuffer)this.b.position(pointer)).put(byteBuffer);
+        }
+        this.b.position(0);
     }
 
     public final String decompile() {
@@ -199,7 +202,7 @@ public abstract class Descriptor<T>{
     }
 
     public ByteBuffer getBuffer() {
-        return ((ByteBuffer)this.b.asReadOnlyBuffer().position(this.pointer)).slice().order(this.b.order());
+        return ((ByteBuffer)this.b.asReadOnlyBuffer().position(this.pointer == 0 ? this.b.limit() : this.pointer)).slice().order(this.b.order());
     }
 
     public Descriptor getData() {
@@ -216,6 +219,10 @@ public abstract class Descriptor<T>{
 
     public abstract int[] getShape();
 
+    public int getSize() {
+        return this.serialize().limit();
+    }
+
     public final T getValue() {
         return this.getValue(this.getBuffer());
     }
@@ -227,7 +234,7 @@ public abstract class Descriptor<T>{
         return Descriptor.isatomic;
     }
 
-    public ByteBuffer serialize() {
+    public final ByteBuffer serialize() {
         return this.b.asReadOnlyBuffer().order(this.b.order());
     }
 

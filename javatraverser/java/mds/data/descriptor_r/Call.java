@@ -1,7 +1,6 @@
 package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
@@ -97,11 +96,11 @@ public final class Call extends BUILD<Short>{
     }
 
     public Call(final short type, final Descriptor image, final Descriptor routine, final byte nargs){
-        super(DTYPE.CALL, ByteBuffer.allocate(Short.BYTES).order(ByteOrder.LITTLE_ENDIAN).putShort(type), new Descriptor[]{image, routine});
+        super(DTYPE.CALL, ByteBuffer.allocate(Short.BYTES).order(Descriptor.BYTEORDER).putShort(type), new Descriptor[]{image, routine});
     }
 
     public Call(final short type, final Descriptor image, final Descriptor routine, final Descriptor[] args){
-        super(DTYPE.CALL, ByteBuffer.allocate(Short.BYTES).order(ByteOrder.LITTLE_ENDIAN).putShort(type), new Descriptor[]{image, routine}, args);
+        super(DTYPE.CALL, ByteBuffer.allocate(Short.BYTES).order(Descriptor.BYTEORDER).putShort(type), new Descriptor[]{image, routine}, args);
     }
 
     @Override

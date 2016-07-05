@@ -27,10 +27,10 @@ import mds.data.descriptor_s.Missing;
 /** Fixed-Length (static) Descriptor (-62 : 194) **/
 @SuppressWarnings("deprecation")
 public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
-    public static final byte _dscoff = 12;
-    public static final byte _ndesc  = 8;
-    public static final int  BYTES   = Descriptor.BYTES + 24;
-    public static final byte CLASS   = -62;                  // 194
+    public static final byte _ndescB   = 8;
+    public static final byte _dscoffIa = 12;
+    public static final int  BYTES     = Descriptor.BYTES + 24;
+    public static final byte CLASS     = -62;                  // 194
 
     public static Descriptor_R deserialize(final ByteBuffer b) throws MdsException {
         switch(b.get(Descriptor._typB)){
@@ -77,39 +77,81 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
         }
         throw new MdsException(String.format("Unsupported dtype %s for class %s", Descriptor.getDTypeName(b.get(Descriptor._typB)), Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
+
+    private static final Descriptor[] joinArrays(final Descriptor[] args0, final Descriptor[] args1) {
+        if(args0 == null) return args1;
+        if(args1 == null) return args0;
+        final Descriptor[] args = new Descriptor[args0.length + args1.length];
+        System.arraycopy(args0, 0, args, 0, args0.length);
+        System.arraycopy(args1, 0, args, args0.length, args1.length);
+        return args;
+    }
+
+    private static final int joinSize(final Descriptor[] args) {
+        if(args == null) return 0;
+        int size = 0;
+        for(final Descriptor arg : args)
+            if(arg != null) size += arg.getSize();
+        return size;
+    }
+    private final int[]        desc_ptr;
     private final Descriptor[] dscptrs;
-    public final byte          ndesc;
+    protected final int        ndesc;
 
     public Descriptor_R(final byte dtype, final ByteBuffer data, final Descriptor[] args){
-        super((short)(data == null ? 0 : data.limit()), dtype, Descriptor_R.CLASS, data, Byte.BYTES + (args == null ? 0 : args.length) * Integer.BYTES);
-        this.ndesc = (byte)(args == null ? 0 : args.length);
+        super((short)(data == null ? 0 : data.limit()), dtype, Descriptor_R.CLASS, data, Descriptor_R._dscoffIa + (args == null ? 0 : args.length * Integer.BYTES), Descriptor_R.joinSize(args));
+        this.b.put(Descriptor_R._ndescB, (byte)(this.ndesc = args == null ? 0 : args.length));
+        this.b.position(Descriptor_R._dscoffIa);
         this.dscptrs = new Descriptor[this.ndesc];
-        if(args != null) System.arraycopy(args, 0, this.dscptrs, 0, args.length);
+        this.desc_ptr = new int[this.ndesc];
+        if(args != null && args.length > 0){
+            int offset = Descriptor_R._dscoffIa + (args == null ? 0 : args.length * Integer.BYTES) + (data == null ? 0 : data.limit());
+            for(int i = 0; i < this.ndesc; i++){
+                if(args[i] == null | args[i] == Missing.NEW) this.b.putInt(this.desc_ptr[i] = 0);
+                else{
+                    this.b.putInt(this.desc_ptr[i] = offset);
+                    offset += args[i].getSize();
+                }
+            }
+            for(int i = 0; i < this.ndesc; i++){
+                if(this.desc_ptr[i] == 0) this.dscptrs[i] = Missing.NEW;
+                else{
+                    this.b.put(args[i].serialize());
+                    try{
+                        this.dscptrs[i] = Descriptor.deserialize((ByteBuffer)this.serialize().position(this.desc_ptr[i]));
+                    }catch(final MdsException e){
+                        e.printStackTrace();
+                        this.dscptrs[i] = Missing.NEW;
+                    }
+                }
+            }
+        }
+        this.b.position(0);
     }
 
     protected Descriptor_R(final byte dtype, final ByteBuffer data, final Descriptor[] args0, final Descriptor[] args1){
-        super((short)(data == null ? 0 : data.limit()), dtype, Descriptor_R.CLASS, data, Byte.BYTES + (args0.length + (args1 == null ? 0 : args1.length)) * Integer.BYTES);
-        this.ndesc = (byte)(args0.length + (args1 == null ? 0 : args1.length));
-        this.dscptrs = new Descriptor[this.ndesc];
-        System.arraycopy(args0, 0, this.dscptrs, 0, args0.length);
-        if(args1 != null) System.arraycopy(args1, args0.length, this.dscptrs, 0, args1.length);
+        this(dtype, data, Descriptor_R.joinArrays(args0, args1));
     }
 
-    public Descriptor_R(final ByteBuffer b) throws MdsException{
+    public Descriptor_R(final ByteBuffer b){
         super(b);
         this.ndesc = b.get();
-        b.position(Descriptor_R._dscoff);
+        b.position(Descriptor_R._dscoffIa);
         this.dscptrs = new Descriptor[this.ndesc];
-        final int[] pos = new int[this.ndesc];
+        this.desc_ptr = new int[this.ndesc];
         for(int i = 0; i < this.ndesc; i++)
-            pos[i] = b.getInt();
+            this.desc_ptr[i] = b.getInt();
         int end = b.limit();
         for(int i = this.ndesc; i-- > 0;){
-            if(pos[i] == 0) this.dscptrs[i] = Missing.NEW;
+            if(this.desc_ptr[i] == 0) this.dscptrs[i] = Missing.NEW;
             else{
-                b.position(pos[i]).limit(end);
-                this.dscptrs[i] = Descriptor.deserialize(b);
-                end = pos[i];
+                b.position(this.desc_ptr[i]).limit(end);
+                try{
+                    this.dscptrs[i] = Descriptor.deserialize(b);
+                }catch(final MdsException e){
+                    e.printStackTrace();
+                }
+                end = this.desc_ptr[i];
             }
         }
     }
@@ -124,7 +166,7 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
             if(indent) pout.append("\n\t");
         }
         for(j = first; j <= last; j++){
-            this.dscptrs[j].decompile(Descriptor_R.P_ARG, pout, (mode & ~Descriptor.DECO_X));
+            this.dscptrs[j].decompile(Descriptor.P_ARG, pout, (mode & ~Descriptor.DECO_X));
             if(j < last) pout.append(sep);
         }
         if(right != null){

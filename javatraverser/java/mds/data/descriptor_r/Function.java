@@ -1,7 +1,6 @@
 package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import debug.DEBUG;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
@@ -220,7 +219,7 @@ public final class Function extends Descriptor_R<Short>{
     }
 
     private static final void addOneStatement(final Descriptor pin, final StringBuilder pout, final int mode) {
-        if(pin != null) pin.decompile(Function.P_STMT, pout, mode & ~Descriptor.DECO_X);
+        if(pin != null) pin.decompile(Descriptor.P_STMT, pout, mode & ~Descriptor.DECO_X);
         Function.deIndent(pout);
         switch(pout.substring(pout.length() - 1).charAt(0)){
             default:
@@ -251,7 +250,7 @@ public final class Function extends Descriptor_R<Short>{
     }
 
     public Function(final short mode, final Descriptor[] args){
-        super(DTYPE.FUNCTION, ByteBuffer.allocate(Short.BYTES).order(ByteOrder.LITTLE_ENDIAN).putShort(mode), args);
+        super(DTYPE.FUNCTION, ByteBuffer.allocate(Short.BYTES).order(Descriptor.BYTEORDER).putShort(0, mode), args);
     }
 
     @Override
@@ -273,14 +272,14 @@ public final class Function extends Descriptor_R<Short>{
                     break;
                 }
                 case OPC.OpcFun:{ /*fun ident(arg, ...) stmt */
-                    if(prec < Function.P_STMT) pout.append('(');
+                    if(prec < Descriptor.P_STMT) pout.append('(');
                     pout.append("Fun ");
                     ptr = this.getDescriptor(0);
                     if(ptr.dtype == DTYPE.T) pout.append(ptr.toString());
-                    else ptr.decompile(Function.P_SUBS, pout, mode & ~Descriptor.DECO_X);
+                    else ptr.decompile(Descriptor.P_SUBS, pout, mode & ~Descriptor.DECO_X);
                     this.addArguments(2, " (", ") ", pout, mode);
                     Function.addCompoundStatement(1, this, 1, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(')');
+                    if(prec < Descriptor.P_STMT) pout.append(')');
                     break;
                 }
                 case OPC.OpcIn: /*input argument */
@@ -293,7 +292,7 @@ public final class Function extends Descriptor_R<Short>{
                     pout.append(" ");
                     ptr = this.getDescriptor(0);
                     if(ptr.dtype == DTYPE.T) pout.append(ptr.toString());
-                    else ptr.decompile(Function.P_SUBS, pout, mode & ~Descriptor.DECO_X);
+                    else ptr.decompile(Descriptor.P_SUBS, pout, mode & ~Descriptor.DECO_X);
                     break;
                 }
                 case OPC.OpcExtFunction:{ /*_label(arg, ...)*/
@@ -307,7 +306,7 @@ public final class Function extends Descriptor_R<Short>{
                     break;
                 }
                 case OPC.OpcSubscript:{ /*postfix[subscript, ...] */
-                    this.getDescriptor(0).decompile(Function.P_SUBS, pout, mode & ~Descriptor.DECO_X);
+                    this.getDescriptor(0).decompile(Descriptor.P_SUBS, pout, mode & ~Descriptor.DECO_X);
                     this.addArguments(1, "[", "]", pout, mode);
                     break;
                 }
@@ -409,106 +408,106 @@ public final class Function extends Descriptor_R<Short>{
                 }
                 case OPC.OpcBreak: /*break; */
                 case OPC.OpcContinue:{ /*continue; */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     pout.append(this.getDescriptor(0).toString());
                     Function.addOneStatement(null, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcCase:{ /*case (xxx) stmt ... */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     pout.append("Case (");
-                    this.getDescriptor(0).decompile(Function.P_STMT, pout, mode & ~Descriptor.DECO_X);
+                    this.getDescriptor(0).decompile(Descriptor.P_STMT, pout, mode & ~Descriptor.DECO_X);
                     pout.append(") ");
                     Function.addMultiStatement(narg - 1, this, 1, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcDefault:{ /*case default stmt ... */
                     pout.append("(");
                     pout.append("Case Default ");
                     Function.addMultiStatement(narg, this, 0, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcDo:{ /*do {stmt} while (exp); Note argument order is (exp,stmt,...) */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     pout.append("DO {");
                     Function.addMultiStatement(narg - 1, this, 1, pout, mode);
                     pout.append("} While ");
-                    this.getDescriptor(0).decompile(Function.P_STMT, pout, mode & ~Descriptor.DECO_X);
+                    this.getDescriptor(0).decompile(Descriptor.P_STMT, pout, mode & ~Descriptor.DECO_X);
                     Function.addMultiStatement(0, null, 0, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcFor:{ /*for (init;test;step) stmt */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     pout.append("For (");
-                    this.getDescriptor(0).decompile(Function.P_STMT, pout, mode & ~Descriptor.DECO_X);
+                    this.getDescriptor(0).decompile(Descriptor.P_STMT, pout, mode & ~Descriptor.DECO_X);
                     pout.append("; ");
-                    this.getDscptrs(1).decompile(Function.P_STMT, pout, mode & ~Descriptor.DECO_X);
+                    this.getDscptrs(1).decompile(Descriptor.P_STMT, pout, mode & ~Descriptor.DECO_X);
                     pout.append("; ");
-                    this.getDscptrs(2).decompile(Function.P_STMT, pout, mode & ~Descriptor.DECO_X);
+                    this.getDscptrs(2).decompile(Descriptor.P_STMT, pout, mode & ~Descriptor.DECO_X);
                     pout.append(") ");
                     Function.addCompoundStatement(narg - 3, this, 3, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcGoto:{ /*goto xxx; */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     pout.append("GoTo ");
                     pout.append(this.getDescriptor(0).toString());
                     Function.addOneStatement(null, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcIf: /*if (exp) stmt else stmt */
                 case OPC.OpcWhere:{ /*where (exp) stmt elsewhere stmt */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     pout.append((opcode == OPC.OpcIf) ? "If (" : "Where (");
-                    this.getDescriptor(0).decompile(Function.P_STMT, pout, mode & ~Descriptor.DECO_X);
+                    this.getDescriptor(0).decompile(Descriptor.P_STMT, pout, mode & ~Descriptor.DECO_X);
                     pout.append(") ");
                     Function.addCompoundStatement(1, this, 1, pout, mode);
                     if(narg >= 3){
                         pout.append((opcode == OPC.OpcIf) ? " Else " : " ElseWhere ");
                         Function.addCompoundStatement(1, this, 2, pout, mode);
                     }
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcLabel:{ /*xxx : stmt ... */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     pout.append("Label ");
                     pout.append(this.getDescriptor(0).toString());
                     pout.append(" : ");
                     Function.addMultiStatement(narg - 1, this, 1, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcReturn:{ /*return (optional-exp); */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     pout.append("Return (");
-                    if(this.ndesc > 0) this.getDescriptor(0).decompile(Function.P_STMT, pout, mode & ~Descriptor.DECO_X);
+                    if(this.ndesc > 0) this.getDescriptor(0).decompile(Descriptor.P_STMT, pout, mode & ~Descriptor.DECO_X);
                     else pout.append("*");
                     pout.append(")");
                     Function.addOneStatement(null, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcStatement:{ /*{stmt ...} */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     Function.addMultiStatement(narg, this, 0, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
                 case OPC.OpcSwitch: /*switch (exp) stmt */
                 case OPC.OpcWhile:{ /*while (exp) stmt */
-                    if(prec < Function.P_STMT) pout.append("(");
+                    if(prec < Descriptor.P_STMT) pout.append("(");
                     pout.append((opcode == OPC.OpcSwitch) ? "Switch (" : "While (");
-                    this.getDescriptor(0).decompile(Function.P_STMT, pout, mode & ~Descriptor.DECO_X);
+                    this.getDescriptor(0).decompile(Descriptor.P_STMT, pout, mode & ~Descriptor.DECO_X);
                     pout.append(") ");
                     Function.addCompoundStatement(narg - 1, this, 1, pout, mode);
-                    if(prec < Function.P_STMT) pout.append(")");
+                    if(prec < Descriptor.P_STMT) pout.append(")");
                     break;
                 }
             }

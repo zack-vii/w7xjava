@@ -1,7 +1,6 @@
 package mds.data.descriptor;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import debug.DEBUG;
 import mds.MdsException;
@@ -10,18 +9,18 @@ import mds.mdsip.Message;
 /** Compressed Array Descriptor (-61 : 195) **/
 public class Descriptor_CA extends ARRAY<ByteBuffer>{
     private static final class DECOMPRESS{
+        private static final int       MAXX    = 1024;
+        // private static final int MAXY = 32;
         private static final int       BITSX   = 10;
         private static final int       BITSY   = 6;
-        private static final IntBuffer diff    = IntBuffer.allocate(DECOMPRESS.MAXX);
-        private static final IntBuffer exce    = IntBuffer.allocate(DECOMPRESS.MAXX);
         private static final int       FIELDSX = 2;
         private static final int       FIELDSY = DECOMPRESS.BITSY + DECOMPRESS.BITSX;
-        private static final IntBuffer header  = IntBuffer.allocate(2);
         private static final int[]     MASKS   = new int[]{0, 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff, 0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff, 0x1fffff, 0x3fffff, 0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff, 0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff,};
         private static final int       MASKX   = DECOMPRESS.MASKS[DECOMPRESS.BITSX];
         private static final int       MASKY   = DECOMPRESS.MASKS[DECOMPRESS.BITSY];
-        private static final int       MAXX    = 1024;
-        // private static final int MAXY = 32;
+        private static final IntBuffer header  = IntBuffer.allocate(2);
+        private static final IntBuffer diff    = IntBuffer.allocate(DECOMPRESS.MAXX);
+        private static final IntBuffer exce    = IntBuffer.allocate(DECOMPRESS.MAXX);
 
         private static final int X_OF_INT(final int x) {
             return (x >> DECOMPRESS.BITSY) & DECOMPRESS.MASKX;
@@ -46,7 +45,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         /** MdsUnpk expects LittleEndian buffers **/
         private final void MdsUnpk(final int nbits, int nitems, final ByteBuffer pack_in, final IntBuffer items_in) {
             final IntBuffer items = ((IntBuffer)items_in.position(0)).duplicate();
-            final ByteBuffer pack = (ByteBuffer)pack_in.duplicate().order(ByteOrder.LITTLE_ENDIAN).position((this.bit >> 5) * Integer.BYTES);
+            final ByteBuffer pack = (ByteBuffer)pack_in.duplicate().order(Descriptor.BYTEORDER).position((this.bit >> 5) * Integer.BYTES);
             if(DEBUG.D) System.err.print(String.format("MdsUnpk(%d, %d, [..%d..], %d) -> ", nbits, nitems, pack.getInt(pack.position()), this.bit));
             if(nbits == 0){// zero fill
                 if(DEBUG.D) System.err.println("zero fill");
@@ -119,7 +118,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
             if(pack_dsc instanceof Descriptor_CA) pack_dsc = new DECOMPRESS((Descriptor_CA)pack_dsc).out_dsc;
             if(DEBUG.D) System.out.println("mdsXpand: " + pack_dsc.getDName() + pack_dsc.arsize);
             this.bit = 0;
-            final ByteBuffer bpack = ByteBuffer.allocate(pack_dsc.arsize + 4).order(ByteOrder.LITTLE_ENDIAN);
+            final ByteBuffer bpack = ByteBuffer.allocate(pack_dsc.arsize + 4).order(Descriptor.BYTEORDER);
             // bpack.asIntBuffer().put(pack_dsc.getBuffer().asIntBuffer()).position(0); // would swap ints
             bpack.put(pack_dsc.getBuffer()).position(0); // take buffer as is
             final ByteBuffer bout = ByteBuffer.allocate(items_dsc.arsize + items_dsc.pointer).order(pack_dsc.b.order());

@@ -1,13 +1,13 @@
 package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 
 public final class EmptyArray extends Descriptor_A{
     public EmptyArray(){
-        super(DTYPE.MISSING, ByteBuffer.allocate(0).order(ByteOrder.LITTLE_ENDIAN), 0);
+        super(DTYPE.MISSING, ByteBuffer.allocate(0).order(Descriptor.BYTEORDER), 0);
     }
 
     public EmptyArray(final ByteBuffer b){

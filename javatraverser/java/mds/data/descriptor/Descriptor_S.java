@@ -93,7 +93,7 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     }
 
     public Descriptor_S(final short length, final byte dtype, final ByteBuffer value){
-        super(length, dtype, Descriptor_S.CLASS, value, 0);
+        super(length, dtype, Descriptor_S.CLASS, value, Descriptor.BYTES, 0);
     }
 
     @Override

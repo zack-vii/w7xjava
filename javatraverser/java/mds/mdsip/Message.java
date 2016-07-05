@@ -7,9 +7,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Vector;
 import java.util.zip.InflaterInputStream;
+import mds.data.descriptor.ARRAY;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor.Descriptor_A;
 
 public final class Message extends Object{
     public static final int       _mlenI               = 0;
@@ -78,7 +78,7 @@ public final class Message extends Object{
                 body = ByteBuffer.wrap(Message.readBuf(msglen - Message.HEADER_SIZE, dis, listeners));
             }
         }else body = ByteBuffer.allocate(0);
-        body.order(ByteOrder.LITTLE_ENDIAN);
+        body.order(Descriptor.BYTEORDER);
         return new Message(header, body);
     }
     public final ByteBuffer body;
@@ -116,9 +116,9 @@ public final class Message extends Object{
         this.client_type = client_type;
         this.nargs = nargs;
         this.descr_idx = descr_idx;
-        this.ndims = (ndims > Descriptor_A.MAX_DIM) ? Descriptor_A.MAX_DIM : ndims;
-        if(dims == null || dims.length != Descriptor_A.MAX_DIM){
-            this.dims = new int[Descriptor_A.MAX_DIM];
+        this.ndims = (ndims > ARRAY.MAX_DIM) ? ARRAY.MAX_DIM : ndims;
+        if(dims == null || dims.length != ARRAY.MAX_DIM){
+            this.dims = new int[ARRAY.MAX_DIM];
             if(dims != null) System.arraycopy(dims, 0, this.dims, 0, this.ndims < dims.length ? this.ndims : dims.length);
         }else this.dims = dims;
         this.dtype = dtype;
@@ -135,9 +135,9 @@ public final class Message extends Object{
         this.length = Descriptor.getDataSize(dtype, body_size);
         this.nargs = nargs;
         this.descr_idx = descr_idx;
-        this.ndims = (ndims > Descriptor_A.MAX_DIM) ? Descriptor_A.MAX_DIM : ndims;
-        if(dims == null || dims.length != Descriptor_A.MAX_DIM){
-            this.dims = new int[Descriptor_A.MAX_DIM];
+        this.ndims = (ndims > ARRAY.MAX_DIM) ? ARRAY.MAX_DIM : ndims;
+        if(dims == null || dims.length != ARRAY.MAX_DIM){
+            this.dims = new int[ARRAY.MAX_DIM];
             if(dims != null) System.arraycopy(dims, 0, this.dims, 0, this.ndims < dims.length ? this.ndims : dims.length);
         }else this.dims = dims;
         this.dtype = dtype;
@@ -160,8 +160,8 @@ public final class Message extends Object{
         this.dtype = header.get();
         this.client_type = (byte)(header.get() & 0x1F);
         this.ndims = header.get();
-        this.dims = new int[Descriptor_A.MAX_DIM];
-        for(int i = 0; i < Descriptor_A.MAX_DIM; i++)
+        this.dims = new int[ARRAY.MAX_DIM];
+        for(int i = 0; i < ARRAY.MAX_DIM; i++)
             this.dims[i] = header.getInt();
         this.header = header;
         this.body = body;

@@ -57,7 +57,7 @@ public abstract class ARRAY<T>extends Descriptor<T>{
     public static final int       _dmctB   = 11;
     public static final int       _aszI    = 12;
     public static final int       _a0I     = 16;
-    public static final int       _dmsI    = 20;
+    public static final int       _dmsIa   = 20;
     public static final byte      CLASS    = 4;
     protected static final aflags f_array  = new aflags(false, true, true, false, false);
     protected static final aflags f_bounds = new aflags(false, true, true, true, true);
@@ -81,7 +81,7 @@ public abstract class ARRAY<T>extends Descriptor<T>{
     public final bounds[]         bounds;
 
     public ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int nelements){
-        super((short)(byteBuffer.limit() / nelements), dtype, dclass, byteBuffer, 8);
+        super((short)(nelements == 0 ? 0 : byteBuffer.limit() / nelements), dtype, dclass, byteBuffer, ARRAY._dmsIa + (nelements > 1 ? Integer.BYTES : 0), 0);
         this.scale = (byte)0;
         this.digits = (byte)0;
         this.aflags = ARRAY.f_array;
@@ -106,7 +106,7 @@ public abstract class ARRAY<T>extends Descriptor<T>{
                 this.dims[i] = b.getInt();
         }else{
             this.a0 = 0;
-            this.dims = new int[]{this.arsize / this.length};
+            this.dims = new int[]{this.length == 0 ? 0 : this.arsize / this.length};
         }
         if(this.aflags.bounds){
             this.bounds = new bounds[this.dimct];
@@ -118,10 +118,5 @@ public abstract class ARRAY<T>extends Descriptor<T>{
     @Override
     public final int[] getShape() {
         return this.dims;
-    }
-
-    @Override
-    public ByteBuffer serialize() {
-        return this.b.duplicate().order(this.b.order());
     }
 }
