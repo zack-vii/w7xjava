@@ -80,8 +80,8 @@ public class ActionEditor extends JPanel implements ActionListener, Editor{
                 this.debug_panel = new JPanel(new GridLayout(3, 1));
                 this.add(this.debug_panel, BorderLayout.SOUTH);
                 this.debug_panel.add(this.error_edit);
-                this.debug_panel.add(this.comp_edit, BorderLayout.SOUTH);
-                this.debug_panel.add(this.perf_edit, BorderLayout.SOUTH);
+                this.debug_panel.add(this.comp_edit);
+                this.debug_panel.add(this.perf_edit);
                 break;
             case 2:
                 this.expr_edit = new LabeledExprEditor(this.data);
