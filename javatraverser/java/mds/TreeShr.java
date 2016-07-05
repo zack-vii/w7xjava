@@ -137,7 +137,11 @@ public final class TreeShr{
         return this.connection.getInteger(String.format("_s=TreeShr->TreeOpenNew(ref('%s'),val(%d))", expt, shot));
     }
 
-    /** utility_update=2: compress **/
+    /** utility_update=2: compress, if utility_update!=0 no_write-flags are ignored and flags are reset to 0x5400 **/
+    public final int treePutRecord(final int nid, final Descriptor dsc) throws MdsException {
+        return this.treePutRecord(nid, dsc, 0);
+    }
+
     public final int treePutRecord(final int nid, final Descriptor dsc, final int utility_update) throws MdsException {
         if(dsc == null) return this.connection.getInteger(String.format("_s=TreeShr->TreePutRecord(val(%d),*,val(%d))", nid, utility_update));
         return this.connection.getInteger(String.format("_d=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_d));_s=TreeShr->TreePutRecord(val(%d),xd(_d),val(%d))", nid, utility_update), new Descriptor[]{dsc.serializeDsc()});

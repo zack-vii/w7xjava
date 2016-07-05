@@ -474,7 +474,7 @@ public final class Database{
 
     public final void putData(final Nid nid, final Descriptor data) throws MdsException {
         this._checkContext();
-        final int status = this.treeshr.treePutRecord(nid.getValue(), data, 2);
+        final int status = this.treeshr.treePutRecord(nid.getValue(), data);
         this.handleStatus(status);
     }
 
