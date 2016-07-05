@@ -238,6 +238,7 @@ public class Connection{
     static final int        MAX_NUM_EVENTS = 256;
 
     private static <D extends Descriptor> Descriptor bufferToClass(final ByteBuffer b, final Class<D> cls) throws MdsException {
+        if(b.capacity() == 0) return null;// NoData
         if(cls == null || cls == Descriptor.class) return Descriptor.deserialize(b);
         if(cls == Descriptor_A.class) return Descriptor_A.deserialize(b);
         try{
