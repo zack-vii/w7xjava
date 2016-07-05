@@ -139,19 +139,19 @@ public class Connection{
                 synchronized(this){
                     this.killed = true;
                     this.notifyAll();
-                }
-                if(Connection.this.connected){
-                    this.message = null;
-                    Connection.this.connected = false;
-                    Connection.this.connectThread.update();
-                    (new Thread(){
-                        @Override
-                        public void run() {
-                            final ConnectionEvent ce = new ConnectionEvent(Connection.this, ConnectionEvent.LOST_CONNECTION, "Lost connection from : " + Connection.this.provider.host);
-                            Connection.this.dispatchConnectionEvent(ce);
-                        }
-                    }).start();
-                    if(!(e instanceof SocketException)) e.printStackTrace();
+                    if(Connection.this.connected){
+                        this.message = null;
+                        Connection.this.connected = false;
+                        Connection.this.connectThread.update();
+                        (new Thread(){
+                            @Override
+                            public void run() {
+                                final ConnectionEvent ce = new ConnectionEvent(Connection.this, ConnectionEvent.LOST_CONNECTION, "Lost connection from : " + Connection.this.provider.host);
+                                Connection.this.dispatchConnectionEvent(ce);
+                            }
+                        }).start();
+                        if(!(e instanceof SocketException)) e.printStackTrace();
+                    }
                 }
             }
         }
