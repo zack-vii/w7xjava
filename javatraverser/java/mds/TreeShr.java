@@ -223,7 +223,7 @@ public final class TreeShr{
     }
 
     public final int treeStartConglomerate(final int size) throws MdsException {
-        return this.connection.getInteger(String.format("TreeShr->TreeStartConglomerate(%d)", size));
+        return this.connection.getInteger(String.format("TreeShr->TreeStartConglomerate(val(%d))", size));
     }
 
     /** 265392050 : TreeLock-Failure but does the change of state **/
