@@ -3,8 +3,6 @@ package jtraverser;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
@@ -17,11 +15,9 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import jtraverser.TreeManager.Menu;
-import jtraverser.dialogs.SubTrees;
 import mds.Database;
 
 @SuppressWarnings("serial")
@@ -105,7 +101,7 @@ public final class jTraverserFacade extends JFrame{
         this.treeman = new TreeManager(this);
         final JMenuBar menu_bar = new JMenuBar();
         this.setJMenuBar(menu_bar);
-        JMenuItem item;
+        final JMenuItem item;
         JMenu jmenu;
         menu_bar.add(jmenu = new JMenu("File"));
         jmenu.addMenuListener(new MenuChecker(jmenu, new TreeManager.FileMenu(this.treeman, jmenu)));
@@ -122,42 +118,10 @@ public final class jTraverserFacade extends JFrame{
         jmenu.addMenuListener(new MenuChecker(jmenu, new TreeManager.EditMenu(this.treeman, jmenu)));
         this.jmenus.add(jmenu);
         jmenu.setEnabled(false);
-        jmenu = new JMenu("Extras");
-        menu_bar.add(jmenu);
-        jmenu.add(item = new JMenuItem("Show DataBase"));
-        item.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                try{
-                    JOptionPane.showMessageDialog(jTraverserFacade.this, Database.getDatabase(), //
-                    Database.getCurrentProvider(), //
-                    JOptionPane.PLAIN_MESSAGE);
-                }catch(final Exception ex){
-                    ex.printStackTrace();
-                }
-            }
-        });
-        jmenu.add(item = new JMenuItem("Show SubTrees"));
-        item.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                new SubTrees(jTraverserFacade.this.treeman, jTraverserFacade.this);
-            }
-        });
-        jmenu.add(item = new JMenuItem("Show Tags"));
-        item.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                try{
-                    JOptionPane.showMessageDialog(jTraverserFacade.this, //
-                    jTraverserFacade.this.treeman.getCurrentDatabase().getTagsWild("***", 255).toString(), //
-                    jTraverserFacade.this.treeman.getCurrentDatabase().toString(), //
-                    JOptionPane.PLAIN_MESSAGE);
-                }catch(final Exception ex){
-                    ex.printStackTrace();
-                }
-            }
-        });
+        menu_bar.add(jmenu = new JMenu("Extras"));
+        jmenu.addMenuListener(new MenuChecker(jmenu, new TreeManager.ExtrasMenu(this.treeman, jmenu)));
+        this.jmenus.add(jmenu);
+        jmenu.setEnabled(false);
         this.getContentPane().add(this.treeman);
         this.getContentPane().add(jTraverserFacade.status, BorderLayout.PAGE_END);
         this.addWindowListener(new WindowAdapter(){
@@ -186,9 +150,10 @@ public final class jTraverserFacade extends JFrame{
             this.jmenus.get(1).setEnabled(true);
             this.jmenus.get(2).setEnabled(!tree.isReadOnly());
             this.jmenus.get(3).setEnabled(tree.isEditable());
+            this.jmenus.get(4).setEnabled(true);
         }else{
             this.setTitle(jTraverserFacade.TitleNoTree);
-            for(final JMenu jm : this.jmenus.subList(1, 4))
+            for(final JMenu jm : this.jmenus.subList(1, 5))
                 jm.setEnabled(false);
         }
     }

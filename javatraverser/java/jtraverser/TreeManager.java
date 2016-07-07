@@ -31,6 +31,7 @@ import jtraverser.dialogs.DisplayTags;
 import jtraverser.dialogs.GraphPanel;
 import jtraverser.dialogs.ModifyData;
 import jtraverser.dialogs.ModifyTags;
+import jtraverser.dialogs.SubTrees;
 import jtraverser.dialogs.TreeDialog;
 import jtraverser.dialogs.TreeOpenDialog;
 import jtraverser.editor.NodeEditor;
@@ -184,6 +185,53 @@ public class TreeManager extends JScrollPane{
             }
             for(int i = 0; i < mask.length; i++)
                 this.items.get(i).setEnabled(mask[i]);
+        }
+    }
+    public static final class ExtrasMenu extends Menu{
+        public final class showDatabase implements ActionListener{
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                try{
+                    JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), Database.getDatabase(), //
+                    Database.getCurrentProvider(), //
+                    JOptionPane.PLAIN_MESSAGE);
+                }catch(final Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+        }
+        public final class showSubTrees implements ActionListener{
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                new SubTrees(ExtrasMenu.this.treeman, ExtrasMenu.this.treeman.getFrame());
+            }
+        }
+        public final class showTags implements ActionListener{
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                try{
+                    JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), //
+                    ExtrasMenu.this.treeman.getCurrentDatabase().getTagsWild("***", 255).toString(), //
+                    ExtrasMenu.this.treeman.getCurrentDatabase().toString(), //
+                    JOptionPane.PLAIN_MESSAGE);
+                }catch(final Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        public ExtrasMenu(final TreeManager treeman, final JComponent menu){
+            super(treeman);
+            menu.add(this.addMenuItem("Show DataBase", new showDatabase()));
+            menu.add(this.addMenuItem("Show SubTrees", new showSubTrees()));
+            menu.add(this.addMenuItem("Show Tags", new showTags()));
+        }
+
+        @Override
+        public final void checkSupport() {
+            final boolean open = this.treeman.getCurrentTree() != null;
+            for(final JMenuItem item : this.items)
+                item.setEnabled(open);
         }
     }
     public static class FileMenu extends Menu{
