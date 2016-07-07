@@ -170,7 +170,7 @@ public class TreeShr_Test{
 
     @Test
     public final void test132TreeRemoveNodesTags() throws MdsException {
-        Assert.assertEquals(265388152, TreeShr_Test.treeshr.treeRemoveNodesTags(2));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeRemoveNodesTags(2));
         Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWild("DEVICE"));
     }
 
