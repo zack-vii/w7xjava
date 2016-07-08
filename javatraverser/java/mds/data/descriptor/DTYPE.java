@@ -56,11 +56,10 @@ public final class DTYPE{
     public static final byte      TUPLE          = -41;            // 215
     public static final byte      DICTIONARY     = -40;            // 216
     public static final byte      OPAQUE         = -39;            // 217
-    public static final byte      FLOAT          = DTYPE.F;
-    public static final byte      DOUBLE         = DTYPE.D;
-    public static final byte      COMPLEX_FLOAT  = DTYPE.FC;
-    public static final byte      COMPLEX_DOUBLE = DTYPE.DC;
-
+    public static final byte      FLOAT          = DTYPE.FS;
+    public static final byte      DOUBLE         = DTYPE.FT;
+    public static final byte      COMPLEX_FLOAT  = DTYPE.FSC;
+    public static final byte      COMPLEX_DOUBLE = DTYPE.FTC;
     static{
         DTYPE._name[Byte.toUnsignedInt(DTYPE.B)] = "Byte";
         DTYPE._name[Byte.toUnsignedInt(DTYPE.W)] = "Word";
@@ -116,7 +115,6 @@ public final class DTYPE{
         DTYPE._name[Byte.toUnsignedInt(DTYPE.WITH_ERROR)] = "With_Error";
         DTYPE._name[Byte.toUnsignedInt(DTYPE.WITH_UNITS)] = "With_Units";
     }
-
     static{
         DTYPE._suffix[Byte.toUnsignedInt(DTYPE.B)] = "B";
         DTYPE._suffix[Byte.toUnsignedInt(DTYPE.W)] = "W";
