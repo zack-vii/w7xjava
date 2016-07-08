@@ -9,6 +9,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import jtraverser.NodeInfo;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_a.Float32Array;
 import mds.data.descriptor_a.Uint64Array;
@@ -228,7 +229,7 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test165TreePutRow() throws MdsException {
+    public final void test169TreePutRow() throws MdsException {
         Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRow(1, 1 << 10, 1000010000000l, new Float32Array(new float[]{.9f})));
     }
 
@@ -238,6 +239,16 @@ public class TreeShr_Test{
         Assert.assertArrayEquals(new float[]{.3f, .5f, .7f}, TreeShr_Test.treeshr.treeGetRecord(1).toFloatArray(), 1e-9f);
         Assert.assertEquals(1, TreeShr_Test.treeshr.treeSetTimeContext());
         Assert.assertArrayEquals(new float[]{.0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f}, TreeShr_Test.treeshr.treeGetRecord(1).toFloatArray(), 1e-9f);
+    }
+
+    @Test
+    public final void test171TreeGetSegment() throws MdsException {
+        Assert.assertArrayEquals(new int[]{10}, TreeShr_Test.treeshr.treeGetSegment(1, 0).getShape());
+    }
+
+    @Test
+    public final void test172TreeGetSegmentInfo() throws MdsException {
+        Assert.assertEquals(DTYPE.FLOAT, TreeShr_Test.treeshr.treeGetSegmentInfo(1, 0).dtype);
     }
 
     @Test

@@ -9,6 +9,7 @@ import jtraverser.NodeInfo;
 import jtraverser.jTraverserFacade;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
+import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 import mds.mdsip.Connection;
@@ -144,10 +145,12 @@ public final class Database{
     private final int        mode;
     private final int        shot;
     private final TreeShr    treeshr;
+    private final MdsShr     mdsshr;
 
     public Database(final String provider) throws MdsException{
         this.con = Database.setupConnection(provider);
         this.treeshr = new TreeShr(this.con);
+        this.mdsshr = new MdsShr(this.con);
         this.expt = null;
         this.shot = 0;
         this.mode = 0;
@@ -164,6 +167,7 @@ public final class Database{
     public Database(final String provider, final String expt, final int shot, final int mode) throws MdsException{
         this.con = Database.setupConnection(provider);
         this.treeshr = new TreeShr(this.con);
+        this.mdsshr = new MdsShr(this.con);
         this.expt = expt.toUpperCase();
         this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
         if(mode == Database.NEW){
@@ -182,8 +186,8 @@ public final class Database{
     }
 
     private final void _connect() throws MdsException {
+        if(!this.con.isConnected()) throw new MdsException("Not connected");
         if(Database.mds != this.con) Database.mds = this.con;
-        if(!Database.mds.isConnected()) throw new MdsException("Not connected");
         Database.updateCurrent();
     }
 
@@ -355,8 +359,8 @@ public final class Database{
 
     public final String getMdsMessage(final int status) {
         try{
-            return Database.mds.getString(String.format("GetMsg(%d)", status));
-        }catch(final Exception e){
+            return this.mdsshr.mdsGetMsgDsc(status);
+        }catch(final MdsException e){
             return e.getMessage();
         }
     }
@@ -368,10 +372,6 @@ public final class Database{
 
     public final String getName() {
         return this.expt;
-    }
-
-    public final int getOpcode(final String name) throws MdsException {
-        return Database.mds.getInteger(String.format("mdsGetOpcode(%s)", name));
     }
 
     public final String getOriginalPartName(final Nid nid) throws MdsException {
@@ -388,8 +388,8 @@ public final class Database{
         return Database.tdiEvaluate(String.format("GETNCI(%d,'RECORD')", nid.getValue()));
     }
 
-    public Descriptor getSegment(final Nid nid, final int segment) throws MdsException {
-        return Database.tdiEvaluate(String.format("GetSegment(%d,%d)", nid.getValue(), segment));
+    public Signal getSegment(final Nid nid, final int segment) throws MdsException {
+        return this.treeshr.treeGetSegment(nid.getValue(), segment);
     }
 
     public final long getShot() {

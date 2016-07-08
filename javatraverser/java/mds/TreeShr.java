@@ -4,12 +4,34 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_a.Uint64Array;
+import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.Int32;
 import mds.data.descriptor_s.NUMBER;
 import mds.data.descriptor_s.Pointer;
 import mds.mdsip.Connection;
 
 public final class TreeShr{
+    public static final class SegmentInfo{
+        public final byte  dtype;
+        public final byte  dimct;
+        public final int[] dims;
+        public final int   next_row;
+
+        public SegmentInfo(final byte dtype, final byte dimct, final int[] dims, final int next_row){
+            this.dtype = dtype;
+            this.dimct = dimct;
+            this.dims = dims;
+            this.next_row = next_row;
+        }
+
+        public SegmentInfo(final int[] array){
+            this.dtype = (byte)array[0];
+            this.dimct = (byte)array[1];
+            this.dims = new int[8];
+            System.arraycopy(array, 2, this.dims, 0, 8);
+            this.next_row = array[10];
+        }
+    }
     private final Connection connection;
     private long             treeFindTagWildRef = 0;
     private int              treeFindTagWildNid = -1;
@@ -109,8 +131,16 @@ public final class TreeShr{
         return this.connection.evaluate(String.format("_d=*;_s=TreeShr->TreeGetRecord(val(%d),xd(_d));_d", nid));
     }
 
+    public final Signal treeGetSegment(final int nid, final int idx) throws MdsException {
+        return (Signal)this.connection.mdsValue(String.format("_a=_t=*;_s=TreeShr->TreeGetSegment(val(%d),val(%d),xd(_a),xd(_t));make_signal(_a,*,_t)", nid, idx), Signal.class);
+    }
+
     public final Descriptor treeGetSegmentedRecord(final int nid) throws MdsException {
         return this.connection.mdsValue(String.format("_d=*;_s=TreeShr->TreeGetSegmentedRecord(val(%d),xd(_d));_d", nid));
+    }
+
+    public final SegmentInfo treeGetSegmentInfo(final int nid, final int idx) throws MdsException {
+        return new SegmentInfo(this.connection.getIntegerArray(String.format("_a=0B;_b=0B;_d=zero(8,0);_i=0;_s=TreeShr->TreeGetSegmentInfo(val(%d),val(%d),ref(_a),ref(_b),ref(_d),ref(_i));[_a,_b,_d[0],_d[1],_d[2],_d[3],_d[4],_d[5],_d[6],_d[7],_i]", nid, idx)));
     }
 
     public final Descriptor treeGetXNci(final int nid) throws MdsException {
