@@ -357,26 +357,25 @@ public class Connection{
     }
 
     public final boolean disconnect() {
-        try{
-            this.disconnectFromServer();
-            if(this.connectThread != null) this.connectThread.close();
-            this.connectThread = null;
-            if(this.receiveThread != null) this.receiveThread.waitExited();
-            this.receiveThread = null;
-            this.dos = null;
-            this.dis = null;
-        }catch(final IOException e){
-            return false;
-        }
+        this.disconnectFromServer();
+        if(this.connectThread != null) this.connectThread.close();
+        this.connectThread = null;
+        if(this.receiveThread != null) this.receiveThread.waitExited();
+        this.receiveThread = null;
+        this.dos = null;
+        this.dis = null;
         return true;
     }
 
-    private final void disconnectFromServer() throws IOException {
-        this.dos.close();
+    private final void disconnectFromServer() {
         try{
-            this.dis.close();
+            try{
+                if(this.dos != null) this.dos.close();
+            }finally{
+                if(this.dis != null) this.dis.close();
+            }
         }catch(final IOException e){
-            System.err.println("The output stream has been closed but closing the input stream failed:\n" + e.getMessage());
+            System.err.println("The closing of sockets failed:\n" + e.getMessage());
         }
         if(!this.connection_listener.isEmpty()) this.connection_listener.removeAllElements();
         this.connected = false;
@@ -411,7 +410,7 @@ public class Connection{
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    public void finalize() throws Throwable {
         try{
             this.disconnect();
         }finally{
