@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,24 +21,21 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import jtraverser.TreeManager;
+import jtraverser.jTraverserFacade;
 import mds.Database;
+import mds.MdsException;
+import mds.data.descriptor.Descriptor;
+import mds.data.descriptor_s.CString;
+import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
 public class TreeOpenDialog extends JDialog{
-    /*
-    public static void main(final String[] args) {// TODO:main
-        try{
-            final TreeOpenDialog dialog = new TreeOpenDialog(null, null);
-            dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        }catch(final Exception e){
-            e.printStackTrace();
-        }
-    }
-    */
-    private final JRadioButton open_readonly, open_edit, open_normal;
-    private final JTextField   provider, open_shot, open_expt;
+    private final JRadioButton readonly, edit, normal;
+    private final JTextField   provider, expt;
+    JComboBox<String>          shot;
     private final TreeManager  treeman;
 
     /**
@@ -143,19 +141,47 @@ public class TreeOpenDialog extends JDialog{
         grid.add(new JLabel("server: "));
         grid.add(this.provider = new JTextField(16));
         grid.add(new JLabel("expt: "));
-        grid.add(this.open_expt = new JTextField(16));
+        grid.add(this.expt = new JTextField(16));
         grid.add(new JLabel("shot: "));
-        grid.add(this.open_shot = new JTextField(16));
+        grid.add(this.shot = new JComboBox<String>());
+        this.shot.setEditable(true);
+        this.shot.addPopupMenuListener(new PopupMenuListener(){
+            @Override
+            public void popupMenuCanceled(final PopupMenuEvent e) {}
+
+            @Override
+            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {}
+
+            @Override
+            public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
+                TreeOpenDialog.this.shot.removeAllItems();
+                TreeOpenDialog.this.shot.addItem("model");
+                final Connection mds = new Connection(TreeOpenDialog.this.provider.getText());
+                try{
+                    int[] shots;
+                    try{
+                        shots = mds.getIntegerArray("getShotDB($)", new Descriptor[]{new CString(TreeOpenDialog.this.expt.getText())});
+                    }catch(final MdsException exc){
+                        jTraverserFacade.stderr("getShotDB", exc);
+                        shots = new int[0];
+                    }
+                    for(final int shot : shots)
+                        TreeOpenDialog.this.shot.addItem(Integer.toString(shot));
+                }finally{
+                    mds.disconnect();
+                }
+            }
+        });
         mjp.add(grid, BorderLayout.NORTH);
         final JPanel access = new JPanel(new GridLayout(1, 3));
-        access.add(this.open_readonly = new JRadioButton("readonly"));
-        access.add(this.open_normal = new JRadioButton("normal"));
-        access.add(this.open_edit = new JRadioButton("edit/new"));
+        access.add(this.readonly = new JRadioButton("readonly"));
+        access.add(this.normal = new JRadioButton("normal"));
+        access.add(this.edit = new JRadioButton("edit/new"));
         final ButtonGroup bgMode = new ButtonGroup();
-        bgMode.add(this.open_readonly);
-        bgMode.add(this.open_normal);
-        bgMode.add(this.open_edit);
-        this.open_readonly.setSelected(true);
+        bgMode.add(this.readonly);
+        bgMode.add(this.normal);
+        bgMode.add(this.edit);
+        this.readonly.setSelected(true);
         mjp.add(access, "Center");
         final JPanel buttons = new JPanel();
         JButton but;
@@ -176,7 +202,7 @@ public class TreeOpenDialog extends JDialog{
         });
         mjp.add(buttons, "South");
         this.getContentPane().add(mjp);
-        this.open_shot.addKeyListener(new KeyListener(){
+        this.shot.addKeyListener(new KeyListener(){
             @Override
             public void keyPressed(final KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ENTER) TreeOpenDialog.this.ok();
@@ -193,43 +219,40 @@ public class TreeOpenDialog extends JDialog{
     }
 
     void ok() {
-        final String provider = this.provider.getText().trim(), exp = this.open_expt.getText().trim(), shot_str = this.open_shot.getText().trim();
+        final String provider = this.provider.getText().trim(), exp = this.expt.getText().trim(), shot_str = ((String)this.shot.getSelectedItem()).trim();
         if(exp == null || exp.length() == 0){
             JOptionPane.showMessageDialog(this, "Missing experiment name", "Error opening tree", JOptionPane.WARNING_MESSAGE);
             return;
         }
         int shot;
-        if(shot_str == null || shot_str.length() == 0){
-            JOptionPane.showMessageDialog(this, "Wrong shot number", "Error opening tree", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        try{
+        if(shot_str == null || shot_str.length() == 0 || shot_str.equalsIgnoreCase("model")) shot = -1;
+        else try{
             shot = Integer.parseInt(shot_str);
         }catch(final Exception e){
             JOptionPane.showMessageDialog(this, "Wrong shot number", "Error opening tree", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        if(this.open_edit.isSelected() && this.open_readonly.isSelected()){
+        if(this.edit.isSelected() && this.readonly.isSelected()){
             JOptionPane.showMessageDialog(this, "Tree cannot be open in both edit and readonly mode", "Error opening tree", JOptionPane.WARNING_MESSAGE);
             return;
         }
         this.setVisible(false);
         final int mode;
-        if(this.open_edit.isSelected()) mode = Database.EDITABLE;
-        else if(this.open_readonly.isSelected()) mode = Database.READONLY;
+        if(this.edit.isSelected()) mode = Database.EDITABLE;
+        else if(this.readonly.isSelected()) mode = Database.READONLY;
         else mode = Database.NORMAL;
         if(this.treeman != null) this.treeman.openTree(provider, exp, shot, mode);
     }
 
     public final void open() {
         if(this.treeman != null) this.setLocation(this.treeman.dialogLocation());
-        this.open_readonly.setSelected(true);
+        this.readonly.setSelected(true);
         this.setVisible(true);
     }
 
     public final void setFields(final String provider, final String expt, final long shot) {
         this.provider.setText(provider);
-        this.open_expt.setText(expt);
-        this.open_shot.setText(Long.toString(shot));
+        this.expt.setText(expt);
+        this.shot.setSelectedItem(Long.toString(shot));
     }
 }

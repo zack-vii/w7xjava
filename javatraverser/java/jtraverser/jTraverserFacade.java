@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import jtraverser.TreeManager.Menu;
@@ -101,7 +100,6 @@ public final class jTraverserFacade extends JFrame{
         this.treeman = new TreeManager(this);
         final JMenuBar menu_bar = new JMenuBar();
         this.setJMenuBar(menu_bar);
-        final JMenuItem item;
         JMenu jmenu;
         menu_bar.add(jmenu = new JMenu("File"));
         jmenu.addMenuListener(new MenuChecker(jmenu, new TreeManager.FileMenu(this.treeman, jmenu)));
