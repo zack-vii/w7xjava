@@ -2,6 +2,7 @@
 FOR /f %%i IN ('CD') DO SET root=%%i
 PUSHD %TMP%
 IF NOT EXIST %TMP%\password.bat GOTO:nopw
+CLS
 CALL %TMP%\password.bat
 GOTO:pw
 :nopw
