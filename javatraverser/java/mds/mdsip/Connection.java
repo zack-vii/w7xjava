@@ -357,9 +357,9 @@ public class Connection{
     }
 
     public final boolean disconnect() {
-        this.disconnectFromServer();
         if(this.connectThread != null) this.connectThread.close();
         this.connectThread = null;
+        this.disconnectFromServer();
         if(this.receiveThread != null) this.receiveThread.waitExited();
         this.receiveThread = null;
         this.dos = null;
