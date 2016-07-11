@@ -15,12 +15,12 @@ import mds.data.Data;
 import mds.data.NidData;
 import mds.data.PathData;
 
-public final class localDatabase implements Database{
+public final class LocalDatabase implements Database{
     static{
         try{
-            localDatabase.loadLibraryFromJar("localDatabase");
+            LocalDatabase.loadLibraryFromJar("LocalDatabase");
         }catch(final IOException e){
-            System.err.println("Cannot load 'localDatabase' library.");
+            System.err.println("Cannot load 'LocalDatabase' library.");
             e.printStackTrace();
         }
     }
@@ -45,7 +45,7 @@ public final class localDatabase implements Database{
             final byte[] buffer = new byte[1024];
             int readBytes;
             // Open and check input stream
-            final InputStream is = localDatabase.class.getResourceAsStream(path);
+            final InputStream is = LocalDatabase.class.getResourceAsStream(path);
             if(is == null){ throw new FileNotFoundException("File '" + path + "' was not found inside JAR: " + path); }
             // Open output stream and copy data between source file in JAR and the temporary file
             final OutputStream os = new FileOutputStream(temp);
@@ -70,7 +70,7 @@ public final class localDatabase implements Database{
     private String        provider;
     private final int     shot;
 
-    public localDatabase(final String name, final int shot, final int mode){
+    public LocalDatabase(final String name, final int shot, final int mode){
         this.name = name.toUpperCase();
         this.shot = shot;
         this.mode = mode;

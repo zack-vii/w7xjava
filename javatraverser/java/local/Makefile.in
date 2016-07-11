@@ -3,15 +3,15 @@ include @top_builddir@/Makefile.inc
 srcdir=@srcdir@
 builddir=@builddir@
 VPATH = @srcdir@
-@MINGW_TRUE@ DEF=${srcdir}/localDatabase.def
+@MINGW_TRUE@ DEF=${srcdir}/LocalDatabase.def
 
 CFLAGS += -I /media/sf_FedoraShared/include/ -I /media/sf_FedoraShared/include/win32 $(THREAD) @JDK_CFLAGS@
 
-SOURCES = localDatabase.c
+SOURCES = LocalDatabase.c
 OBJECTS = $(SOURCES:.c=.o)
-EXPORTS = localDatabase.export
+EXPORTS = LocalDatabase.export
 
-all: 	@MAKELIBDIR@ @MAKELIBDIR@@LIBPRE@localDatabase@SHARETYPEJNI@
+all: 	@MAKELIBDIR@ @MAKELIBDIR@@LIBPRE@LocalDatabase@SHARETYPEJNI@
 
 depend:
 	@makedepend -- $(CFLAGS) -- $(SOURCES)
@@ -21,8 +21,8 @@ clean:
 	@ $(RM) @MAKELIBDIR@@LIBPRE@JavaMds@SHARETYPEJNI@
 
 install: $(libdir)
-	$(INSTALL) -m 755  @MAKELIBDIR@@LIBPRE@localDatabase@SHARETYPEJNI@ @libdir@
+	$(INSTALL) -m 755  @MAKELIBDIR@@LIBPRE@LocalDatabase@SHARETYPEJNI@ @libdir@
 
-@MAKELIBDIR@@LIBPRE@localDatabase@SHARETYPEJNI@ : $(OBJECTS) $(DEF)
+@MAKELIBDIR@@LIBPRE@LocalDatabase@SHARETYPEJNI@ : $(OBJECTS) $(DEF)
 	$(LINK.c) $(OUTPUT_OPTION) @LINKJNI@ $(THREAD) $^ -L@MAKELIBDIR@ -lMdsShr -lMdsIpShr -lTreeShr -lTdiShr -lJavaMds $(LIBS)
 

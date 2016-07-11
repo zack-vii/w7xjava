@@ -1,5 +1,5 @@
 #include <jni.h>
-#include "localDatabase.h"
+#include "LocalDatabase.h"
 #include <stdio.h>
 #include <mdsdescrip.h>
 #include <mds_stdarg.h>
@@ -96,7 +96,7 @@ static void RaiseException(JNIEnv * env, char *msg, int status)
   /* //free(msg); */
 }
 
-JNIEXPORT jint JNICALL Java_local_localDatabase_create(JNIEnv * env, jobject obj, jint shot) {
+JNIEXPORT jint JNICALL Java_local_LocalDatabase_create(JNIEnv * env, jobject obj, jint shot) {
   int status;
   //jfieldID name_fid;
   //jclass cls = (*env)->GetObjectClass(env, obj);
@@ -112,7 +112,7 @@ JNIEXPORT jint JNICALL Java_local_localDatabase_create(JNIEnv * env, jobject obj
   return 0;
 }
 
-JNIEXPORT jint JNICALL Java_local_localDatabase_open(JNIEnv * env, jobject obj) {
+JNIEXPORT jint JNICALL Java_local_LocalDatabase_open(JNIEnv * env, jobject obj) {
   int status;
   jfieldID name_fid, readonly_fid, editable_fid, shot_fid;
   jclass cls;
@@ -150,7 +150,7 @@ JNIEXPORT jint JNICALL Java_local_localDatabase_open(JNIEnv * env, jobject obj) 
 
 }
 
-JNIEXPORT jint JNICALL Java_local_localDatabase_openNew(JNIEnv * env, jobject obj) {
+JNIEXPORT jint JNICALL Java_local_LocalDatabase_openNew(JNIEnv * env, jobject obj) {
   int status;
   jfieldID name_fid, shot_fid;
   jclass cls = (*env)->GetObjectClass(env, obj);
@@ -177,7 +177,7 @@ JNIEXPORT jint JNICALL Java_local_localDatabase_openNew(JNIEnv * env, jobject ob
 
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_write(JNIEnv * env, jobject obj, jint context) {
+JNIEXPORT void JNICALL Java_local_LocalDatabase_write(JNIEnv * env, jobject obj, jint context) {
   int status;
   jfieldID name_fid, shot_fid;
   jclass cls = (*env)->GetObjectClass(env, obj);
@@ -196,7 +196,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_write(JNIEnv * env, jobject obj,
     RaiseException(env, MdsGetMsg(status), status);
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_close(JNIEnv * env, jobject obj, jint context)
+JNIEXPORT void JNICALL Java_local_LocalDatabase_close(JNIEnv * env, jobject obj, jint context)
 {
   int status = 1;
 
@@ -217,7 +217,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_close(JNIEnv * env, jobject obj,
     RaiseException(env, MdsGetMsg(status), status);
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_quit(JNIEnv * env, jobject obj, jint context)
+JNIEXPORT void JNICALL Java_local_LocalDatabase_quit(JNIEnv * env, jobject obj, jint context)
 {
   int status;
   jfieldID name_fid, shot_fid;
@@ -238,7 +238,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_quit(JNIEnv * env, jobject obj, 
     RaiseException(env, MdsGetMsg(status), status);
 }
 
-JNIEXPORT jobject JNICALL Java_local_localDatabase_getData
+JNIEXPORT jobject JNICALL Java_local_LocalDatabase_getData
     (JNIEnv * env, jobject obj, jobject jnid, jint context)
 {
 
@@ -287,7 +287,7 @@ printf("Parte DescripToObject\n");
 
 }
 
-JNIEXPORT jobject JNICALL Java_local_localDatabase_evaluateData
+JNIEXPORT jobject JNICALL Java_local_LocalDatabase_evaluateData
     (JNIEnv * env, jobject obj, jobject jnid, jint context) {
   int nid, status;
 
@@ -319,7 +319,7 @@ JNIEXPORT jobject JNICALL Java_local_localDatabase_evaluateData
   return ris;
 }
 
-JNIEXPORT jobject JNICALL Java_local_localDatabase_evaluateSimpleData
+JNIEXPORT jobject JNICALL Java_local_LocalDatabase_evaluateSimpleData
     (JNIEnv * env, jobject obj, jobject jdata, jint context) {
   int status;
   jobject ris;
@@ -339,7 +339,7 @@ JNIEXPORT jobject JNICALL Java_local_localDatabase_evaluateSimpleData
   return ris;
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_putRow
+JNIEXPORT void JNICALL Java_local_LocalDatabase_putRow
     (JNIEnv * env, jobject obj, jobject jnid, jobject jdata, jlong time, jint context) {
   int nid, status;
   jfieldID nid_fid;
@@ -363,7 +363,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_putRow
     RaiseException(env, MdsGetMsg(status), status);
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_putData
+JNIEXPORT void JNICALL Java_local_LocalDatabase_putData
     (JNIEnv * env, jobject obj, jobject jnid, jobject jdata, jint context) {
   int nid, status;
   jfieldID nid_fid;
@@ -386,7 +386,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_putData
     RaiseException(env, MdsGetMsg(status), status);
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_setFlags(JNIEnv * env, jobject obj, jobject jnid, jint jflags, jint context) {
+JNIEXPORT void JNICALL Java_local_LocalDatabase_setFlags(JNIEnv * env, jobject obj, jobject jnid, jint jflags, jint context) {
     int nid, status;
     int flags = (int)jflags;
     NCI_ITM itmlst[] =
@@ -400,7 +400,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_setFlags(JNIEnv * env, jobject o
         RaiseException(env, MdsGetMsg(status), status);
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_clearFlags(JNIEnv * env, jobject obj, jobject jnid, jint jflags, jint context) {
+JNIEXPORT void JNICALL Java_local_LocalDatabase_clearFlags(JNIEnv * env, jobject obj, jobject jnid, jint jflags, jint context) {
     int nid, status;
     int flags = (int)jflags;
     NCI_ITM itmlst[] =
@@ -414,7 +414,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_clearFlags(JNIEnv * env, jobject
         RaiseException(env, MdsGetMsg(status), status);
 }
 
-JNIEXPORT jint JNICALL Java_local_localDatabase_getFlags(JNIEnv * env, jobject obj, jobject jnid, jint context) {
+JNIEXPORT jint JNICALL Java_local_LocalDatabase_getFlags(JNIEnv * env, jobject obj, jobject jnid, jint context) {
   int nid, status;
   jfieldID nid_fid;
   jclass cls = (*env)->GetObjectClass(env, jnid);
@@ -435,7 +435,7 @@ JNIEXPORT jint JNICALL Java_local_localDatabase_getFlags(JNIEnv * env, jobject o
   return nci_flags;
 }
 
-JNIEXPORT jobject JNICALL Java_local_localDatabase_getInfo
+JNIEXPORT jobject JNICALL Java_local_LocalDatabase_getInfo
     (JNIEnv * env, jobject obj, jobject jnid, jint context) {
   int nid, status;
   jfieldID nid_fid;
@@ -507,7 +507,7 @@ JNIEXPORT jobject JNICALL Java_local_localDatabase_getInfo
   return (*env)->CallStaticObjectMethodA(env, cls, constr, args);
 }
 
-JNIEXPORT jstring JNICALL Java_local_localDatabase_getOriginalPartName(JNIEnv * env, jobject obj, jobject jnid) {
+JNIEXPORT jstring JNICALL Java_local_LocalDatabase_getOriginalPartName(JNIEnv * env, jobject obj, jobject jnid) {
   static char part_name[512];
   static int part_name_len;
   int nid, status;
@@ -527,7 +527,7 @@ JNIEXPORT jstring JNICALL Java_local_localDatabase_getOriginalPartName(JNIEnv * 
   return (*env)->NewStringUTF(env, part_name);
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_setTags
+JNIEXPORT void JNICALL Java_local_LocalDatabase_setTags
     (JNIEnv * env, jobject obj, jobject jnid, jobjectArray jtags, jint context) {
   int nid, status, n_tags, i;
   jobject jtag;
@@ -556,7 +556,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_setTags
   }
 }
 
-JNIEXPORT jobjectArray JNICALL Java_local_localDatabase_getTags
+JNIEXPORT jobjectArray JNICALL Java_local_LocalDatabase_getTags
     (JNIEnv * env, jobject obj, jobject jnid, jint context) {
   int nid, n_tags, i;
   jobject jtag;
@@ -587,7 +587,7 @@ JNIEXPORT jobjectArray JNICALL Java_local_localDatabase_getTags
   return jtags;
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_setSubtree
+JNIEXPORT void JNICALL Java_local_LocalDatabase_setSubtree
     (JNIEnv * env, jobject obj, jobject jnid, jint context)
 {
 
@@ -609,7 +609,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_setSubtree
 
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_renameNode
+JNIEXPORT void JNICALL Java_local_LocalDatabase_renameNode
     (JNIEnv * env, jobject obj, jobject jnid, jstring jname, jint context) {
   int nid, status;
   jfieldID nid_fid;
@@ -623,7 +623,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_renameNode
     RaiseException(env, MdsGetMsg(status), status);
 }
 
-JNIEXPORT jobject JNICALL Java_local_localDatabase_addNode
+JNIEXPORT jobject JNICALL Java_local_LocalDatabase_addNode
     (JNIEnv * env, jobject obj, jstring jname, jint usage, jint context)
 {
 
@@ -646,7 +646,7 @@ JNIEXPORT jobject JNICALL Java_local_localDatabase_addNode
   return (*env)->CallStaticObjectMethodA(env, cls, constr, args);
 }
 
-JNIEXPORT jobjectArray JNICALL Java_local_localDatabase_startDelete
+JNIEXPORT jobjectArray JNICALL Java_local_LocalDatabase_startDelete
     (JNIEnv * env, jobject obj, jobjectArray jnids, jint context) {
   int nid, len, i, num_to_delete;
   jfieldID nid_fid;
@@ -676,7 +676,7 @@ JNIEXPORT jobjectArray JNICALL Java_local_localDatabase_startDelete
   return jout_nids;
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_executeDelete(JNIEnv * env, jobject obj, jint context) {
+JNIEXPORT void JNICALL Java_local_LocalDatabase_executeDelete(JNIEnv * env, jobject obj, jint context) {
   TreeDeleteNodeExecute();
 }
 
@@ -734,7 +734,7 @@ JNIEXPORT jobjectArray JNICALL Java_Database_getSons
 
 #define MAX_NODES 5000
 
-JNIEXPORT jobjectArray JNICALL Java_local_localDatabase_getWild
+JNIEXPORT jobjectArray JNICALL Java_local_LocalDatabase_getWild
     (JNIEnv * env, jobject obj, jint usage_mask, jint context) {
   int i, num_nids = 0;
   void *ctx = 0;
@@ -761,7 +761,7 @@ JNIEXPORT jobjectArray JNICALL Java_local_localDatabase_getWild
   return jnids;
 }
 
-JNIEXPORT jobjectArray JNICALL Java_local_localDatabase_getMembers
+JNIEXPORT jobjectArray JNICALL Java_local_LocalDatabase_getMembers
     (JNIEnv * env, jobject obj, jobject jnid, jint context) {
   int nid, status, i;
   jfieldID nid_fid;
@@ -808,7 +808,7 @@ JNIEXPORT jobjectArray JNICALL Java_local_localDatabase_getMembers
   return jnids;
 }
 
-JNIEXPORT jboolean JNICALL Java_local_localDatabase_isOn(JNIEnv * env, jobject obj, jobject jnid, jint context) {
+JNIEXPORT jboolean JNICALL Java_local_LocalDatabase_isOn(JNIEnv * env, jobject obj, jobject jnid, jint context) {
   int nid, status;
   jfieldID nid_fid;
   jclass cls = (*env)->GetObjectClass(env, jnid);
@@ -818,7 +818,7 @@ JNIEXPORT jboolean JNICALL Java_local_localDatabase_isOn(JNIEnv * env, jobject o
   return (status & 1);
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_setOn
+JNIEXPORT void JNICALL Java_local_LocalDatabase_setOn
     (JNIEnv * env, jobject obj, jobject jnid, jboolean on, jint context) {
   int nid, status;
   jfieldID nid_fid;
@@ -836,7 +836,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_setOn
   }
 }
 
-JNIEXPORT jobject JNICALL Java_local_localDatabase_resolve
+JNIEXPORT jobject JNICALL Java_local_LocalDatabase_resolve
     (JNIEnv * env, jobject obj, jobject jpath_data, jint context) {
   int nid, status;
   jfieldID path_fid;
@@ -862,7 +862,7 @@ JNIEXPORT jobject JNICALL Java_local_localDatabase_resolve
   return (*env)->CallStaticObjectMethodA(env, cls, constr, args);
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_setDefault
+JNIEXPORT void JNICALL Java_local_LocalDatabase_setDefault
     (JNIEnv * env, jobject obj, jobject jnid, jint context) {
   int nid, status;
   jfieldID nid_fid;
@@ -874,7 +874,7 @@ JNIEXPORT void JNICALL Java_local_localDatabase_setDefault
     RaiseException(env, MdsGetMsg(status), status);
 }
 
-JNIEXPORT jobject JNICALL Java_local_localDatabase_getDefault(JNIEnv * env, jobject obj, jint context) {
+JNIEXPORT jobject JNICALL Java_local_LocalDatabase_getDefault(JNIEnv * env, jobject obj, jint context) {
   jclass cls;
   jmethodID constr;
   jvalue args[1];
@@ -890,7 +890,7 @@ JNIEXPORT jobject JNICALL Java_local_localDatabase_getDefault(JNIEnv * env, jobj
   return (*env)->CallStaticObjectMethodA(env, cls, constr, args);
 }
 
-JNIEXPORT jobject JNICALL Java_local_localDatabase_addDevice
+JNIEXPORT jobject JNICALL Java_local_LocalDatabase_addDevice
     (JNIEnv * env, jobject obj, jstring jpath, jstring jmodel, jint context) {
   int nid, status;
   const char *path = (*env)->GetStringUTFChars(env, jpath, 0);
@@ -1142,7 +1142,7 @@ EXPORT int doAction(int nid)
   return status;
 }
 
-JNIEXPORT jint JNICALL Java_local_localDatabase_doAction(JNIEnv * env, jobject obj, jobject jnid, jint context) {
+JNIEXPORT jint JNICALL Java_local_LocalDatabase_doAction(JNIEnv * env, jobject obj, jobject jnid, jint context) {
   int nid, status;
   jfieldID nid_fid;
   jclass cls = (*env)->GetObjectClass(env, jnid);
@@ -1192,7 +1192,7 @@ static char *MdsGetString(char *in)
   return out;
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_doDeviceMethod
+JNIEXPORT void JNICALL Java_local_LocalDatabase_doDeviceMethod
     (JNIEnv * env, jobject obj, jobject jnid, jstring jmethod, jint context) {
   int status, nid;
   jfieldID nid_fid;
@@ -1238,13 +1238,13 @@ JNIEXPORT void JNICALL Java_local_localDatabase_doDeviceMethod
   }
 }
 
-JNIEXPORT jint JNICALL Java_local_localDatabase_saveContext(JNIEnv * env, jobject obj) {
+JNIEXPORT jint JNICALL Java_local_LocalDatabase_saveContext(JNIEnv * env, jobject obj) {
   void *context = TreeSaveContext();
 /*//	printf("Saved context: %x\n", context);*/
   return (int)context;
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_restoreContext(JNIEnv * env, jobject obj, void *context) {
+JNIEXPORT void JNICALL Java_local_LocalDatabase_restoreContext(JNIEnv * env, jobject obj, void *context) {
   //char **ctx = (char **)context;
 
   if (context == 0)
@@ -1253,27 +1253,27 @@ JNIEXPORT void JNICALL Java_local_localDatabase_restoreContext(JNIEnv * env, job
   TreeRestoreContext((void *)context);
 }
 
-JNIEXPORT jint JNICALL Java_local_localDatabase_getCurrentShot(JNIEnv * env, jobject obj, jstring jname) {
+JNIEXPORT jint JNICALL Java_local_LocalDatabase_getCurrentShot(JNIEnv * env, jobject obj, jstring jname) {
   const char *name = (*env)->GetStringUTFChars(env, jname, 0);
   int shot = TreeGetCurrentShotId((char *)name);
   (*env)->ReleaseStringUTFChars(env, jname, name);
   return shot;
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_setCurrentShot
+JNIEXPORT void JNICALL Java_local_LocalDatabase_setCurrentShot
     (JNIEnv * env, jobject obj, jstring jname, jint jshot) {
   const char *name = (*env)->GetStringUTFChars(env, jname, 0);
   TreeSetCurrentShotId((char *)name, (int)jshot);
   (*env)->ReleaseStringUTFChars(env, jname, name);
 }
 
-JNIEXPORT void JNICALL Java_local_localDatabase_setEvent(JNIEnv * env, jobject obj, jstring jname) {
+JNIEXPORT void JNICALL Java_local_LocalDatabase_setEvent(JNIEnv * env, jobject obj, jstring jname) {
   const char *name = (*env)->GetStringUTFChars(env, jname, 0);
   MDSEvent((char *)name, 0, 0);
   (*env)->ReleaseStringUTFChars(env, jname, name);
 }
 
-JNIEXPORT jstring JNICALL Java_local_localDatabase_getMdsMessage(JNIEnv * env, jobject obj, jint status) {
+JNIEXPORT jstring JNICALL Java_local_LocalDatabase_getMdsMessage(JNIEnv * env, jobject obj, jint status) {
   char *msg = MdsGetMsg(status);
   return (*env)->NewStringUTF(env, msg);
 }
