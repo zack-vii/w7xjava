@@ -687,14 +687,14 @@ public final class jScopeWaveInterface extends WaveInterface{
 
     @Override
     public void setExperiment(final String experiment) {
+        if(DEBUG.M) System.out.println("jScopeWaveInterface.setExperiment(\"" + experiment + "\")");
         super.setExperiment(experiment);
-        if(DEBUG.M){
-            System.out.println("jScopeWaveInterface.setExperiment(\"" + experiment + "\")");
-        }
         this.cexperiment = experiment;
         // set default
-        if(experiment == null) this.defaults |= (1 << jScopeWaveInterface.B_exp);
-        else this.defaults &= ~(1 << jScopeWaveInterface.B_exp);
+        if(experiment == null){
+            this.defaults |= (1 << jScopeWaveInterface.B_exp);
+            this.default_is_update = false;
+        }else this.defaults &= ~(1 << jScopeWaveInterface.B_exp);
     }
 
     public void toFile(final PrintWriter out, final String prompt) throws IOException {
@@ -825,7 +825,7 @@ public final class jScopeWaveInterface extends WaveInterface{
         /*
         bit = jScopeWaveInterface.B_shot;
         def_flag =    ((defaults & (1<<bit)) == 1<<bit);
-        in_shot       = GetDefaultValue(bit ,  def_flag);
+        in_shot       = this.getDefaultValue(bit ,  def_flag);
          */
         bit = jScopeWaveInterface.B_exp;
         def_flag = ((this.defaults & (1 << bit)) == 1 << bit);
