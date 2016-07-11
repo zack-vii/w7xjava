@@ -24,17 +24,6 @@ import mds.data.descriptor.Descriptor;
 public class GraphPanel extends JPanel{
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
 
-    /*
-    public static void main(final String[] args) throws MdsException {// TODO:main
-        final Connection con = new Connection("mds-data-1");
-        final String tree = "QSS";
-        final int shot = 160310007;
-        System.out.println(con.mdsValue(String.format("GetMsg(TreeOpen('%s',%d))", tree, shot)));
-        final String path = "DATA.FILTERSCOPE:T16_C_II";
-        final Descriptor sig = con.mdsValue(path);
-        GraphPanel.newPlot(sig, null, tree, shot, path).setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
-    }
-    */
     public static final JFrame newPlot(final Descriptor sig, final Component parent, final String title) {
         final JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

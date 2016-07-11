@@ -24,11 +24,6 @@ public final class Flags extends JDialog{
             bflags[i] = (iflags & (1 << i)) != 0;
         return bflags;
     }
-    /*
-    public static final void main(final String[] args) {// TODO:main
-        new Flags(null, null).open();
-    }
-    */
     private final JButton     close_b;
     private final JCheckBox[] flag;;
     private final boolean[]   settable_flag = new boolean[]{true, false, true, true, false, false, true, true, false, true, true, true, true, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false};
@@ -171,6 +166,6 @@ public final class Flags extends JDialog{
         }
         if(currnode == null) this.setTitle("Flags of <none selected>");
         else this.setTitle(new StringBuilder(128).append("Flags of ").append(currnode.getFullPath())//
-        .append(" (0x").append(Integer.toHexString(iflags)).append(')').toString());
+                .append(" (0x").append(Integer.toHexString(iflags)).append(')').toString());
     }
 }

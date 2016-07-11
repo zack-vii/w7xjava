@@ -235,34 +235,6 @@ public final class W7XSignalaccess{
         return W7XSignalaccess.getAccess(W7XSignalaccess.databaselist.get(0)) != null;
     }
 
-    /*
-    public static void main(final String[] args) {//TODO:main
-        final String path = "/ArchiveDB/codac/W7X/CoDaStationDesc.111/DataModuleDesc.250_DATASTREAM/0";// "/ArchiveDB/codac/W7X/CoDaStationDesc.14823/DataModuleDesc.14833_DATASTREAM/0/image/scaled";
-        final String XP = "XP:20160310.7";// "XP:20160210.5";
-        final TimeInterval TI = W7XSignalaccess.getTimeInterval(XP);
-        try{
-            final ReadOptions ro = ReadOptions.fetchAll();
-            final SignalReader R = W7XSignalaccess.getReader(path);
-            final List<TimeInterval> T = R.availableIntervals(TI);
-            try{
-                long time = -System.nanoTime();
-                System.out.println(R.readSignal(TI, ro));// SignalFetcher.readBoxes(path, TI);
-                time += System.nanoTime();
-                System.out.println(time / 1e9);
-                for(int i = 0; i < T.size(); i++){
-                    time = -System.nanoTime();
-                    System.out.println(R.readSignal(T.get(i), ro));
-                    time += System.nanoTime();
-                    System.out.println(time / 1e9);
-                }
-            }finally{
-                R.close();
-            }
-        }catch(final Exception e){
-            e.printStackTrace();
-        }
-    }
-    */
     public static final W7XSignalaccess NewInstance(final String DataBase) {
         try{
             return new W7XSignalaccess(DataBase);

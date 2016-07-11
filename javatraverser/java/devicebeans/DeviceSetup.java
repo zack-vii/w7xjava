@@ -490,6 +490,6 @@ public class DeviceSetup extends JDialog{
             Database.tdiEvaluate(varExpr.toString());
         }catch(final MdsException e){
             e.printStackTrace();
-        }// TODO
+        }
     }
 }

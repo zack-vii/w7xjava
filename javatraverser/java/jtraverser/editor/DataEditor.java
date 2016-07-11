@@ -16,16 +16,6 @@ import mds.data.descriptor_s.CString;
 
 @SuppressWarnings("serial")
 public class DataEditor extends JPanel implements ActionListener, Editor{
-    /*
-    public static final void main(final String[] args) {// TODO:main
-        final JFrame f = new JFrame();
-        final DataEditor ed = new DataEditor(new CString("HELLO_WORLD"), null);
-        ed.setEditable(true);
-        f.add(ed);
-        f.pack();
-        f.setVisible(true);
-    }
-    */
     JComboBox         combo;
     Descriptor        data;
     TreeDialog        dialog;

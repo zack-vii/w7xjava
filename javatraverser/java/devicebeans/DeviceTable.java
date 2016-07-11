@@ -276,7 +276,6 @@ public class DeviceTable extends DeviceComponent{
             if(this.useExpressions) return Database.tdiCompile("COMPILE(\'" + DeviceTable.expandBackslash(dataString) + "\')");
             return Database.tdiCompile(dataString);
         }catch(final MdsException e){
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
@@ -513,7 +512,7 @@ public class DeviceTable extends DeviceComponent{
                           table.repaint();
                       }
                   }
-                
+
                               }
                               else //refMode == NORMAL
                 */ {

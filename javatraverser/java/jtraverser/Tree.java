@@ -79,19 +79,6 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
     public static final String decompile(final Descriptor data) {
         return data.toString();
     }
-    /*
-    public static final void main(final String[] args) throws Exception {//TODO:main
-        final String def_server = System.getProperty("server");
-        final String def_tree = System.getProperty("tree");
-        if(def_tree != null){
-            final String def_shot = System.getProperty("shot");
-            int shot;
-            if(def_shot != null) shot = Integer.parseInt(def_shot);
-            else shot = -1;
-            new Tree(null, def_server, def_tree, shot, 0);
-        }
-    }
-    */
     private JDialog                add_device_dialog;
     private JTextField             add_device_type, add_device_name;
     private Node                   curr_node;
@@ -145,10 +132,10 @@ public class Tree extends JTree implements TreeSelectionListener, DataChangeList
                     Tree.this.getCurrentNode().copyToClipboard();
                     Tree.this.getCurrentNode().copy();
                 }else if(e.getKeyChar() == 24) // i.e. Ctrl+X
-                if(Tree.this.isEditable()) Tree.this.getCurrentNode().cut();
+                    if(Tree.this.isEditable()) Tree.this.getCurrentNode().cut();
                 else Tree.this.getCurrentNode().copy();
                 else if(e.getKeyChar() == 22) // i.e. Ctrl+V
-                Tree.this.getCurrentNode().paste();
+                    Tree.this.getCurrentNode().paste();
                 else if(e.getKeyChar() == KeyEvent.VK_DELETE || e.getKeyChar() == KeyEvent.VK_BACK_SPACE) Tree.this.getCurrentNode().delete();
                 Tree.this.treeman.reportChange();
             }

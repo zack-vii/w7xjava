@@ -22,27 +22,6 @@ public class TwuProperties{
         return "http:" + in;
     }
 
-    /*
-    public static void main(final String a[]) {//TODO:main
-        TwuProperties twup;
-        System.out.println();
-        System.out.println(TwuProperties.revision());
-        System.out.println();
-        System.out.println("Web-Umbrella data from a webserver.");
-        twup = new TwuProperties(
-                // "//localhost/textor/all/91100/vuv/spred-a/H-I_@_102,550"); // Existing
-                // "//localhost/textor/all/91100/vuv/spred-a/H-I_@_102,551"); // Non-existing
-                // ""); // Non-existing
-                null);
-        System.out.println(twup);
-        System.out.println(twup.summary());
-        System.out.println();
-        twup = new TwuProperties("//localhost/textor/all/91100/vuv/spred-a/H-I_@_102,550"); // Existing
-        System.out.println(twup);
-        System.out.println(twup.summary());
-        System.out.println();
-    }
-    */
     public static String revision() {
         return "$Id$";
     }

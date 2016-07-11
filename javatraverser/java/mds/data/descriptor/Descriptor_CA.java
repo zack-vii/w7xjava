@@ -192,14 +192,6 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         }catch(final Exception exc){}
         return null;
     }
-    /*
-    public static final void main(final String[] args) throws MdsException {//TODO:main
-        final Database db = new Database(null, "TEST", 1l, Database.NORMAL);
-        final Descriptor rec = db.getData(new Nid(18));// 8,9
-        System.out.println(rec.decompile());
-        System.exit(0);
-    }
-    */
     public Descriptor_A decmprs;
     public Descriptor_R payload;
 
