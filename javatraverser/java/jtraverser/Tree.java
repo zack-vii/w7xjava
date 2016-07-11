@@ -34,13 +34,13 @@ import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
 
 @SuppressWarnings("serial")
-public class Tree extends JTree implements TreeSelectionListener, DataChangeListener{
+public final class Tree extends JTree implements TreeSelectionListener, DataChangeListener{
     // Inner class FromTranferHandler managed drag operation
-    class FromTransferHandler extends TransferHandler{
+    private static final class FromTransferHandler extends TransferHandler{
         @Override
         public final Transferable createTransferable(final JComponent comp) {
             try{
-                return new StringSelection(Tree.this.getName() + ":" + Tree.this.getCurrentNode().getFullPath());
+                return new StringSelection(((Tree)comp).getExpt() + ":" + ((Tree)comp).getCurrentNode().getFullPath());
             }catch(final Exception exc){
                 return null;
             }
