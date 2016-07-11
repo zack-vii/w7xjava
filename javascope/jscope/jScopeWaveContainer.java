@@ -878,18 +878,14 @@ public final class jScopeWaveContainer extends WaveformContainer{
     @SuppressWarnings("rawtypes")
     public void setDataServer(DataServerItem server_item, final UpdateEventListener l) throws Exception {
         DataProvider new_dp = null;
-        if(DEBUG.D){
-            System.out.println("server_item.name " + server_item.name);
-        }
+        if(DEBUG.D) System.out.println("server_item.name " + server_item.name);
         if(server_item == null || server_item.name.trim().length() == 0) throw(new Exception("Defined null or empty data server name"));
-        if(DEBUG.D){
-            System.out.println("server_item.class_name " + server_item.class_name);
-        }
+        if(DEBUG.D) System.out.println("server_item.class_name " + server_item.class_name);
         if(server_item.class_name != null){
             try{
                 final Class cl = Class.forName(server_item.class_name);
                 new_dp = (DataProvider)cl.newInstance();
-            }catch(final Exception e){
+            }catch(final NoClassDefFoundError e){
                 throw(new Exception("Can't load data provider class : " + server_item.class_name + "\n" + e));
             }
         }else{

@@ -371,7 +371,6 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
     public static final String     VERSION;
     private static final long      VMS_BASE         = 0x7c95674beb4000L;
     static String                  windowsClassName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-
     static{
         String builddate = "unknown";
         try{
@@ -1059,8 +1058,13 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             srv_item = jScopeWaveContainer.dataServerFromClient(srv_item);
             if(srv_item == null || !this.setDataServer(srv_item)){
                 if(jScopeFacade.server_ip_list != null && this.default_server_idx >= 0 && this.default_server_idx < jScopeFacade.server_ip_list.length){
-                    srv_item = jScopeFacade.server_ip_list[this.default_server_idx];
-                    this.setDataServer(srv_item);
+                    try{
+                        srv_item = jScopeFacade.server_ip_list[this.default_server_idx];
+                        this.setDataServer(srv_item);
+                    }catch(final Exception exc){
+                        this.setDataServerLabel();
+                        exc.printStackTrace();
+                    }
                 }else this.setDataServerLabel();
             }
         }
@@ -2163,15 +2167,15 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
 @SuppressWarnings("serial")
 class ServerDialog extends JDialog implements ActionListener{
     private static String                   know_provider[]   = {"w7x.W7XDataProvider", "mds.MdsDataProvider",
-                                                              // "mds.MdsDataProviderUdt",
-                                                              // "jet.JetMdsDataProvider",
-                                                              // "jet.JetDataProvider",
-                                                              // "twu.TwuDataProvider",
-                                                              // "ftu.FtuDataProvider",
-                                                              // "ts.TsDataProvider",
-                                                              // "asdex.AsdexDataProvider",
-                                                              // "ascii.AsciiDataProvider",
-                                                                        "local.LocalDataProvider", "mds.MdsAsynchDataProvider"};
+            // "mds.MdsDataProviderUdt",
+            // "jet.JetMdsDataProvider",
+            // "jet.JetDataProvider",
+            // "twu.TwuDataProvider",
+            // "ftu.FtuDataProvider",
+            // "ts.TsDataProvider",
+            // "asdex.AsdexDataProvider",
+            // "ascii.AsciiDataProvider",
+            "local.LocalDataProvider", "mds.MdsAsynchDataProvider"};
     static private JList                    server_list;
     private final JButton                   add_b, remove_b, exit_b, connect_b, modify_b;
     JCheckBox                               automatic;
