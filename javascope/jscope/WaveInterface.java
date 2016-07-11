@@ -7,7 +7,7 @@ import debug.DEBUG;
 import jscope.ColorMap.ColorProfile;
 
 public class WaveInterface{
-    static public boolean    auto_color_on_expr = false;
+    static public boolean    auto_color_on_expr = true;
     protected static boolean brief_error        = true;
     static final int         MAX_NUM_SHOT       = 30;
     static SignalBox         sig_box            = new SignalBox();
