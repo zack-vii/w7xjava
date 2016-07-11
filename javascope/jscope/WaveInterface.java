@@ -194,11 +194,7 @@ public class WaveInterface{
 
     public boolean addSignal(final String x_expr, final String y_expr) {
         if(DEBUG.M) System.out.println("WaveInterface.AddSignal(\"" + x_expr + "\", \"" + y_expr + "\")");
-        final String x[] = new String[1];
-        final String y[] = new String[1];
-        x[0] = x_expr;
-        y[0] = y_expr;
-        return this.addSignals(x, y);
+        return this.addSignals(new String[]{x_expr}, new String[]{y_expr});
     }
 
     public boolean addSignals(final String x_expr[], final String y_expr[]) {
@@ -220,24 +216,22 @@ public class WaveInterface{
             }
             if(num_sig == 0) return true;
             new_num_waves = this.num_waves + (this.num_shot != 0 ? this.num_shot : 1) * num_sig;
-        }else new_num_waves = x_expr.length;
-        final String new_in_label[] = new String[new_num_waves];
-        final String new_in_x[] = new String[new_num_waves];
-        final String new_in_y[] = new String[new_num_waves];
-        final String new_in_up_err[] = new String[new_num_waves];
-        final String new_in_low_err[] = new String[new_num_waves];
-        final int new_markers[] = new int[new_num_waves];
-        final int new_markers_step[] = new int[new_num_waves];
-        final int new_colors_idx[] = new int[new_num_waves];
-        final boolean new_interpolates[] = new boolean[new_num_waves];
-        final int new_mode2D[] = new int[new_num_waves];
-        final int new_mode1D[] = new int[new_num_waves];
-        final long new_shots[];
-        if(this.shots == null) new_shots = null;
-        else new_shots = new long[new_num_waves];
-        final boolean new_evaluated[] = new boolean[new_num_waves];
-        final Signal new_signals[] = new Signal[new_num_waves];
-        final String new_w_error[] = new String[new_num_waves];
+        }else new_num_waves = (this.num_shot != 0 ? this.num_shot : 1) * x_expr.length;
+        final String[] new_in_label = new String[new_num_waves];
+        final String[] new_in_x = new String[new_num_waves];
+        final String[] new_in_y = new String[new_num_waves];
+        final String[] new_in_up_err = new String[new_num_waves];
+        final String[] new_in_low_err = new String[new_num_waves];
+        final int[] new_markers = new int[new_num_waves];
+        final int[] new_markers_step = new int[new_num_waves];
+        final int[] new_colors_idx = new int[new_num_waves];
+        final boolean[] new_interpolates = new boolean[new_num_waves];
+        final int[] new_mode2D = new int[new_num_waves];
+        final int[] new_mode1D = new int[new_num_waves];
+        final long[] new_shots = (this.shots == null) ? null : new long[new_num_waves];
+        final boolean[] new_evaluated = new boolean[new_num_waves];
+        final Signal[] new_signals = new Signal[new_num_waves];
+        final String[] new_w_error = new String[new_num_waves];
         if(this.num_waves > 0){
             System.arraycopy(this.in_label, 0, new_in_label, 0, this.num_waves);
             System.arraycopy(this.in_x, 0, new_in_x, 0, this.num_waves);
@@ -258,9 +252,10 @@ public class WaveInterface{
             if(this.evaluated != null) new_evaluated[i] = this.evaluated[i];
             else new_evaluated[i] = false;
         }
+        final int numshot = this.num_shot > 0 ? this.num_shot : 1;
         for(int i = 0, k = this.num_waves; i < x_expr.length; i++){
             if(is_new != null && !is_new[i]) continue;
-            for(int j = 0; j < this.num_shot; j++){
+            for(int j = 0; j < numshot; j++, k++){
                 new_in_label[k] = "";
                 new_in_x[k] = x_expr[i];
                 new_in_y[k] = y_expr[i];
@@ -275,7 +270,6 @@ public class WaveInterface{
                 new_mode2D[k] = Signal.MODE_XZ;
                 new_mode1D[k] = Signal.MODE_LINE;
                 if(new_shots != null && this.shots.length > 0 && this.num_shot > 0) new_shots[k] = this.shots[j];
-                k++;
             }
         }
         this.in_label = new_in_label;

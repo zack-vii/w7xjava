@@ -692,8 +692,9 @@ public final class jScopeWaveInterface extends WaveInterface{
             System.out.println("jScopeWaveInterface.setExperiment(\"" + experiment + "\")");
         }
         this.cexperiment = experiment;
-        // Remove default
-        this.defaults &= ~(1 << jScopeWaveInterface.B_exp);
+        // set default
+        if(experiment == null) this.defaults |= (1 << jScopeWaveInterface.B_exp);
+        else this.defaults &= ~(1 << jScopeWaveInterface.B_exp);
     }
 
     public void toFile(final PrintWriter out, final String prompt) throws IOException {

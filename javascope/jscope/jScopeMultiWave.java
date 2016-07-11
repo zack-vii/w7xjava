@@ -10,7 +10,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.StringTokenizer;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import debug.DEBUG;
@@ -37,10 +36,9 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
         public boolean importData(final TransferHandler.TransferSupport support) {
             if(!this.canImport(support)) return false;
             try{
-                final String data = (String)support.getTransferable().getTransferData(DataFlavor.stringFlavor);
-                final StringTokenizer st = new StringTokenizer(data, ":");
-                final String experiment = st.nextToken();
-                final String path = data.substring(experiment.length() + 1);
+                final String[] data = ((String)support.getTransferable().getTransferData(DataFlavor.stringFlavor)).split(":", 2);
+                final String experiment = data[0].equals("null") ? null : data[0];
+                final String path = data[1];
                 if(support.getDropAction() == TransferHandler.MOVE) jScopeMultiWave.this.wi.erase();
                 jScopeMultiWave.this.wi.setExperiment(experiment);
                 jScopeMultiWave.this.wi.addSignal(path);
@@ -124,7 +122,7 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
                     case Signal.MODE_YZ:
                         s = s + " [Y-Z X = " + sign.getStringOfXinYZplot() +
                         // Waveform.ConvertToString(sign.getTime(), false) +
-                        " ]";
+                                " ]";
                         break;
                     /*
                     case Signal.MODE_YX:
