@@ -126,10 +126,10 @@ public class TreeShr_Test{
         final String deco = TreeShr_Test.treeshr.treeCtx().decompile();
         Assert.assertTrue(deco, deco.matches("Pointer\\(0x[a-f0-9]+\\)"));
         final Pointer save = TreeShr_Test.treeshr.treeSaveContext();
-        // Assert.assertEquals(TreeShr_Test.mds.decompile(save), save.decompile()); //TODO: inconsistency between unix and windows mdsip server
+        Assert.assertEquals(TreeShr_Test.mds.decompile(save), save.decompile());
         Assert.assertTrue(save.decompile().matches("Pointer\\(0x[a-f0-9]+\\)"));
         Assert.assertArrayEquals(save.serializeArray(), TreeShr_Test.mds.mdsValue("_b=*;_s=MdsShr->MdsSerializeDscOut(xd((_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_a;)),xd(_b));_b", new Descriptor[]{save.serializeDsc()}, Descriptor.class).toByteArray());
-        // Assert.assertArrayEquals(TreeShr_Test.mds.mdsValue("$", new Descriptor[]{save}, Descriptor.class).serializeArray(), save.serializeArray());// TODO: works with fix in ProcessMessage.c (#559 zack-vii:zck_mdsip_processmessage_pointer)
+        Assert.assertArrayEquals(TreeShr_Test.mds.mdsValue("$", new Descriptor[]{save}, Descriptor.class).serializeArray(), save.serializeArray());
         String line0, line1;
         System.out.println(line0 = TreeShr_Test.mds.getString("_t='';_s=TCL('show db',_t);_t"));
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeOpen(AllTests.tree, TreeShr_Test.shot1, true));
