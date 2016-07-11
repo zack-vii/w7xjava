@@ -22,21 +22,21 @@ import mds.data.descriptor_s.Nid;
 public class Node{
     private static Node              copied;
     private static boolean           cut;
-    private static final ImageIcon[] ICONS = new ImageIcon[]{                                   //
-                                                   Node.loadIcon("jtraverser/any.gif"),         // any
-                                                   Node.loadIcon("jtraverser/structure.gif"),   //
-                                                   Node.loadIcon("jtraverser/action.gif"),      //
-                                                   Node.loadIcon("jtraverser/device.gif"),      //
-                                                   Node.loadIcon("jtraverser/dispatch.gif"),    //
-                                                   Node.loadIcon("jtraverser/numeric.gif"),     //
-                                                   Node.loadIcon("jtraverser/signal.gif"),      //
-                                                   Node.loadIcon("jtraverser/task.gif"),        //
-                                                   Node.loadIcon("jtraverser/text.gif"),        //
-                                                   Node.loadIcon("jtraverser/window.gif"),      //
-                                                   Node.loadIcon("jtraverser/axis.gif"),        //
-                                                   Node.loadIcon("jtraverser/subtree.gif"),     //
-                                                   Node.loadIcon("jtraverser/compound.gif")     //
-                                             };
+    private static final ImageIcon[] ICONS = new ImageIcon[]{   //
+            Node.loadIcon("jtraverser/any.gif"),                //
+            Node.loadIcon("jtraverser/structure.gif"),          //
+            Node.loadIcon("jtraverser/action.gif"),             //
+            Node.loadIcon("jtraverser/device.gif"),             //
+            Node.loadIcon("jtraverser/dispatch.gif"),           //
+            Node.loadIcon("jtraverser/numeric.gif"),            //
+            Node.loadIcon("jtraverser/signal.gif"),             //
+            Node.loadIcon("jtraverser/task.gif"),               //
+            Node.loadIcon("jtraverser/text.gif"),               //
+            Node.loadIcon("jtraverser/window.gif"),             //
+            Node.loadIcon("jtraverser/axis.gif"),               //
+            Node.loadIcon("jtraverser/subtree.gif"),            //
+            Node.loadIcon("jtraverser/compound.gif")            //
+    };
 
     public static void copySubtreeContent(final Node fromNode, final Node toNode) {
         try{
@@ -498,6 +498,7 @@ public class Node{
     }
 
     public final boolean isSegmented() {
+        if(this.info.isSegmented()) return true;
         try{
             return this.database.evaluate(new StringBuilder(32).append("GetNumSegments(").append(this.nid.getValue()).append(')').toString()).toInt() > 0;
         }catch(final MdsException e){
