@@ -142,7 +142,7 @@ public class Connection{
                     if(Connection.this.connected){
                         this.message = null;
                         Connection.this.connected = false;
-                        Connection.this.connectThread.update();
+                        if(Connection.this.connectThread != null) Connection.this.connectThread.update();
                         (new Thread(){
                             @Override
                             public void run() {
