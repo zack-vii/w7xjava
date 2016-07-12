@@ -19,7 +19,7 @@ public class MethodEditor extends JPanel implements Editor{
     }
 
     public MethodEditor(final Method method){
-        this.method = (method == null) ? new Method(null, null, null, null) : method;
+        this.method = (method == null) ? new Method(null, null, null) : method;
         this.setLayout(new BorderLayout());
         this.device_edit = new LabeledExprEditor("Device", new ExprEditor(this.method.getObject(), true));
         this.method_edit = new LabeledExprEditor("Method", new ExprEditor(this.method.getMethod(), true));
@@ -54,7 +54,7 @@ public class MethodEditor extends JPanel implements Editor{
 
     public final void setData(final Descriptor data) {
         this.method = (Method)data;
-        if(this.method == null) this.method = new Method(null, null, null, null);
+        if(this.method == null) this.method = new Method(null, null, null);
         this.reset();
     }
 

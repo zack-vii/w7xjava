@@ -34,7 +34,7 @@ public final class Descriptor_A_Test{
 
     @Test
     public final void testFloat32Array() throws MdsException {
-        Assert.assertEquals("[1.,2.,3.,4.,5.]", new Float32Array(new float[]{1, 2, 3, 4, 5}).decompile());
+        Assert.assertEquals("[1.,2.,3.,4.,5.]", new Float32Array(1, 2, 3, 4, 5).decompile());
     }
 
     @Test
@@ -46,7 +46,7 @@ public final class Descriptor_A_Test{
 
     @Test
     public final void testInt64Array() throws MdsException {
-        Assert.assertEquals("[1234567890123456QU,1234567890123457QU]", new Uint64Array(new long[]{1234567890123456l, 1234567890123457l}).decompile());
+        Assert.assertEquals("[1234567890123456QU,1234567890123457QU]", new Uint64Array(1234567890123456l, 1234567890123457l).decompile());
         /** [0X462d53c8abac0QU,0X462d53c8abac1QU] **/
     }
 }

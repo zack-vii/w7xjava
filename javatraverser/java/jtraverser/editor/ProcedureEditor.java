@@ -20,7 +20,7 @@ public class ProcedureEditor extends JPanel implements Editor{
     public ProcedureEditor(final Procedure procedure){
         this.procedure = procedure;
         if(this.procedure == null){
-            this.procedure = new Procedure(null, null, null, null);
+            this.procedure = new Procedure(null, null, null);
         }
         this.setLayout(new BorderLayout());
         final JPanel jp = new JPanel();
@@ -59,7 +59,7 @@ public class ProcedureEditor extends JPanel implements Editor{
     public final void setData(final Descriptor data) {
         this.procedure = (Procedure)data;
         if(this.procedure == null){
-            this.procedure = new Procedure(null, null, null, null);
+            this.procedure = new Procedure(null, null, null);
         }
         this.reset();
     }
