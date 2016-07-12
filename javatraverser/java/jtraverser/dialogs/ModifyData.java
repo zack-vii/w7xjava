@@ -18,6 +18,7 @@ import jtraverser.editor.DispatchEditor;
 import jtraverser.editor.Editor;
 import jtraverser.editor.NodeEditor;
 import jtraverser.editor.RangeEditor;
+import jtraverser.editor.SignalEditor;
 import jtraverser.editor.TaskEditor;
 import jtraverser.editor.WindowEditor;
 import mds.MdsException;
@@ -30,18 +31,19 @@ public class ModifyData extends NodeEditor{
         if(tags == null || tags.length == 0) return "<no tags>";
         return String.join(", ", tags);
     }
-    ActionEditor   action_edit   = null;
-    Editor         curr_edit;
-    DataEditor     data_edit     = null;
-    TreeDialog     dialog;
-    DispatchEditor dispatch_edit = null;
-    boolean        is_editable;
-    JButton        ok_b, apply_b, reset_b, cancel_b;
-    JLabel         onoff;
-    RangeEditor    range_edit    = null;
-    JLabel         tags;
-    TaskEditor     task_edit     = null;
-    WindowEditor   window_edit   = null;
+    ActionEditor         action_edit   = null;
+    Editor               curr_edit;
+    DataEditor           data_edit     = null;
+    TreeDialog           dialog;
+    DispatchEditor       dispatch_edit = null;
+    boolean              is_editable;
+    JButton              ok_b, apply_b, reset_b, cancel_b;
+    JLabel               onoff;
+    RangeEditor          range_edit    = null;
+    JLabel               tags;
+    TaskEditor           task_edit     = null;
+    WindowEditor         window_edit   = null;
+    private SignalEditor signal_edit;
 
     public ModifyData(){
         this(true);
@@ -142,6 +144,12 @@ public class ModifyData extends NodeEditor{
             data = null;
         }
         switch(this.node.getUsage()){
+            case NodeInfo.USAGE_SIGNAL:
+                if(this.signal_edit == null) this.signal_edit = new SignalEditor(data, this.frame);
+                else this.signal_edit.setData(data);
+                this.signal_edit.setEditable(this.is_editable);
+                this.replace(this.signal_edit);
+                break;
             case NodeInfo.USAGE_ACTION:
                 if(this.action_edit == null) this.action_edit = new ActionEditor(data, this.frame);
                 else this.action_edit.setData(data);

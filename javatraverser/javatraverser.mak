@@ -82,6 +82,7 @@ JTRAVERSER_SRC= \
   jtraverser/dialogs/TreeOpenDialog.java \
   jtraverser/editor/ActionEditor.java \
   jtraverser/editor/ArgEditor.java \
+  jtraverser/editor/ArrayEditor.java \
   jtraverser/editor/AxisEditor.java \
   jtraverser/editor/DataEditor.java \
   jtraverser/editor/DispatchEditor.java \
@@ -96,6 +97,7 @@ JTRAVERSER_SRC= \
   jtraverser/editor/PythonEditor.java \
   jtraverser/editor/RangeEditor.java \
   jtraverser/editor/RoutineEditor.java \
+  jtraverser/editor/SignalEditor.java \
   jtraverser/editor/TaskEditor.java \
   jtraverser/editor/WindowEditor.java \
   jtraverser/jTraverserFacade.java \

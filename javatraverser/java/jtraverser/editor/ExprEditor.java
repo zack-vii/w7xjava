@@ -64,8 +64,6 @@ public class ExprEditor extends JPanel implements Editor{
     boolean                  default_scroll;
     boolean                  default_to_string;
     boolean                  editable = false;
-    // private final JButton eval;
-    // private final JTextField eval_field;
     String                   expr;
     private final JButton    left, right;
     private final JPanel     pl, pr;
@@ -164,30 +162,6 @@ public class ExprEditor extends JPanel implements Editor{
             this.add(this.text_field, BorderLayout.CENTER);
             if(quotes_needed) this.add(this.right, BorderLayout.LINE_END);
         }
-        /*
-        final JPanel eval_jp = new JPanel();
-        this.eval = new JButton("EVAL");
-        this.eval_field = new JTextField(columns);
-        this.eval.addActionListener(new ActionListener(){
-        @Override
-        public void actionPerformed(final ActionEvent ev) {
-        try{
-            final String text;
-            if(ExprEditor.this.text_area != null) text = ExprEditor.this.text_area.getText();
-            else if(ExprEditor.this.text_field != null) text = ExprEditor.this.text_field.getText();
-            else return;
-            ExprEditor.this.eval_field.setText(new FunctionData(159, new Data[]{Data.fromExpr(text)}).toString());
-        }catch(final Exception e){
-            ExprEditor.this.eval_field.setText("<" + e + ">");
-        }
-        }
-        });
-        eval_jp.add(this.eval, BorderLayout.EAST);
-        eval_jp.add(this.eval_field);
-        final JPanel eval_jp2 = new JPanel();
-        eval_jp2.add(eval_jp, BorderLayout.CENTER);
-        this.add(eval_jp2, BorderLayout.SOUTH);
-        */
     }
 
     @Override
