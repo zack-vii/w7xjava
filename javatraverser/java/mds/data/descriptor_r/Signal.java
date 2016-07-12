@@ -24,7 +24,7 @@ public final class Signal extends BUILD{
     }
 
     public final Descriptor getDimension(final int idx) {
-        return this.getDimension(2 + idx);
+        return this.getDescriptor(2 + idx);
     }
 
     public final Descriptor getRaw() {
