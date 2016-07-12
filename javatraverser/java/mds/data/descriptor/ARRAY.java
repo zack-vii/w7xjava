@@ -82,13 +82,15 @@ public abstract class ARRAY<T>extends Descriptor<T>{
 
     protected ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int nelements){
         super((short)(nelements == 0 ? 0 : byteBuffer.limit() / nelements), dtype, dclass, byteBuffer, ARRAY._dmsIa + (nelements > 1 ? Integer.BYTES : 0), 0);
-        this.scale = (byte)0;
-        this.digits = (byte)0;
-        this.aflags = ARRAY.f_array;
-        this.dimct = nelements > 1 ? (byte)1 : (byte)0;
-        this.arsize = byteBuffer.limit();
-        this.a0 = this.pointer;
-        this.dims = (this.dimct > 0) ? new int[]{nelements} : new int[0];
+        final ByteBuffer b = this.b.duplicate().order(this.b.order());
+        b.position(ARRAY._sclB);
+        b.put(this.scale = (byte)0);
+        b.put(this.digits = (byte)0);
+        b.put((this.aflags = ARRAY.f_array).toByte());
+        b.put(this.dimct = nelements > 1 ? (byte)1 : (byte)0);
+        b.putInt(this.arsize = byteBuffer.limit());
+        b.putInt(this.a0 = this.pointer);
+        b.asIntBuffer().put(this.dims = (this.dimct > 0) ? new int[]{nelements} : new int[0]);
         this.bounds = null;
     }
 
