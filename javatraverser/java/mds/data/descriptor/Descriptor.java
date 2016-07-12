@@ -209,12 +209,20 @@ public abstract class Descriptor<T>{
         return this;
     }
 
+    public final String getDClassName() {
+        return Descriptor.getDClassName(this.dclass);
+    }
+
     public final Descriptor getDescriptor() throws MdsException {
         return Descriptor.deserialize(this.getBuffer());
     }
 
     protected String getDName() {
         return DTYPE.getName(this.dtype);
+    }
+
+    public final String getDTypeName() {
+        return Descriptor.getDTypeName(this.dtype);
     }
 
     public abstract int[] getShape();
