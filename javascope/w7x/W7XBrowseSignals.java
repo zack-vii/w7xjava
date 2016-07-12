@@ -416,13 +416,22 @@ public final class W7XBrowseSignals extends jScopeBrowseSignals{
         tree.setToggleClickCount(0);
         tree.addMouseListener(new MouseAdapter(){
             @Override
-            public void mousePressed(final MouseEvent e) {
+            public void mouseReleased(final MouseEvent e) {
+                if(e.getClickCount() != 1) return;
                 final int selRow = tree.getRowForLocation(e.getX(), e.getY());
-                final TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-                if(path == null) return;
-                final w7xNode node = (w7xNode)path.getLastPathComponent();
-                if(selRow != -1) if(e.getClickCount() == 1) tree.expandRow(selRow);
-                else if(e.getClickCount() == 2 && node.isLeaf()) node.addSignal();
+                if(selRow < 0) return;
+                final TreePath path = tree.getPathForRow(selRow);
+                if(((w7xNode)path.getLastPathComponent()).loaded) tree.expandRow(selRow);
+                else new Thread(){
+                    @Override
+                    public final void run() {
+                        tree.expandRow(selRow);
+                    }
+                }.start();
+                /*else{//do not add just page it to mark a leaf
+                    final w7xNode node = (w7xNode)path.getLastPathComponent();
+                    if(e.getClickCount() == 2 && node.isLeaf()) node.addSignal();
+                }*/
             }
         });
         tree.expandPath(new TreePath(this.top));
