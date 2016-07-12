@@ -129,7 +129,8 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
             final int dtype = items_dsc.dtype;
             int step;
             int j = 0;
-            final ByteBuffer bx = out_dsc.getBuffer();
+            final ByteBuffer bx = out_dsc.b.duplicate().order(out_dsc.b.order());
+            bx.position(out_dsc.pointer);
             int ye, xe, yn, xn, xhead;
             final IntBuffer n = DECOMPRESS.diff, e = DECOMPRESS.exce;
             int old, buf = 0, mark = 0;
