@@ -115,6 +115,11 @@ public interface WaveformManager{
      */
     public Point getWavePosition(Waveform w);
 
+    /**
+     * Returns true if current action has been aborted
+     */
+    public boolean isAborted();
+
     public boolean isMaximize();
 
     public void maximizeComponent(Waveform w);

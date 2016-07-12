@@ -42,13 +42,15 @@ public final class jScopeWaveContainer extends WaveformContainer{
         boolean pending = false;
 
         @Override
-        synchronized public void run() {
+        public void run() {
             WaveContainerEvent wce = null;
             this.setName("Update Thread");
             while(true){
                 try{
                     while(!this.pending)
-                        this.wait(3);
+                        synchronized(this){
+                            this.wait(3);
+                        }
                     this.pending = false;
                     wce = new WaveContainerEvent(this, WaveContainerEvent.START_UPDATE, "Start Update");
                     jScopeWaveContainer.this.dispatchWaveContainerEvent(wce);
@@ -498,7 +500,7 @@ public final class jScopeWaveContainer extends WaveformContainer{
         return (JFrame)c;
     }
 
-    public synchronized void getjScopeMultiWave() {
+    public void getjScopeMultiWave() {
         this.wave_all = new jScopeMultiWave[this.getGridComponentCount()];
         for(int i = 0, k = 0; i < 4; i++)
             for(int j = 0; j < this.rows[i]; j++, k++)
@@ -557,6 +559,11 @@ public final class jScopeWaveContainer extends WaveformContainer{
                 w = (jScopeMultiWave)this.getGridComponent(k);
                 if(w != null) ((jScopeWaveInterface)w.wi).default_is_update = false;
             }
+    }
+
+    @Override
+    public boolean isAborted() {
+        return this.abort;
     }
 
     public boolean isCacheEnabled() {
@@ -1083,7 +1090,7 @@ public final class jScopeWaveContainer extends WaveformContainer{
         }
     }
 
-    public synchronized void updateAllWave() throws Exception {
+    public final void updateAllWave() throws Exception {// synchronized
         WaveContainerEvent wce;
         try{
             if(this.wave_all == null) this.abort = true;
@@ -1129,7 +1136,7 @@ public final class jScopeWaveContainer extends WaveformContainer{
                                 if(this.wave_all[k].wi != null && this.wave_all[k].wi.error == null && this.wave_all[k].isWaveformVisible() && this.wave_all[k].wi.num_waves != 0 && ((jScopeWaveInterface)this.wave_all[k].wi).useDefaultShot()){
                                     wce = new WaveContainerEvent(this, WaveContainerEvent.START_UPDATE, "Update signal column " + (i + 1) + " row " + (j + 1) + " main shot " + this.main_shots[l]);
                                     this.dispatchWaveContainerEvent(wce);
-                                    ((jScopeWaveInterface)this.wave_all[k].wi).evaluateShot(this.main_shots[l]);
+                                    ((jScopeWaveInterface)this.wave_all[k].wi).evaluateShot(this.main_shots[l], this);
                                     if(((jScopeWaveInterface)this.wave_all[k].wi).allEvaluated()){
                                         if(this.wave_all[k].wi != null) this.wave_all[k].update(this.wave_all[k].wi);
                                     }

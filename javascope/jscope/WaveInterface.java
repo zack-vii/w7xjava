@@ -403,12 +403,12 @@ public class WaveInterface{
         this.modified = false;
     }
 
-    public synchronized void evaluateShot(final long shot) throws Exception {
+    public void evaluateShot(final long shot, final WaveformManager wfm) throws Exception {
         if(DEBUG.M) System.out.println("WaveInterface.EvaluateShot(" + shot + ")");
         int curr_wave;
         if(this.is_image) return;
-        // dp.enableAsyncUpdate(false);
         for(curr_wave = 0; curr_wave < this.num_waves; curr_wave++){
+            if(wfm.isAborted()) break;
             if((shot == 0) || (this.shots[curr_wave] == shot && !this.evaluated[curr_wave] && (this.interpolates[curr_wave] || this.markers[curr_wave] != Signal.NONE))){
                 this.w_error[curr_wave] = null;
                 this.signals[curr_wave] = this.getSignal(curr_wave, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -422,7 +422,6 @@ public class WaveInterface{
                 }
             }
         }
-        // dp.enableAsyncUpdate(true);
     }
 
     public ColorProfile getColorProfile() {
@@ -502,9 +501,7 @@ public class WaveInterface{
                 this.wave.setMode(mode);
                 return null;
             }
-            synchronized(this.dp){
-                out_signal = this.getSignalFromProvider(curr_wave, xmin, xmax);
-            }
+            out_signal = this.getSignalFromProvider(curr_wave, xmin, xmax);
             if(out_signal != null){
                 if(this.xmin > xmin) xmin = this.xmin;
                 if(this.xmax < xmax) xmax = this.xmax;

@@ -32,16 +32,22 @@ import mds.MdsDataProvider;
 public final class W7XDataProvider implements DataProvider{
     private final class SimpleFrameData implements FrameData{
         private final class UpdateWorker extends Thread{
+            private final int abort;
+
+            public UpdateWorker(){
+                super();
+                this.abort = W7XDataProvider.this.abort;
+            }
+
             @Override
-            public final synchronized void run() {
+            public final void run() {
                 try{
-                    final int abort = W7XDataProvider.this.abort;
                     this.setName(SimpleFrameData.this.in_y);
                     try{
                         final SignalReader sr_x = (SimpleFrameData.this.in_x == null) ? null : W7XSignalaccess.getReader(SimpleFrameData.this.in_x);
                         final SignalReader sr_y = W7XSignalaccess.getReader(SimpleFrameData.this.in_y);
                         if(sr_y != null) try{
-                            while(!SimpleFrameData.this.frameQueue.isEmpty() && (abort == W7XDataProvider.this.abort)){
+                            while(!SimpleFrameData.this.frameQueue.isEmpty() && this.abort == W7XDataProvider.this.abort){
                                 final int idx = SimpleFrameData.this.frameQueue.peek();
                                 SimpleFrameData.this.getSignal(idx);
                                 this.notify();
@@ -213,16 +219,17 @@ public final class W7XDataProvider implements DataProvider{
     }
     private final class SimpleWaveData implements WaveData{
         private final class UpdateWorker extends Thread{
-            SimpleWaveData swd;
+            private final SimpleWaveData swd;
+            private final int            abort;
 
             public UpdateWorker(final SimpleWaveData swd){
                 this.swd = swd;
+                this.abort = W7XDataProvider.this.abort;
             }
 
             @Override
-            public final synchronized void run() {
+            public final void run() {
                 try{
-                    final int abort = W7XDataProvider.this.abort;
                     this.setName(this.swd.in_y);
                     try{
                         final SignalReader sr_y = W7XSignalaccess.getReader(this.swd.in_y);
@@ -230,7 +237,7 @@ public final class W7XDataProvider implements DataProvider{
                         if(this.swd.in_x == null) sr_x = null;
                         else sr_x = W7XSignalaccess.getReader(this.swd.in_x);
                         try{
-                            while(this.swd.getSignals(sr_y, sr_x) && (abort == W7XDataProvider.this.abort)){
+                            while(this.swd.getSignals(sr_y, sr_x) && this.abort == W7XDataProvider.this.abort){
                                 final XYData xydata = this.swd.getData(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Integer.MAX_VALUE, false);
                                 for(int j = 0; j < this.swd.getWaveDataListeners().size(); j++)
                                     this.swd.getWaveDataListeners().elementAt(j).dataRegionUpdated(xydata);
@@ -395,20 +402,6 @@ public final class W7XDataProvider implements DataProvider{
         return in.startsWith("/");
     }
 
-    /*
-    public static final void main(final String[] args) throws IOException {//TODO:main
-    final W7XDataProvider dp = new W7XDataProvider();
-    dp.mds.setArgument("mds-data-1");
-    dp.mds.CheckOpen("w7x", 160303007);
-    final WaveData wd = dp.getWaveData("/codac/W7X/CoDaStationDesc.16007/DataReductionProcessDesc.17547_DATASTREAM/8");
-    try{
-        wd.getData(0., .2, 1000);
-    }catch(final Exception e){
-        e.printStackTrace();
-    }
-    System.exit(0);
-    }
-    */
     public static final void setTiming() {
         W7XDataProvider.instance.mds.mds.mdsValue("TIME(0)");
     }
@@ -443,20 +436,21 @@ public final class W7XDataProvider implements DataProvider{
     }
 
     @Override
-    public final synchronized void abort() {
+    synchronized public final void abort() {
         this.abort++;
         this.notifyAll();
+        this.mds.abort();
         for(final Thread th : W7XDataProvider.threads)
             if(th != null) th.interrupt();
     }
 
     @Override
-    public final synchronized void addConnectionListener(final ConnectionListener l) {
+    synchronized public final void addConnectionListener(final ConnectionListener l) {
         if(this.mds != null) this.mds.addConnectionListener(l);
     }
 
     @Override
-    public final synchronized void addUpdateEventListener(final UpdateEventListener l, final String event_name) throws IOException {
+    synchronized public final void addUpdateEventListener(final UpdateEventListener l, final String event_name) throws IOException {
         if(this.mds != null) this.mds.addUpdateEventListener(l, event_name);
     }
 
@@ -486,7 +480,7 @@ public final class W7XDataProvider implements DataProvider{
     }
 
     @Override
-    public final synchronized float getFloat(final String in) throws IOException {
+    public final float getFloat(final String in) throws IOException {
         return (this.mds == null) ? Float.NaN : this.mds.getFloat(in);
     }
 
@@ -513,7 +507,7 @@ public final class W7XDataProvider implements DataProvider{
     @Override
     public final long[] getShots(final String in) throws IOException {
         if(DEBUG.M) System.out.println("GetShots(" + in + ")");
-        if(in == null) return null;
+        if(in == null) return new long[]{-1};
         if(this.shot_cache_in != null && this.shot_cache_in == in) return this.shot_cache_out;
         if(in.startsWith("XP:")){
             final TimeInterval ti = W7XSignalaccess.getTimeInterval(in);
@@ -526,11 +520,11 @@ public final class W7XDataProvider implements DataProvider{
     }
 
     @Override
-    public final synchronized String getString(final String in) throws IOException {
+    public final String getString(final String in) throws IOException {
         if(in == "TimeInterval") return String.format("from %s upto %s t0 %s", //
-        W7XDataProvider.format.format(new Date(W7XDataProvider.Timing[0])), //
-        W7XDataProvider.format.format(new Date(W7XDataProvider.Timing[1])), //
-        W7XDataProvider.format.format(new Date(W7XDataProvider.Timing[2])));
+                W7XDataProvider.format.format(new Date(W7XDataProvider.Timing[0])), //
+                W7XDataProvider.format.format(new Date(W7XDataProvider.Timing[1])), //
+                W7XDataProvider.format.format(new Date(W7XDataProvider.Timing[2])));
         return (this.mds == null) ? in : this.mds.getString(in);
     }
 
@@ -561,7 +555,7 @@ public final class W7XDataProvider implements DataProvider{
     }
 
     @Override
-    public final synchronized void join() {
+    public final void join() {
         try{
             while(W7XDataProvider.threads.size() > 0)
                 W7XDataProvider.threads.firstElement().join();
@@ -586,7 +580,7 @@ public final class W7XDataProvider implements DataProvider{
     }
 
     @Override
-    public final synchronized void setEnvironment(final String in) throws IOException {
+    public final void setEnvironment(final String in) throws IOException {
         if(this.mds != null) this.mds.setEnvironment(in);
     }
 
@@ -596,7 +590,7 @@ public final class W7XDataProvider implements DataProvider{
     }
 
     @Override
-    public final synchronized void update(final String expt, final long shot) {
+    public final void update(final String expt, final long shot) {
         if(this.mds != null) this.mds.update(expt, shot);
     }
 }

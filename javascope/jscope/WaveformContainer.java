@@ -387,6 +387,11 @@ public class WaveformContainer extends RowColumnContainer implements WaveformMan
         return this.getComponentPosition(w);
     }
 
+    @Override
+    public boolean isAborted() {
+        return false;
+    }
+
     public boolean isMaximize(final Waveform w) {
         return super.isMaximize();
     }
@@ -447,7 +452,7 @@ public class WaveformContainer extends RowColumnContainer implements WaveformMan
         int i, j, k = 0;
         int pix = 1;
         if(this.getWavePanel(0).grid_mode == 2) // Grid.IS_NONE mode
-        pix = 0;
+            pix = 0;
         int curr_height = 0;
         int curr_width = 0;
         int px = 0;

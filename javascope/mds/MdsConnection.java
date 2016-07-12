@@ -283,14 +283,17 @@ public class MdsConnection{
         if(this.hashEventId.containsKey(eventid)) this.dispatchUpdateEvent(this.hashEventId.get(eventid));
     }
 
-    public final synchronized void dispatchUpdateEvent(final String eventName) {
+    synchronized public final void dispatchUpdateEvent(final String eventName) {
         if(this.hashEventName.containsKey(eventName)) this.dispatchUpdateEvent(this.hashEventName.get(eventName));
     }
 
-    public final synchronized Descriptor getAnswer() throws IOException {
+    public final Descriptor getAnswer() throws IOException {
         final Descriptor out = new Descriptor();
-        // wait();//!!!!!!!!!!
-        final MdsMessage message = this.receiveThread.GetMessage();
+        final MdsMessage message;
+        synchronized(this){
+            // wait();//!!!!!!!!!!
+            message = this.receiveThread.GetMessage();
+        }
         if(message == null || message.length == 0){
             out.error = "Null response from server";
             return out;

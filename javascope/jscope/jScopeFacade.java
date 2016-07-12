@@ -633,7 +633,10 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
         if(ob == this.apply_b || ob == this.shot_t){
             this.incShotValue = 0;
             if(this.executing_update){
-                if(ob == this.apply_b) this.wave_panel.abortUpdate();
+                if(ob == this.apply_b){
+                    this.wave_panel.abortUpdate();
+                    this.setStatusLabel("Aborting...");
+                }
             }else{
                 if(ob == this.shot_t){
                     this.setMainShot();

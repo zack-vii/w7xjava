@@ -194,6 +194,7 @@ public class MdsDataProvider implements DataProvider{
 
         public Signal(final String in_y, final String in_x, final boolean isframe){
             if(DEBUG.M) System.out.println("MdsDataProvider.Signal(\"" + in_y + "\",\"" + in_x + "\"," + isframe + ")");
+            final int abort = MdsDataProvider.this.abort;
             MdsDataProvider.this.error = null;
             this.y = this.getNode(in_y);
             this.isframe = isframe;
@@ -232,7 +233,8 @@ public class MdsDataProvider implements DataProvider{
                 this.seglimits = null;
                 this.segs = null;
                 final String xxx = (this.x == null) ? "DIM_OF(_yyy)" : "_xxx";
-                this.dim = this.getRealArrayOrError(xxx + ((this.x == null) ? "" : "=COMMA(*," + this.x + ")"), this.x);
+                if(abort != MdsDataProvider.this.abort) this.dim = new IOException("aborted");
+                else this.dim = this.getRealArrayOrError(xxx + ((this.x == null) ? "" : "=COMMA(*," + this.x + ")"), this.x);
                 this.units_of_dat = this.getStringOrError("UNITS_OF(_yyy)");
                 this.units_of_dim = this.getStringOrError("UNITS_OF(" + xxx + ")");
                 this.help_of_dat = this.getStringOrError("HELP_OF(_yyy)");
@@ -473,7 +475,6 @@ public class MdsDataProvider implements DataProvider{
             return false;
         }
 
-        // GAB JULY 2014 NEW WAVEDATA INTERFACE RAFFAZZONATA
         @Override
         public final XYData getData(final double xmin, final double xmax, final int numPoints) throws Exception {
             return this.getData(xmin, xmax, numPoints, false);
@@ -805,12 +806,12 @@ public class MdsDataProvider implements DataProvider{
         Vector<UpdateDescriptor> requestsV  = new Vector<UpdateDescriptor>();
         boolean                  stopWorker = false;
 
-        private final synchronized void enableAsyncUpdate(final boolean enabled) {
+        synchronized private final void enableAsyncUpdate(final boolean enabled) {
             this.enabled = enabled;
             if(enabled) this.notify();
         }
 
-        private final synchronized void intUpdateInfo(final double updateLowerBound, final double updateUpperBound, final int updatePoints, final Vector<WaveDataListener> waveDataListenersV, final SimpleWaveData simpleWaveData, final boolean isXLong, final long updateTime) {
+        synchronized private final void intUpdateInfo(final double updateLowerBound, final double updateUpperBound, final int updatePoints, final Vector<WaveDataListener> waveDataListenersV, final SimpleWaveData simpleWaveData, final boolean isXLong, final long updateTime) {
             if(updateTime > 0) // If a delayed request for update
             {
                 for(int i = 0; i < this.requestsV.size(); i++){
@@ -827,13 +828,13 @@ public class MdsDataProvider implements DataProvider{
             if(DEBUG.M) System.out.println("run()");
             this.setName("UpdateWorker");
             while(true){
-                synchronized(this){
-                    try{
+                try{
+                    synchronized(this){
                         this.wait();
-                        if(this.stopWorker) return;
-                    }catch(final InterruptedException exc){
-                        exc.printStackTrace();
                     }
+                    if(this.stopWorker) return;
+                }catch(final InterruptedException exc){
+                    exc.printStackTrace();
                 }
                 if(!this.enabled) continue;
                 long currTime = Calendar.getInstance().getTimeInMillis();
@@ -857,7 +858,7 @@ public class MdsDataProvider implements DataProvider{
                         }
                     }else{
                         if(nextTime == -1 || nextTime > currUpdate.updateTime) // It will always be nextTime != -1
-                        nextTime = currUpdate.updateTime;
+                            nextTime = currUpdate.updateTime;
                         i++;
                     }
                 }
@@ -952,24 +953,6 @@ public class MdsDataProvider implements DataProvider{
         return javaTime;
     }
 
-    /*
-    @SuppressWarnings("all")
-    public static final void main(final String[] args) {//TODO:main
-        final MdsDataProvider dp = new MdsDataProvider(args[0]);
-        try{
-            dp.CheckOpen("W7X", 0);
-            System.out.println(dp.getString("TCL('DIR',_out);_out"));
-            final MdsDataProvider.Signal signal = dp.getSignal("sqrt(QSS.HARDWARE.ARRAY:TUBE01)", null, false);
-            System.out.println(signal);
-            final SimpleWaveData wd = (SimpleWaveData)dp.getWaveData("sqrt(QSS.HARDWARE.ARRAY:TUBE01)");
-            System.out.println(wd.getData(-1, 2, 1000));
-            System.out.println(dp.error);
-            System.exit(0);
-        }catch(final Exception e){
-            e.printStackTrace();
-        }
-    }
-    */
     protected static final boolean notYetNumber(final String in) {
         if(DEBUG.M) System.out.println("MdsDataProvider.NotYetNumber(\"" + in + "\")");
         try{
@@ -997,6 +980,7 @@ public class MdsDataProvider implements DataProvider{
     public static boolean supportsFastNetwork() {
         return true;
     }
+    private int            abort            = 0;
     private boolean        def_node_changed = false;
     protected String       default_node;
     protected String       environment_vars;
@@ -1031,7 +1015,8 @@ public class MdsDataProvider implements DataProvider{
 
     @Override
     public void abort() {
-        // TODO Auto-generated method stub
+        this.abort += 1;
+        this.updateWorker.stopUpdateWorker();
     }
 
     @Override
