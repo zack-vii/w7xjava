@@ -2,9 +2,10 @@ package w7x;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -14,7 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import javax.swing.JComponent;
 import java.util.List;
 import java.util.TimeZone;
 import javax.swing.JButton;
@@ -26,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTree;
 import javax.swing.SpinnerDateModel;
+import javax.swing.TransferHandler;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -39,6 +41,7 @@ import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import org.jdesktop.swingx.JXDatePicker;
+import org.jdesktop.swingx.JXMonthView;
 import org.jdesktop.swingx.calendar.SingleDaySelectionModel;
 import de.mpg.ipp.codac.signalaccess.SignalAddress;
 import de.mpg.ipp.codac.w7xtime.TimeInterval;
@@ -49,97 +52,258 @@ import jscope.jScopeWaveContainer;
 
 @SuppressWarnings("serial")
 public final class W7XBrowseSignals extends jScopeBrowseSignals{
-    static final class DateTimePicker extends JXDatePicker{
+    public static class CalendarEdit extends JPanel{
+        private final class DateTimePicker extends JXDatePicker{
+            private JPanel   timePanel;
+            private JSpinner timeSpinner;
+
+            public DateTimePicker(){
+                super();
+                this.getMonthView().setSelectionModel(new SingleDaySelectionModel());
+                this.setTimeZone(W7XBrowseSignals.UTC);
+                this.setFormats(CalendarEdit.format);
+                this.updateTextFieldFormat();
+                this.addActionListener(new ActionListener(){
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        if(CalendarEdit.this.settime_cb.isSelected()) CalendarEdit.this.setTiming();
+                    }
+                });
+            }
+
+            public DateTimePicker(final Date date, final int hh, final int mm, final int ss, final int SSS){
+                this();
+                this.setDateTime(date, hh, mm, ss, SSS);
+            }
+
+            @Override
+            public void cancelEdit() {
+                super.cancelEdit();
+                this.setTimeSpinners();
+            }
+
+            @Override
+            public void commitEdit() throws ParseException {
+                this.commitTime();
+                super.commitEdit();
+            }
+
+            private void commitTime() {
+                final Date date = this.getDate();
+                if(date == null) return;
+                final Calendar timeCalendar = Calendar.getInstance(W7XBrowseSignals.UTC);
+                timeCalendar.setTimeInMillis(((Date)this.timeSpinner.getValue()).getTime() % Grid.dayMilliSeconds);
+                final Calendar calendar = Calendar.getInstance(W7XBrowseSignals.UTC);
+                calendar.setTime(date);
+                for(final int entry : W7XBrowseSignals.time)
+                    calendar.set(entry, timeCalendar.get(entry));
+                this.setDate(calendar.getTime());
+            }
+
+            private JPanel createTimePanel() {
+                final JPanel newPanel = new JPanel();
+                newPanel.setLayout(new FlowLayout());
+                final SpinnerDateModel dateModel = new SpinnerDateModel();
+                this.timeSpinner = new JSpinner(dateModel);
+                this.updateTextFieldFormat();
+                newPanel.add(new JLabel("Time:"));
+                newPanel.add(this.timeSpinner);
+                this.timeSpinner.addChangeListener(new ChangeListener(){
+                    @Override
+                    public void stateChanged(final ChangeEvent e) {
+                        DateTimePicker.this.commitTime();
+                    }
+                });
+                newPanel.setBackground(Color.WHITE);
+                return newPanel;
+            }
+
+            @Override
+            public JPanel getLinkPanel() {
+                super.getLinkPanel();
+                if(this.timePanel == null) this.timePanel = this.createTimePanel();
+                this.setTimeSpinners();
+                return this.timePanel;
+            }
+
+            public final void setDateTime(final Date date, final int hh, final int mm, final int ss, final int SSS) {
+                final Calendar calendar = Calendar.getInstance(W7XBrowseSignals.UTC);
+                calendar.setTime(date);
+                calendar.set(Calendar.HOUR_OF_DAY, hh);
+                calendar.set(Calendar.MINUTE, mm);
+                calendar.set(Calendar.SECOND, ss);
+                calendar.set(Calendar.MILLISECOND, SSS);
+                this.setDate(calendar.getTime());
+            }
+
+            private void setTimeSpinners() {
+                final Date date = this.getDate();
+                if(date == null) return;
+                this.timeSpinner.setValue(date);
+            }
+
+            private void updateTextFieldFormat() {
+                if(this.timeSpinner == null) return;
+                final JFormattedTextField tf = ((JSpinner.DefaultEditor)this.timeSpinner.getEditor()).getTextField();
+                final DefaultFormatterFactory factory = (DefaultFormatterFactory)tf.getFormatterFactory();
+                final DateFormatter formatter = (DateFormatter)factory.getDefaultFormatter();
+                formatter.setFormat(CalendarEdit.timeFormat);
+            }
+        }
         public static final DateFormat  format     = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        private static final int[]      time       = new int[]{Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND};
         private static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSS");
-        public static final TimeZone    UTC        = TimeZone.getTimeZone("UTC");
-        private JPanel                  timePanel;
-        private JSpinner                timeSpinner;
+        static{
+            CalendarEdit.timeFormat.setTimeZone(W7XBrowseSignals.UTC);
+            CalendarEdit.format.setTimeZone(W7XBrowseSignals.UTC);
+        }
+        private final JXMonthView    jxmv;
+        private final DateTimePicker from, upto;
+        private final JCheckBox      is_image, settime_cb;
 
-        public DateTimePicker(final Date date, final int mm, final int ss, final int SSS){
-            super();
-            DateTimePicker.timeFormat.setTimeZone(DateTimePicker.UTC);
-            DateTimePicker.format.setTimeZone(DateTimePicker.UTC);
-            this.getMonthView().setSelectionModel(new SingleDaySelectionModel());
-            this.setTimeZone(DateTimePicker.UTC);
-            this.setFormats(DateTimePicker.format);
-            this.updateTextFieldFormat();
-            final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeZone(DateTimePicker.UTC);
-            calendar.setTime(date);
-            calendar.set(Calendar.MINUTE, mm);
-            calendar.set(Calendar.SECOND, ss);
-            calendar.set(Calendar.MILLISECOND, SSS);
-            this.setDate(calendar.getTime());
+        public CalendarEdit(){
+            this(W7XBrowseSignals.UTC);
         }
 
-        @Override
-        public void cancelEdit() {
-            super.cancelEdit();
-            this.setTimeSpinners();
-        }
-
-        @Override
-        public void commitEdit() throws ParseException {
-            this.commitTime();
-            super.commitEdit();
-        }
-
-        private void commitTime() {
-            final Date date = this.getDate();
-            if(date == null) return;
-            final Calendar timeCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            timeCalendar.setTimeInMillis(((Date)this.timeSpinner.getValue()).getTime() % Grid.dayMilliSeconds);
-            final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            calendar.setTime(date);
-            for(final int entry : DateTimePicker.time)
-                calendar.set(entry, timeCalendar.get(entry));
-            this.setDate(calendar.getTime());
-        }
-
-        private JPanel createTimePanel() {
-            final JPanel newPanel = new JPanel();
-            newPanel.setLayout(new FlowLayout());
-            final SpinnerDateModel dateModel = new SpinnerDateModel();
-            this.timeSpinner = new JSpinner(dateModel);
-            this.updateTextFieldFormat();
-            newPanel.add(new JLabel("Time:"));
-            newPanel.add(this.timeSpinner);
-            this.timeSpinner.addChangeListener(new ChangeListener(){
+        public CalendarEdit(final TimeZone tz){
+            super(new BorderLayout());
+            this.jxmv = new JXMonthView();
+            this.jxmv.setTimeZone(tz);
+            final Date date = this.jxmv.getToday();
+            this.jxmv.setSelectionDate(date);
+            this.from = new DateTimePicker(date, 0, 0, 0, 0);
+            this.upto = new DateTimePicker(date, 23, 59, 59, 999);
+            this.jxmv.addActionListener(new ActionListener(){
                 @Override
-                public void stateChanged(final ChangeEvent e) {
-                    DateTimePicker.this.commitTime();
+                public void actionPerformed(final ActionEvent e) {
+                    CalendarEdit.this.from.setDateTime(CalendarEdit.this.jxmv.getSelectionDate(), 0, 0, 0, 0);
+                    CalendarEdit.this.upto.setDateTime(CalendarEdit.this.jxmv.getSelectionDate(), 23, 59, 59, 999);
+                    if(CalendarEdit.this.settime_cb.isSelected()) CalendarEdit.this.setTiming();
                 }
             });
-            newPanel.setBackground(Color.WHITE);
-            return newPanel;
+            JButton jb;
+            JPanel bp, jp;
+            this.add(jp = new JPanel(new BorderLayout()), BorderLayout.WEST);
+            jp.add(this.jxmv, BorderLayout.CENTER);
+            jp.add(jp = new JPanel(new BorderLayout()), BorderLayout.NORTH);
+            jp.add(bp = new JPanel(new GridLayout(1, 2)), BorderLayout.WEST);
+            bp.add(jb = new JButton("<<"));
+            jb.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    CalendarEdit.this.modCalendar(Calendar.YEAR, -1);
+                }
+            });
+            bp.add(jb = new JButton("<"));
+            jb.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    CalendarEdit.this.modCalendar(Calendar.MONTH, -1);
+                }
+            });
+            jp.add(jb = new JButton(), BorderLayout.CENTER);
+            jb.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    CalendarEdit.this.setToday();
+                }
+            });
+            jp.add(bp = new JPanel(new GridLayout(1, 2)), BorderLayout.EAST);
+            bp.add(jb = new JButton(">"));
+            jb.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    CalendarEdit.this.modCalendar(Calendar.MONTH, 1);
+                }
+            });
+            bp.add(jb = new JButton(">>"));
+            jb.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    CalendarEdit.this.modCalendar(Calendar.YEAR, 1);
+                }
+            });
+            /* the datepicker */
+            JPanel ejp;
+            this.settime_cb = new JCheckBox("setTime");
+            this.add(jp = new JPanel(new BorderLayout()), BorderLayout.CENTER);
+            jp.add(ejp = new JPanel());
+            ejp.add(this.settime_cb);
+            this.settime_cb.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    if(CalendarEdit.this.settime_cb.isSelected()) CalendarEdit.this.setTiming();
+                }
+            });
+            final JButton cleartime_b = new JButton("clearTime");
+            ejp.add(cleartime_b);
+            cleartime_b.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    CalendarEdit.this.settime_cb.setSelected(false);
+                    W7XDataProvider.setTiming();
+                }
+            });
+            ejp.add(this.is_image = new JCheckBox("asImage"));
+            jp.add(jp = new JPanel(new GridLayout(1, 2)), BorderLayout.SOUTH);
+            jp.add(this.from);
+            jp.add(this.upto);
+        }
+
+        private final Calendar getCalendar() {
+            final Date date = this.jxmv.isSelectionEmpty() ? this.jxmv.getFirstDisplayedDay() : this.jxmv.getSelectionDate();
+            final Calendar cal = Calendar.getInstance(this.jxmv.getTimeZone());
+            cal.setTime(date);
+            return cal;
+        }
+
+        public final long getDate() {
+            final Calendar cal = this.jxmv.getCalendar();
+            for(final int entry : W7XBrowseSignals.time)
+                cal.set(entry, 0);
+            return cal.getTimeInMillis() * 1000000L;
+        }
+
+        private final void modCalendar(final int mode, final int increment) {
+            final Calendar cal = CalendarEdit.this.getCalendar();
+            cal.set(mode, cal.get(mode) + increment);
+            CalendarEdit.this.setCalendar(cal, false);
+        }
+
+        public final void setCalendar(final Calendar cal, final boolean setselection) {
+            final Date date = cal.getTime();
+            if(!this.jxmv.isSelectionEmpty() || setselection) this.jxmv.setSelectionDate(date);
+            this.jxmv.setFirstDisplayedDay(date);
+            this.jxmv.updateUI();
+        }
+
+        protected void setTiming() {
+            W7XDataProvider.setTiming(CalendarEdit.this.from.getDate().getTime(), CalendarEdit.this.upto.getDate().getTime());
+            jScopeFacade.instance.updateAllWaves();
+        }
+
+        public void setToday() {
+            final Calendar cal = Calendar.getInstance(CalendarEdit.this.jxmv.getTimeZone());
+            cal.setTime(CalendarEdit.this.jxmv.getToday());
+            CalendarEdit.this.setCalendar(cal, true);
+        }
+    }
+    private static final class FromTransferHandler extends TransferHandler{
+        @Override
+        public final Transferable createTransferable(final JComponent comp) {
+            try{
+                return new StringSelection("W7X:" + ((w7xNode)((JTree)comp).getLastSelectedPathComponent()).getSignalPath());
+            }catch(final Exception exc){
+                return null;
+            }
         }
 
         @Override
-        public JPanel getLinkPanel() {
-            super.getLinkPanel();
-            if(this.timePanel == null) this.timePanel = this.createTimePanel();
-            this.setTimeSpinners();
-            return this.timePanel;
-        }
-
-        private void setTimeSpinners() {
-            final Date date = this.getDate();
-            if(date == null) return;
-            this.timeSpinner.setValue(date);
-        }
-
-        private void updateTextFieldFormat() {
-            if(this.timeSpinner == null) return;
-            final JFormattedTextField tf = ((JSpinner.DefaultEditor)this.timeSpinner.getEditor()).getTextField();
-            final DefaultFormatterFactory factory = (DefaultFormatterFactory)tf.getFormatterFactory();
-            final DateFormatter formatter = (DateFormatter)factory.getDefaultFormatter();
-            formatter.setFormat(DateTimePicker.timeFormat);
+        public final int getSourceActions(final JComponent comp) {
+            return TransferHandler.COPY_OR_MOVE;
         }
     }
     public final class W7XDataBase extends w7xNode{
-        private final String      name;
+        private final String         name;
         public final W7XSignalaccess sa;
 
         public W7XDataBase(final String name, final W7XSignalaccess sa){
@@ -166,13 +330,13 @@ public final class W7XBrowseSignals extends jScopeBrowseSignals{
             final TreeNode[] path = this.getPath();
             if(path == null || path.length < 2) return;
             final String sig_path = "/" + ((W7XDataBase)path[1]).name + this.getSignalPath();
-            if(sig_path != null) W7XBrowseSignals.this.wave_panel.addSignal(null, null, null, sig_path, false, W7XBrowseSignals.this.is_image);
+            if(sig_path != null) W7XBrowseSignals.this.wave_panel.addSignal("W7X", null, null, sig_path, false, W7XBrowseSignals.this.isImage());
         }
 
         public final List<SignalAddress> getChildren() {
             final TreeNode[] path = this.getPath();
             if(path == null || path.length < 2) return null;
-            final TimeInterval ti = TimeInterval.ALL.withStart(W7XBrowseSignals.this.from.getDate().getTime() * 1000000L).withEnd(W7XBrowseSignals.this.upto.getDate().getTime() * 1000000L);
+            final TimeInterval ti = W7XBrowseSignals.this.getTimeInterval();
             return W7XSignalaccess.getList(this.getSignalPath(), ti);
         }
 
@@ -203,77 +367,31 @@ public final class W7XBrowseSignals extends jScopeBrowseSignals{
             return ((SignalAddress)this.getUserObject()).tail();
         }
     }
-    /*
-    public static void main(final String[] args) {//TODO:main
-        EventQueue.invokeLater(new Runnable(){
-            @Override
-            public void run() {
-                try{
-                    final W7XBrowseSignals frame = new W7XBrowseSignals();
-                    frame.setVisible(true);
-                }catch(final Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-    */
-    private final JPanel                contentPane;
-    private final DateTimePicker        from, upto;
-    public boolean                      is_image = false;
+    public static final TimeZone        UTC  = TimeZone.getTimeZone("UTC");
+    private static final int[]          time = new int[]{Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND};
     private String                      server_url;
     private String                      shot;
     public final DefaultMutableTreeNode top;
     private String                      tree;
     public jScopeWaveContainer          wave_panel;
+    private final CalendarEdit          calendarEdit;
 
     /**
      * Create the frame.
      */
     public W7XBrowseSignals(){
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.contentPane = new JPanel();
-        this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        this.contentPane.setLayout(new BorderLayout(0, 0));
-        this.setContentPane(this.contentPane);
-        this.setPreferredSize(new Dimension(424, 550));
-        JPanel jp, ejp;
-        JButton but;
-        final JCheckBox cb;
-        final GridLayout grid = new GridLayout(2, 1);
-        grid.setVgap(-10);
-        this.contentPane.add(ejp = new JPanel(grid), BorderLayout.NORTH);
-        ejp.add(jp = new JPanel());
-        jp.add(but = new JButton("setTime"));
-        but.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                W7XDataProvider.setTiming(W7XBrowseSignals.this.from.getDate().getTime(), W7XBrowseSignals.this.upto.getDate().getTime());
-                jScopeFacade.instance.updateAllWaves();
-            }
-        });
-        jp.add(but = new JButton("clearTime"));
-        but.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                W7XDataProvider.setTiming();
-            }
-        });
-        jp.add(cb = new JCheckBox("asImage"));
-        cb.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                W7XBrowseSignals.this.is_image = cb.isSelected();
-            }
-        });
-        ejp.add(ejp = new JPanel());
-        ejp.add(jp = new JPanel());
-        final Date date = new Date();
-        jp.add(this.from = new DateTimePicker(date, 0, 0, 0));
-        jp.add(this.upto = new DateTimePicker(date, 59, 59, 999));
+        final JPanel contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        contentPane.setLayout(new BorderLayout(0, 0));
+        this.calendarEdit = new CalendarEdit();
+        contentPane.add(this.calendarEdit, BorderLayout.PAGE_START);
+        this.setContentPane(contentPane);
         this.top = new DefaultMutableTreeNode("DataBase");
         final JTree tree = new JTree(this.top);
-        this.contentPane.add(new JScrollPane(tree));
+        tree.setTransferHandler(new FromTransferHandler());
+        tree.setDragEnabled(true);
+        contentPane.add(new JScrollPane(tree));
         tree.setRootVisible(true);
         for(final String db : W7XSignalaccess.getDataBaseList()){
             final W7XSignalaccess sa = W7XSignalaccess.getAccess(db);
@@ -331,9 +449,19 @@ public final class W7XBrowseSignals extends jScopeBrowseSignals{
         return null;
     }
 
+    public final TimeInterval getTimeInterval() {
+        final long from = this.calendarEdit.getDate();
+        final long upto = from + 86399999999999L;
+        return TimeInterval.ALL.withStart(from).withEnd(upto);
+    }
+
     @Override
     protected String getTree() {
         return this.tree;
+    }
+
+    public final boolean isImage() {
+        return this.calendarEdit.is_image.isSelected();
     }
 
     @Override
