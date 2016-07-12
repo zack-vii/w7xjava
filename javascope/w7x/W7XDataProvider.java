@@ -423,7 +423,7 @@ public final class W7XDataProvider implements DataProvider{
         args.addElement(new Descriptor(null, new long[]{W7XDataProvider.Timing[0]}));
         args.addElement(new Descriptor(null, new long[]{W7XDataProvider.Timing[1]}));
         args.addElement(new Descriptor(null, new long[]{W7XDataProvider.Timing[2]}));
-        System.out.println(W7XDataProvider.instance.mds.mds.mdsValue("T2STR(TIME($,$,$))", args).strdata);
+        if(W7XDataProvider.instance.mds.mds.connected) System.out.println(W7XDataProvider.instance.mds.mds.mdsValue("T2STR(TIME($,$,$))", args).strdata);
     }
     private int                  abort = 0;
     private String               error;
