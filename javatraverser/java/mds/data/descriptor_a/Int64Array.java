@@ -8,7 +8,7 @@ public final class Int64Array extends NUMBERArray<Long>{
         super(b);
     }
 
-    public Int64Array(final long[] values){
+    public Int64Array(final long... values){
         super(DTYPE.Q, values);
     }
 

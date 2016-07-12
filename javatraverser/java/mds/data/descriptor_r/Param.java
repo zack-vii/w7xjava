@@ -11,7 +11,7 @@ public final class Param extends BUILD{
     }
 
     public Param(final Descriptor data, final Descriptor help, final Descriptor valid){
-        super(DTYPE.PARAM, null, new Descriptor[]{data, help, valid});
+        super(DTYPE.PARAM, null, data, help, valid);
     }
 
     @Override

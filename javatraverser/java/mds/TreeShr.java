@@ -53,7 +53,7 @@ public final class TreeShr{
     }
 
     public final int treeBeginTimestampedSegment(final int nid, final Descriptor_A initialValue, final int idx) throws MdsException {
-        return this.connection.mdsValue(String.format("_s=TreeShr->TreeBeginTimestampedSegment(val(%d),xd($),val(%d))", nid, idx), new Descriptor[]{initialValue}).toInt();
+        return this.connection.mdsValue(String.format("_s=TreeShr->TreeBeginTimestampedSegment(val(%d),xd($),val(%d))", nid, idx), initialValue).toInt();
     }
 
     public final int treeCleanDatafile(final String expt, final int shot) throws MdsException {
@@ -152,7 +152,7 @@ public final class TreeShr{
     }
 
     public final int treeMakeTimestampedSegment(final int nid, final Uint64Array timestamps, final Descriptor_A initialValue, final int idx, final int rows_filled) throws MdsException {
-        return this.connection.mdsValue(String.format("_s=TreeShr->TreeMakeTimestampedSegment(val(%d),ref($),xd($),val(%d),val(%d))", nid, idx, rows_filled), new Descriptor[]{timestamps, initialValue}).toInt();
+        return this.connection.mdsValue(String.format("_s=TreeShr->TreeMakeTimestampedSegment(val(%d),ref($),xd($),val(%d),val(%d))", nid, idx, rows_filled), timestamps, initialValue).toInt();
     }
 
     public final int treeOpen(final String expt, final int shot, final boolean readonly) throws MdsException {
@@ -174,21 +174,21 @@ public final class TreeShr{
 
     public final int treePutRecord(final int nid, final Descriptor dsc, final int utility_update) throws MdsException {
         if(dsc == null) return this.connection.getInteger(String.format("_s=TreeShr->TreePutRecord(val(%d),*,val(%d))", nid, utility_update));
-        return this.connection.getInteger(String.format("_d=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_d));_s=TreeShr->TreePutRecord(val(%d),xd(_d),val(%d))", nid, utility_update), new Descriptor[]{dsc.serializeDsc()});
+        return this.connection.getInteger(String.format("_d=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_d));_s=TreeShr->TreePutRecord(val(%d),xd(_d),val(%d))", nid, utility_update), dsc.serializeDsc());
     }
 
     /** adds row to segmented node **/
     public final int treePutRow(final int nid, final int bufsize, final long timestamp, final Descriptor_A data) throws MdsException {
-        return this.connection.mdsValue(String.format("_s=TreeShr->TreePutRow(val(%d),val(%d),ref(%dQU),xd($))", nid, bufsize, timestamp), new Descriptor[]{data}).toInt();
+        return this.connection.mdsValue(String.format("_s=TreeShr->TreePutRow(val(%d),val(%d),ref(%dQU),xd($))", nid, bufsize, timestamp), data).toInt();
     }
 
     public final int treePutSegment(final int nid, final int idx, final Descriptor_A data) throws MdsException {
-        return this.connection.mdsValue(String.format("_s=TreeShr->TreePutSegment(val(%d),val(%d),xd($))", nid, idx), new Descriptor[]{data}).toInt();
+        return this.connection.mdsValue(String.format("_s=TreeShr->TreePutSegment(val(%d),val(%d),xd($))", nid, idx), data).toInt();
     }
 
     /** adds row to segmented node **/
     public final int treePutTimestampedSegment(final int nid, final long timestamp, final Descriptor_A data) throws MdsException {
-        return (Integer)this.connection.mdsValue(String.format("_s=TreeShr->TreePutTimestampedSegment(val(%d),ref(%dQU),xd($))", nid, timestamp), new Descriptor[]{data}, Int32.class).getValue();
+        return (Integer)this.connection.mdsValue(String.format("_s=TreeShr->TreePutTimestampedSegment(val(%d),ref(%dQU),xd($))", nid, timestamp), Int32.class, data).getValue();
     }
 
     public final int treeQuitTree(final String expt, final int shot) throws MdsException {
@@ -204,7 +204,7 @@ public final class TreeShr{
     }
 
     public final int treeRestoreContext(final Pointer treectx) throws MdsException {// ""
-        return this.connection.getInteger("TreeShr->TreeRestoreContext(val($))", new Descriptor[]{treectx});
+        return this.connection.getInteger("TreeShr->TreeRestoreContext(val($))", treectx);
     }
 
     public final Pointer treeSaveContext() throws MdsException {
@@ -253,7 +253,7 @@ public final class TreeShr{
     }
 
     public final int treeSetXNci(final int nid, final String name, final Descriptor value) throws MdsException {
-        return this.connection.mdsValue(String.format("_s=TreeShr->TreeSetXNci(val(%d),ref('%s'),xd($))", nid, name), new Descriptor[]{value.getData()}).toInt();
+        return this.connection.mdsValue(String.format("_s=TreeShr->TreeSetXNci(val(%d),ref('%s'),xd($))", nid, name), value.getData()).toInt();
     }
 
     public final int treeStartConglomerate(final int size) throws MdsException {

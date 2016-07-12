@@ -6,7 +6,7 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor_s.Int128;
 
 public final class Int128Array extends NUMBERArray<BigInteger>{
-    public Int128Array(final BigInteger[] values){
+    public Int128Array(final BigInteger... values){
         super(DTYPE.O, values);
     }
 

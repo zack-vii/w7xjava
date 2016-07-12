@@ -11,11 +11,11 @@ public final class Routine extends BUILD{
     }
 
     public Routine(final Descriptor time_out, final Descriptor image, final Descriptor routine){
-        super(DTYPE.ROUTINE, null, new Descriptor[]{time_out, image, routine});
+        super(DTYPE.ROUTINE, null, time_out, image, routine);
     }
 
     public Routine(final Descriptor time_out, final Descriptor image, final Descriptor routine, final Descriptor[] args){
-        super(DTYPE.ROUTINE, null, new Descriptor[]{time_out, image, routine}, args);
+        super(DTYPE.ROUTINE, null, args, time_out, image, routine);
     }
 
     public final Descriptor getArgument(final int idx) {

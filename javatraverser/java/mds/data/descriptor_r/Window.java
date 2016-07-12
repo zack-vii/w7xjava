@@ -11,7 +11,7 @@ public final class Window extends BUILD{
     }
 
     public Window(final Descriptor startingidx, final Descriptor endingidx, final Descriptor valueat0){
-        super(DTYPE.WINDOW, null, new Descriptor[]{startingidx, endingidx, valueat0});
+        super(DTYPE.WINDOW, null, startingidx, endingidx, valueat0);
     }
 
     public final Descriptor getEndingIdx() {

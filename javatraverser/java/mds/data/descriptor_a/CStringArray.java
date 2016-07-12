@@ -23,7 +23,7 @@ public final class CStringArray extends Descriptor_A<String>{
         super(b);
     }
 
-    public CStringArray(final String[] lines){
+    public CStringArray(final String... lines){
         super(DTYPE.T, CStringArray.toBytes(lines), lines.length);
     }
 

@@ -15,7 +15,7 @@ public final class Condition extends BUILD<Byte>{
     public static final byte NEGATE_CONDITION = 7;
 
     public Condition(final byte mode, final Descriptor cond){
-        super(DTYPE.CONDITION, ByteBuffer.allocate(Byte.BYTES).order(Descriptor.BYTEORDER).put(mode), new Descriptor[]{cond});
+        super(DTYPE.CONDITION, ByteBuffer.allocate(Byte.BYTES).order(Descriptor.BYTEORDER).put(mode), cond);
     }
 
     public Condition(final ByteBuffer b) throws MdsException{

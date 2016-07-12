@@ -12,7 +12,7 @@ public final class Range extends Descriptor_R{
     }
 
     public Range(final Descriptor begin, final Descriptor ending, final Descriptor delta){
-        super(DTYPE.RANGE, null, new Descriptor[]{begin, ending, delta});
+        super(DTYPE.RANGE, null, begin, ending, delta);
     }
 
     @Override

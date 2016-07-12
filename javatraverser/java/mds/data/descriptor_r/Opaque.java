@@ -11,7 +11,7 @@ public final class Opaque extends BUILD{
     }
 
     public Opaque(final Descriptor data, final Descriptor opaque_type){
-        super(DTYPE.OPAQUE, null, new Descriptor[]{data,});
+        super(DTYPE.OPAQUE, null, data);
     }
 
     @Override

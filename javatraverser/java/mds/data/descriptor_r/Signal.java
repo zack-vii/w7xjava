@@ -10,20 +10,8 @@ public final class Signal extends BUILD{
         super(b);
     }
 
-    public Signal(final Descriptor data, final Descriptor raw){
-        super(DTYPE.ROUTINE, null, new Descriptor[]{data, raw});
-    }
-
-    public Signal(final Descriptor data, final Descriptor raw, final Descriptor dim){
-        this(data, raw, new Descriptor[]{dim});
-    }
-
-    public Signal(final Descriptor data, final Descriptor raw, final Descriptor dim0, final Descriptor dim1){
-        this(data, raw, new Descriptor[]{dim0, dim1});
-    }
-
-    public Signal(final Descriptor data, final Descriptor raw, final Descriptor[] dims){
-        super(DTYPE.ROUTINE, null, new Descriptor[]{data, raw}, dims);
+    public Signal(final Descriptor data, final Descriptor raw, final Descriptor dim, final Descriptor... dims){
+        super(DTYPE.ROUTINE, null, dims, data, raw, dim);
     }
 
     @Override

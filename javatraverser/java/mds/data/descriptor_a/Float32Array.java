@@ -8,7 +8,7 @@ public final class Float32Array extends FLOATArray<Float>{
         super(b);
     }
 
-    public Float32Array(final float[] values){
+    public Float32Array(final float... values){
         super(DTYPE.FLOAT, values);
     }
 

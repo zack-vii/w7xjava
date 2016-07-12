@@ -95,12 +95,8 @@ public final class Call extends BUILD<Short>{
         super(b);
     }
 
-    public Call(final short type, final Descriptor image, final Descriptor routine, final byte nargs){
-        super(DTYPE.CALL, ByteBuffer.allocate(Short.BYTES).order(Descriptor.BYTEORDER).putShort(type), new Descriptor[]{image, routine});
-    }
-
-    public Call(final short type, final Descriptor image, final Descriptor routine, final Descriptor[] args){
-        super(DTYPE.CALL, ByteBuffer.allocate(Short.BYTES).order(Descriptor.BYTEORDER).putShort(type), new Descriptor[]{image, routine}, args);
+    public Call(final short type, final Descriptor image, final Descriptor routine, final Descriptor... args){
+        super(DTYPE.CALL, ByteBuffer.allocate(Short.BYTES).order(Descriptor.BYTEORDER).putShort(type), args, image, routine);
     }
 
     @Override

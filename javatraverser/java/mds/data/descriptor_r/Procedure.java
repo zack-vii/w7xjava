@@ -13,11 +13,11 @@ public final class Procedure extends BUILD{
     }
 
     public Procedure(final Descriptor time_out, final Descriptor procedure, final Descriptor language, final byte nargs){
-        super(DTYPE.PROCEDURE, null, new Descriptor[]{time_out, procedure, language});
+        super(DTYPE.PROCEDURE, null, time_out, procedure, language);
     }
 
-    public Procedure(final Descriptor time_out, final Descriptor procedure, final Descriptor language, final Descriptor[] args){
-        super(DTYPE.PROCEDURE, null, new Descriptor[]{time_out, procedure, language}, args);
+    public Procedure(final Descriptor time_out, final Descriptor procedure, final Descriptor language, final Descriptor... args){
+        super(DTYPE.PROCEDURE, null, args, time_out, procedure, language);
     }
 
     public final Descriptor getArgument(final int idx) {

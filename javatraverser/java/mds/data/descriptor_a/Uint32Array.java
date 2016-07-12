@@ -9,7 +9,7 @@ public final class Uint32Array extends NUMBERArray<UInteger>{
         super(b);
     }
 
-    public Uint32Array(final int[] values){
+    public Uint32Array(final int... values){
         super(DTYPE.LU, values);
     }
 

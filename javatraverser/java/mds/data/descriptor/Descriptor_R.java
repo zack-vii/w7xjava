@@ -79,15 +79,15 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
     }
 
     private static final Descriptor[] joinArrays(final Descriptor[] args0, final Descriptor[] args1) {
-        if(args0 == null) return args1;
-        if(args1 == null) return args0;
+        if(args0 == null || args0.length == 0) return args1;
+        if(args1 == null || args1.length == 0) return args0;
         final Descriptor[] args = new Descriptor[args0.length + args1.length];
         System.arraycopy(args0, 0, args, 0, args0.length);
         System.arraycopy(args1, 0, args, args0.length, args1.length);
         return args;
     }
 
-    private static final int joinSize(final Descriptor[] args) {
+    private static final int joinSize(final Descriptor... args) {
         if(args == null) return 0;
         int size = 0;
         for(final Descriptor arg : args)
@@ -98,7 +98,7 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
     private final Descriptor[] dscptrs;
     protected final int        ndesc;
 
-    public Descriptor_R(final byte dtype, final ByteBuffer data, final Descriptor[] args){
+    public Descriptor_R(final byte dtype, final ByteBuffer data, final Descriptor... args){
         super((short)(data == null ? 0 : data.limit()), dtype, Descriptor_R.CLASS, data, Descriptor_R._dscoffIa + (args == null ? 0 : args.length * Integer.BYTES), Descriptor_R.joinSize(args));
         this.b.put(Descriptor_R._ndescB, (byte)(this.ndesc = args == null ? 0 : args.length));
         this.b.position(Descriptor_R._dscoffIa);
@@ -129,7 +129,7 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
         this.b.position(0);
     }
 
-    protected Descriptor_R(final byte dtype, final ByteBuffer data, final Descriptor[] args0, final Descriptor[] args1){
+    protected Descriptor_R(final byte dtype, final ByteBuffer data, final Descriptor[] args1, final Descriptor... args0){
         this(dtype, data, Descriptor_R.joinArrays(args0, args1));
     }
 

@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
 
 public final class Int8Array extends NUMBERArray<Byte>{
-    public Int8Array(final byte[] values){
+    public Int8Array(final byte... values){
         super(DTYPE.B, values);
     }
 

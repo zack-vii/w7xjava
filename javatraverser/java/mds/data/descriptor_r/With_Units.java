@@ -11,7 +11,7 @@ public final class With_Units extends BUILD{
     }
 
     public With_Units(final Descriptor data, final Descriptor units){
-        super(DTYPE.WITH_UNITS, null, new Descriptor[]{data, units});
+        super(DTYPE.WITH_UNITS, null, data, units);
     }
 
     @Override

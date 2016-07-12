@@ -63,39 +63,39 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
         return b;
     }
 
-    public NUMBERArray(final byte dtype, final BigInteger[] values){
+    protected NUMBERArray(final byte dtype, final BigInteger[] values){
         super(dtype, NUMBERArray.toByteBuffer(values), values.length);
     }
 
-    public NUMBERArray(final byte dtype, final byte[] values){
+    protected NUMBERArray(final byte dtype, final byte[] values){
         super(dtype, ByteBuffer.wrap(values).order(Descriptor.BYTEORDER), values.length);
     }
 
-    public NUMBERArray(final byte dtype, final Complex[] values){
+    protected NUMBERArray(final byte dtype, final Complex[] values){
         super(dtype, NUMBERArray.toByteBuffer(values), values.length);
     }
 
-    public NUMBERArray(final byte dtype, final double[] values){
+    protected NUMBERArray(final byte dtype, final double[] values){
         super(dtype, NUMBERArray.toByteBuffer(values), values.length);
     }
 
-    public NUMBERArray(final byte dtype, final float[] values){
+    protected NUMBERArray(final byte dtype, final float[] values){
         super(dtype, NUMBERArray.toByteBuffer(values), values.length);
     }
 
-    public NUMBERArray(final byte dtype, final int[] values){
+    protected NUMBERArray(final byte dtype, final int[] values){
         super(dtype, NUMBERArray.toByteBuffer(values), values.length);
     }
 
-    public NUMBERArray(final byte dtype, final long[] values){
+    protected NUMBERArray(final byte dtype, final long[] values){
         super(dtype, NUMBERArray.toByteBuffer(values), values.length);
     }
 
-    public NUMBERArray(final byte dtype, final short[] values){
+    protected NUMBERArray(final byte dtype, final short[] values){
         super(dtype, NUMBERArray.toByteBuffer(values), values.length);
     }
 
-    public NUMBERArray(final ByteBuffer b){
+    protected NUMBERArray(final ByteBuffer b){
         super(b);
     }
 

@@ -26,7 +26,7 @@ public final class Function_Test{
 
     @Test
     public final void $a0() throws MdsException {
-        Assert.assertEquals(Function_Test.mds.evaluate("$A0").decompile(), Function.$A0().evaluate().decompile());// , new Descriptor[]{Function.$A0()}));
+        Assert.assertEquals(Function_Test.mds.evaluate("$A0").decompile(), Function.$A0().evaluate().decompile());// , Function.$A0()));
     }
 
     @Test

@@ -11,11 +11,11 @@ public final class Method extends BUILD{
     }
 
     public Method(final Descriptor time_out, final Descriptor method, final Descriptor object, final byte nargs){
-        super(DTYPE.METHOD, null, new Descriptor[]{time_out, method, object});
+        super(DTYPE.METHOD, null, time_out, method, object);
     }
 
-    public Method(final Descriptor time_out, final Descriptor method, final Descriptor object, final Descriptor[] args){
-        super(DTYPE.METHOD, null, new Descriptor[]{time_out, method, object}, args);
+    public Method(final Descriptor time_out, final Descriptor method, final Descriptor object, final Descriptor... args){
+        super(DTYPE.METHOD, null, args, time_out, method, object);
     }
 
     public final Descriptor getArgument(final int idx) {

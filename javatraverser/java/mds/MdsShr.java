@@ -20,7 +20,7 @@ public final class MdsShr{
     }
 
     public final Descriptor mdsSerializeDscIn(final Int8Array serial) throws MdsException {
-        return this.connection.mdsValue("_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_a", new Descriptor[]{serial}, Descriptor.class);
+        return this.connection.mdsValue("_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_a", Descriptor.class, serial);
     }
 
     public final Int8Array mdsSerializeDscOut(final String expr) throws MdsException {
@@ -29,6 +29,6 @@ public final class MdsShr{
 
     public final Int8Array mdsSerializeDscOut(final String expr, final Descriptor[] args) throws MdsException {
         return (Int8Array)this.connection.mdsValue(new StringBuffer(expr.length() + 64)//
-        .append("_a=*;_s=MdsShr->MdsSerializeDscOut(xd((").append(expr).append(";)),xd(_a));_a").toString(), args, Int8Array.class);
+                .append("_a=*;_s=MdsShr->MdsSerializeDscOut(xd((").append(expr).append(";)),xd(_a));_a").toString(), Int8Array.class, args);
     }
 }

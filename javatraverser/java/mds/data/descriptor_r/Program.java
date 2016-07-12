@@ -13,7 +13,7 @@ public final class Program extends BUILD{
     }
 
     public Program(final Descriptor time_out, final Descriptor program){
-        super(DTYPE.PROGRAM, null, new Descriptor[]{time_out, program});
+        super(DTYPE.PROGRAM, null, time_out, program);
     }
 
     public final Descriptor getProgram() {

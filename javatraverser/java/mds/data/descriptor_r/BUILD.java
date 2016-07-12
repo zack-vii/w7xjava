@@ -5,15 +5,15 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
 
 public abstract class BUILD<T extends Number>extends Descriptor_R<T>{
-    public BUILD(final byte dtype, final ByteBuffer data, final Descriptor[] args){
+    protected BUILD(final byte dtype, final ByteBuffer data, final Descriptor... args){
         super(dtype, data, args);
     }
 
-    public BUILD(final byte dtype, final ByteBuffer data, final Descriptor[] args0, final Descriptor[] args1){
-        super(dtype, data, args0, args1);
+    protected BUILD(final byte dtype, final ByteBuffer data, final Descriptor[] args1, final Descriptor... args0){
+        super(dtype, data, args1, args0);
     }
 
-    public BUILD(final ByteBuffer b){
+    protected BUILD(final ByteBuffer b){
         super(b);
     }
 

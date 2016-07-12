@@ -26,51 +26,51 @@ public final class Function extends Descriptor_R<Short>{
             this.lorr = lorr;
         }
     }
-    private static final op_rec[] binary    = new op_rec[]{                                                            //
-                                                    new op_rec(", ", OPC.OpcComma, (byte)92, (byte)-1),                // 0
-                                                    new op_rec(" = ", OPC.OpcEquals, (byte)84, (byte)1),               // 1
-                                                    new op_rec(null, OPC.OpcEqualsFirst, (byte)84, (byte)1),           // 2
-                                                    new op_rec(" : ", OPC.OpcDtypeRange, (byte)80, (byte)0),           // 3
-                                                    new op_rec(" ? ", OPC.OpcConditional, (byte)72, (byte)1),          // 4
-                                                    new op_rec(" @ ", OPC.OpcPromote, (byte)68, (byte)1),              // 5
-                                                    new op_rec(" Eqv ", OPC.OpcEqv, (byte)64, (byte)-1),               // 6
-                                                    new op_rec(" Neqv ", OPC.OpcNeqv, (byte)64, (byte)-1),             // 7
-                                                    new op_rec(" || ", OPC.OpcOr, (byte)60, (byte)-1),                 // 8
-                                                    new op_rec(" Or_Not ", OPC.OpcOrNot, (byte)60, (byte)-1),          // 9
-                                                    new op_rec(" Nor ", OPC.OpcNor, (byte)60, (byte)-1),               // 10
-                                                    new op_rec(" Nor_Not ", OPC.OpcNorNot, (byte)60, (byte)-1),        // 11
-                                                    new op_rec(" && ", OPC.OpcAnd, (byte)52, (byte)-1),                // 12
-                                                    new op_rec(" And_Not ", OPC.OpcAndNot, (byte)52, (byte)-1),        // 13
-                                                    new op_rec(" Nand ", OPC.OpcNand, (byte)52, (byte)-1),             // 14
-                                                    new op_rec(" Nand_Not ", OPC.OpcNandNot, (byte)52, (byte)-1),      // 15
-                                                    new op_rec(" == ", OPC.OpcEq, (byte)48, (byte)-1),                 // 16
-                                                    new op_rec(" <> ", OPC.OpcNe, (byte)48, (byte)-1),                 // 17
-                                                    new op_rec(" >= ", OPC.OpcGe, (byte)44, (byte)-1),                 // 18
-                                                    new op_rec(" > ", OPC.OpcGt, (byte)44, (byte)-1),                  // 19
-                                                    new op_rec(" <= ", OPC.OpcLe, (byte)44, (byte)-1),                 // 20
-                                                    new op_rec(" < ", OPC.OpcLt, (byte)44, (byte)-1),                  // 21
-                                                    new op_rec(" Is_In ", OPC.OpcIsIn, (byte)40, (byte)-1),            // 22
-                                                    new op_rec(" // ", OPC.OpcConcat, (byte)32, (byte)-1),             // 23
-                                                    new op_rec(" << ", OPC.OpcShiftLeft, (byte)28, (byte)-1),          // 24
-                                                    new op_rec(" >> ", OPC.OpcShiftRight, (byte)28, (byte)-1),         // 25
-                                                    new op_rec(" + ", OPC.OpcAdd, (byte)24, (byte)-1),                 // 26
-                                                    new op_rec(" - ", OPC.OpcSubtract, (byte)24, (byte)-1),            // 27
-                                                    new op_rec(" * ", OPC.OpcMultiply, (byte)20, (byte)-1),            // 28
-                                                    new op_rec(" / ", OPC.OpcDivide, (byte)20, (byte)-1),              // 29
-                                                    new op_rec(" ^ ", OPC.OpcPower, (byte)16, (byte)1),                // 30
-                                              };
+    private static final op_rec[] binary    = new op_rec[]{                    //
+            new op_rec(", ", OPC.OpcComma, (byte)92, (byte)-1),                // 0
+            new op_rec(" = ", OPC.OpcEquals, (byte)84, (byte)1),               // 1
+            new op_rec(null, OPC.OpcEqualsFirst, (byte)84, (byte)1),           // 2
+            new op_rec(" : ", OPC.OpcDtypeRange, (byte)80, (byte)0),           // 3
+            new op_rec(" ? ", OPC.OpcConditional, (byte)72, (byte)1),          // 4
+            new op_rec(" @ ", OPC.OpcPromote, (byte)68, (byte)1),              // 5
+            new op_rec(" Eqv ", OPC.OpcEqv, (byte)64, (byte)-1),               // 6
+            new op_rec(" Neqv ", OPC.OpcNeqv, (byte)64, (byte)-1),             // 7
+            new op_rec(" || ", OPC.OpcOr, (byte)60, (byte)-1),                 // 8
+            new op_rec(" Or_Not ", OPC.OpcOrNot, (byte)60, (byte)-1),          // 9
+            new op_rec(" Nor ", OPC.OpcNor, (byte)60, (byte)-1),               // 10
+            new op_rec(" Nor_Not ", OPC.OpcNorNot, (byte)60, (byte)-1),        // 11
+            new op_rec(" && ", OPC.OpcAnd, (byte)52, (byte)-1),                // 12
+            new op_rec(" And_Not ", OPC.OpcAndNot, (byte)52, (byte)-1),        // 13
+            new op_rec(" Nand ", OPC.OpcNand, (byte)52, (byte)-1),             // 14
+            new op_rec(" Nand_Not ", OPC.OpcNandNot, (byte)52, (byte)-1),      // 15
+            new op_rec(" == ", OPC.OpcEq, (byte)48, (byte)-1),                 // 16
+            new op_rec(" <> ", OPC.OpcNe, (byte)48, (byte)-1),                 // 17
+            new op_rec(" >= ", OPC.OpcGe, (byte)44, (byte)-1),                 // 18
+            new op_rec(" > ", OPC.OpcGt, (byte)44, (byte)-1),                  // 19
+            new op_rec(" <= ", OPC.OpcLe, (byte)44, (byte)-1),                 // 20
+            new op_rec(" < ", OPC.OpcLt, (byte)44, (byte)-1),                  // 21
+            new op_rec(" Is_In ", OPC.OpcIsIn, (byte)40, (byte)-1),            // 22
+            new op_rec(" // ", OPC.OpcConcat, (byte)32, (byte)-1),             // 23
+            new op_rec(" << ", OPC.OpcShiftLeft, (byte)28, (byte)-1),          // 24
+            new op_rec(" >> ", OPC.OpcShiftRight, (byte)28, (byte)-1),         // 25
+            new op_rec(" + ", OPC.OpcAdd, (byte)24, (byte)-1),                 // 26
+            new op_rec(" - ", OPC.OpcSubtract, (byte)24, (byte)-1),            // 27
+            new op_rec(" * ", OPC.OpcMultiply, (byte)20, (byte)-1),            // 28
+            new op_rec(" / ", OPC.OpcDivide, (byte)20, (byte)-1),              // 29
+            new op_rec(" ^ ", OPC.OpcPower, (byte)16, (byte)1),                // 30
+    };
     private static final String   newline   = "\r\n\t\t\t\t\t\t\t";
     private static int            TdiIndent = 1;
-    private static final op_rec[] unary     = new op_rec[]{                                                            //
-                                                    new op_rec("~", OPC.OpcInot, (byte)8, (byte)1),                    // 0
-                                                    new op_rec("!", OPC.OpcNot, (byte)8, (byte)1),                     // 1
-                                                    new op_rec("--", OPC.OpcPreDec, (byte)8, (byte)1),                 // 2
-                                                    new op_rec("++", OPC.OpcPreInc, (byte)8, (byte)1),                 // 3
-                                                    new op_rec("-", OPC.OpcUnaryMinus, (byte)8, (byte)1),              // 4
-                                                    new op_rec("+", OPC.OpcUnaryPlus, (byte)8, (byte)1),               // 5
-                                                    new op_rec("--", OPC.OpcPostDec, (byte)4, (byte)-1),               // 6
-                                                    new op_rec("++", OPC.OpcPostInc, (byte)4, (byte)-1),               // 7
-                                              };
+    private static final op_rec[] unary     = new op_rec[]{                    //
+            new op_rec("~", OPC.OpcInot, (byte)8, (byte)1),                    // 0
+            new op_rec("!", OPC.OpcNot, (byte)8, (byte)1),                     // 1
+            new op_rec("--", OPC.OpcPreDec, (byte)8, (byte)1),                 // 2
+            new op_rec("++", OPC.OpcPreInc, (byte)8, (byte)1),                 // 3
+            new op_rec("-", OPC.OpcUnaryMinus, (byte)8, (byte)1),              // 4
+            new op_rec("+", OPC.OpcUnaryPlus, (byte)8, (byte)1),               // 5
+            new op_rec("--", OPC.OpcPostDec, (byte)4, (byte)-1),               // 6
+            new op_rec("++", OPC.OpcPostInc, (byte)4, (byte)-1),               // 7
+    };
 
     public static final Function $2PI() {
         return new Function((short)377);
@@ -188,7 +188,7 @@ public final class Function extends Descriptor_R<Short>{
     public final static void popValue() {
         Function.$value.pop();
     }
-
+    
     public final static void pushValue(final Descriptor descpr) {
         Function.$value.push(descpr);
     }
@@ -245,11 +245,7 @@ public final class Function extends Descriptor_R<Short>{
         super(b);
     }
 
-    public Function(final short mode){
-        this(mode, null);
-    }
-
-    public Function(final short mode, final Descriptor[] args){
+    public Function(final short mode, final Descriptor... args){
         super(DTYPE.FUNCTION, ByteBuffer.allocate(Short.BYTES).order(Descriptor.BYTEORDER).putShort(0, mode), args);
     }
 

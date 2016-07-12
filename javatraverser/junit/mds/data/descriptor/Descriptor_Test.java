@@ -43,7 +43,7 @@ public final class Descriptor_Test{
         Assert.assertEquals(134348817, Descriptor_Test.mds.mdsValue(String.format("tcl('quit')")).toInt());
         Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("treeopen('%s',%d)", AllTests.tree, shot)).toInt());
         Assert.assertNotNull(nid = (Nid)Descriptor_Test.mds.mdsValue(String.format("GetNci(%s,'NID_NUMBER')", node), Nid.class));
-        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue("TreePutRecord", new Descriptor[]{nid, new Int32Array(new int[]{1, 2, 3, 4, 5, 6})}).toInt());
+        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue("TreePutRecord", nid, new Int32Array(1, 2, 3, 4, 5, 6)).toInt());
         Assert.assertEquals("[1,2,3,4,5,6]", Descriptor_Test.mds.mdsValue("GETNCI(1,'RECORD')").decompile());
     }
 }

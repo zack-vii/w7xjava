@@ -11,7 +11,7 @@ public final class With_Error extends BUILD{
     }
 
     public With_Error(final Descriptor data, final Descriptor error){
-        super(DTYPE.WITH_ERROR, null, new Descriptor[]{data, error});
+        super(DTYPE.WITH_ERROR, null, data, error);
     }
 
     @Override

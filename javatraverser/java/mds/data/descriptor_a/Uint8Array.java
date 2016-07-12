@@ -5,7 +5,7 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor_s.Uint8.UByte;
 
 public final class Uint8Array extends NUMBERArray<UByte>{
-    public Uint8Array(final byte[] values){
+    public Uint8Array(final byte... values){
         super(DTYPE.BU, values);
     }
 

@@ -11,7 +11,7 @@ public final class Action extends BUILD{
     }
 
     public Action(final Descriptor dispatch, final Descriptor task, final Descriptor errorlogs, final Descriptor completion_message, final Descriptor performance){
-        super(DTYPE.ACTION, null, new Descriptor[]{dispatch, task, errorlogs, completion_message, performance});
+        super(DTYPE.ACTION, null, dispatch, task, errorlogs, completion_message, performance);
     }
 
     public final Descriptor getCompletionMessage() {

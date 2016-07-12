@@ -27,7 +27,6 @@ import jtraverser.TreeManager;
 import jtraverser.jTraverserFacade;
 import mds.Database;
 import mds.MdsException;
-import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
 import mds.mdsip.Connection;
 
@@ -160,7 +159,7 @@ public class TreeOpenDialog extends JDialog{
                 try{
                     int[] shots;
                     try{
-                        shots = mds.getIntegerArray("getShotDB($)", new Descriptor[]{new CString(TreeOpenDialog.this.expt.getText())});
+                        shots = mds.getIntegerArray("getShotDB($)", new CString(TreeOpenDialog.this.expt.getText()));
                     }catch(final MdsException exc){
                         jTraverserFacade.stderr("getShotDB", exc);
                         shots = new int[0];

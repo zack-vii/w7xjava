@@ -80,7 +80,7 @@ public abstract class ARRAY<T>extends Descriptor<T>{
     /** (20+dimct*4,2i) bounds **/
     public final bounds[]         bounds;
 
-    public ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int nelements){
+    protected ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int nelements){
         super((short)(nelements == 0 ? 0 : byteBuffer.limit() / nelements), dtype, dclass, byteBuffer, ARRAY._dmsIa + (nelements > 1 ? Integer.BYTES : 0), 0);
         this.scale = (byte)0;
         this.digits = (byte)0;

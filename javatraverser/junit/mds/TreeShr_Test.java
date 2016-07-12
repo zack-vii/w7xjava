@@ -128,8 +128,8 @@ public class TreeShr_Test{
         final Pointer save = TreeShr_Test.treeshr.treeSaveContext();
         Assert.assertEquals(TreeShr_Test.mds.decompile(save), save.decompile());
         Assert.assertTrue(save.decompile().matches("Pointer\\(0x[a-f0-9]+\\)"));
-        Assert.assertArrayEquals(save.serializeArray(), TreeShr_Test.mds.mdsValue("_b=*;_s=MdsShr->MdsSerializeDscOut(xd((_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_a;)),xd(_b));_b", new Descriptor[]{save.serializeDsc()}, Descriptor.class).toByteArray());
-        Assert.assertArrayEquals(TreeShr_Test.mds.mdsValue("$", new Descriptor[]{save}, Descriptor.class).serializeArray(), save.serializeArray());
+        Assert.assertArrayEquals(save.serializeArray(), TreeShr_Test.mds.mdsValue("_b=*;_s=MdsShr->MdsSerializeDscOut(xd((_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_a;)),xd(_b));_b", Descriptor.class, save.serializeDsc()).toByteArray());
+        Assert.assertArrayEquals(TreeShr_Test.mds.mdsValue("$", Descriptor.class, save).serializeArray(), save.serializeArray());
         String line0, line1;
         System.out.println(line0 = TreeShr_Test.mds.getString("_t='';_s=TCL('show db',_t);_t"));
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeOpen(AllTests.tree, TreeShr_Test.shot1, true));
@@ -210,7 +210,7 @@ public class TreeShr_Test{
 
     @Test
     public final void test162TreePutTimestampedSegment() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutTimestampedSegment(1, System.nanoTime(), new Float32Array(new float[]{.1f, .2f, .3f})));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutTimestampedSegment(1, System.nanoTime(), new Float32Array(.1f, .2f, .3f)));
     }
 
     @Test
@@ -225,12 +225,12 @@ public class TreeShr_Test{
         final long[] dim = new long[10];
         for(int i = 0; i < 10; i++)
             dim[i] = t0 + i * 1000000l;
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(dim), new Float32Array(new float[]{.0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, Float.NaN}), -1, 9));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(dim), new Float32Array(.0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, Float.NaN), -1, 9));
     }
 
     @Test
     public final void test169TreePutRow() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRow(1, 1 << 10, 1000010000000l, new Float32Array(new float[]{.9f})));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRow(1, 1 << 10, 1000010000000l, new Float32Array(.9f)));
     }
 
     @Test

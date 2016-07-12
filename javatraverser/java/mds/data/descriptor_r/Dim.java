@@ -12,7 +12,7 @@ public final class Dim extends BUILD{
     }
 
     public Dim(final Descriptor window, final Descriptor axis){
-        super(DTYPE.DIMENSION, null, new Descriptor[]{window, axis});
+        super(DTYPE.DIMENSION, null, window, axis);
     }
 
     public final Descriptor getAxis() {

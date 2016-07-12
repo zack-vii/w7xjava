@@ -8,7 +8,7 @@ public final class Int32Array extends NUMBERArray<Integer>{
         super(b);
     }
 
-    public Int32Array(final int[] values){
+    public Int32Array(final int... values){
         super(DTYPE.L, values);
     }
 

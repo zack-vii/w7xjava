@@ -11,7 +11,7 @@ public final class Conglom extends BUILD{
     }
 
     public Conglom(final Descriptor image, final Descriptor model, final Descriptor name, final Descriptor qualifiers){
-        super(DTYPE.CONGLOM, null, new Descriptor[]{image, model, name, qualifiers});
+        super(DTYPE.CONGLOM, null, image, model, name, qualifiers);
     }
 
     public final Descriptor getImage() {

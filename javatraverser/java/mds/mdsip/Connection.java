@@ -317,7 +317,7 @@ public class Connection{
     }
 
     public Descriptor compile(final String expr) throws MdsException {
-        return this.mdsValue("COMPILE($)", new Descriptor[]{new CString(expr)}, Descriptor.class);
+        return this.mdsValue("COMPILE($)", Descriptor.class, new CString(expr));
     }
 
     public final boolean connect() {
@@ -353,7 +353,7 @@ public class Connection{
     }
 
     public String decompile(final Descriptor dsc) throws MdsException {
-        return this.getString("DECOMPILE($)", new Descriptor[]{dsc});
+        return this.getString("DECOMPILE($)", dsc);
     }
 
     public final boolean disconnect() {
@@ -402,7 +402,7 @@ public class Connection{
     }
 
     public final Descriptor evaluate(final Descriptor desc) throws MdsException {
-        return this.mdsValue("EVALUATE($)", new Descriptor[]{desc});
+        return this.mdsValue("EVALUATE($)", desc);
     }
 
     public final Descriptor evaluate(final String expr) throws MdsException {
@@ -431,16 +431,16 @@ public class Connection{
         return message;
     }
 
-    public ByteBuffer getByteBuffer(final String in) throws MdsException {
-        return this.mdsIO(in, false).body;
+    public ByteBuffer getByteBuffer(final String in, final Descriptor... args) throws MdsException {
+        return this.mdsIO(in, false, args).body;
     }
 
-    public final double getDouble(final String in) throws MdsException {
-        return this.getNumberArray(in).toDouble();
+    public final double getDouble(final String in, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(in, args).toDouble();
     }
 
-    public final double[] getDoubleArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toDoubleArray();
+    public final double[] getDoubleArray(final String in, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(in, args).toDoubleArray();
     }
 
     private final int getEventId() {
@@ -451,47 +451,31 @@ public class Connection{
         return i;
     }
 
-    public final float getFloat(final String in) throws MdsException {
-        return this.getNumberArray(in).toFloat();
+    public final float getFloat(final String in, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(in, args).toFloat();
     }
 
-    public final float[] getFloatArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toFloatArray();
+    public final float[] getFloatArray(final String in, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(in, args).toFloatArray();
     }
 
     public final String getHost() {
         return this.provider.host;
     }
 
-    public final int getInteger(final String in) throws MdsException {
-        return this.getNumberArray(in).toInt();
-    }
-
-    public final int getInteger(final String in, final Descriptor[] args) throws MdsException {
+    public final int getInteger(final String in, final Descriptor... args) throws MdsException {
         return this.getNumberArray(in, args).toInt();
     }
 
-    public final int[] getIntegerArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toIntArray();
-    }
-
-    public final int[] getIntegerArray(final String in, final Descriptor[] args) throws MdsException {
+    public final int[] getIntegerArray(final String in, final Descriptor... args) throws MdsException {
         return this.getNumberArray(in, args).toIntArray();
     }
 
-    public final long getLong(final String in) throws MdsException {
-        return this.getNumberArray(in).toLong();
-    }
-
-    public final long getLong(final String in, final Descriptor[] args) throws MdsException {
+    public final long getLong(final String in, final Descriptor... args) throws MdsException {
         return this.getNumberArray(in, args).toLong();
     }
 
-    public final long[] getLongArray(final String in) throws MdsException {
-        return this.getNumberArray(in).toLongArray();
-    }
-
-    public final long[] getLongArray(final String in, final Descriptor[] args) throws MdsException {
+    public final long[] getLongArray(final String in, final Descriptor... args) throws MdsException {
         return this.getNumberArray(in, args).toLongArray();
     }
 
@@ -500,16 +484,7 @@ public class Connection{
         return new StringBuilder(128).append(classname).append('(').append(this.sock.getInetAddress()).append(", ").append(this.sock.getPort()).append(", ").append(this.sock.getLocalPort()).append(')').toString();
     }
 
-    private final Descriptor getNumberArray(final String in) throws MdsException {
-        final Descriptor desc = this.mdsValue(in);
-        if(desc instanceof CString){
-            if(desc.length > 0) throw new MdsException(desc.toString(), 0);
-            return Missing.NEW;
-        }
-        return desc;
-    }
-
-    private final Descriptor getNumberArray(final String in, final Descriptor[] args) throws MdsException {
+    private final Descriptor getNumberArray(final String in, final Descriptor... args) throws MdsException {
         final Descriptor desc = this.mdsValue(in, args);
         if(desc instanceof CString){
             if(desc.length > 0) throw new MdsException(desc.toString(), 0);
@@ -526,13 +501,7 @@ public class Connection{
         return this.provider.toString();
     }
 
-    public final String getString(final String in) throws MdsException {
-        final Descriptor desc = this.mdsValue(in);
-        if(desc instanceof CString) return ((CString)desc).getValue();
-        return desc.toString();
-    }
-
-    public final String getString(final String in, final Descriptor[] args) throws MdsException {
+    public final String getString(final String in, final Descriptor... args) throws MdsException {
         final Descriptor desc = this.mdsValue(in, args);
         if(desc instanceof CString) return ((CString)desc).getValue();
         return desc.toString();
@@ -546,11 +515,7 @@ public class Connection{
         return this.connected;
     }
 
-    public final Message mdsIO(final String expr, final boolean serialize) throws MdsException {
-        return this.mdsIO(expr, null, serialize);
-    }
-
-    public final Message mdsIO(final String expr, final Descriptor[] args, final boolean serialize) throws MdsException {
+    public final Message mdsIO(final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
         byte idx = 0;
@@ -603,22 +568,13 @@ public class Connection{
         }
     }
 
-    public final Descriptor mdsValue(final String expr) throws MdsException {
-        return Descriptor.readMessage(this.mdsIO(expr, false));
-    }
-
-    public <D extends Descriptor> Descriptor mdsValue(final String expr, final Class<D> cls) throws MdsException {
-        final ByteBuffer b = this.mdsIO(expr, true).body;
+    public final <D extends Descriptor> Descriptor mdsValue(final String expr, final Class<D> cls, final Descriptor... args) throws MdsException {
+        final ByteBuffer b = this.mdsIO(expr, true, args).body;
         return Connection.bufferToClass(b, cls);
     }
 
-    public final Descriptor mdsValue(final String expr, final Descriptor[] args) throws MdsException {
-        return Descriptor.readMessage(this.mdsIO(expr, args, false));
-    }
-
-    public final <D extends Descriptor> Descriptor mdsValue(final String expr, final Descriptor[] args, final Class<D> cls) throws MdsException {
-        final ByteBuffer b = this.mdsIO(expr, args, true).body;
-        return Connection.bufferToClass(b, cls);
+    public final Descriptor mdsValue(final String expr, final Descriptor... args) throws MdsException {
+        return Descriptor.readMessage(this.mdsIO(expr, false, args));
     }
 
     synchronized private void notifyTried() {

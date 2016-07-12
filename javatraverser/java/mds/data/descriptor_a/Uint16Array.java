@@ -9,7 +9,7 @@ public final class Uint16Array extends NUMBERArray<UShort>{
         super(b);
     }
 
-    public Uint16Array(final short[] values){
+    public Uint16Array(final short... values){
         super(DTYPE.WU, values);
     }
 
