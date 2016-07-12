@@ -2192,7 +2192,7 @@ class ServerDialog extends JDialog implements ActionListener{
     public ServerDialog(final JFrame _dw, final String title){
         super(_dw, title, true);
         this.dw = (jScopeFacade)_dw;
-        // setResizable(false);
+        this.setResizable(false);
         final GridBagLayout gridbag = new GridBagLayout();
         final GridBagConstraints c = new GridBagConstraints();
         final Insets insets = new Insets(4, 4, 4, 4);
@@ -2322,7 +2322,7 @@ class ServerDialog extends JDialog implements ActionListener{
                     if(e.getStateChange() == ItemEvent.SELECTED){
                         final String srv = (String)ServerDialog.this.data_provider_list.getSelectedItem();
                         if(srv != null){
-                            final Class cl = Class.forName("jScope." + srv);
+                            final Class cl = Class.forName(srv);
                             final DataProvider dp = ((DataProvider)cl.newInstance());
                             final boolean state = dp.supportsTunneling();
                             ServerDialog.this.tunneling.setEnabled(state);
