@@ -5,8 +5,17 @@ import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
+import mds.data.descriptor_a.Float64Array;
 
 public final class Range extends Descriptor_R{
+    public static double[] range(final double begin, final double ending, final double delta) {
+        final int n = (int)((ending - begin) / delta) + 1;
+        final double[] array = new double[n];
+        for(int i = 0; i <= n; i++)
+            array[i] = begin + (i * delta);
+        return array;
+    }
+
     public Range(final ByteBuffer b) throws MdsException{
         super(b);
     }
@@ -24,6 +33,11 @@ public final class Range extends Descriptor_R{
 
     public final Descriptor getBegin() {
         return this.getDescriptor(0);
+    }
+
+    @Override
+    public final Descriptor getData() {
+        return new Float64Array(Range.range(this.getBegin().toDouble(), this.getEnding().toDouble(), this.getDelta().toDouble()));
     }
 
     public final Descriptor getDelta() {
