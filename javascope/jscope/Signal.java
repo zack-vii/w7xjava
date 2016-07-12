@@ -1925,7 +1925,7 @@ public final class Signal implements WaveDataListener{
                 System.out.println(x0 + "," + y0 + ": " + z00 + "," + z10 + "," + z01 + "," + z11 + " -> " + this.z_value);
             }
         }catch(final Exception e){
-            System.err.println("jScope.Signal.surfaceValue: " + e);
+            System.err.println("jscope.Signal.surfaceValue: " + e);
             final int idx = this.img_xprev * this.x.length + this.img_yprev;
             this.z_value = this.z[idx < this.z.length ? idx : this.z.length - 1];
         }

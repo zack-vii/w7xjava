@@ -1684,7 +1684,7 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
             remove 28/06/2005
                         wave_panel.setServerItem(dsi);
              */
-            if(!this.setDataServer(dsi)) this.setDataServer(new DataServerItem("Not Connected", null, null, "jScope.NotConnectedDataProvider", null, null, null, false));
+            if(!this.setDataServer(dsi)) this.setDataServer(new DataServerItem("Not Connected", null, null, "jscope.NotConnectedDataProvider", null, null, null, false));
             // SetFastNetworkState(wave_panel.getFastNetworkState());
             this.shot_t.setText("");
             this.updateAllWaves();

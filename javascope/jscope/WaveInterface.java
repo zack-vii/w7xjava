@@ -309,7 +309,7 @@ public class WaveInterface{
         if(DEBUG.M) System.out.println("WaveInterface.CreateNewFramesClass()");
         if(image_type == FrameData.JAI_IMAGE){
             try{
-                final Class cl = Class.forName("jScope.FrameJAI");
+                final Class cl = Class.forName("jscope.FrameJAI");
                 this.frames = (Frames)cl.newInstance();
             }catch(final Exception e){
                 throw(new IOException("Java Advanced Imaging must be installed to show this type of image"));
