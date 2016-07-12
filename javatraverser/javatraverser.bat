@@ -200,6 +200,7 @@ SET MDSIP_SRC=^
   mds\data\descriptor_s\NUMBER.java ^
   mds\data\descriptor_s\Nid.java ^
   mds\data\descriptor_s\Path.java ^
+  mds\data\descriptor_s\Pointer.java ^
   mds\data\descriptor_s\Uint128.java ^
   mds\data\descriptor_s\Uint16.java ^
   mds\data\descriptor_s\Uint32.java ^

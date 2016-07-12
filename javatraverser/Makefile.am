@@ -39,6 +39,7 @@ mdsData.jar: classjava.stamp $(DATA_CLS)
 
 # Giant list of source files follow
 
+
 DEVICE_SRC= \
   devicebeans/DeviceApply.java \
   devicebeans/DeviceApplyBeanInfo.java \
@@ -78,45 +79,40 @@ DEVICE_SRC= \
   devicebeans/DeviceTable.java \
   devicebeans/DeviceTableBeanInfo.java \
   devicebeans/DeviceTableCustomizer.java \
-  devicebeans/DeviceUpdateListener.java \
-  devicebeans/DeviceWave.java \
-  devicebeans/DeviceWaveBeanInfo.java \
-  devicebeans/DeviceWaveCustomizer.java \
-  devicebeans/DeviceWaveDisplay.java \
-  devicebeans/DeviceWaveDisplayBeanInfo.java \
-  devicebeans/DeviceWaveDisplayCustomizer.java \
-  devicebeans/DeviceWaveParameters.java \
-  devicebeans/DeviceWaveParametersBeanInfo.java
+  devicebeans/DeviceUpdateListener.java
+  
+DEVWAV_SRC= \
+  devicebeans/devicewave/DeviceWave.java \
+  devicebeans/devicewave/DeviceWaveBeanInfo.java \
+  devicebeans/devicewave/DeviceWaveCustomizer.java \
+  devicebeans/devicewave/DeviceWaveDisplay.java \
+  devicebeans/devicewave/DeviceWaveDisplayBeanInfo.java \
+  devicebeans/devicewave/DeviceWaveDisplayCustomizer.java \
+  devicebeans/devicewave/DeviceWaveParameters.java \
+  devicebeans/devicewave/DeviceWaveParametersBeanInfo.java
 
-TRAV_SRC= \
-  jTraverser.java \
-  jtraverser/CompileTree.java \
-  jtraverser/Convert.java \
+JTRAVERSER_SRC= \
   jtraverser/DataChangeEvent.java \
   jtraverser/DataChangeListener.java \
-  jtraverser/DecompileTree.java \
-  jtraverser/DisplayData.java \
-  jtraverser/DisplayNci.java \
-  jtraverser/DisplayTags.java \
-  jtraverser/FrameRepository.java \
-  jtraverser/jTraverserFacade.java \
-  jtraverser/LoadFile.java \
-  jtraverser/LoadPulse.java \
-  jtraverser/ModifyData.java \
   jtraverser/Node.java \
-  jtraverser/NodeBeanInfo.java \
-  jtraverser/NodeDisplayData.java \
-  jtraverser/NodeDisplayNci.java \
-  jtraverser/NodeDisplayTags.java \
   jtraverser/NodeInfo.java \
-  jtraverser/NodeModifyData.java \
-  jtraverser/RemoteTree.java \
-  jtraverser/StoreFile.java \
-  jtraverser/SyntaxException.java \
   jtraverser/Tree.java \
-  jtraverser/TreeDialog.java \
-  jtraverser/TreeNode.java \
-  jtraverser/TreeServer.java \
+  jtraverser/TreeManager.java \
+  jtraverser/TreeNodeLabel.java \
+  jtraverser/dialogs/AddNode.java \
+  jtraverser/dialogs/DialogSet.java \
+  jtraverser/dialogs/Dialogs.java \
+  jtraverser/dialogs/DisplayData.java \
+  jtraverser/dialogs/DisplayNci.java \
+  jtraverser/dialogs/DisplayTags.java \
+  jtraverser/dialogs/Flags.java \
+  jtraverser/dialogs/GraphPanel.java \
+  jtraverser/dialogs/ModifyData.java \
+  jtraverser/dialogs/ModifyTags.java \
+  jtraverser/dialogs/Rename.java \
+  jtraverser/dialogs/SubTrees.java \
+  jtraverser/dialogs/TreeDialog.java \
+  jtraverser/dialogs/TreeOpenDialog.java \
   jtraverser/editor/ActionEditor.java \
   jtraverser/editor/ArgEditor.java \
   jtraverser/editor/AxisEditor.java \
@@ -124,13 +120,9 @@ TRAV_SRC= \
   jtraverser/editor/DispatchEditor.java \
   jtraverser/editor/Editor.java \
   jtraverser/editor/ExprEditor.java \
-  jtraverser/editor/FloatArrayEditor.java \
-  jtraverser/editor/IntArrayEditor.java \
   jtraverser/editor/LabeledExprEditor.java \
   jtraverser/editor/MethodEditor.java \
-  jtraverser/editor/NodeDataPropertyEditor.java \
   jtraverser/editor/NodeEditor.java \
-  jtraverser/editor/NodeInfoPropertyEditor.java \
   jtraverser/editor/ParameterEditor.java \
   jtraverser/editor/ProcedureEditor.java \
   jtraverser/editor/ProgramEditor.java \
@@ -138,66 +130,97 @@ TRAV_SRC= \
   jtraverser/editor/RangeEditor.java \
   jtraverser/editor/RoutineEditor.java \
   jtraverser/editor/TaskEditor.java \
-  jtraverser/editor/WindowEditor.java
+  jtraverser/editor/WindowEditor.java \
+  jtraverser/jTraverserFacade.java \
+  jTraverser.java
 
-DATA_SRC= \
+TOOLS_SRC= \
+  jtraverser/tools/CompileTree.java \
+  jtraverser/tools/DecompileTree.java
+
+MDSIP_SRC= \
   mds/Database.java \
   mds/MdsException.java \
   mds/MdsShr.java \
   mds/TdiShr.java \
   mds/TreeShr.java \
-  mds/Database.java \
-  mds/DatabaseException.java \
-  mds/data/ActionData.java \
-  mds/data/ApdData.java \
-  mds/data/AtomicData.java \
-  mds/data/ByteData.java \
-  mds/data/CallData.java \
-  mds/data/ComplexData.java \
-  mds/data/CompoundData.java \
-  mds/data/ConditionData.java \
-  mds/data/ConglomData.java \
-  mds/data/Data.java \
-  mds/data/DataId.java \
-  mds/data/DataListener.java \
-  mds/data/DependencyData.java \
-  mds/data/DimensionData.java \
-  mds/data/DispatchData.java \
-  mds/data/DoubleData.java \
-  mds/data/EventData.java \
-  mds/data/FloatData.java \
-  mds/data/FunctionData.java \
-  mds/data/IdentData.java \
-  mds/data/IllegalDataException.java \
-  mds/data/IntData.java \
-  mds/data/MethodData.java \
-  mds/data/NidData.java \
-  mds/data/NodeId.java \
-  mds/data/OctaData.java \
-  mds/data/ParameterData.java \
-  mds/data/PathData.java \
-  mds/data/ProcedureData.java \
-  mds/data/ProgramData.java \
-  mds/data/QuadData.java \
-  mds/data/RangeData.java \
-  mds/data/RoutineData.java \
-  mds/data/ShortData.java \
-  mds/data/SignalData.java \
-  mds/data/SlopeData.java \
-  mds/data/StringData.java \
-  mds/data/UnsupportedDataException.java \
-  mds/data/WindowData.java \
-  mds/data/WithErrorData.java \
-  mds/data/WithUnitsData.java \
-  mds/data/arraydata/ArrayData.java \
-  mds/data/arraydata/ByteArray.java \
-  mds/data/arraydata/DoubleArray.java \
-  mds/data/arraydata/FloatArray.java \
-  mds/data/arraydata/IntArray.java \
-  mds/data/arraydata/OctaArray.java \
-  mds/data/arraydata/QuadArray.java \
-  mds/data/arraydata/ShortArray.java \
-  mds/data/arraydata/StringArray.java \
+  mds/data/descriptor/ARRAY.java \
+  mds/data/descriptor/DTYPE.java \
+  mds/data/descriptor/OPC.java \
+  mds/data/descriptor/Descriptor.java \
+  mds/data/descriptor/Descriptor_A.java \
+  mds/data/descriptor/Descriptor_APD.java \
+  mds/data/descriptor/Descriptor_CA.java \
+  mds/data/descriptor/Descriptor_D.java \
+  mds/data/descriptor/Descriptor_R.java \
+  mds/data/descriptor/Descriptor_S.java \
+  mds/data/descriptor/Descriptor_XD.java \
+  mds/data/descriptor/Descriptor_XS.java \
+  mds/data/descriptor_a/COMPLEXArray.java \
+  mds/data/descriptor_a/CStringArray.java \
+  mds/data/descriptor_a/Complex32Array.java \
+  mds/data/descriptor_a/Complex64Array.java \
+  mds/data/descriptor_a/EmptyArray.java \
+  mds/data/descriptor_a/FLOATArray.java \
+  mds/data/descriptor_a/Float32Array.java \
+  mds/data/descriptor_a/Float64Array.java \
+  mds/data/descriptor_a/Int128Array.java \
+  mds/data/descriptor_a/Int16Array.java \
+  mds/data/descriptor_a/Int32Array.java \
+  mds/data/descriptor_a/Int64Array.java \
+  mds/data/descriptor_a/Int8Array.java \
+  mds/data/descriptor_a/NUMBERArray.java \
+  mds/data/descriptor_a/NidArray.java \
+  mds/data/descriptor_a/Uint128Array.java \
+  mds/data/descriptor_a/Uint16Array.java \
+  mds/data/descriptor_a/Uint32Array.java \
+  mds/data/descriptor_a/Uint64Array.java \
+  mds/data/descriptor_a/Uint8Array.java \
+  mds/data/descriptor_r/BUILD.java \
+  mds/data/descriptor_r/Action.java \
+  mds/data/descriptor_r/Call.java \
+  mds/data/descriptor_r/Condition.java \
+  mds/data/descriptor_r/Conglom.java \
+  mds/data/descriptor_r/Dependency.java \
+  mds/data/descriptor_r/Dim.java \
+  mds/data/descriptor_r/Dispatch.java \
+  mds/data/descriptor_r/Function.java \
+  mds/data/descriptor_r/Method.java \
+  mds/data/descriptor_r/Opaque.java \
+  mds/data/descriptor_r/Param.java \
+  mds/data/descriptor_r/Procedure.java \
+  mds/data/descriptor_r/Program.java \
+  mds/data/descriptor_r/Range.java \
+  mds/data/descriptor_r/Routine.java \
+  mds/data/descriptor_r/Signal.java \
+  mds/data/descriptor_r/Slope.java \
+  mds/data/descriptor_r/Window.java \
+  mds/data/descriptor_r/With_Error.java \
+  mds/data/descriptor_r/With_Units.java \
+  mds/data/descriptor_s/COMPLEX.java \
+  mds/data/descriptor_s/CString.java \
+  mds/data/descriptor_s/Complex32.java \
+  mds/data/descriptor_s/Complex64.java \
+  mds/data/descriptor_s/Event.java \
+  mds/data/descriptor_s/FLOAT.java \
+  mds/data/descriptor_s/Float32.java \
+  mds/data/descriptor_s/Float64.java \
+  mds/data/descriptor_s/Ident.java \
+  mds/data/descriptor_s/Int128.java \
+  mds/data/descriptor_s/Int16.java \
+  mds/data/descriptor_s/Int32.java \
+  mds/data/descriptor_s/Int64.java \
+  mds/data/descriptor_s/Int8.java \
+  mds/data/descriptor_s/Missing.java \
+  mds/data/descriptor_s/NUMBER.java \
+  mds/data/descriptor_s/Nid.java \
+  mds/data/descriptor_s/Path.java \
+  mds/data/descriptor_s/Pointer.java \
+  mds/data/descriptor_s/Uint128.java \
+  mds/data/descriptor_s/Uint16.java \
+  mds/data/descriptor_s/Uint32.java \
+  mds/data/descriptor_s/Uint64.java \
+  mds/data/descriptor_s/Uint8.java \
   mds/mdsip/Connection.java \
   mds/mdsip/ConnectionEvent.java \
   mds/mdsip/ConnectionListener.java \
@@ -205,7 +228,7 @@ DATA_SRC= \
   mds/mdsip/UpdateEvent.java \
   mds/mdsip/UpdateEventListener.java
 
-_DEVICE_GIFS= \
+DEVICE_GIF= \
   devicebeans/DeviceApply.gif \
   devicebeans/DeviceButtons.gif \
   devicebeans/DeviceCancel.gif \
@@ -217,8 +240,12 @@ _DEVICE_GIFS= \
   devicebeans/DeviceReset.gif \
   devicebeans/DeviceSetup.gif
 
-_TRAV_GIFS= \
+DEVICE_GIF= \
+  devicebeans/devicewave/DeviceWave.gif
+
+TRAV_GIF= \
   jtraverser/action.gif \
+  jtraverser/any.gif \
   jtraverser/axis.gif \
   jtraverser/compound.gif \
   jtraverser/device.gif \
