@@ -144,7 +144,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     @Override
     public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         if(pout.capacity() < 1024) pout.ensureCapacity(1024);
-        if(this.format()) pout.append(this.getDName()).append('(');
+        if(this.format()) pout.append(this.getDTypeName()).append('(');
         if((mode & Descriptor.DECO_STR) != 0 && this.arsize > 255){
             String size;
             if(this.dimct == 0 || ((this.dims != null) && (this.dims.length == 0))) size = "0";

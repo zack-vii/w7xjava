@@ -22,7 +22,7 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     }
 
     @Override
-    protected final String getDName() {
+    public final String getDTypeName() {
         return Descriptor_APD.name;
     }
 

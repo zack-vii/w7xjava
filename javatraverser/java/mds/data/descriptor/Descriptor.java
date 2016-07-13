@@ -217,11 +217,7 @@ public abstract class Descriptor<T>{
         return Descriptor.deserialize(this.getBuffer());
     }
 
-    protected String getDName() {
-        return DTYPE.getName(this.dtype);
-    }
-
-    public final String getDTypeName() {
+    public String getDTypeName() {
         return Descriptor.getDTypeName(this.dtype);
     }
 

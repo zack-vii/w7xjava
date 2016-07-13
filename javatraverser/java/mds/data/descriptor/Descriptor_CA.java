@@ -38,7 +38,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         }
 
         public DECOMPRESS(final Descriptor_CA ca) throws MdsException{
-            if(DEBUG.D) System.out.println("DECOMPRESS: " + ca.getDName() + ca.arsize);
+            if(DEBUG.D) System.out.println("DECOMPRESS: " + ca.getDTypeName() + ca.arsize);
             this.out_dsc = this.mdsXpand(ca.arsize / ca.length, (ARRAY)ca.payload.getDescriptor(3), ca);
         }
 
@@ -116,7 +116,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
 
         private final Descriptor_A mdsXpand(int nitems, ARRAY pack_dsc, final Descriptor_CA items_dsc) throws MdsException {
             if(pack_dsc instanceof Descriptor_CA) pack_dsc = new DECOMPRESS((Descriptor_CA)pack_dsc).out_dsc;
-            if(DEBUG.D) System.out.println("mdsXpand: " + pack_dsc.getDName() + pack_dsc.arsize);
+            if(DEBUG.D) System.out.println("mdsXpand: " + pack_dsc.getDTypeName() + pack_dsc.arsize);
             this.bit = 0;
             final ByteBuffer bpack = ByteBuffer.allocate(pack_dsc.arsize + 4).order(Descriptor.BYTEORDER);
             // bpack.asIntBuffer().put(pack_dsc.getBuffer().asIntBuffer()).position(0); // would swap ints
