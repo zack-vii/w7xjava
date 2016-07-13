@@ -63,34 +63,46 @@ public abstract class ARRAY<T>extends Descriptor<T>{
     protected static final aflags f_bounds = new aflags(false, true, true, true, true);
     protected static final aflags f_coeff  = new aflags(false, true, true, true, false);
     public static final byte      MAX_DIM  = 8;
+
+    private static final short getLength(final int[] shape, final byte dtype, final int size) {
+        if(shape == null || shape.length == 0 || shape[0] == 0) return Descriptor_A.getDataSize(dtype, 0);
+        int arrlen = shape[0];
+        for(int i = 1; i < shape.length; i++)
+            arrlen *= shape[i];
+        return (short)(size / arrlen);
+    }
     /** (8,b) scale **/
-    public final byte             scale;
+    public final byte     scale;
     /** (9,b) digits **/
-    public final byte             digits;
+    public final byte     digits;
     /** (10,b) array flags **/
-    public final aflags           aflags;
+    public final aflags   aflags;
     /** (11,b) dim count **/
-    public final byte             dimct;
+    public final byte     dimct;
     /** (12,i) array size **/
-    public final int              arsize;
+    public final int      arsize;
     /** (16,i) a0 **/
-    public final int              a0;
+    public final int      a0;
     /** (20,i) dimensions **/
-    public final int[]            dims;
+    public final int[]    dims;
     /** (20+dimct*4,2i) bounds **/
-    public final bounds[]         bounds;
+    public final bounds[] bounds;
 
     protected ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int nelements){
-        super((short)(nelements == 0 ? 0 : byteBuffer.limit() / nelements), dtype, dclass, byteBuffer, ARRAY._dmsIa + (nelements > 1 ? Integer.BYTES : 0), 0);
+        this(dtype, dclass, byteBuffer, nelements == 0 ? new int[0] : new int[]{nelements});
+    }
+
+    protected ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int[] shape){
+        super(ARRAY.getLength(shape, dtype, byteBuffer.limit()), dtype, dclass, byteBuffer, ARRAY._dmsIa + shape.length * Integer.BYTES, 0);
         final ByteBuffer b = this.b.duplicate().order(this.b.order());
         b.position(ARRAY._sclB);
         b.put(this.scale = (byte)0);
         b.put(this.digits = (byte)0);
         b.put((this.aflags = ARRAY.f_array).toByte());
-        b.put(this.dimct = nelements > 1 ? (byte)1 : (byte)0);
+        b.put(this.dimct = (byte)shape.length);
         b.putInt(this.arsize = byteBuffer.limit());
         b.putInt(this.a0 = this.pointer);
-        b.asIntBuffer().put(this.dims = (this.dimct > 0) ? new int[]{nelements} : new int[0]);
+        b.asIntBuffer().put(this.dims = shape);
         this.bounds = null;
     }
 
