@@ -1,6 +1,7 @@
 package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
+import mds.data.descriptor_s.COMPLEX.Complex;
 import mds.data.descriptor_s.Complex32.ComplexFloat;
 
 public final class Complex32Array extends COMPLEXArray<Float>{
@@ -21,5 +22,11 @@ public final class Complex32Array extends COMPLEXArray<Float>{
     @Override
     public final ComplexFloat parse(final String in) {
         return ComplexFloat.decode(in);
+    }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final Complex<Float> value) {
+        b.putFloat(value.real);
+        b.putFloat(value.real);
     }
 }

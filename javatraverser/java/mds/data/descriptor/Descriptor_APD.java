@@ -43,6 +43,9 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     }
 
     @Override
+    protected final void setElement(final ByteBuffer b, final Descriptor value) {}
+
+    @Override
     public final byte toByte(final Descriptor t) {
         return t.toByte();
     }

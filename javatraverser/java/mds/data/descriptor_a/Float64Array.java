@@ -23,7 +23,12 @@ public final class Float64Array extends FLOATArray<Double>{
     }
 
     @Override
-    public Double parse(final String in) {
+    public final Double parse(final String in) {
         return Double.valueOf(in);
+    }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final Double value) {
+        b.putDouble(value);
     }
 }

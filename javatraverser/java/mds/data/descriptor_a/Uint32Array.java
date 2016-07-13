@@ -32,4 +32,9 @@ public final class Uint32Array extends NUMBERArray<UInteger>{
     public final UInteger parse(final String in) {
         return UInteger.decode(in);
     }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final UInteger value) {
+        b.putInt(value.intValue());
+    }
 }

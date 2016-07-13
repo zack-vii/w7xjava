@@ -18,6 +18,12 @@ public final class CString extends Descriptor_S<String>{
         return CString.addQuotes(str).replaceAll("\\\\", "\\\\\\\\");
     }
 
+    public static void putString(final ByteBuffer b, final String value) {
+        b.put(//
+                (b.remaining() < value.length() ? value.substring(0, b.remaining()) : value)//
+                        .getBytes());
+    }
+
     public CString(final byte[] array){
         super(DTYPE.T, ByteBuffer.wrap(array).order(Descriptor.BYTEORDER));
     }

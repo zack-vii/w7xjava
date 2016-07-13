@@ -29,7 +29,12 @@ public final class Uint16Array extends NUMBERArray<UShort>{
     }
 
     @Override
-    public UShort parse(final String in) {
+    public final UShort parse(final String in) {
         return UShort.decode(in);
+    }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final UShort value) {
+        b.putShort(value.shortValue());
     }
 }

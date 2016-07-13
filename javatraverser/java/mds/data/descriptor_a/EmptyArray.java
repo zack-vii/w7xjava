@@ -15,7 +15,7 @@ public final class EmptyArray extends Descriptor_A{
     }
 
     @Override
-    public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
+    public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         return pout.append("[]");
     }
 
@@ -28,6 +28,9 @@ public final class EmptyArray extends Descriptor_A{
     protected final Object[] initArray(final int size) {
         return new Object[0];
     }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final Object value) {}
 
     @Override
     public final byte toByte(final Object t) {

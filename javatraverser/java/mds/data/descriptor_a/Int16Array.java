@@ -31,4 +31,9 @@ public final class Int16Array extends NUMBERArray<Short>{
     public final Short parse(final String in) {
         return Short.decode(in);
     }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final Short value) {
+        b.putShort(value);
+    }
 }

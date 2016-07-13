@@ -9,7 +9,7 @@ import mds.data.descriptor_s.COMPLEX.Complex;
 import mds.data.descriptor_s.NUMBER;
 
 public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
-    private static ByteBuffer toByteBuffer(final BigInteger[] values) {
+    private static final ByteBuffer toByteBuffer(final BigInteger[] values) {
         final ByteBuffer b = ByteBuffer.allocate(values.length * 16).order(Descriptor.BYTEORDER);
         for(final BigInteger value : values){
             final byte[] by = value.or(NUMBER.max128).toByteArray();
@@ -18,7 +18,7 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
         return b;
     }
 
-    private static ByteBuffer toByteBuffer(final Complex[] values) {
+    private static final ByteBuffer toByteBuffer(final Complex[] values) {
         if(values.length == 0) return ByteBuffer.allocate(0);
         final ByteBuffer b;
         if(values[0].real instanceof Double){
@@ -112,7 +112,13 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
 
     public abstract T parse(String in);
 
-    public void setValue(final int idx, final T value) {}
+    public final void setValue(final int idx, final T value) {
+        final ByteBuffer buf = this.b.duplicate().order(this.b.order());
+        final int maxidx = buf.limit() / this.length - 1;
+        if(idx > maxidx || idx < 0) return;
+        if(idx > 0) buf.position(idx * this.length);
+        this.setElement(buf, value);
+    }
 
     @Override
     public byte toByte(final T t) {

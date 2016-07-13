@@ -26,4 +26,9 @@ public final class Int64Array extends NUMBERArray<Long>{
     public final Long parse(final String in) {
         return Long.decode(in);
     }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final Long value) {
+        b.putLong(value);
+    }
 }

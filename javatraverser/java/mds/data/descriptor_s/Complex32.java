@@ -16,6 +16,11 @@ public final class Complex32 extends COMPLEX<Float>{
         }
     }
 
+    public static void putComplexFloat(final ByteBuffer b, final Complex<Float> value) {
+        b.putFloat(value.real);
+        b.putFloat(value.real);
+    }
+
     public Complex32(final ByteBuffer b){
         super(b);
     }

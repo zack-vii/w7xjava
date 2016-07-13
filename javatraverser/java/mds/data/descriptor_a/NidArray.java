@@ -21,4 +21,9 @@ public final class NidArray extends NUMBERArray<Integer>{
     public final Integer parse(final String in) {
         return Integer.decode(in);
     }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final Integer value) {
+        b.putInt(value);
+    }
 }

@@ -31,4 +31,9 @@ public final class Int8Array extends NUMBERArray<Byte>{
     public final Byte parse(final String in) {
         return Byte.decode(in);
     }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final Byte value) {
+        b.put(value);
+    }
 }

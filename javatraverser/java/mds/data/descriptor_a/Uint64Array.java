@@ -27,4 +27,9 @@ public final class Uint64Array extends NUMBERArray<ULong>{
     public final ULong parse(final String in) {
         return ULong.decode(in);
     }
+
+    @Override
+    protected void setElement(final ByteBuffer b, final ULong value) {
+        b.putLong(value.longValue());
+    }
 }

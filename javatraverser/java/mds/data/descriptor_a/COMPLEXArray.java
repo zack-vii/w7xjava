@@ -6,7 +6,7 @@ import mds.data.descriptor_s.COMPLEX;
 import mds.data.descriptor_s.COMPLEX.Complex;
 
 public abstract class COMPLEXArray<T extends Number>extends NUMBERArray<Complex<T>>{
-    public COMPLEXArray(final ByteBuffer b){
+    protected COMPLEXArray(final ByteBuffer b){
         super(b);
     }
 

@@ -45,6 +45,14 @@ public final class CStringArray extends Descriptor_A<String>{
     }
 
     @Override
+    protected final void setElement(final ByteBuffer b, final String value) {
+        final int maxlength = this.length < b.remaining() ? this.length : b.remaining();
+        b.put(//
+                (maxlength < value.length() ? value.substring(0, maxlength) : value)//
+                        .getBytes());
+    }
+
+    @Override
     public final byte toByte(final String t) {
         return Byte.parseByte(t);
     }

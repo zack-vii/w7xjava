@@ -23,7 +23,12 @@ public final class Float32Array extends FLOATArray<Float>{
     }
 
     @Override
-    public Float parse(final String in) {
+    public final Float parse(final String in) {
         return Float.valueOf(in);
+    }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final Float value) {
+        b.putFloat(value);
     }
 }

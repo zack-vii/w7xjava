@@ -195,12 +195,17 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         return vals[0];
     }
 
-    protected final T[] getValue(final int begin, int count) {
+    protected final T[] getValue(int begin, int count) {
         if(begin < 0 || count < 0) return this.initArray(0);
         final ByteBuffer buf = this.getBuffer();
-        final int maxidx = buf.limit() / this.length;
+        final int arrlength = buf.limit() / this.length;
+        if(begin >= arrlength) return this.initArray(0);
         if(begin > 0) buf.position(begin * this.length);
-        if(begin + count > maxidx) count = maxidx - begin;
+        else{// clip negative index
+            count += begin;
+            begin = 0;
+        }
+        if(begin + count > arrlength) count = arrlength - begin;
         final T[] bi = this.initArray(count);
         for(int i = 0; i < count; i++){
             bi[i] = this.getElement(buf);
@@ -209,6 +214,8 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     }
 
     protected abstract T[] initArray(int size);
+
+    protected abstract void setElement(ByteBuffer b, T value);
 
     public abstract byte toByte(T t);
 

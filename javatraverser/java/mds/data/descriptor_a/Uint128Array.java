@@ -16,7 +16,7 @@ public final class Uint128Array extends NUMBERArray<BigInteger>{
 
     @Override
     protected final BigInteger getElement(final ByteBuffer b) {
-        return Uint128.toBigInteger(b);
+        return Uint128.getBigInteger(b);
     }
 
     @Override
@@ -27,5 +27,10 @@ public final class Uint128Array extends NUMBERArray<BigInteger>{
     @Override
     public final BigInteger parse(final String in) {
         return new BigInteger(in).abs().setBit(128);
+    }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final BigInteger value) {
+        Uint128.putBigInteger(b, value);
     }
 }

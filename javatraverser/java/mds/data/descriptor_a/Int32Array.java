@@ -13,7 +13,7 @@ public final class Int32Array extends NUMBERArray<Integer>{
     }
 
     @Override
-    protected StringBuilder decompileT(final StringBuilder pout, final Integer value) {
+    protected final StringBuilder decompileT(final StringBuilder pout, final Integer value) {
         return pout.append(value);
     }
 
@@ -30,5 +30,10 @@ public final class Int32Array extends NUMBERArray<Integer>{
     @Override
     public final Integer parse(final String in) {
         return Integer.decode(in);
+    }
+
+    @Override
+    protected final void setElement(final ByteBuffer b, final Integer value) {
+        b.putInt(value);
     }
 }

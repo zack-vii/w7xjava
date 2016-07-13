@@ -32,4 +32,9 @@ public final class Uint8Array extends NUMBERArray<UByte>{
     public final UByte parse(final String in) {
         return UByte.decode(in);
     }
+
+    @Override
+    protected void setElement(final ByteBuffer b, final UByte value) {
+        b.put(value.byteValue());
+    }
 }

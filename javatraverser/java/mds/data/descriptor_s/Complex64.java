@@ -16,6 +16,11 @@ public final class Complex64 extends COMPLEX<Double>{
         }
     }
 
+    public static void putComplexDouble(final ByteBuffer b, final Complex<Double> value) {
+        b.putDouble(value.real);
+        b.putDouble(value.real);
+    }
+
     public Complex64(final ByteBuffer b){
         super(b);
     }
