@@ -197,7 +197,7 @@ public abstract class Descriptor<T>{
         return false;
     }
 
-    /** Returns the evaluated **/
+    /** Evaluates Descriptor remotely and returns result Descriptor **/
     public Descriptor evaluate() {
         try{
             return Database.tdiEvaluate(this);
