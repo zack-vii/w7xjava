@@ -11,7 +11,7 @@ public final class Signal extends BUILD{
     }
 
     public Signal(final Descriptor data, final Descriptor raw, final Descriptor dim, final Descriptor... dims){
-        super(DTYPE.ROUTINE, null, dims, data, raw, dim);
+        super(DTYPE.SIGNAL, null, dims, data, raw, dim);
     }
 
     @Override
