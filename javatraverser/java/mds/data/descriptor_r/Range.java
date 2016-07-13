@@ -6,12 +6,13 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
 import mds.data.descriptor_a.Float64Array;
+import mds.data.descriptor_s.Float64;
 
 public final class Range extends Descriptor_R{
     public static double[] range(final double begin, final double ending, final double delta) {
         final int n = (int)((ending - begin) / delta) + 1;
         final double[] array = new double[n];
-        for(int i = 0; i <= n; i++)
+        for(int i = 0; i < n; i++)
             array[i] = begin + (i * delta);
         return array;
     }
@@ -22,6 +23,10 @@ public final class Range extends Descriptor_R{
 
     public Range(final Descriptor begin, final Descriptor ending, final Descriptor delta){
         super(DTYPE.RANGE, null, begin, ending, delta);
+    }
+
+    public Range(final double begin, final double ending, final double delta){
+        this(new Float64(begin), new Float64(ending), new Float64(delta));
     }
 
     @Override
