@@ -34,15 +34,18 @@ public abstract class Descriptor<T>{
         return ByteBuffer.wrap(buf).asReadOnlyBuffer().order(bo);
     }
 
+    /** null safe decompile of the given Descriptor **/
     public static final String decompile(final Descriptor t) {
         return t == null ? "*" : t.decompile();
     }
 
+    /** Returns the Descriptor deserialized from the given byte[] with byte order **/
     public static final Descriptor deserialize(final byte[] buf, final boolean swap) throws MdsException {
         if(buf == null) return null;
         return Descriptor.deserialize(Descriptor.Buffer(buf, swap));
     }
 
+    /** Returns the Descriptor deserialized from the given ByteBuffer **/
     public static Descriptor deserialize(final ByteBuffer bi) throws MdsException {
         if(!bi.hasRemaining()) return Missing.NEW;
         final ByteBuffer b = bi.slice().order(bi.order());
@@ -67,6 +70,7 @@ public abstract class Descriptor<T>{
         throw new MdsException(String.format("Unsupported class %s", Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
 
+    /** Returns the element length of the given dtype **/
     public static final short getDataSize(final byte dtype, final int length) {
         switch(dtype){
             default:
@@ -100,6 +104,7 @@ public abstract class Descriptor<T>{
         }
     }
 
+    /** Returns the name of the given dclass **/
     public static final String getDClassName(final byte dclass) {
         switch(dclass){
             case Descriptor_S.CLASS:
@@ -123,11 +128,13 @@ public abstract class Descriptor<T>{
         }
     }
 
+    /** Returns Descriptor contained in Message **/
     public static Descriptor readMessage(final Message msg) throws MdsException {
         if(msg.header.get(Message._typB) == DTYPE.T) return new CString(msg.body.array());
         return Descriptor_A.readMessage(msg);
     }
 
+    /** null safe sloppy decompile of the given Descriptor **/
     public static final String toString(final Descriptor t) {
         return t == null ? "*" : t.toString();
     }
@@ -164,10 +171,12 @@ public abstract class Descriptor<T>{
         this.b.position(0);
     }
 
+    /** Returns the decompiled string **/
     public final String decompile() {
         return this.decompile(Descriptor.P_STMT, new StringBuilder(1024), Descriptor.DECO_NRM).toString();
     }
 
+    /** Core method for decompiling (dummy) **/
     public StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         pout.append("<Descriptor(");
         pout.append(this.length & 0xFFFF).append(',');
@@ -177,16 +186,18 @@ public abstract class Descriptor<T>{
         return pout.append(")>");
     }
 
+    /** Returns the decompiled string with first level indentation **/
     public final String decompileX() {
         return this.decompile(Descriptor.P_STMT, new StringBuilder(1024), Descriptor.DECO_X).toString();
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if(obj instanceof Descriptor) return this.getValue().equals(((Descriptor)obj).getValue());
         return false;
     }
 
+    /** Returns the evaluated **/
     public Descriptor evaluate() {
         try{
             return Database.tdiEvaluate(this);
@@ -195,36 +206,45 @@ public abstract class Descriptor<T>{
         }
     }
 
+    /** Returns the value as raw ByteBuffer **/
     public ByteBuffer getBuffer() {
         return ((ByteBuffer)this.b.asReadOnlyBuffer().position(this.pointer == 0 ? this.b.limit() : this.pointer)).slice().order(this.b.order());
     }
 
+    /** Returns the data of the Descriptor, i.e. DATA($THIS) **/
     public Descriptor getData() {
         return this;
     }
 
+    /** Returns the dclass name of the Descriptor **/
     public final String getDClassName() {
         return Descriptor.getDClassName(this.dclass);
     }
 
+    /** Returns the value cast to Descriptor **/
     public final Descriptor getDescriptor() throws MdsException {
         return Descriptor.deserialize(this.getBuffer());
     }
 
+    /** Returns the dtype name of the Descriptor **/
     public String getDTypeName() {
         return DTYPE.getName(this.dtype);
     }
 
+    /** Returns the shape of the Descriptor, i.e. SHAPE($THIS) **/
     public abstract int[] getShape();
 
+    /** Returns the total size of the backing buffer in bytes **/
     public int getSize() {
         return this.serialize().limit();
     }
 
+    /** Returns the value<T> of the body directed to by pointer **/
     public final T getValue() {
         return this.getValue(this.getBuffer());
     }
 
+    /** Returns value<T> from given ByteBuffer **/
     protected abstract T getValue(ByteBuffer b);
 
     @SuppressWarnings("static-method")
@@ -232,59 +252,75 @@ public abstract class Descriptor<T>{
         return Descriptor.isatomic;
     }
 
+    /** Returns serialized byte stream as ByteBuffer **/
     public final ByteBuffer serialize() {
         return this.b.asReadOnlyBuffer().order(this.b.order());
     }
 
+    /** Returns serialized byte stream as byte[] **/
     public final byte[] serializeArray() {
         final ByteBuffer b = this.serialize();
         return ByteBuffer.allocate(b.limit()).put(b).array();
     }
 
+    /** Returns serialized byte stream as Descriptor **/
     public final Int8Array serializeDsc() {
         return new Int8Array(this.serializeArray());
     }
 
+    /** Returns value as byte **/
     public byte toByte() {
         return this.toByteArray()[0];
     }
 
+    /** Returns value as byte[] **/
     public abstract byte[] toByteArray();
 
+    /** Returns value as double **/
     public double toDouble() {
         return this.toDoubleArray()[0];
     }
 
+    /** Returns value as double[] **/
     public abstract double[] toDoubleArray();
 
+    /** Returns value as float **/
     public float toFloat() {
         return this.toFloatArray()[0];
     }
 
+    /** Returns value as float[] **/
     public abstract float[] toFloatArray();
 
+    /** Returns value as int **/
     public int toInt() {
         return this.toIntArray()[0];
     }
 
+    /** Returns value as int[] **/
     public abstract int[] toIntArray();
 
+    /** Returns value as long **/
     public long toLong() {
         return this.toLongArray()[0];
     }
 
+    /** return value as long[] **/
     public abstract long[] toLongArray();
 
+    /** Returns the MdsIp Message representing this Descriptor **/
     public Message toMessage(final byte descr_idx, final byte n_args) {
         final Descriptor data = this.getData();
         return new Message(descr_idx, data.dtype, n_args, data.getShape(), data.getBuffer());
     }
 
     @Override
+    /** Returns a sloppy decompiled string **/
     public final String toString() {
         return this.decompile(Descriptor.P_STMT, new StringBuilder(1024), Descriptor.DECO_STR).toString();
     }
 
+    /** Returns a sloppy decompiled string with first level indentation **/
     public final String toStringX() {
         return this.decompile(Descriptor.P_STMT, new StringBuilder(1024), Descriptor.DECO_STRX).toString();
     }
