@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -134,14 +135,14 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
             this.revalidate();
         }
     }
-    private final JComboBox          combo;
+    private final JComboBox<String>  combo;
     private int                      mode_idx, curr_mode_idx;
     private JTable                   table;
     private JTable                   rows;
     private Descriptor               array;
     private Thread                   updater;
     private final String             name;
-    private HashMap<Integer, Object> changes;
+    private HashMap<Integer, Number> changes;
     private JPanel                   array_panel;
     private LabeledExprEditor        expr_edit;
     private final TreeDialog         dialog;
@@ -243,7 +244,12 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
             case 0:
                 return null;
             case 1:
-                return this.array;
+                if(!(this.array instanceof NUMBERArray)) return this.array;
+                @SuppressWarnings("unchecked")
+                final NUMBERArray<Number> narray = (NUMBERArray)this.array;
+                for(final Entry<Integer, Number> entry : this.changes.entrySet())
+                    narray.setValue(entry.getKey(), entry.getValue());
+                return narray;
             case 2:
                 return this.expr_edit.getData();
         }
@@ -269,7 +275,7 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
         if(this.updater != null && this.updater.isAlive()) this.updater.interrupt();
         if(!(this.array instanceof NUMBERArray)) return;
         final NUMBERArray narray = (NUMBERArray)this.array;
-        this.changes = new HashMap<Integer, Object>();
+        this.changes = new HashMap<Integer, Number>();
         final TableColumn column = ArrayEditor.this.rows.getColumn(ArrayEditor.this.rows);
         final JTableHeader header = ArrayEditor.this.rows.getTableHeader();
         final DefaultTableModel model = new DefaultTableModel(){
@@ -289,19 +295,24 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
         model.addColumn(this.array.getDTypeName());
         this.table.setModel(model);
         this.table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        final int dim = this.slider == null ? 0 : this.slider.getValue();
         final int[] dims = narray.getShape();
-        final int[] coord = new int[dims.length];
-        for(int i = 0; i < dims.length; i++)
-            coord[i] = (Integer)this.coord_edit[i].getValue();
-        int toffset = 0, tinc = 1;
-        final int offset, inc;
-        for(int i = 0, j = 1; i < dims.length; j *= dims[i++]){
-            if(dim == i) tinc = j;
-            else toffset += j * coord[i];
+        final int offset, inc, dim;
+        if(this.slider == null){
+            dim = offset = 0;
+            inc = 1;
+        }else{
+            dim = this.slider.getValue();
+            final int[] coord = new int[dims.length];
+            for(int i = 0; i < dims.length; i++)
+                coord[i] = (Integer)this.coord_edit[i].getValue();
+            int toffset = 0, tinc = 1;
+            for(int i = 0, j = 1; i < dims.length; j *= dims[i++]){
+                if(dim == i) tinc = j;
+                else toffset += j * coord[i];
+            }
+            offset = toffset;
+            inc = tinc;
         }
-        offset = toffset;
-        inc = tinc;
         (this.updater = new Thread(this.name){
             {
                 this.setDaemon(true);
@@ -327,7 +338,7 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
         }).start();
     }
 
-    public final void setData(final Descriptor array) {
+    public final void setData(final Descriptor<?> array) {
         if(array == null) this.mode_idx = 0;
         else if(array instanceof NUMBERArray) this.mode_idx = 1;
         else this.mode_idx = 2;
