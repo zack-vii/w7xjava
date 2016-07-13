@@ -102,7 +102,7 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
 
         @Override
         public Object getValueAt(final int row, final int column) {
-            return Integer.toString(row + 1);
+            return Integer.toString(row);
         }
 
         @Override
@@ -153,7 +153,9 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
         this.dialog = dialog;
         this.setLayout(new BorderLayout());
         final JPanel jp = new JPanel(new GridLayout(2, 1));
-        jp.add(new JLabel(name + ':'));
+        final JLabel label = new JLabel(name + ':');
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        jp.add(label);
         this.combo = new JComboBox<String>(new String[]{"Undefined", "Array", "Expression"});
         this.combo.setEditable(false);
         this.combo.setSelectedIndex(this.mode_idx);
@@ -180,12 +182,14 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
             case 1:
                 this.table = new JTable();
                 this.table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+                this.table.setDoubleBuffered(true);
                 this.array_panel = new JPanel(new BorderLayout());
                 final JScrollPane scroll_panel = new JScrollPane(this.table);
                 final int[] dims = this.array.getShape();
                 if(dims.length > 1){
+                    final int dim = 0;
                     final JPanel jp = new JPanel(new BorderLayout());
-                    jp.add(this.slider = new JSlider(0, dims.length - 1, 0), BorderLayout.WEST);
+                    jp.add(this.slider = new JSlider(0, dims.length - 1, dim), BorderLayout.WEST);
                     this.slider.setMajorTickSpacing(1);
                     this.slider.setPaintTicks(true);
                     this.slider.setPaintLabels(true);
@@ -194,6 +198,7 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
                     this.slider.addChangeListener(this);
                     this.slider.setBorder(new EmptyBorder(3, 0, 3, 0));
                     this.slider.setPreferredSize(new Dimension(20 * dims.length - 6, 20));
+                    this.slider.setInverted(true);
                     final JPanel coord = new JPanel(new GridLayout(dims.length, 1));
                     jp.add(coord, BorderLayout.CENTER);
                     this.coord_edit = new JSpinner[dims.length];
@@ -207,11 +212,13 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
                         row.add(label);
                         coord.add(row);
                     }
+                    this.coord_edit[dim].setEnabled(false);
                     this.array_panel.add(jp, BorderLayout.NORTH);
                 }
                 this.array_panel.add(scroll_panel, BorderLayout.CENTER);
                 this.rows = new RowNumberTable(this.table);
                 scroll_panel.setRowHeaderView(this.rows);
+                scroll_panel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
                 scroll_panel.setCorner(JScrollPane.UPPER_LEFT_CORNER, this.rows.getTableHeader());
                 this.array_panel.setPreferredSize(new Dimension(240, 640));
                 this.add(this.array_panel, BorderLayout.CENTER);
@@ -290,8 +297,8 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
         int toffset = 0, tinc = 1;
         final int offset, inc;
         for(int i = 0, j = 1; i < dims.length; j *= dims[i++]){
-            toffset += j * coord[i];
             if(dim == i) tinc = j;
+            else toffset += j * coord[i];
         }
         offset = toffset;
         inc = tinc;
@@ -360,6 +367,11 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
 
     @Override
     public void stateChanged(final ChangeEvent e) {
-        ArrayEditor.this.setArray();
+        if(this.slider != null){
+            final int dim = this.slider.getValue();
+            for(int i = 0; i < this.coord_edit.length; i++)
+                this.coord_edit[i].setEnabled(i != dim);
+        }
+        this.setArray();
     }
 }
