@@ -14,9 +14,14 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
@@ -32,7 +37,7 @@ import mds.data.descriptor_a.NUMBERArray;
 import mds.data.descriptor_s.Missing;
 
 @SuppressWarnings("serial")
-public class ArrayEditor extends JPanel implements ActionListener, Editor{
+public class ArrayEditor extends JPanel implements ActionListener, Editor, ChangeListener{
     public class RowNumberTable extends JTable implements ChangeListener, PropertyChangeListener{
         private class RowNumberRenderer extends DefaultTableCellRenderer{
             public RowNumberRenderer(){
@@ -137,9 +142,11 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor{
     private Thread                   updater;
     private final String             name;
     private HashMap<Integer, Object> changes;
-    private JScrollPane              array_panel;
+    private JPanel                   array_panel;
     private LabeledExprEditor        expr_edit;
     private final TreeDialog         dialog;
+    private JSlider                  slider;
+    private JSpinner[]               coord_edit;
 
     public ArrayEditor(final Descriptor array, final TreeDialog dialog, final String name){
         this.name = name;
@@ -172,12 +179,41 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor{
                 return;
             case 1:
                 this.table = new JTable();
-                this.array_panel = new JScrollPane(this.table);
-                this.rows = new RowNumberTable(this.table);
-                this.array_panel.setRowHeaderView(this.rows);
-                this.array_panel.setCorner(JScrollPane.UPPER_LEFT_CORNER, this.rows.getTableHeader());
-                this.array_panel.setPreferredSize(new Dimension(240, 640));
                 this.table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+                this.array_panel = new JPanel(new BorderLayout());
+                final JScrollPane scroll_panel = new JScrollPane(this.table);
+                final int[] dims = this.array.getShape();
+                if(dims.length > 1){
+                    final JPanel jp = new JPanel(new BorderLayout());
+                    jp.add(this.slider = new JSlider(0, dims.length - 1, 0), BorderLayout.WEST);
+                    this.slider.setMajorTickSpacing(1);
+                    this.slider.setPaintTicks(true);
+                    this.slider.setPaintLabels(true);
+                    this.slider.setOrientation(JSlider.VERTICAL);
+                    this.slider.setToolTipText("Slice array along this dimension. Time is the last dimension.");
+                    this.slider.addChangeListener(this);
+                    this.slider.setBorder(new EmptyBorder(3, 0, 3, 0));
+                    this.slider.setPreferredSize(new Dimension(20 * dims.length - 6, 20));
+                    final JPanel coord = new JPanel(new GridLayout(dims.length, 1));
+                    jp.add(coord, BorderLayout.CENTER);
+                    this.coord_edit = new JSpinner[dims.length];
+                    for(int i = 0; i < dims.length; i++){
+                        final JPanel row = new JPanel(new GridLayout(1, 2));
+                        final JSpinner ce = this.coord_edit[i] = new JSpinner(new SpinnerNumberModel(0, 0, dims[i] - 1, 1));
+                        ce.addChangeListener(this);
+                        row.add(ce);
+                        final JLabel label = new JLabel(String.format("%d", dims[i]));
+                        label.setHorizontalAlignment(SwingConstants.CENTER);
+                        row.add(label);
+                        coord.add(row);
+                    }
+                    this.array_panel.add(jp, BorderLayout.NORTH);
+                }
+                this.array_panel.add(scroll_panel, BorderLayout.CENTER);
+                this.rows = new RowNumberTable(this.table);
+                scroll_panel.setRowHeaderView(this.rows);
+                scroll_panel.setCorner(JScrollPane.UPPER_LEFT_CORNER, this.rows.getTableHeader());
+                this.array_panel.setPreferredSize(new Dimension(240, 640));
                 this.add(this.array_panel, BorderLayout.CENTER);
                 this.setArray();
                 break;
@@ -225,11 +261,10 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor{
     public final void setArray() {
         if(this.updater != null && this.updater.isAlive()) this.updater.interrupt();
         if(!(this.array instanceof NUMBERArray)) return;
+        final NUMBERArray narray = (NUMBERArray)this.array;
         this.changes = new HashMap<Integer, Object>();
         final TableColumn column = ArrayEditor.this.rows.getColumn(ArrayEditor.this.rows);
-        column.setHeaderValue("*");
         final JTableHeader header = ArrayEditor.this.rows.getTableHeader();
-        final NUMBERArray narray = (NUMBERArray)this.array;
         final DefaultTableModel model = new DefaultTableModel(){
             @Override
             public final void setValueAt(final Object value, final int row, final int col) {
@@ -239,6 +274,7 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor{
                     ArrayEditor.this.changes.put(Integer.valueOf(row), number);
                     super.setValueAt(number, row, col);
                 }catch(final Exception e){
+                    System.err.println(e + ": " + e.getMessage());
                     ArrayEditor.this.setToolTipText(e.getMessage());
                 }
             }
@@ -246,6 +282,19 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor{
         model.addColumn(this.array.getDTypeName());
         this.table.setModel(model);
         this.table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        final int dim = this.slider == null ? 0 : this.slider.getValue();
+        final int[] dims = narray.getShape();
+        final int[] coord = new int[dims.length];
+        for(int i = 0; i < dims.length; i++)
+            coord[i] = (Integer)this.coord_edit[i].getValue();
+        int toffset = 0, tinc = 1;
+        final int offset, inc;
+        for(int i = 0, j = 1; i < dims.length; j *= dims[i++]){
+            toffset += j * coord[i];
+            if(dim == i) tinc = j;
+        }
+        offset = toffset;
+        inc = tinc;
         (this.updater = new Thread(this.name){
             {
                 this.setDaemon(true);
@@ -254,16 +303,16 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor{
 
             @Override
             public final void run() {
-                final int n = narray.length == 0 ? narray.arsize : narray.arsize / narray.length;
+                final int n = dims[dim];
                 for(int i = 0; i < n; i++){
-                    if(i % 10000 == 0){
+                    if(i % 10000 == 0 && n > 10000){
                         column.setHeaderValue(String.format("%d%%", 100 * i / n));
                         header.repaint();
                         synchronized(this){
                             if(this.isInterrupted()) return;
                         }
                     }
-                    model.addRow(new Object[]{narray.getValue(i)});
+                    model.addRow(new Object[]{narray.getValue(i * inc + offset)});
                 }
                 column.setHeaderValue("");
                 header.repaint();
@@ -307,5 +356,10 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor{
         this.validate();
         this.dialog.repack();
         this.repaint();
+    }
+
+    @Override
+    public void stateChanged(final ChangeEvent e) {
+        ArrayEditor.this.setArray();
     }
 }
