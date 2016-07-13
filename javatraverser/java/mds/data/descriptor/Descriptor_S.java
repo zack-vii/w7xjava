@@ -77,7 +77,7 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
             case DTYPE.PATH:
                 return new Path(b);
             case DTYPE.MISSING:
-                return new Missing(b);
+                return Missing.NEW;
             case DTYPE.EVENT:
                 return new Event(b);
         }

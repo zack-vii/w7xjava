@@ -197,7 +197,7 @@ public abstract class Descriptor<T>{
         try{
             return Database.tdiEvaluate(this);
         }catch(final MdsException e){
-            return new Missing();
+            return Missing.NEW;
         }
     }
 
