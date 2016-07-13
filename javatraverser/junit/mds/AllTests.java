@@ -1,5 +1,7 @@
 package mds;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Map;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -16,6 +18,29 @@ import mds.mdsip.Connection_Test;
 public class AllTests{
     public static final int    port = 8000;
     public static final String tree = "test";
+    static{// clean up test files
+        try{
+            Runtime.getRuntime().exec("taskkill /im mdsip.exe /F").waitFor();
+        }catch(final Exception e){
+            System.err.println(e + ": " + e.getMessage());
+        }
+        final String paths = System.getenv(AllTests.tree + "_path").replace("~t", AllTests.tree);
+        for(final String path : paths.split(";")){
+            final File folder = new File(path);
+            final String filesearchstring = String.format("%s_([0-9]+|model)\\..*", AllTests.tree);
+            final File[] files = folder.listFiles(new FilenameFilter(){
+                @Override
+                public boolean accept(final File dir, final String name) {
+                    return name.matches(filesearchstring);
+                }
+            });
+            for(final File file : files){
+                if(!file.delete()){
+                    System.err.println("Can't remove " + file.getAbsolutePath());
+                }
+            }
+        }
+    }
 
     public static Connection setUpBeforeClass() throws Exception {
         final Connection mds = new Connection("localhost:" + AllTests.port);
