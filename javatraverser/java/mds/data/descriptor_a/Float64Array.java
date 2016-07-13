@@ -21,4 +21,9 @@ public final class Float64Array extends FLOATArray<Double>{
     protected final Double[] initArray(final int size) {
         return new Double[size];
     }
+
+    @Override
+    public Double parse(final String in) {
+        return Double.valueOf(in);
+    }
 }

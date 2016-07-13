@@ -25,4 +25,9 @@ public class Int32 extends NUMBER<Integer>{
     public final Integer getValue(final ByteBuffer b) {
         return b.getInt(0);
     }
+
+    @Override
+    public final Integer parse(final String in) {
+        return Integer.decode(in);
+    }
 }

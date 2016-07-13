@@ -7,6 +7,10 @@ import mds.data.descriptor_s.Uint32.UInteger;
 @SuppressWarnings("serial")
 public final class Uint32 extends NUMBER<UInteger>{
     public static final class UInteger extends Number{
+        public static UInteger decode(final String in) {
+            return new UInteger(Long.decode(in).intValue());
+        }
+
         public static final UInteger fromBuffer(final ByteBuffer b) {
             return new UInteger(b.getInt());
         }
@@ -53,5 +57,10 @@ public final class Uint32 extends NUMBER<UInteger>{
     @Override
     protected final UInteger getValue(final ByteBuffer b) {
         return new UInteger(b.getInt(0));
+    }
+
+    @Override
+    public final UInteger parse(final String in) {
+        return UInteger.decode(in);
     }
 }

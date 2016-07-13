@@ -16,4 +16,9 @@ public final class Int64 extends NUMBER<Long>{
     public final Long getValue(final ByteBuffer b) {
         return b.getLong(0);
     }
+
+    @Override
+    public final Long parse(final String in) {
+        return Long.decode(in);
+    }
 }

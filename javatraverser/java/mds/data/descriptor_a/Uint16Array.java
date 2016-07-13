@@ -27,4 +27,9 @@ public final class Uint16Array extends NUMBERArray<UShort>{
     protected final UShort[] initArray(final int size) {
         return new UShort[size];
     }
+
+    @Override
+    public UShort parse(final String in) {
+        return UShort.decode(in);
+    }
 }

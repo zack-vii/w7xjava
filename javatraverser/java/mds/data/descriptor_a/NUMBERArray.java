@@ -110,6 +110,10 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
         return DTYPE.getSuffix(this.dtype);
     }
 
+    public abstract T parse(String in);
+
+    public void setValue(final int idx, final T value) {}
+
     @Override
     public byte toByte(final T t) {
         return t.byteValue();

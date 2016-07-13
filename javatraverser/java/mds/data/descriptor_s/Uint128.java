@@ -23,7 +23,12 @@ public final class Uint128 extends NUMBER<BigInteger>{
     }
 
     @Override
-    protected BigInteger getValue(final ByteBuffer b) {
+    protected final BigInteger getValue(final ByteBuffer b) {
         return Uint128.toBigInteger(b);
+    }
+
+    @Override
+    public final BigInteger parse(final String in) {
+        return null;
     }
 }

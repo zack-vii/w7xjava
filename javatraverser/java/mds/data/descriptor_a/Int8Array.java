@@ -26,4 +26,9 @@ public final class Int8Array extends NUMBERArray<Byte>{
     protected final Byte[] initArray(final int size) {
         return new Byte[size];
     }
+
+    @Override
+    public final Byte parse(final String in) {
+        return Byte.decode(in);
+    }
 }

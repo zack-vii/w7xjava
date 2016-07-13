@@ -16,4 +16,9 @@ public final class Int16 extends NUMBER<Short>{
     public final Short getValue(final ByteBuffer b) {
         return b.getShort(0);
     }
+
+    @Override
+    public final Short parse(final String in) {
+        return Short.decode(in);
+    }
 }

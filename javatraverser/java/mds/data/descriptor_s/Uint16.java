@@ -7,6 +7,10 @@ import mds.data.descriptor_s.Uint16.UShort;
 @SuppressWarnings("serial")
 public final class Uint16 extends NUMBER<UShort>{
     public static final class UShort extends Number{
+        public static UShort decode(final String in) {
+            return new UShort(Integer.decode(in).shortValue());
+        }
+
         public static final UShort fromBuffer(final ByteBuffer b) {
             return new UShort(b.getShort());
         }
@@ -53,5 +57,10 @@ public final class Uint16 extends NUMBER<UShort>{
     @Override
     protected final UShort getValue(final ByteBuffer b) {
         return new UShort(b.getShort(0));
+    }
+
+    @Override
+    public final UShort parse(final String in) {
+        return UShort.decode(in);
     }
 }

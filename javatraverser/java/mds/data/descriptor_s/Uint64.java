@@ -10,6 +10,10 @@ public final class Uint64 extends NUMBER<ULong>{
     public static final class ULong extends Number{
         private static final BigInteger max = BigInteger.ONE.shiftLeft(64);
 
+        public static ULong decode(final String in) {
+            return new ULong(new BigInteger(in).longValue());
+        }
+
         public static final ULong fromBuffer(final ByteBuffer b) {
             return new ULong(b.getLong());
         }
@@ -58,5 +62,10 @@ public final class Uint64 extends NUMBER<ULong>{
     @Override
     protected final ULong getValue(final ByteBuffer b) {
         return new ULong(b.getLong(0));
+    }
+
+    @Override
+    public final ULong parse(final String in) {
+        return ULong.decode(in);
     }
 }

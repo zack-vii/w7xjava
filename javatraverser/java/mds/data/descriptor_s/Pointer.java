@@ -2,6 +2,7 @@ package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor_s.Uint64.ULong;
 
 public final class Pointer extends NUMBER<Number>{
     public Pointer(final ByteBuffer b){
@@ -26,5 +27,10 @@ public final class Pointer extends NUMBER<Number>{
     @Override
     public final Number getValue(final ByteBuffer b) {
         return this.length == 4 ? b.getInt(0) : b.getLong(0);
+    }
+
+    @Override
+    public Number parse(final String in) {
+        return ULong.decode(in).longValue();
     }
 }

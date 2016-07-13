@@ -26,4 +26,9 @@ public final class Int32Array extends NUMBERArray<Integer>{
     protected final Integer[] initArray(final int size) {
         return new Integer[size];
     }
+
+    @Override
+    public final Integer parse(final String in) {
+        return Integer.decode(in);
+    }
 }

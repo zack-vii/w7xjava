@@ -104,6 +104,8 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
         return DTYPE.getSuffix(this.dtype);
     }
 
+    public abstract T parse(final String in);
+
     @Override
     public byte toByte() {
         return this.getValue().byteValue();

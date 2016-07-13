@@ -21,4 +21,9 @@ public final class Int64Array extends NUMBERArray<Long>{
     protected final Long[] initArray(final int size) {
         return new Long[size];
     }
+
+    @Override
+    public final Long parse(final String in) {
+        return Long.decode(in);
+    }
 }

@@ -26,4 +26,9 @@ public final class Int128 extends NUMBER<BigInteger>{
     public final BigInteger getValue(final ByteBuffer b) {
         return Int128.toBigInteger(b);
     }
+
+    @Override
+    public final BigInteger parse(final String in) {
+        return new BigInteger(in).setBit(128);
+    }
 }

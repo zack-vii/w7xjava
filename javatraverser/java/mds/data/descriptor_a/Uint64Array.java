@@ -22,4 +22,9 @@ public final class Uint64Array extends NUMBERArray<ULong>{
     protected final ULong[] initArray(final int size) {
         return new ULong[size];
     }
+
+    @Override
+    public final ULong parse(final String in) {
+        return ULong.decode(in);
+    }
 }

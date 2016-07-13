@@ -27,4 +27,9 @@ public final class Uint8Array extends NUMBERArray<UByte>{
     protected final UByte[] initArray(final int size) {
         return new UByte[size];
     }
+
+    @Override
+    public final UByte parse(final String in) {
+        return UByte.decode(in);
+    }
 }

@@ -23,4 +23,9 @@ public final class Int128Array extends NUMBERArray<BigInteger>{
     protected final BigInteger[] initArray(final int size) {
         return new BigInteger[size];
     }
+
+    @Override
+    public final BigInteger parse(final String in) {
+        return new BigInteger(in).setBit(128);
+    }
 }

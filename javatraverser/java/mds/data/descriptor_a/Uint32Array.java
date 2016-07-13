@@ -27,4 +27,9 @@ public final class Uint32Array extends NUMBERArray<UInteger>{
     protected final UInteger[] initArray(final int size) {
         return new UInteger[size];
     }
+
+    @Override
+    public final UInteger parse(final String in) {
+        return UInteger.decode(in);
+    }
 }

@@ -20,4 +20,9 @@ public final class Float32 extends FLOAT<Float>{
     public final Float getValue(final ByteBuffer b) {
         return b.getFloat(0);
     }
+
+    @Override
+    public final Float parse(final String in) {
+        return Float.valueOf(in);
+    }
 }

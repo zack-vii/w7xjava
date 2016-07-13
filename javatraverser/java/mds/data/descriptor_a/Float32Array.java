@@ -21,4 +21,9 @@ public final class Float32Array extends FLOATArray<Float>{
     protected final Float[] initArray(final int size) {
         return new Float[size];
     }
+
+    @Override
+    public Float parse(final String in) {
+        return Float.valueOf(in);
+    }
 }

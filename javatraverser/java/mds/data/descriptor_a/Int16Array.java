@@ -26,4 +26,9 @@ public final class Int16Array extends NUMBERArray<Short>{
     protected final Short[] initArray(final int size) {
         return new Short[size];
     }
+
+    @Override
+    public final Short parse(final String in) {
+        return Short.decode(in);
+    }
 }

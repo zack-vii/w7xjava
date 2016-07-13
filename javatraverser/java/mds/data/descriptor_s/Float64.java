@@ -20,4 +20,9 @@ public final class Float64 extends FLOAT<Double>{
     public final Double getValue(final ByteBuffer b) {
         return b.getDouble(0);
     }
+
+    @Override
+    public final Double parse(final String in) {
+        return Double.valueOf(in);
+    }
 }

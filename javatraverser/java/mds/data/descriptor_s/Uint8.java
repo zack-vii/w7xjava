@@ -7,6 +7,10 @@ import mds.data.descriptor_s.Uint8.UByte;
 @SuppressWarnings("serial")
 public final class Uint8 extends NUMBER<UByte>{
     public static final class UByte extends Number{
+        public static UByte decode(final String in) {
+            return new UByte(Short.decode(in).byteValue());
+        }
+
         public static final UByte fromBuffer(final ByteBuffer b) {
             return new UByte(b.get());
         }
@@ -53,5 +57,10 @@ public final class Uint8 extends NUMBER<UByte>{
     @Override
     protected final UByte getValue(final ByteBuffer b) {
         return new UByte(b.get(0));
+    }
+
+    @Override
+    public final UByte parse(final String in) {
+        return UByte.decode(in);
     }
 }
