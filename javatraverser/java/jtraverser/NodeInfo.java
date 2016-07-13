@@ -2,6 +2,7 @@ package jtraverser;
 
 /** class NodeInfo carries all the NCI information */
 import java.io.Serializable;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 
 @SuppressWarnings("serial")
@@ -226,7 +227,7 @@ public class NodeInfo implements Serializable{
         sb.append("</nobr></td></tr><tr><td align=\"left\">Data:</td><td align=\"left\">");
         if(this.getLength() == 0) sb.append("<nobr>There is no data stored for this this</nobr>");
         else{
-            final String dtype = Descriptor.getDTypeName(this.getDType());
+            final String dtype = DTYPE.getName(this.getDType());
             final String dclass = Descriptor.getDClassName(this.getDClass());
             sb.append("<nobr>").append(dtype + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(dclass).append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(this.getLength()).append(" Bytes</nobr>");
             sb.append("</td></tr><tr><td align=\"left\">Inserted:</td><td align=\"left\">");

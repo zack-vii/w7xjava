@@ -67,8 +67,8 @@ public abstract class Descriptor<T>{
         throw new MdsException(String.format("Unsupported class %s", Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
 
-    public static final short getDataSize(final byte type, final int length) {
-        switch(type){
+    public static final short getDataSize(final byte dtype, final int length) {
+        switch(dtype){
             default:
             case DTYPE.T:
                 return (short)length;
@@ -119,14 +119,8 @@ public abstract class Descriptor<T>{
             case Descriptor_APD.CLASS:
                 return "CLASS_APD";
             default:
-                return "CLASS" + (dclass & 0xFF);
+                return "CLASS_" + (dclass & 0xFF);
         }
-    }
-
-    public static final String getDTypeName(final byte dtype) {
-        final String name = DTYPE.getName(dtype);
-        if(name != null) return name;
-        return "DTYPE_" + (dtype & 0xFF);
     }
 
     public static Descriptor readMessage(final Message msg) throws MdsException {
@@ -218,7 +212,7 @@ public abstract class Descriptor<T>{
     }
 
     public String getDTypeName() {
-        return Descriptor.getDTypeName(this.dtype);
+        return DTYPE.getName(this.dtype);
     }
 
     public abstract int[] getShape();

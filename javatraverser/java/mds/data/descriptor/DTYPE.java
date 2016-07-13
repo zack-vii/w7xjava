@@ -141,7 +141,9 @@ public final class DTYPE{
     }
 
     public static final String getName(final byte dtype) {
-        return DTYPE._name[Byte.toUnsignedInt(dtype)];
+        final int idx = Byte.toUnsignedInt(dtype);
+        if(idx < DTYPE._name.length) return DTYPE._name[idx];
+        return new StringBuffer(9).append("DTYPE_").append(idx).toString();
     }
 
     public static final String getSuffix(final byte dtype) {

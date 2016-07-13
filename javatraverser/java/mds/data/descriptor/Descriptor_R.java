@@ -75,7 +75,7 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
             case DTYPE.SLOPE:
                 return new Slope(b);
         }
-        throw new MdsException(String.format("Unsupported dtype %s for class %s", Descriptor.getDTypeName(b.get(Descriptor._typB)), Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
+        throw new MdsException(String.format("Unsupported dtype %s for class %s", DTYPE.getName(b.get(Descriptor._typB)), Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
 
     private static final Descriptor[] joinArrays(final Descriptor[] args0, final Descriptor[] args1) {
