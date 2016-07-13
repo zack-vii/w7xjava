@@ -1,5 +1,6 @@
 package mds.data.descriptor_r;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
@@ -10,10 +11,16 @@ import mds.data.descriptor_s.Float64;
 
 public final class Range extends Descriptor_R{
     public static double[] range(final double begin, final double ending, final double delta) {
-        final int n = (int)((ending - begin) / delta) + 1;
-        final double[] array = new double[n];
-        for(int i = 0; i < n; i++)
-            array[i] = begin + (i * delta);
+        BigDecimal strt = BigDecimal.valueOf(begin);
+        final BigDecimal stop = BigDecimal.valueOf(ending);
+        final BigDecimal delt = BigDecimal.valueOf(delta);
+        final int n = stop.subtract(strt).divide(delt).intValue();
+        final double[] array = new double[n + 1];
+        for(int i = 0;; i++){
+            array[i] = strt.doubleValue();
+            if(i >= n) break;
+            strt = strt.add(delt);
+        }
         return array;
     }
 
