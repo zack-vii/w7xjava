@@ -33,7 +33,7 @@ import javax.swing.table.TableColumn;
 import jtraverser.dialogs.TreeDialog;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor_a.Float32Array;
+import mds.data.descriptor.Descriptor_CA;
 import mds.data.descriptor_a.NUMBERArray;
 import mds.data.descriptor_s.Missing;
 
@@ -198,20 +198,19 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
                     this.slider.setToolTipText("Slice array along this dimension. Time is the last dimension.");
                     this.slider.addChangeListener(this);
                     this.slider.setBorder(new EmptyBorder(3, 0, 3, 0));
-                    this.slider.setPreferredSize(new Dimension(20 * dims.length - 6, 20));
+                    this.slider.setPreferredSize(new Dimension(60, 20 * dims.length - 6));
                     this.slider.setInverted(true);
-                    final JPanel coord = new JPanel(new GridLayout(dims.length, 1));
+                    final JPanel coord = new JPanel(new GridLayout(dims.length, 2));
+                    coord.setMinimumSize(new Dimension(180, 0));
                     jp.add(coord, BorderLayout.CENTER);
                     this.coord_edit = new JSpinner[dims.length];
                     for(int i = 0; i < dims.length; i++){
-                        final JPanel row = new JPanel(new GridLayout(1, 2));
                         final JSpinner ce = this.coord_edit[i] = new JSpinner(new SpinnerNumberModel(0, 0, dims[i] - 1, 1));
                         ce.addChangeListener(this);
-                        row.add(ce);
+                        coord.add(ce);
                         final JLabel label = new JLabel(String.format("%d", dims[i]));
                         label.setHorizontalAlignment(SwingConstants.CENTER);
-                        row.add(label);
-                        coord.add(row);
+                        coord.add(label);
                     }
                     this.coord_edit[dim].setEnabled(false);
                     this.array_panel.add(jp, BorderLayout.NORTH);
@@ -338,11 +337,14 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
         }).start();
     }
 
-    public final void setData(final Descriptor<?> array) {
+    public final void setData(Descriptor array) {
         if(array == null) this.mode_idx = 0;
-        else if(array instanceof NUMBERArray) this.mode_idx = 1;
-        else this.mode_idx = 2;
-        this.array = array == null ? new Float32Array() : array;
+        else{
+            if(array instanceof Descriptor_CA) array = ((Descriptor_CA)array).unpack();
+            if(array instanceof NUMBERArray) this.mode_idx = 1;
+            else this.mode_idx = 2;
+        }
+        this.array = array;
         this.reset();
     }
 
