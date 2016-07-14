@@ -39,7 +39,21 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
 
         public DECOMPRESS(final Descriptor_CA ca) throws MdsException{
             if(DEBUG.D) System.out.println("DECOMPRESS: " + ca.getDTypeName() + ca.arsize);
-            this.out_dsc = this.mdsXpand(ca.arsize / ca.length, (ARRAY)ca.payload.getDescriptor(3), ca);
+            ARRAY pack_dsc = (ARRAY)ca.payload.getDescriptor(3);
+            if(pack_dsc instanceof Descriptor_CA) pack_dsc = new DECOMPRESS((Descriptor_CA)pack_dsc).out_dsc;
+            this.out_dsc = this.mdsXpand(ca.arsize / ca.length, pack_dsc, ca);
+        }
+
+        public DECOMPRESS(final Descriptor_CA ca, final int preview) throws MdsException{
+            ARRAY pack_dsc = (ARRAY)ca.payload.getDescriptor(3);
+            if(pack_dsc instanceof Descriptor_CA) pack_dsc = new DECOMPRESS((Descriptor_CA)pack_dsc, preview).out_dsc;
+            int size = ca.pointer * 2 + preview;
+            if(size > ca.b.limit()) size = ca.b.limit();
+            final ByteBuffer buf = ByteBuffer.allocate(size).order(Descriptor.BYTEORDER);
+            for(int i = 0; i < size; i++)
+                buf.put(ca.serialize().get());
+            buf.putInt(ARRAY._aszI, preview * ca.length).rewind();
+            this.out_dsc = this.mdsXpand(ca.arsize / ca.length, pack_dsc, new Descriptor_CA(buf, ca.payload));
         }
 
         /** MdsUnpk expects LittleEndian buffers **/
@@ -114,8 +128,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
             }
         }
 
-        private final Descriptor_A mdsXpand(int nitems, ARRAY pack_dsc, final Descriptor_CA items_dsc) throws MdsException {
-            if(pack_dsc instanceof Descriptor_CA) pack_dsc = new DECOMPRESS((Descriptor_CA)pack_dsc).out_dsc;
+        private final Descriptor_A mdsXpand(int nitems, final ARRAY pack_dsc, final Descriptor_CA items_dsc) throws MdsException {
             if(DEBUG.D) System.out.println("mdsXpand: " + pack_dsc.getDTypeName() + pack_dsc.arsize);
             this.bit = 0;
             final ByteBuffer bpack = ByteBuffer.allocate(pack_dsc.arsize + 4).order(Descriptor.BYTEORDER);
@@ -196,16 +209,26 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     public Descriptor_A decmprs;
     public Descriptor_R payload;
 
-    public Descriptor_CA(final ByteBuffer b) throws Exception{
+    public Descriptor_CA(final ByteBuffer b) throws MdsException{
         super(b);
         if(this.pointer == 0) this.payload = null;
         else this.payload = Descriptor_R.deserialize(this.getBuffer());
     }
 
+    public Descriptor_CA(final ByteBuffer header, final Descriptor_R payload) throws MdsException{
+        super(header);
+        this.payload = payload;
+    }
+
     @Override
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         if(this.payload == null) return this.substitute(pout);
-        return this.unpack().decompile(prec, pout, mode);
+        try{
+            return new DECOMPRESS(this, 1).out_dsc.decompile(prec, pout, mode);
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return this.payload.decompile(prec, pout, mode);
+        }
         // TODO: decompile DSC_CA data like TDI "Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)"
     }
 
