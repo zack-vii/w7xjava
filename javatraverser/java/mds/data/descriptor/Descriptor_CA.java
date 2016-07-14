@@ -206,6 +206,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         if(this.payload == null) return this.substitute(pout);
         return this.unpack().decompile(prec, pout, mode);
+        // TODO: decompile DSC_CA data like TDI "Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)"
     }
 
     @Override

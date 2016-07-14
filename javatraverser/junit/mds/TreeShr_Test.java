@@ -250,6 +250,7 @@ public class TreeShr_Test{
                                     for(int i0 = 0; i0 < dims[0]; i0++)
                                         data[i++] = i7 * 10000000 + i6 * 1000000 + i5 * 100000 + i4 * 10000 + i3 * 1000 + i2 * 100 + i1 * 10 + i0;
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treePutRecord(47, new Signal(new Uint32Array(dims, data), null, new Uint64Array(dim))));
+        Assert.assertEquals("Build_Signal(Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)), *, [0X100000018QU])", TreeShr_Test.treeshr.treeGetRecord(47).decompile());
     }
 
     @Test
