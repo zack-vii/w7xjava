@@ -1,0 +1,105 @@
+=Class W7XSignalAccess=
+==usage==
+
+ String   path = "/ArchiveDB/codac/W7X/CoDaStationDesc.111/DataModuleDesc.250_DATASTREAM/15/L1_ECA63/scaled";
+ String     xp = "XP:20160310.7";
+ Signal signal = W7XSignalAccess.getSignal(path, xp);
+ double[] data = W7XSignalAccess.getDouble(signal);
+ int[]   shape = W7XSignalAccess.getShape(signal);
+ long[]   time = W7XSignalAccess.getDimension(signal);";
+
+==Hierarchy==
+java.lang.Object -> w7x.W7XSignalAccess
+==Referred Classes==
+
+java.io.IOException
+
+java.util.List
+
+de.mpg.ipp.codac.signalaccess.Signal
+
+de.mpg.ipp.codac.signalaccess.SignalAddress
+
+de.mpg.ipp.codac.signalaccess.SignalReader
+
+de.mpg.ipp.codac.signalaccess.readoptions.ReadOptions
+
+de.mpg.ipp.codac.w7xtime.TimeInterval
+
+==Field and Description==
+
+===String database===
+===static String help===
+
+==Constructors==
+
+===W7XSignalAccess(String database)===
+Constructs an instance of W7XSignalAccess linked to the given database
+
+==Static Methods==
+ 
+===byte[] getByte(Signal signal)===
+Returns the data vector of the given Signal object as byte[]
+ 
+===List<String> getDataBaseList()===
+Returns the list of known data bases
+ 
+===long[] getDimension(Signal signal)===
+Returns the time vector of the given Signal object as long[]
+ 
+===double[] getDouble(Signal signal)===
+Returns the data vector of the given Signal object as double[]
+ 
+===float[] getFloat(Signal signal)===
+Returns the data vector of the given Signal object as float[]
+ 
+===int[] getInteger(Signal signal)===
+Returns the data vector of the given Signal object as int[]
+ 
+===List<SignalAddress> getList(String path, TimeInterval interval)===
+Returns the addresses of available children of the given path String in the given TimeInterval
+ 
+===long[] getLong(Signal signal)===
+Returns the data vector of the given Signal object as long[]
+ 
+===SignalReader getReader(String path)===
+Returns the SignalReader object of the given path String
+ 
+===int[] getShape(Signal signal)===
+Returns the shape of the given Signal object
+ 
+===short[] getShort(Signal signal)===
+Returns the data vector of the given Signal object as short[]
+ 
+===Signal getSignal(String path, long from, long upto)===
+Returns the Signal object based on path String and from- and upto time stamps
+ 
+===Signal getSignal(String path, long from, long upto, int samples)===
+Returns the Signal object based on path String and from- and upto time stamps limited to a number of samples
+ 
+===Signal getSignal(String path, String xp)===
+Returns the Signal object based on path String and XP number
+ 
+===Signal getSignal(String path, TimeInterval interval)===
+Returns the Signal object based on path String and TimeInterval
+ 
+===Signal getSignal(String path, TimeInterval interval, ReadOptions options)===
+Returns the Signal object based on path String and TimeInterval with ReadOptions
+ 
+===String[] getString(Signal signal)===
+Returns the data vector of the given Signal object as String[]
+ 
+===TimeInterval getTimeInterval(long from, long upto)=== 
+Returns the TimeInterval defined by from and upto
+ 
+===TimeInterval getTimeInterval(String xp)=== 
+Returns the TimeInterval defined by the XP number
+ 
+===String help()=== 
+Prints the 'help' example
+ 
+===boolean isConnected()=== 
+Returns true if W7XSignalAccess is properly connected to the W7X-Archive
+ 
+===Signal[] readBoxes(String path, TimeInterval interval)===
+Returns a list of Signal chunks multithreaded read based on path String and TimeInterval

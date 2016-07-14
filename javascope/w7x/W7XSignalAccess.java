@@ -74,7 +74,7 @@ public final class W7XSignalAccess{
         if(path.startsWith("/")) name = path.split("/", 3)[1];
         else name = path.split("/", 2)[0];
         if(!W7XSignalAccess.databaselist.contains(name)) name = W7XSignalAccess.databaselist.get(0);
-        if(!W7XSignalAccess.access.containsKey(name)) W7XSignalAccess.access.put(name, W7XSignalAccess.NewInstance(name));
+        if(!W7XSignalAccess.access.containsKey(name)) W7XSignalAccess.access.put(name, W7XSignalAccess.newInstance(name));
         return W7XSignalAccess.access.get(name);
     }
 
@@ -184,16 +184,16 @@ public final class W7XSignalAccess{
         return W7XSignalAccess.getSignal(path, from, upto, W7XSignalAccess.MAX_SAMPLES);
     }
 
-    /** Returns the Signal object based on path String and from- and upto time stamps limited to nSamples **/
-    public static final Signal getSignal(final String path, final long from, final long upto, final int nSamples) throws IOException {
+    /** Returns the Signal object based on path String and from- and upto time stamps limited to a number of samples **/
+    public static final Signal getSignal(final String path, final long from, final long upto, final int samples) throws IOException {
         final TimeInterval interval = W7XSignalAccess.getTimeInterval(from, upto);
-        final ReadOptions options = ReadOptions.firstNSamples(nSamples);
+        final ReadOptions options = ReadOptions.firstNSamples(samples);
         return W7XSignalAccess.getSignal(path, interval, options);
     }
 
     /** Returns the Signal object based on path String and XP number **/
-    public static final Signal getSignal(final String path, final String XP) throws IOException {
-        return W7XSignalAccess.getSignal(path, W7XSignalAccess.getTimeInterval(XP));
+    public static final Signal getSignal(final String path, final String xp) throws IOException {
+        return W7XSignalAccess.getSignal(path, W7XSignalAccess.getTimeInterval(xp));
     }
 
     /** Returns the Signal object based on path String and TimeInterval **/
@@ -225,8 +225,8 @@ public final class W7XSignalAccess{
     }
 
     /** Returns the TimeInterval defined by the XP number **/
-    public static final TimeInterval getTimeInterval(final String XP) {
-        return XPtools.xp2TimeInterval(XP);
+    public static final TimeInterval getTimeInterval(final String xp) {
+        return XPtools.xp2TimeInterval(xp);
     }
 
     /** Prints the 'help' example **/
@@ -241,7 +241,7 @@ public final class W7XSignalAccess{
     }
 
     /** Returns a new instance of W7XSignalAccess linked to the given data base **/
-    public static final W7XSignalAccess NewInstance(final String database) {
+    private static final W7XSignalAccess newInstance(final String database) {
         try{
             return new W7XSignalAccess(database);
         }catch(final Exception e){}
@@ -268,18 +268,19 @@ public final class W7XSignalAccess{
             signals[i] = fetchers[i].getSignal();
         return signals;
     }
-    public final String                dbName;
+    public final String                database;
     private final SignalAddressBuilder sab;
     private final SignalToolsFactory   stf;
 
-    public W7XSignalAccess(final String dbName){
-        this.dbName = dbName;
-        this.stf = ArchieToolsFactory.remoteArchive(dbName);
+    /** Constructs an instance of W7XSignalAccess linked to the given database **/
+    public W7XSignalAccess(final String database){
+        this.database = database;
+        this.stf = ArchieToolsFactory.remoteArchive(database);
         this.sab = this.stf.makeSignalAddressBuilder(new String[0]);
     }
 
     private final boolean checkPath(final String path) {
-        return path.startsWith(String.format("/%s/", this.dbName));
+        return path.startsWith(String.format("/%s/", this.database));
     }
 
     @Override
@@ -288,7 +289,7 @@ public final class W7XSignalAccess{
     }
 
     /*package*/final SignalAddress getAddress(String path) {
-        if(this.checkPath(path)) path = path.substring(this.dbName.length() + 1);
+        if(this.checkPath(path)) path = path.substring(this.database.length() + 1);
         return this.sab.newBuilder().path(path).build();
     }
 
