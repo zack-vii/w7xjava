@@ -43,7 +43,7 @@ ECHO unpacking W7XDataProvider.jar
 DEL META-INF\MANIFEST.MF
 POPD
 COPY /Y %SRCDIR%\MANIFEST.MF .\MANIFEST.MF >NUL
-ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>%JARDIR%\%MANIFEST%
+ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>MANIFEST.MF
 
 ECHO packing jScopeFull.jar
 %JAR% -cmf MANIFEST.MF jScopeFull.jar -C full .
