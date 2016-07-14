@@ -1,4 +1,14 @@
 @ECHO OFF
+<!-- : --- get date Script ---------------------------
+FOR /F "delims=" %%x IN ('cscript //nologo "%~f0?.wsf"') DO %%x
+GOTO:rest
+-->
+<job id="Elevate"><script language="VBScript">
+Wscript.Echo("set Year=" & DatePart("yyyy", Date))
+Wscript.Echo("set Month=0" & DatePart("m", Date))
+Wscript.Echo("set Day=0" & DatePart("d", Date))
+</script></job>
+:rest
 ECHO preparing
 if defined JDK_HOME GOTO:start
 rem This script located the current version of
@@ -33,7 +43,7 @@ ECHO unpacking W7XDataProvider.jar
 DEL META-INF\MANIFEST.MF
 POPD
 COPY /Y %SRCDIR%\MANIFEST.MF .\MANIFEST.MF >NUL
-ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>MANIFEST.MF
+ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>%JARDIR%\%MANIFEST%
 
 ECHO packing jScopeFull.jar
 %JAR% -cmf MANIFEST.MF jScopeFull.jar -C full .
