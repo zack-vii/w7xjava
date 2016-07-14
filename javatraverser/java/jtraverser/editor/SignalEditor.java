@@ -1,31 +1,20 @@
 package jtraverser.editor;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import jtraverser.dialogs.TreeDialog;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor_r.Range;
 import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.Missing;
 
 @SuppressWarnings("serial")
 public class SignalEditor extends JPanel implements ActionListener, Editor{
-    public static void main(final String... arg) {
-        final JFrame f = new JFrame();
-        f.setPreferredSize(new Dimension(640, 480));
-        f.add(new SignalEditor(new Signal(new Range(1, 10000, 0.01).getData(), null, new Range(1, 10000, 0.01).getData()), new TreeDialog(new NodeEditor())));
-        f.pack();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setVisible(true);
-    }
     private final TreeDialog  dialog;
     private final JComboBox   combo;
     private int               mode_idx = 0, curr_mode_idx = 0;
