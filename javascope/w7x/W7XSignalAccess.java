@@ -19,41 +19,24 @@ import de.mpg.ipp.codac.signalaccess.readoptions.ReadOptions;
 import de.mpg.ipp.codac.w7xtime.TimeInterval;
 
 public final class W7XSignalAccess{
-    public final static class SignalFetcher extends Thread{
-        public static final Signal[] readBoxes(final String path, final TimeInterval TI) throws IOException {
-            final ReadOptions ro = ReadOptions.firstNSamples(W7XSignalAccess.MAX_SAMPLES);
-            final SignalReader R = W7XSignalAccess.getReader(path);
-            final TimeInterval[] tis;
-            try{
-                tis = R.availableIntervals(TI).toArray(new TimeInterval[0]);
-            }finally{
-                R.close();
-            }
-            final SignalFetcher[] fetchers = new SignalFetcher[tis.length];
-            final Signal[] signals = new Signal[tis.length];
-            for(int i = 0; i < fetchers.length; i++)
-                fetchers[i] = new SignalFetcher(path, tis[i], ro);
-            for(final SignalFetcher fetcher : fetchers)
-                fetcher.start();
-            for(int i = 0; i < fetchers.length; i++)
-                signals[i] = fetchers[i].getSignal();
-            return signals;
-        }
+    /** Helper class to asynchronously read Signals **/
+    private final static class SignalFetcher extends Thread{
         private final String       path;
-        private final ReadOptions  ro;
-        private Signal             s;
-        private final TimeInterval ti;
+        private final ReadOptions  options;
+        private final TimeInterval interval;
+        private Signal             signal;
 
-        public SignalFetcher(final String path, final TimeInterval ti, final ReadOptions ro){
+        public SignalFetcher(final String path, final TimeInterval interval, final ReadOptions options){
             this.path = path;
-            this.ti = ti;
-            this.ro = ro;
+            this.interval = interval;
+            this.options = options;
         }
 
+        /** Returns the Signal object **/
         public final Signal getSignal() {
             try{
                 this.join();
-                return this.s;
+                return this.signal;
             }catch(final InterruptedException e){
                 e.printStackTrace();
                 return null;
@@ -62,30 +45,31 @@ public final class W7XSignalAccess{
 
         @Override
         public final void run() {
-            SignalReader sr;
+            SignalReader reader;
             try{
-                sr = W7XSignalAccess.getReader(this.path);
+                reader = W7XSignalAccess.getReader(this.path);
                 try{
-                    this.s = sr.readSignal(this.ti, this.ro);
+                    this.signal = reader.readSignal(this.interval, this.options);
                 }finally{
-                    sr.close();
+                    reader.close();
                 }
             }catch(final IOException e){
                 e.printStackTrace();
             }
-            System.out.println(this.s.getLastSampleTime() + " : " + this.s.getDimensionSize(0));
+            System.out.println(this.signal.getLastSampleTime() + " : " + this.signal.getDimensionSize(0));
         }
     }
-    private static final Map<String, W7XSignalAccess> access       = new HashMap<String, W7XSignalAccess>(2);
-    private static final List<String>                 databaselist = new ArrayList<String>(2);
     public static final String                        help         = "usage:\nString   path = \"/ArchiveDB/codac/W7X/CoDaStationDesc.111/DataModuleDesc.250_DATASTREAM/15/L1_ECA63/scaled\";\nString     xp = \"XP:20160310.7\";\nSignal signal = W7XSignalAccess.getSignal(path,xp);\ndouble[] data = W7XSignalAccess.getDouble(signal);\nint[]   shape = W7XSignalAccess.getShape(signal);\nlong[]   time = W7XSignalAccess.getDimension(signal);";
-    public static final int                           MAX_SAMPLES  = 64000000;
+    private static final Map<String, W7XSignalAccess> access       = new HashMap<String, W7XSignalAccess>(2);
+    private static final int                          MAX_SAMPLES  = 64000000;
+    private static final List<String>                 databaselist = new ArrayList<String>(2);
     static{
         W7XSignalAccess.databaselist.add("ArchiveDB");
         W7XSignalAccess.databaselist.add("Test");
     }
 
-    public static final W7XSignalAccess getAccess(final String path) {
+    /** Returns an instance of W7XSignalAccess based the given path String **/
+    /*package*/static final W7XSignalAccess getAccess(final String path) {
         String name;
         if(path.startsWith("/")) name = path.split("/", 3)[1];
         else name = path.split("/", 2)[0];
@@ -94,6 +78,7 @@ public final class W7XSignalAccess{
         return W7XSignalAccess.access.get(name);
     }
 
+    /** Returns the data vector of the given Signal object as byte[] **/
     public static final byte[] getByte(final Signal signal) {
         if(signal == null) return new byte[]{};
         final int count = signal.getSampleCount();
@@ -105,14 +90,17 @@ public final class W7XSignalAccess{
         return data;
     }
 
+    /** Returns the list of known data bases **/
     public static final List<String> getDataBaseList() {
         return W7XSignalAccess.databaselist;
     }
 
+    /** Returns the time vector of the given Signal object as long[] **/
     public static final long[] getDimension(final Signal signal) throws IOException {
         return W7XSignalAccess.getLong(signal.getDimensionSignal(0));
     }
 
+    /** Returns the data vector of the given Signal object as double[] **/
     public static final double[] getDouble(final Signal signal) {
         if(signal == null) return new double[]{};
         final int count = signal.getSampleCount();
@@ -124,6 +112,7 @@ public final class W7XSignalAccess{
         return data;
     }
 
+    /** Returns the data vector of the given Signal object as float[] **/
     public static final float[] getFloat(final Signal signal) {
         if(signal == null) return new float[]{};
         final int count = signal.getSampleCount();
@@ -135,6 +124,7 @@ public final class W7XSignalAccess{
         return data;
     }
 
+    /** Returns the data vector of the given Signal object as int[] **/
     public static final int[] getInteger(final Signal signal) {
         if(signal == null) return new int[]{};
         final int count = signal.getSampleCount();
@@ -146,10 +136,12 @@ public final class W7XSignalAccess{
         return data;
     }
 
-    public static final List<SignalAddress> getList(final String path, final TimeInterval ti) {
-        return W7XSignalAccess.getAccess(path).getList_(path, ti);
+    /** Returns the addresses of available children of the given path String in the given TimeInterval **/
+    public static final List<SignalAddress> getList(final String path, final TimeInterval interval) {
+        return W7XSignalAccess.getAccess(path).getList_(path, interval);
     }
 
+    /** Returns the data vector of the given Signal object as long[] **/
     public static final long[] getLong(final Signal signal) {
         if(signal == null) return new long[]{};
         final int count = signal.getSampleCount();
@@ -161,10 +153,12 @@ public final class W7XSignalAccess{
         return data;
     }
 
+    /** Returns the SignalReader object of the given path String **/
     public static final SignalReader getReader(final String path) throws IOException {
         return W7XSignalAccess.getAccess(path).getReader_(path);
     }
 
+    /** Returns the shape of the given Signal object **/
     public static final int[] getShape(final Signal signal) {
         final int ndims = signal.getDimensionCount();
         final int[] shape = new int[ndims];
@@ -173,6 +167,7 @@ public final class W7XSignalAccess{
         return shape;
     }
 
+    /** Returns the data vector of the given Signal object as short[] **/
     public static final short[] getShort(final Signal signal) {
         if(signal == null) return new short[]{};
         final int count = signal.getSampleCount();
@@ -184,29 +179,35 @@ public final class W7XSignalAccess{
         return data;
     }
 
+    /** Returns the Signal object based on path String and from- and upto time stamps **/
     public static final Signal getSignal(final String path, final long from, final long upto) throws IOException {
         return W7XSignalAccess.getSignal(path, from, upto, W7XSignalAccess.MAX_SAMPLES);
     }
 
+    /** Returns the Signal object based on path String and from- and upto time stamps limited to nSamples **/
     public static final Signal getSignal(final String path, final long from, final long upto, final int nSamples) throws IOException {
-        final TimeInterval ti = W7XSignalAccess.getTimeInterval(from, upto);
-        final ReadOptions ro = ReadOptions.firstNSamples(nSamples);
-        return W7XSignalAccess.getSignal(path, ti, ro);
+        final TimeInterval interval = W7XSignalAccess.getTimeInterval(from, upto);
+        final ReadOptions options = ReadOptions.firstNSamples(nSamples);
+        return W7XSignalAccess.getSignal(path, interval, options);
     }
 
+    /** Returns the Signal object based on path String and XP number **/
     public static final Signal getSignal(final String path, final String XP) throws IOException {
         return W7XSignalAccess.getSignal(path, W7XSignalAccess.getTimeInterval(XP));
     }
 
-    public static final Signal getSignal(final String path, final TimeInterval ti) throws IOException {
-        final ReadOptions ro = ReadOptions.firstNSamples(W7XSignalAccess.MAX_SAMPLES);
-        return W7XSignalAccess.getSignal(path, ti, ro);
+    /** Returns the Signal object based on path String and TimeInterval **/
+    public static final Signal getSignal(final String path, final TimeInterval interval) throws IOException {
+        final ReadOptions options = ReadOptions.firstNSamples(W7XSignalAccess.MAX_SAMPLES);
+        return W7XSignalAccess.getSignal(path, interval, options);
     }
 
-    public static final Signal getSignal(final String path, final TimeInterval ti, final ReadOptions ro) throws IOException {
-        return W7XSignalAccess.getAccess(path).getSignal_(path, ti, ro);
+    /** Returns the Signal object based on path String and TimeInterval with ReadOptions **/
+    public static final Signal getSignal(final String path, final TimeInterval interval, final ReadOptions options) throws IOException {
+        return W7XSignalAccess.getAccess(path).getSignal_(path, interval, options);
     }
 
+    /** Returns the data vector of the given Signal object as String[] **/
     public static final String[] getString(final Signal signal) {
         if(signal == null) return new String[]{};
         final int count = signal.getSampleCount();
@@ -218,28 +219,54 @@ public final class W7XSignalAccess{
         return data;
     }
 
+    /** Returns the TimeInterval defined by from and upto **/
     public static final TimeInterval getTimeInterval(final long from, final long upto) {
         return TimeInterval.ALL.withStart(from).withEnd(upto);
     }
 
+    /** Returns the TimeInterval defined by the XP number **/
     public static final TimeInterval getTimeInterval(final String XP) {
         return XPtools.xp2TimeInterval(XP);
     }
 
+    /** Prints the 'help' example **/
     public static final String help() {
         System.out.println(W7XSignalAccess.help);
         return W7XSignalAccess.help;
     }
 
+    /** Returns true if W7XSignalAccess is properly connected to the W7X-Archive **/
     public static final boolean isConnected() {
         return W7XSignalAccess.getAccess(W7XSignalAccess.databaselist.get(0)) != null;
     }
 
-    public static final W7XSignalAccess NewInstance(final String DataBase) {
+    /** Returns a new instance of W7XSignalAccess linked to the given data base **/
+    public static final W7XSignalAccess NewInstance(final String database) {
         try{
-            return new W7XSignalAccess(DataBase);
+            return new W7XSignalAccess(database);
         }catch(final Exception e){}
         return null;
+    }
+
+    /** Returns a list of Signal chunks multithreaded read based on path String and TimeInterval **/
+    public static final Signal[] readBoxes(final String path, final TimeInterval interval) throws IOException {
+        final ReadOptions options = ReadOptions.firstNSamples(W7XSignalAccess.MAX_SAMPLES);
+        final SignalReader reader = W7XSignalAccess.getReader(path);
+        final TimeInterval[] interval_array;
+        try{
+            interval_array = reader.availableIntervals(interval).toArray(new TimeInterval[0]);
+        }finally{
+            reader.close();
+        }
+        final SignalFetcher[] fetchers = new SignalFetcher[interval_array.length];
+        final Signal[] signals = new Signal[interval_array.length];
+        for(int i = 0; i < fetchers.length; i++)
+            fetchers[i] = new SignalFetcher(path, interval_array[i], options);
+        for(final SignalFetcher fetcher : fetchers)
+            fetcher.start();
+        for(int i = 0; i < fetchers.length; i++)
+            signals[i] = fetchers[i].getSignal();
+        return signals;
     }
     public final String                dbName;
     private final SignalAddressBuilder sab;
@@ -260,20 +287,16 @@ public final class W7XSignalAccess{
         this.stf.close();
     }
 
-    final SignalAddress getAddress(String path) {
+    /*package*/final SignalAddress getAddress(String path) {
         if(this.checkPath(path)) path = path.substring(this.dbName.length() + 1);
         return this.sab.newBuilder().path(path).build();
     }
 
-    public final List<SignalAddress> getList_(final String path) {
-        return this.getList_(path, TimeInterval.ALL);
-    }
-
     @SuppressWarnings("unchecked")
-    public final List<SignalAddress> getList_(final String path, final TimeInterval ti) {
+    private final List<SignalAddress> getList_(final String path, final TimeInterval interval) {
         final SignalsTreeLister stl = this.stf.makeSignalsTreeLister();
         try{
-            return (List<SignalAddress>)stl.listFor(ti, path);
+            return (List<SignalAddress>)stl.listFor(interval, path);
         }finally{
             stl.close();
         }
@@ -283,10 +306,10 @@ public final class W7XSignalAccess{
         return this.stf.makeSignalReader(this.getAddress(path));
     }
 
-    private final Signal getSignal_(final String path, final TimeInterval ti, final ReadOptions ro) throws IOException {
+    private final Signal getSignal_(final String path, final TimeInterval interval, final ReadOptions options) throws IOException {
         final SignalReader sr = this.getReader_(path);
         try{
-            return sr.readSignal(ti, ro);
+            return sr.readSignal(interval, options);
         }finally{
             sr.close();
         }
