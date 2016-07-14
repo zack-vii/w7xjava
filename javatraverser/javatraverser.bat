@@ -1,4 +1,14 @@
 @ECHO OFF
+<!-- : --- get date Script ---------------------------
+FOR /F "delims=" %%x IN ('cscript //nologo "%~f0?.wsf"') DO %%x
+GOTO:rest
+-->
+<job id="Elevate"><script language="VBScript">
+Wscript.Echo("set Year=" & DatePart("yyyy", Date))
+Wscript.Echo("set Month=0" & DatePart("m", Date))
+Wscript.Echo("set Day=0" & DatePart("d", Date))
+</script></job>
+:rest
 ECHO preparing
 if defined JDK_HOME GOTO:start
 rem This script located the current version of
@@ -277,7 +287,7 @@ rem COPY /Y %SRCDIR%\devicebeans\devicewave\*.gif %JARDIR%\devicebeans\devicewav
 COPY /Y %SRCDIR%\jtraverser\*.gif  %JARDIR%\jtraverser>NUL
 COPY /Y %SRCDIR%\%DBMANIFEST% %JARDIR%\%DBMANIFEST% >NUL
 COPY /Y %SRCDIR%\%JTMANIFEST% %JARDIR%\%JTMANIFEST% >NUL
-ECHO Built-Date: %DATE:~10,4%-%DATE:~4,2%-%DATE:~7,2% %TIME:~0,8%>>%JARDIR%\%JTMANIFEST%
+ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>%JARDIR%\%JTMANIFEST%
 
 ECHO creating jar packages
 PUSHD %JARDIR%
