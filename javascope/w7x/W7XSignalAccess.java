@@ -18,11 +18,11 @@ import de.mpg.ipp.codac.signalaccess.objylike.ArchieToolsFactory;
 import de.mpg.ipp.codac.signalaccess.readoptions.ReadOptions;
 import de.mpg.ipp.codac.w7xtime.TimeInterval;
 
-public final class W7XSignalaccess{
+public final class W7XSignalAccess{
     public final static class SignalFetcher extends Thread{
         public static final Signal[] readBoxes(final String path, final TimeInterval TI) throws IOException {
-            final ReadOptions ro = ReadOptions.firstNSamples(W7XSignalaccess.MAX_SAMPLES);
-            final SignalReader R = W7XSignalaccess.getReader(path);
+            final ReadOptions ro = ReadOptions.firstNSamples(W7XSignalAccess.MAX_SAMPLES);
+            final SignalReader R = W7XSignalAccess.getReader(path);
             final TimeInterval[] tis;
             try{
                 tis = R.availableIntervals(TI).toArray(new TimeInterval[0]);
@@ -64,7 +64,7 @@ public final class W7XSignalaccess{
         public final void run() {
             SignalReader sr;
             try{
-                sr = W7XSignalaccess.getReader(this.path);
+                sr = W7XSignalAccess.getReader(this.path);
                 try{
                     this.s = sr.readSignal(this.ti, this.ro);
                 }finally{
@@ -76,22 +76,22 @@ public final class W7XSignalaccess{
             System.out.println(this.s.getLastSampleTime() + " : " + this.s.getDimensionSize(0));
         }
     }
-    private static final Map<String, W7XSignalaccess> access       = new HashMap<String, W7XSignalaccess>(2);
+    private static final Map<String, W7XSignalAccess> access       = new HashMap<String, W7XSignalAccess>(2);
     private static final List<String>                 databaselist = new ArrayList<String>(2);
-    public static final String                        help         = "usage:\nString   path = \"/ArchiveDB/codac/W7X/CoDaStationDesc.111/DataModuleDesc.250_DATASTREAM/15/L1_ECA63/scaled\";\nString     xp = \"XP:20160310.7\";\nSignal signal = W7XSignalaccess.getSignal(path,xp);\ndouble[] data = W7XSignalaccess.getDouble(signal);\nint[]   shape = W7XSignalaccess.getShape(signal);\nlong[]   time = W7XSignalaccess.getDimension(signal);";
+    public static final String                        help         = "usage:\nString   path = \"/ArchiveDB/codac/W7X/CoDaStationDesc.111/DataModuleDesc.250_DATASTREAM/15/L1_ECA63/scaled\";\nString     xp = \"XP:20160310.7\";\nSignal signal = W7XSignalAccess.getSignal(path,xp);\ndouble[] data = W7XSignalAccess.getDouble(signal);\nint[]   shape = W7XSignalAccess.getShape(signal);\nlong[]   time = W7XSignalAccess.getDimension(signal);";
     public static final int                           MAX_SAMPLES  = 64000000;
     static{
-        W7XSignalaccess.databaselist.add("ArchiveDB");
-        W7XSignalaccess.databaselist.add("Test");
+        W7XSignalAccess.databaselist.add("ArchiveDB");
+        W7XSignalAccess.databaselist.add("Test");
     }
 
-    public static final W7XSignalaccess getAccess(final String path) {
+    public static final W7XSignalAccess getAccess(final String path) {
         String name;
         if(path.startsWith("/")) name = path.split("/", 3)[1];
         else name = path.split("/", 2)[0];
-        if(!W7XSignalaccess.databaselist.contains(name)) name = W7XSignalaccess.databaselist.get(0);
-        if(!W7XSignalaccess.access.containsKey(name)) W7XSignalaccess.access.put(name, W7XSignalaccess.NewInstance(name));
-        return W7XSignalaccess.access.get(name);
+        if(!W7XSignalAccess.databaselist.contains(name)) name = W7XSignalAccess.databaselist.get(0);
+        if(!W7XSignalAccess.access.containsKey(name)) W7XSignalAccess.access.put(name, W7XSignalAccess.NewInstance(name));
+        return W7XSignalAccess.access.get(name);
     }
 
     public static final byte[] getByte(final Signal signal) {
@@ -106,11 +106,11 @@ public final class W7XSignalaccess{
     }
 
     public static final List<String> getDataBaseList() {
-        return W7XSignalaccess.databaselist;
+        return W7XSignalAccess.databaselist;
     }
 
     public static final long[] getDimension(final Signal signal) throws IOException {
-        return W7XSignalaccess.getLong(signal.getDimensionSignal(0));
+        return W7XSignalAccess.getLong(signal.getDimensionSignal(0));
     }
 
     public static final double[] getDouble(final Signal signal) {
@@ -147,7 +147,7 @@ public final class W7XSignalaccess{
     }
 
     public static final List<SignalAddress> getList(final String path, final TimeInterval ti) {
-        return W7XSignalaccess.getAccess(path).getList_(path, ti);
+        return W7XSignalAccess.getAccess(path).getList_(path, ti);
     }
 
     public static final long[] getLong(final Signal signal) {
@@ -162,7 +162,7 @@ public final class W7XSignalaccess{
     }
 
     public static final SignalReader getReader(final String path) throws IOException {
-        return W7XSignalaccess.getAccess(path).getReader_(path);
+        return W7XSignalAccess.getAccess(path).getReader_(path);
     }
 
     public static final int[] getShape(final Signal signal) {
@@ -185,26 +185,26 @@ public final class W7XSignalaccess{
     }
 
     public static final Signal getSignal(final String path, final long from, final long upto) throws IOException {
-        return W7XSignalaccess.getSignal(path, from, upto, W7XSignalaccess.MAX_SAMPLES);
+        return W7XSignalAccess.getSignal(path, from, upto, W7XSignalAccess.MAX_SAMPLES);
     }
 
     public static final Signal getSignal(final String path, final long from, final long upto, final int nSamples) throws IOException {
-        final TimeInterval ti = W7XSignalaccess.getTimeInterval(from, upto);
+        final TimeInterval ti = W7XSignalAccess.getTimeInterval(from, upto);
         final ReadOptions ro = ReadOptions.firstNSamples(nSamples);
-        return W7XSignalaccess.getSignal(path, ti, ro);
+        return W7XSignalAccess.getSignal(path, ti, ro);
     }
 
     public static final Signal getSignal(final String path, final String XP) throws IOException {
-        return W7XSignalaccess.getSignal(path, W7XSignalaccess.getTimeInterval(XP));
+        return W7XSignalAccess.getSignal(path, W7XSignalAccess.getTimeInterval(XP));
     }
 
     public static final Signal getSignal(final String path, final TimeInterval ti) throws IOException {
-        final ReadOptions ro = ReadOptions.firstNSamples(W7XSignalaccess.MAX_SAMPLES);
-        return W7XSignalaccess.getSignal(path, ti, ro);
+        final ReadOptions ro = ReadOptions.firstNSamples(W7XSignalAccess.MAX_SAMPLES);
+        return W7XSignalAccess.getSignal(path, ti, ro);
     }
 
     public static final Signal getSignal(final String path, final TimeInterval ti, final ReadOptions ro) throws IOException {
-        return W7XSignalaccess.getAccess(path).getSignal_(path, ti, ro);
+        return W7XSignalAccess.getAccess(path).getSignal_(path, ti, ro);
     }
 
     public static final String[] getString(final Signal signal) {
@@ -227,17 +227,17 @@ public final class W7XSignalaccess{
     }
 
     public static final String help() {
-        System.out.println(W7XSignalaccess.help);
-        return W7XSignalaccess.help;
+        System.out.println(W7XSignalAccess.help);
+        return W7XSignalAccess.help;
     }
 
     public static final boolean isConnected() {
-        return W7XSignalaccess.getAccess(W7XSignalaccess.databaselist.get(0)) != null;
+        return W7XSignalAccess.getAccess(W7XSignalAccess.databaselist.get(0)) != null;
     }
 
-    public static final W7XSignalaccess NewInstance(final String DataBase) {
+    public static final W7XSignalAccess NewInstance(final String DataBase) {
         try{
-            return new W7XSignalaccess(DataBase);
+            return new W7XSignalAccess(DataBase);
         }catch(final Exception e){}
         return null;
     }
@@ -245,7 +245,7 @@ public final class W7XSignalaccess{
     private final SignalAddressBuilder sab;
     private final SignalToolsFactory   stf;
 
-    public W7XSignalaccess(final String dbName){
+    public W7XSignalAccess(final String dbName){
         this.dbName = dbName;
         this.stf = ArchieToolsFactory.remoteArchive(dbName);
         this.sab = this.stf.makeSignalAddressBuilder(new String[0]);

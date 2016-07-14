@@ -304,9 +304,9 @@ public final class W7XBrowseSignals extends jScopeBrowseSignals{
     }
     public final class W7XDataBase extends w7xNode{
         private final String         name;
-        public final W7XSignalaccess sa;
+        public final W7XSignalAccess sa;
 
-        public W7XDataBase(final String name, final W7XSignalaccess sa){
+        public W7XDataBase(final String name, final W7XSignalAccess sa){
             super(sa.getAddress(""));
             this.name = name;
             this.sa = sa;
@@ -337,7 +337,7 @@ public final class W7XBrowseSignals extends jScopeBrowseSignals{
             final TreeNode[] path = this.getPath();
             if(path == null || path.length < 2) return null;
             final TimeInterval ti = W7XBrowseSignals.this.getTimeInterval();
-            return W7XSignalaccess.getList(this.getSignalPath(), ti);
+            return W7XSignalAccess.getList(this.getSignalPath(), ti);
         }
 
         private String getSignalPath() {
@@ -393,8 +393,8 @@ public final class W7XBrowseSignals extends jScopeBrowseSignals{
         tree.setDragEnabled(true);
         contentPane.add(new JScrollPane(tree));
         tree.setRootVisible(true);
-        for(final String db : W7XSignalaccess.getDataBaseList()){
-            final W7XSignalaccess sa = W7XSignalaccess.getAccess(db);
+        for(final String db : W7XSignalAccess.getDataBaseList()){
+            final W7XSignalAccess sa = W7XSignalAccess.getAccess(db);
             if(sa == null) break;
             this.top.add(new W7XDataBase(db, sa));
         }

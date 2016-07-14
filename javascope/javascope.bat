@@ -91,7 +91,7 @@ SET TWU_SRC=^
 SET W7X_SRC=^
   w7x\W7XDataProvider.java ^
   w7x\W7XBrowseSignals.java ^
-  w7x\W7XSignalaccess.java
+  w7x\W7XSignalAccess.java
 
 
 SET COMMON_SRC=^

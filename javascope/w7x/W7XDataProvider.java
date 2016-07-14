@@ -44,8 +44,8 @@ public final class W7XDataProvider implements DataProvider{
                 try{
                     this.setName(SimpleFrameData.this.in_y);
                     try{
-                        final SignalReader sr_x = (SimpleFrameData.this.in_x == null) ? null : W7XSignalaccess.getReader(SimpleFrameData.this.in_x);
-                        final SignalReader sr_y = W7XSignalaccess.getReader(SimpleFrameData.this.in_y);
+                        final SignalReader sr_x = (SimpleFrameData.this.in_x == null) ? null : W7XSignalAccess.getReader(SimpleFrameData.this.in_x);
+                        final SignalReader sr_y = W7XSignalAccess.getReader(SimpleFrameData.this.in_y);
                         if(sr_y != null) try{
                             while(!SimpleFrameData.this.frameQueue.isEmpty() && this.abort == W7XDataProvider.this.abort){
                                 final int idx = SimpleFrameData.this.frameQueue.peek();
@@ -84,7 +84,7 @@ public final class W7XDataProvider implements DataProvider{
                 this.orig = timing.length > 2 ? timing[2] : 0L;
                 this.from = timing[0];
                 this.upto = timing[1];
-                this.TI = W7XSignalaccess.getTimeInterval(this.from, this.upto);
+                this.TI = W7XSignalAccess.getTimeInterval(this.from, this.upto);
                 SimpleFrameData.this.updateLists();
                 if(SimpleFrameData.this.frameQueue == null) return;
                 this.updateWorker = new UpdateWorker();
@@ -146,7 +146,7 @@ public final class W7XDataProvider implements DataProvider{
                 }
                 return xd;
             }
-            return W7XSignalaccess.getFloat(this.sig_x);
+            return W7XSignalAccess.getFloat(this.sig_x);
         }
 
         @Override
@@ -171,7 +171,7 @@ public final class W7XDataProvider implements DataProvider{
 
         private final synchronized Signal getSignal(final int idx) throws IOException {
             final Signal sig;
-            if(this.sig_x == null && this.in_x != null) this.sig_x = W7XSignalaccess.getSignal(this.in_x, SimpleFrameData.this.from, SimpleFrameData.this.upto);
+            if(this.sig_x == null && this.in_x != null) this.sig_x = W7XSignalAccess.getSignal(this.in_x, SimpleFrameData.this.from, SimpleFrameData.this.upto);
             if(idx >= this.todoList.size()) this.updateLists();
             if(!this.frameQueue.remove(idx)){
                 if(idx >= this.todoList.size()) return null;
@@ -183,14 +183,14 @@ public final class W7XDataProvider implements DataProvider{
                 return this.sig_y.get(idx);
             }
             final TimeInterval ti = this.todoList.get(idx);
-            SimpleFrameData.this.sig_y.set(idx, sig = W7XSignalaccess.getSignal(this.in_y, ti, this.ro));
+            SimpleFrameData.this.sig_y.set(idx, sig = W7XSignalAccess.getSignal(this.in_y, ti, this.ro));
             return sig;
         }
 
         private final boolean updateLists() {
             SignalReader sr_y;
             try{
-                sr_y = W7XSignalaccess.getReader(this.in_y);
+                sr_y = W7XSignalAccess.getReader(this.in_y);
                 try{
                     if(this.todoList == null){
                         this.todoList = sr_y.availableIntervals(this.TI);
@@ -232,10 +232,10 @@ public final class W7XDataProvider implements DataProvider{
                 try{
                     this.setName(this.swd.in_y);
                     try{
-                        final SignalReader sr_y = W7XSignalaccess.getReader(this.swd.in_y);
+                        final SignalReader sr_y = W7XSignalAccess.getReader(this.swd.in_y);
                         final SignalReader sr_x;
                         if(this.swd.in_x == null) sr_x = null;
-                        else sr_x = W7XSignalaccess.getReader(this.swd.in_x);
+                        else sr_x = W7XSignalAccess.getReader(this.swd.in_x);
                         try{
                             while(this.swd.getSignals(sr_y, sr_x) && this.abort == W7XDataProvider.this.abort){
                                 final XYData xydata = this.swd.getData(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Integer.MAX_VALUE, false);
@@ -275,7 +275,7 @@ public final class W7XDataProvider implements DataProvider{
                 this.orig = timing.length > 2 ? timing[2] : 0L;
                 this.from = timing[0];
                 this.upto = timing[1];
-                this.ti = W7XSignalaccess.getTimeInterval(this.from, this.upto);
+                this.ti = W7XSignalAccess.getTimeInterval(this.from, this.upto);
                 this.updateWorker = new UpdateWorker(this);
                 W7XDataProvider.threads.add(this.updateWorker);
                 this.updateWorker.start();
@@ -352,12 +352,12 @@ public final class W7XDataProvider implements DataProvider{
 
         @Override
         public final double[] getX2D() {
-            return W7XSignalaccess.getDouble(this.sig_x);
+            return W7XSignalAccess.getDouble(this.sig_x);
         }
 
         @Override
         public final long[] getX2DLong() {
-            return W7XSignalaccess.getLong(this.sig_x);
+            return W7XSignalAccess.getLong(this.sig_x);
         }
 
         @Override
@@ -367,7 +367,7 @@ public final class W7XDataProvider implements DataProvider{
 
         @Override
         public final float[] getY2D() {
-            return W7XSignalaccess.getFloat(this.sig_y.getDimensionSignal(1));
+            return W7XSignalAccess.getFloat(this.sig_y.getDimensionSignal(1));
         }
 
         @Override
@@ -377,7 +377,7 @@ public final class W7XDataProvider implements DataProvider{
 
         @Override
         public final float[] getZ() {
-            return W7XSignalaccess.getFloat(this.sig_y);
+            return W7XSignalAccess.getFloat(this.sig_y);
         }
 
         @Override
@@ -457,7 +457,7 @@ public final class W7XDataProvider implements DataProvider{
     @Override
     public final boolean checkProvider() {
         if(this.mds == null) if(!this.mds.checkProvider()) System.err.println(this.mds.errorString());
-        return W7XSignalaccess.isConnected();
+        return W7XSignalAccess.isConnected();
     }
 
     @Override
@@ -510,7 +510,7 @@ public final class W7XDataProvider implements DataProvider{
         if(in == null) return new long[]{-1};
         if(this.shot_cache_in != null && this.shot_cache_in == in) return this.shot_cache_out;
         if(in.startsWith("XP:")){
-            final TimeInterval ti = W7XSignalaccess.getTimeInterval(in);
+            final TimeInterval ti = W7XSignalAccess.getTimeInterval(in);
             if(ti.isNull()) return this.shot_cache_out = null;
             W7XDataProvider.Timing = new long[]{ti.from(), ti.upto(), ti.from()};
             return this.shot_cache_out = new long[]{-1l};
