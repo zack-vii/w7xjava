@@ -205,22 +205,12 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     @Override
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         if(this.payload == null) return this.substitute(pout);
-        return this.resolve().decompile(prec, pout, mode);
+        return this.unpack().decompile(prec, pout, mode);
     }
 
     @Override
-    public ByteBuffer getValue(final ByteBuffer b) {
+    public final ByteBuffer getValue(final ByteBuffer b) {
         return b.slice().order(b.order());
-    }
-
-    private Descriptor resolve() {
-        if(this.decmprs != null) return this.decmprs;
-        try{
-            return(this.decmprs = new DECOMPRESS(this).out_dsc);
-        }catch(final MdsException e){
-            e.printStackTrace();
-            return this.payload;
-        }
     }
 
     private final StringBuilder substitute(final StringBuilder pout) {
@@ -228,37 +218,47 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     }
 
     @Override
-    public byte[] toByteArray() {
+    public final byte[] toByteArray() {
         if(this.payload == null) return null;
-        return this.resolve().toByteArray();
+        return this.unpack().toByteArray();
     }
 
     @Override
-    public double[] toDoubleArray() {
+    public final double[] toDoubleArray() {
         if(this.payload == null) return null;
-        return this.resolve().toDoubleArray();
+        return this.unpack().toDoubleArray();
     }
 
     @Override
-    public float[] toFloatArray() {
+    public final float[] toFloatArray() {
         if(this.payload == null) return null;
-        return this.resolve().toFloatArray();
+        return this.unpack().toFloatArray();
     }
 
     @Override
-    public int[] toIntArray() {
+    public final int[] toIntArray() {
         if(this.payload == null) return null;
-        return this.resolve().toIntArray();
+        return this.unpack().toIntArray();
     }
 
     @Override
-    public long[] toLongArray() {
+    public final long[] toLongArray() {
         if(this.payload == null) return null;
-        return this.resolve().toLongArray();
+        return this.unpack().toLongArray();
     }
 
     @Override
-    public Message toMessage(final byte descr_idx, final byte n_args) {
+    public final Message toMessage(final byte descr_idx, final byte n_args) {
         return this.payload == null ? null : this.payload.toMessage(descr_idx, n_args);// TODO: null
+    }
+
+    public final Descriptor unpack() {
+        if(this.decmprs != null) return this.decmprs;
+        try{
+            return(this.decmprs = new DECOMPRESS(this).out_dsc);
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return this.payload;
+        }
     }
 }
