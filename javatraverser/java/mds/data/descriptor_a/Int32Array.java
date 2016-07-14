@@ -12,6 +12,10 @@ public final class Int32Array extends NUMBERArray<Integer>{
         super(DTYPE.L, values);
     }
 
+    public Int32Array(final int shape[], final int... values){
+        super(DTYPE.L, values, shape);
+    }
+
     @Override
     protected final StringBuilder decompileT(final StringBuilder pout, final Integer value) {
         return pout.append(value);

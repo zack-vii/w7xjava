@@ -13,6 +13,10 @@ public final class Uint8Array extends NUMBERArray<UByte>{
         super(b);
     }
 
+    public Uint8Array(final int shape[], final byte... values){
+        super(DTYPE.BU, values, shape);
+    }
+
     @Override
     protected final boolean format() {
         return true;

@@ -88,17 +88,13 @@ public abstract class ARRAY<T>extends Descriptor<T>{
     /** (20+dimct*4,2i) bounds **/
     public final bounds[] bounds;
 
-    protected ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int nelements){
-        this(dtype, dclass, byteBuffer, nelements == 0 ? new int[0] : new int[]{nelements});
-    }
-
-    protected ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int[] shape){
+    protected ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int... shape){
         super(ARRAY.getLength(shape, dtype, byteBuffer.limit()), dtype, dclass, byteBuffer, ARRAY._dmsIa + shape.length * Integer.BYTES, 0);
         final ByteBuffer b = this.b.duplicate().order(this.b.order());
         b.position(ARRAY._sclB);
         b.put(this.scale = (byte)0);
         b.put(this.digits = (byte)0);
-        b.put((this.aflags = ARRAY.f_array).toByte());
+        b.put((this.aflags = shape.length > 1 ? ARRAY.f_coeff : ARRAY.f_array).toByte());
         b.put(this.dimct = (byte)shape.length);
         b.putInt(this.arsize = byteBuffer.limit());
         b.putInt(this.a0 = this.pointer);

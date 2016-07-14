@@ -13,6 +13,10 @@ public final class Uint32Array extends NUMBERArray<UInteger>{
         super(DTYPE.LU, values);
     }
 
+    public Uint32Array(final int shape[], final int... values){
+        super(DTYPE.LU, values, shape);
+    }
+
     @Override
     protected final boolean format() {
         return true;

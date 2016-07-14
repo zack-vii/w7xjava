@@ -63,36 +63,36 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
         return b;
     }
 
-    protected NUMBERArray(final byte dtype, final BigInteger[] values){
-        super(dtype, NUMBERArray.toByteBuffer(values), values.length);
+    protected NUMBERArray(final byte dtype, final BigInteger[] values, final int... shape){
+        super(dtype, NUMBERArray.toByteBuffer(values), shape.length == 0 ? new int[]{values.length} : shape);
     }
 
-    protected NUMBERArray(final byte dtype, final byte[] values){
-        super(dtype, ByteBuffer.wrap(values).order(Descriptor.BYTEORDER), values.length);
+    protected NUMBERArray(final byte dtype, final byte[] values, final int... shape){
+        super(dtype, ByteBuffer.wrap(values).order(Descriptor.BYTEORDER), shape.length == 0 ? new int[]{values.length} : shape);
     }
 
-    protected NUMBERArray(final byte dtype, final Complex[] values){
-        super(dtype, NUMBERArray.toByteBuffer(values), values.length);
+    protected NUMBERArray(final byte dtype, final Complex[] values, final int... shape){
+        super(dtype, NUMBERArray.toByteBuffer(values), shape.length == 0 ? new int[]{values.length} : shape);
     }
 
-    protected NUMBERArray(final byte dtype, final double[] values){
-        super(dtype, NUMBERArray.toByteBuffer(values), values.length);
+    protected NUMBERArray(final byte dtype, final double[] values, final int... shape){
+        super(dtype, NUMBERArray.toByteBuffer(values), shape.length == 0 ? new int[]{values.length} : shape);
     }
 
-    protected NUMBERArray(final byte dtype, final float[] values){
-        super(dtype, NUMBERArray.toByteBuffer(values), values.length);
+    protected NUMBERArray(final byte dtype, final float[] values, final int... shape){
+        super(dtype, NUMBERArray.toByteBuffer(values), shape.length == 0 ? new int[]{values.length} : shape);
     }
 
-    protected NUMBERArray(final byte dtype, final int[] values){
-        super(dtype, NUMBERArray.toByteBuffer(values), values.length);
+    protected NUMBERArray(final byte dtype, final int[] values, final int... shape){
+        super(dtype, NUMBERArray.toByteBuffer(values), shape.length == 0 ? new int[]{values.length} : shape);
     }
 
-    protected NUMBERArray(final byte dtype, final long[] values){
-        super(dtype, NUMBERArray.toByteBuffer(values), values.length);
+    protected NUMBERArray(final byte dtype, final long[] values, final int... shape){
+        super(dtype, NUMBERArray.toByteBuffer(values), shape.length == 0 ? new int[]{values.length} : shape);
     }
 
-    protected NUMBERArray(final byte dtype, final short[] values){
-        super(dtype, NUMBERArray.toByteBuffer(values), values.length);
+    protected NUMBERArray(final byte dtype, final short[] values, final int... shape){
+        super(dtype, NUMBERArray.toByteBuffer(values), shape.length == 0 ? new int[]{values.length} : shape);
     }
 
     protected NUMBERArray(final ByteBuffer b){

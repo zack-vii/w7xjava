@@ -12,6 +12,10 @@ public final class Float64Array extends FLOATArray<Double>{
         super(DTYPE.DOUBLE, values);
     }
 
+    public Float64Array(final int shape[], final double... values){
+        super(DTYPE.DOUBLE, values, shape);
+    }
+
     @Override
     protected final Double getElement(final ByteBuffer b) {
         return b.getDouble();

@@ -14,6 +14,10 @@ public final class Uint128Array extends NUMBERArray<BigInteger>{
         super(b);
     }
 
+    public Uint128Array(final int shape[], final BigInteger... values){
+        super(DTYPE.OU, values, shape);
+    }
+
     @Override
     protected final BigInteger getElement(final ByteBuffer b) {
         return Uint128.getBigInteger(b);

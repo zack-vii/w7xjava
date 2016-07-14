@@ -7,7 +7,7 @@ import mds.data.descriptor.Descriptor_A;
 
 public final class EmptyArray extends Descriptor_A{
     public EmptyArray(){
-        super(DTYPE.MISSING, ByteBuffer.allocate(0).order(Descriptor.BYTEORDER), 0);
+        super(DTYPE.MISSING, ByteBuffer.allocate(0).order(Descriptor.BYTEORDER));
     }
 
     public EmptyArray(final ByteBuffer b){

@@ -133,8 +133,8 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         return Descriptor_A.deserialize(b);
     }
 
-    public Descriptor_A(final byte dtype, final ByteBuffer byteBuffer, final int nelements){
-        super(dtype, Descriptor_A.CLASS, byteBuffer, nelements);
+    public Descriptor_A(final byte dtype, final ByteBuffer byteBuffer, final int... shape){
+        super(dtype, Descriptor_A.CLASS, byteBuffer, shape);
     }
 
     protected Descriptor_A(final ByteBuffer b){

@@ -10,6 +10,7 @@ import mds.AllTests;
 import mds.MdsException;
 import mds.data.descriptor_a.Float32Array;
 import mds.data.descriptor_a.Float64Array;
+import mds.data.descriptor_a.Int32Array;
 import mds.data.descriptor_a.Int64Array;
 import mds.data.descriptor_a.Uint64Array;
 import mds.data.descriptor_r.Signal;
@@ -38,6 +39,7 @@ public final class Descriptor_A_Test{
     @Test
     public final void testARRAY() throws MdsException {
         Assert.assertEquals("Build_Signal([1.0D0,2.0D0,3.0D0], *, [1Q,2Q,3Q])", new Signal(new Float64Array(1, 2, 3), null, new Int64Array(1, 2, 3)).decompile());
+        Assert.assertEquals("Build_Signal([[[1,2],[3,4]],[[5,6],[7,8]]], *, [1Q,2Q])", new Signal(new Int32Array(new int[]{2, 2, 2}, 1, 2, 3, 4, 5, 6, 7, 8), null, new Int64Array(1, 2)).decompile());
     }
 
     @Test

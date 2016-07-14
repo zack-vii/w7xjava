@@ -5,12 +5,12 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.FLOAT;
 
 public abstract class FLOATArray<T extends Number>extends NUMBERArray<T>{
-    protected FLOATArray(final byte dtype, final double[] values){
-        super(dtype, values);
+    protected FLOATArray(final byte dtype, final double[] values, final int... shape){
+        super(dtype, values, shape);
     }
 
-    protected FLOATArray(final byte dtype, final float[] values){
-        super(dtype, values);
+    protected FLOATArray(final byte dtype, final float[] values, final int... shape){
+        super(dtype, values, shape);
     }
 
     protected FLOATArray(final ByteBuffer b){

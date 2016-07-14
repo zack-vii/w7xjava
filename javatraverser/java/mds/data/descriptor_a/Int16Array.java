@@ -8,6 +8,10 @@ public final class Int16Array extends NUMBERArray<Short>{
         super(b);
     }
 
+    public Int16Array(final int shape[], final short... values){
+        super(DTYPE.W, values, shape);
+    }
+
     public Int16Array(final short... values){
         super(DTYPE.W, values);
     }

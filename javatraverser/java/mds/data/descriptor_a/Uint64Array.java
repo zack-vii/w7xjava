@@ -9,6 +9,10 @@ public final class Uint64Array extends NUMBERArray<ULong>{
         super(b);
     }
 
+    public Uint64Array(final int shape[], final long... values){
+        super(DTYPE.QU, values, shape);
+    }
+
     public Uint64Array(final long... values){
         super(DTYPE.QU, values);
     }

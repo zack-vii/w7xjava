@@ -12,6 +12,10 @@ public final class Float32Array extends FLOATArray<Float>{
         super(DTYPE.FLOAT, values);
     }
 
+    public Float32Array(final int shape[], final float... values){
+        super(DTYPE.FLOAT, values, shape);
+    }
+
     @Override
     protected final Float getElement(final ByteBuffer b) {
         return b.getFloat();

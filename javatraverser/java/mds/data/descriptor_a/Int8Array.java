@@ -12,6 +12,10 @@ public final class Int8Array extends NUMBERArray<Byte>{
         super(b);
     }
 
+    public Int8Array(final int shape[], final byte... values){
+        super(DTYPE.B, values, shape);
+    }
+
     @Override
     protected final boolean format() {
         return true;
