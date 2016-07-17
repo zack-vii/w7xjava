@@ -125,6 +125,14 @@ public abstract class ARRAY<T>extends Descriptor<T>{
         }else this.bounds = null;
     }
 
+    public final int getLength() {
+        if(this.dimct == 0) return 0;
+        int length = 1;
+        for(final int dim : this.dims)
+            length *= dim;
+        return length;
+    }
+
     @Override
     public final int[] getShape() {
         return this.dims;
