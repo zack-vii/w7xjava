@@ -146,6 +146,11 @@ public abstract class NUMBERArray<T extends Number>extends Descriptor_A<T>{
     }
 
     @Override
+    public short toShort(final T t) {
+        return t.shortValue();
+    }
+
+    @Override
     public String toString(final int idx) {
         return this.TtoString(this.getValue(idx));
     }

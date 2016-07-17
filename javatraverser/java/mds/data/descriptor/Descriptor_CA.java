@@ -276,6 +276,12 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         return this.payload == null ? null : this.payload.toMessage(descr_idx, n_args);// TODO: null
     }
 
+    @Override
+    public short[] toShortArray() {
+        if(this.payload == null) return null;
+        return this.unpack().toShortArray();
+    }
+
     public final Descriptor unpack() {
         if(this.decmprs != null) return this.decmprs;
         try{

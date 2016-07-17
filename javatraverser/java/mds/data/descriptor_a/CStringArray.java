@@ -82,6 +82,11 @@ public final class CStringArray extends Descriptor_A<String>{
     }
 
     @Override
+    public final short toShort(final String t) {
+        return Short.parseShort(t);
+    }
+
+    @Override
     protected final String TtoString(final String t) {
         return t.toString();
     }

@@ -50,4 +50,9 @@ public final class Missing extends Descriptor_S{
     public final long[] toLongArray() {
         return new long[0];
     }
+
+    @Override
+    public short[] toShortArray() {
+        return new short[0];
+    }
 }

@@ -50,4 +50,9 @@ public final class Path extends Descriptor_S<String>{
     public long[] toLongArray() {
         return this.evaluate().toLongArray();
     }
+
+    @Override
+    public short[] toShortArray() {
+        return this.evaluate().toShortArray();
+    }
 }

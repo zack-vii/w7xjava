@@ -272,6 +272,17 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
         return out;
     }
 
+    public abstract short toShort(T t);
+
+    @Override
+    public final short[] toShortArray() {
+        final T[] val = this.getValue();
+        final short[] out = new short[val.length];
+        for(int i = 0; i < out.length; i++)
+            out[i] = this.toShort(val[i]);
+        return out;
+    }
+
     public String toString(final int idx) {
         return this.getValue(idx).toString();
     }

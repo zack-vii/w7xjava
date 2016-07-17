@@ -74,4 +74,9 @@ public class Descriptor_XS extends Descriptor<Descriptor>{
     public Message toMessage(final byte descr_idx, final byte n_args) {
         return this.payload.toMessage(descr_idx, n_args);
     }
+
+    @Override
+    public short[] toShortArray() {
+        return this.payload.toShortArray();
+    }
 }

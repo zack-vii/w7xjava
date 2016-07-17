@@ -71,6 +71,11 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     }
 
     @Override
+    public final short toShort(final Descriptor t) {
+        return t.toShort();
+    }
+
+    @Override
     protected final String TtoString(final Descriptor t) {
         return Descriptor.toString(t);
     }

@@ -314,6 +314,14 @@ public abstract class Descriptor<T>{
         return new Message(descr_idx, data.dtype, n_args, data.getShape(), data.getBuffer());
     }
 
+    /** Returns value as short **/
+    public short toShort() {
+        return this.toShortArray()[0];
+    }
+
+    /** Returns value as short[] **/
+    public abstract short[] toShortArray();
+
     @Override
     /** Returns a sloppy decompiled string **/
     public final String toString() {

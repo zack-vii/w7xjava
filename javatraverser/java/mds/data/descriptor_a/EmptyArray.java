@@ -58,6 +58,11 @@ public final class EmptyArray extends Descriptor_A{
     }
 
     @Override
+    public final short toShort(final Object t) {
+        return 0;
+    }
+
+    @Override
     protected final String TtoString(final Object t) {
         return "*";
     }

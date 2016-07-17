@@ -155,4 +155,14 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
     public long[] toLongArray() {
         return new long[]{this.toLong()};
     }
+
+    @Override
+    public short toShort() {
+        return this.getValue().shortValue();
+    }
+
+    @Override
+    public short[] toShortArray() {
+        return new short[]{this.toShort()};
+    }
 }

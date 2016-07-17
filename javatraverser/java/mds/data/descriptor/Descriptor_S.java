@@ -166,4 +166,14 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
         else if(val instanceof double[]) return new long[]{(long)((double[])val)[0]};
         else return new long[]{0};
     }
+
+    @Override
+    public short[] toShortArray() {
+        final T val = this.getValue();
+        if(val instanceof Number) return new short[]{((Number)val).shortValue()};
+        else if(val instanceof String) return new short[]{Short.parseShort((String)val)};
+        else if(val instanceof float[]) return new short[]{(short)((float[])val)[0]};
+        else if(val instanceof double[]) return new short[]{(short)((double[])val)[0]};
+        else return new short[]{0};
+    }
 }

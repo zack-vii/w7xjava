@@ -199,11 +199,6 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
     }
 
     @Override
-    public double toDouble() {
-        return (Double)this.getValue();
-    }
-
-    @Override
     public double[] toDoubleArray() {
         return this.getData().toDoubleArray();
     }
@@ -221,5 +216,10 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
     @Override
     public long[] toLongArray() {
         return this.getData().toLongArray();
+    }
+
+    @Override
+    public short[] toShortArray() {
+        return this.getData().toShortArray();
     }
 }
