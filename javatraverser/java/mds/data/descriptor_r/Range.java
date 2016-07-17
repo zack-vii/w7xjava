@@ -8,6 +8,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
 import mds.data.descriptor_a.Float64Array;
 import mds.data.descriptor_s.Float64;
+import mds.data.descriptor_s.Missing;
 
 public final class Range extends Descriptor_R{
     public static double[] range(final double begin, final double ending, final double delta) {
@@ -28,8 +29,16 @@ public final class Range extends Descriptor_R{
         super(b);
     }
 
+    public Range(final Descriptor begin, final Descriptor ending){
+        super(DTYPE.RANGE, null, begin, ending, null);
+    }
+
     public Range(final Descriptor begin, final Descriptor ending, final Descriptor delta){
         super(DTYPE.RANGE, null, begin, ending, delta);
+    }
+
+    public Range(final double begin, final double ending){
+        this(new Float64(begin), new Float64(ending), null);
     }
 
     public Range(final double begin, final double ending, final double delta){
@@ -38,8 +47,9 @@ public final class Range extends Descriptor_R{
 
     @Override
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
-        pout.append(DTYPE.getName(DTYPE.RANGE));
-        this.addArguments(0, "(", ")", pout, mode);
+        this.getBegin().decompile(prec, pout, mode).append(" : ");
+        this.getEnding().decompile(prec, pout, mode);
+        if(this.getDelta() != Missing.NEW) this.getDelta().decompile(prec, pout.append(" : "), mode);
         return pout;
     }
 
@@ -49,7 +59,7 @@ public final class Range extends Descriptor_R{
 
     @Override
     public final Descriptor getData() {
-        return new Float64Array(Range.range(this.getBegin().toDouble(), this.getEnding().toDouble(), this.getDelta().toDouble()));
+        return new Float64Array(Range.range(this.getBegin().toDouble(), this.getEnding().toDouble(), this.getDelta() == Missing.NEW ? 1d : this.getDelta().toDouble()));
     }
 
     public final Descriptor getDelta() {
