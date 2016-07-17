@@ -33,8 +33,12 @@ public final class TdiShr{
         return this.connection.getIntegerArray(expr.append(')').toString(), args.toArray(new Descriptor[args.size()]));
     }
 
+    public final String tdiDecompile(final Descriptor dsc) throws MdsException {
+        return this.connection.getString("TdiShr->TdiDecompile(xd($),xd(_a),val(-1)", dsc);
+    }
+
     public final String tdiDecompile(final String expr) throws MdsException {
         if(expr == null || expr.isEmpty()) return "*";
-        return this.connection.getString(String.format("_a=*;TdiShr->TdiDecompile(xd(EVALUATE((%s))),xd(_ans),val(-1));_a", expr));
+        return this.connection.getString(String.format("_a=*;TdiShr->TdiDecompile(xd(EVALUATE($)),xd(_a),val(-1));_a", new CString(expr)));
     }
 }
