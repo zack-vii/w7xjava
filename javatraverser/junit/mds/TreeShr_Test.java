@@ -234,7 +234,7 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test164TreePuRecordMultiDim() throws MdsException {
+    public final void test164TreePutRecordMultiDim() throws MdsException {
         final long t0 = 1000000000000l;
         final int[] dims = {8, 7, 6, 5, 4, 3, 2, 1};
         final long[] dim = {t0};

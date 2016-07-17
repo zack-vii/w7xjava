@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_a.Int8Array;
+import mds.data.descriptor_r.Range;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -33,8 +34,14 @@ public class MdsShr_Test{
     public void tearDown() throws Exception {}
 
     @Test
+    public final void testMdsCompress() throws MdsException {
+        Assert.assertEquals("Set_Range(100000,0D0 /*** etc. ***/)", MdsShr_Test.mds.decompile("_a=*;_s=MdsShr->MdsCompress(0,0,xd(DATA(0:99999)),xd(_a));_a");
+        Assert.assertEquals("Set_Range(100000,0D0 /*** etc. ***/)", MdsShr_Test.mdsshr.mdsCompress(new Range(0, 99999, 1)));
+    }
+
+    @Test
     public final void testMdsEvent() throws MdsException {
-        Assert.assertEquals(1, MdsShr_Test.mdsshr.mdsEvent("myevent"));// TODO: MdsEvent fails only on windows mdsip server
+        Assert.assertEquals(1, MdsShr_Test.mdsshr.mdsEvent("myevent"));
     }
 
     @Test
