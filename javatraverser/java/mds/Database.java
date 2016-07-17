@@ -10,6 +10,7 @@ import jtraverser.jTraverserFacade;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_r.Signal;
+import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 import mds.mdsip.Connection;
@@ -127,7 +128,7 @@ public final class Database{
 
     public static final ByteBuffer tdiSerialize(final String expr) throws MdsException {
         if(expr == null || expr.isEmpty()) return null;
-        return Database.mds.mdsIO(expr, true).body;
+        return Database.mds.getMessage(expr, true).body;
     }
 
     private static final void updateCurrent() throws MdsException {
@@ -429,7 +430,7 @@ public final class Database{
     }
 
     public final byte[] getType(final String expr) throws MdsException {
-        return (byte[])Database.mds.mdsValue(String.format("_a=As_Is(%s);_a=[Class(_a),Kind(_a)]", expr)).getValue();
+        return Database.mds.getByteArray("_a=As_Is(EXECUTE($));_a=[Class(_a),Kind(_a)]", new CString(expr));
     }
 
     public final Nid[] getWild(final int usage_mask) throws MdsException {
@@ -502,7 +503,7 @@ public final class Database{
 
     public final Nid resolve(final Path pad) throws MdsException {
         this._checkContext();
-        return (Nid)Database.mds.mdsValue(String.format("GETNCI('%s','NID_NUMBER')", pad.getValue()), Nid.class);
+        return (Nid)Database.mds.getDescriptor(String.format("GETNCI('%s','NID_NUMBER')", pad.getValue()), Nid.class);
     }
 
     public final Nid resolveRefSimple(final Nid nid) throws MdsException {

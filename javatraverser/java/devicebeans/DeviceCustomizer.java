@@ -30,7 +30,7 @@ public class DeviceCustomizer extends Panel{
         }
         byte[] linBytes = null;
         try{
-            linBytes = DeviceCustomizer.deviceProvider.mdsIO("JavaGetDeviceFields(\"" + DeviceSetupBeanInfo.beanDeviceType + "\")", false).body.array();
+            linBytes = DeviceCustomizer.deviceProvider.getByteBuffer("JavaGetDeviceFields(\"" + DeviceSetupBeanInfo.beanDeviceType + "\")").array();
             linFields = new String(linBytes);
             // linFields = deviceProvider.GetString("JavaGetDeviceFields(\""+
             // DeviceSetupBeanInfo.beanDeviceType + "\")");
@@ -42,7 +42,7 @@ public class DeviceCustomizer extends Panel{
         for(int i = 0; i < DeviceCustomizer.lastFields.length; i++)
             DeviceCustomizer.lastFields[i] = st.nextToken();
         if(DeviceCustomizer.lastFields.length == 0) // If name retrieval failed
-        JOptionPane.showMessageDialog(null, "Unable to retrieve device field names: check deviceType and deviceProvider main form properties");
+            JOptionPane.showMessageDialog(null, "Unable to retrieve device field names: check deviceType and deviceProvider main form properties");
         return DeviceCustomizer.lastFields;
     }
     String dummies[] = {":NAME", ":COMMENT", ":ACT_CHANNELS", ":CLOCK_MODE", ":CLOCK_SOURCE", ":FREQUENCY", ":TRIGGER_MODE", ":TRIG_SOURCE", ":INIT_ACTION", ":STORE_ACTION", ".CHANNEL_1", ".CHANNEL_1:START", ".CHANNEL_1:END", ".CHANNEL_1:DATA", ".CHANNEL_2", ".CHANNEL_2:START", ".CHANNEL_2:END", ".CHANNEL_2:DATA", ".CHANNEL_3", ".CHANNEL_3:START", ".CHANNEL_3:END", ".CHANNEL_3:DATA", ".CHANNEL_4", ".CHANNEL_4:START", ".CHANNEL_4:END", ".CHANNEL_4:DATA"};
