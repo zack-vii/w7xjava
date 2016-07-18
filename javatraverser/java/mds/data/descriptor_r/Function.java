@@ -188,11 +188,19 @@ public final class Function extends Descriptor_R<Short>{
     public final static void popValue() {
         Function.$value.pop();
     }
-    
+
     public final static void pushValue(final Descriptor descpr) {
         Function.$value.push(descpr);
     }
     */
+
+    public static final Function abs(final Descriptor... dscptrs) {
+        return new Function(OPC.OpcAbs, dscptrs);
+    }
+
+    public static final Function add(final Descriptor... dscptrs) {
+        return new Function(OPC.OpcAdd, dscptrs);
+    }
 
     private static final void addCompoundStatement(final int nstmt, final Descriptor_R pin, final int offset, final StringBuilder pout, final int mode) {
         pout.append('{');
