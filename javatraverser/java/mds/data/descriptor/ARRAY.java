@@ -6,15 +6,15 @@ import java.nio.ByteBuffer;
 public abstract class ARRAY<T>extends Descriptor<T>{
     public static final class aflags{
         /** if set, scale is a power-of-two, otherwise, -ten **/
-        boolean binscale = true;
+        boolean binscale;
         /** if set, indicates the bounds block is present **/
-        boolean bounds   = true;
+        boolean bounds;
         /** if set, indicates the multipliers block is present **/
-        boolean coeff    = true;
+        boolean coeff;
         /** if set, indicates column-major order (FORTRAN) **/
-        boolean column   = true;
+        boolean column;
         /** if set, indicates the array can be re-dimensioned **/
-        boolean redim    = true;
+        boolean redim;
 
         public aflags(final boolean binscale, final boolean redim, final boolean column, final boolean coeff, final boolean bounds){
             this.binscale = binscale;
@@ -89,7 +89,7 @@ public abstract class ARRAY<T>extends Descriptor<T>{
     public final bounds[] bounds;
 
     protected ARRAY(final byte dtype, final byte dclass, final ByteBuffer byteBuffer, final int... shape){
-        super(ARRAY.getLength(shape, dtype, byteBuffer.limit()), dtype, dclass, byteBuffer, ARRAY._dmsIa + shape.length * Integer.BYTES, 0);
+        super(ARRAY.getLength(shape, dtype, byteBuffer.limit()), dtype, dclass, byteBuffer, shape.length > 1 ? ARRAY._dmsIa + shape.length * Integer.BYTES : ARRAY._a0I, 0);
         final ByteBuffer b = this.b.duplicate().order(this.b.order());
         b.position(ARRAY._sclB);
         b.put(this.scale = (byte)0);
@@ -97,9 +97,13 @@ public abstract class ARRAY<T>extends Descriptor<T>{
         b.put((this.aflags = shape.length > 1 ? ARRAY.f_coeff : ARRAY.f_array).toByte());
         b.put(this.dimct = (byte)shape.length);
         b.putInt(this.arsize = byteBuffer.limit());
-        b.putInt(this.a0 = this.pointer);
-        b.asIntBuffer().put(this.dims = shape);
+        this.a0 = this.pointer;
+        this.dims = shape;
         this.bounds = null;
+        if(shape.length > 1){
+            b.putInt(this.pointer);
+            b.asIntBuffer().put(shape);
+        }
     }
 
     protected ARRAY(final ByteBuffer b){
