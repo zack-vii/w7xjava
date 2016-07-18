@@ -116,6 +116,7 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
             for(int i = 0; i < this.ndesc; i++){
                 if(this.desc_ptr[i] == 0) this.dscptrs[i] = Missing.NEW;
                 else{
+                    this.b.position(this.desc_ptr[i]);
                     this.b.put(args[i].serialize());
                     try{
                         this.dscptrs[i] = Descriptor.deserialize((ByteBuffer)this.serialize().position(this.desc_ptr[i]));
