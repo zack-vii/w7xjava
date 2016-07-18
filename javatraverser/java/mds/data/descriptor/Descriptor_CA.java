@@ -227,8 +227,7 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         if(this.payload == null) return this.substitute(pout);
         try{
-            final Descriptor_A that = (this.decmprs = new DECOMPRESS(this, 1).out_dsc);
-            if(pout.capacity() < 1024) pout.ensureCapacity(1024);
+            final Descriptor_A that = new DECOMPRESS(this, 1).out_dsc;
             if(that.format()) pout.append(this.getDTypeName()).append('(');
             pout.append("Set_Range(");
             if(that.dimct == 0 || ((that.dims != null) && (that.dims.length == 0))) pout.append("0,");
