@@ -162,10 +162,16 @@ final public class ColorMap{
         }
 
         public ColorProfile(final ColorProfile cp){
-            this.colorMap = cp.colorMap;
-            this.bitShift = cp.bitShift;
-            this.bitClip = cp.bitClip;
-            this.useRGB = cp.useRGB;
+            if(cp == null){
+                this.colorMap = new ColorMap();
+                this.bitShift = 0;
+                this.bitClip = this.useRGB = false;
+            }else{
+                this.colorMap = cp.colorMap;
+                this.bitShift = cp.bitShift;
+                this.bitClip = cp.bitClip;
+                this.useRGB = cp.useRGB;
+            }
         }
     }
 
