@@ -7,7 +7,10 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_R;
 import mds.data.descriptor_a.Float64Array;
+import mds.data.descriptor_a.Int32Array;
+import mds.data.descriptor_s.FLOAT;
 import mds.data.descriptor_s.Float64;
+import mds.data.descriptor_s.Int32;
 import mds.data.descriptor_s.Missing;
 
 public final class Range extends Descriptor_R{
@@ -21,6 +24,17 @@ public final class Range extends Descriptor_R{
             array[i] = strt.doubleValue();
             if(i >= n) break;
             strt = strt.add(delt);
+        }
+        return array;
+    }
+
+    public static int[] range(int begin, final int ending, final int delta) {
+        final int n = (ending - begin) / delta;
+        final int[] array = new int[n + 1];
+        for(int i = 0;; i++){
+            array[i] = begin;
+            if(i >= n) break;
+            begin += delta;
         }
         return array;
     }
@@ -45,6 +59,14 @@ public final class Range extends Descriptor_R{
         this(new Float64(begin), new Float64(ending), new Float64(delta));
     }
 
+    public Range(final int begin, final int ending){
+        this(new Int32(begin), new Int32(ending), null);
+    }
+
+    public Range(final int begin, final int ending, final int delta){
+        this(new Int32(begin), new Int32(ending), new Int32(delta));
+    }
+
     @Override
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         this.getBegin().decompile(prec, pout, mode).append(" : ");
@@ -59,7 +81,8 @@ public final class Range extends Descriptor_R{
 
     @Override
     public final Descriptor getData() {
-        return new Float64Array(Range.range(this.getBegin().toDouble(), this.getEnding().toDouble(), this.getDelta() == Missing.NEW ? 1d : this.getDelta().toDouble()));
+        if(this.getBegin() instanceof FLOAT || this.getEnding() instanceof FLOAT || this.getDelta() instanceof FLOAT) return new Float64Array(Range.range(this.getBegin().toDouble(), this.getEnding().toDouble(), this.getDelta() == Missing.NEW ? 1d : this.getDelta().toDouble()));
+        return new Int32Array(Range.range(this.getBegin().toInt(), this.getEnding().toInt(), this.getDelta() == Missing.NEW ? 1 : this.getDelta().toInt()));
     }
 
     public final Descriptor getDelta() {
