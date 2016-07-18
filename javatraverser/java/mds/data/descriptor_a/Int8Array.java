@@ -1,7 +1,9 @@
 package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
+import mds.MdsException;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor.Descriptor;
 
 public final class Int8Array extends NUMBERArray<Byte>{
     public Int8Array(final byte... values){
@@ -14,6 +16,10 @@ public final class Int8Array extends NUMBERArray<Byte>{
 
     public Int8Array(final int shape[], final byte... values){
         super(DTYPE.B, values, shape);
+    }
+
+    public final Descriptor deserialize() throws MdsException {
+        return Descriptor.deserialize(this.getBuffer());
     }
 
     @Override
