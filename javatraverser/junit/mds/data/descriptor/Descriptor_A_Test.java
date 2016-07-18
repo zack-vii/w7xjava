@@ -13,6 +13,7 @@ import mds.data.descriptor_a.Float64Array;
 import mds.data.descriptor_a.Int32Array;
 import mds.data.descriptor_a.Int64Array;
 import mds.data.descriptor_a.Uint64Array;
+import mds.data.descriptor_r.Function;
 import mds.data.descriptor_r.Signal;
 import mds.mdsip.Connection;
 
@@ -38,7 +39,11 @@ public final class Descriptor_A_Test{
 
     @Test
     public final void testARRAY() throws MdsException {
-        Assert.assertEquals("Build_Signal([1.0D0,2.0D0,3.0D0], *, [1Q,2Q,3Q])", new Signal(new Float64Array(1, 2, 3), null, new Int64Array(1, 2, 3)).decompile());
+        final Descriptor_A test = new Uint64Array(1000000000000l);
+        Assert.assertEquals("[0Xe8d4a51000QU]", Descriptor_A_Test.mds.getString("DECOMPILE($)", test));
+        Assert.assertArrayEquals(new byte[]{8, 0, 5, 4, 16, 0, 0, 0, 0, 0, 48, 1, 8, 0, 0, 0, 0, 16, -91, -44, -24, 0, 0, 0}, test.serializeArray());
+        Assert.assertEquals("ABS([0Xe8d4a51000QU])", Descriptor_A_Test.mds.getString("_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_s=TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a", Function.abs(new Uint64Array(1000000000000l)).serializeDsc()));
+        Assert.assertEquals("Build_Signal([1D0,2D0,3D0], *, [1Q,2Q,3Q])", new Signal(new Float64Array(1, 2, 3), null, new Int64Array(1, 2, 3)).decompile());
         Assert.assertEquals("Build_Signal([[[1,2],[3,4]],[[5,6],[7,8]]], *, [1Q,2Q])", new Signal(new Int32Array(new int[]{2, 2, 2}, 1, 2, 3, 4, 5, 6, 7, 8), null, new Int64Array(1, 2)).decompile());
     }
 

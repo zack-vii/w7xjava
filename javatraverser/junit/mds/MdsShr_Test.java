@@ -35,8 +35,8 @@ public class MdsShr_Test{
 
     @Test
     public final void testMdsCompress() throws MdsException {
-        Assert.assertEquals("Set_Range(100000,0D0 /*** etc. ***/)", MdsShr_Test.mds.decompile("_a=*;_s=MdsShr->MdsCompress(0,0,xd(DATA(0:99999)),xd(_a));_a");
-        Assert.assertEquals("Set_Range(100000,0D0 /*** etc. ***/)", MdsShr_Test.mdsshr.mdsCompress(new Range(0, 99999, 1)));
+        Assert.assertEquals("Set_Range(50000,0 /*** etc. ***/)", MdsShr_Test.mds.getString("_a=DATA(0:99999:2);_s=MdsShr->MdsCompress(0,0,xd(_a),xd(_a));_s=TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a"));
+        Assert.assertEquals("Set_Range(50000,0 /*** etc. ***/)", MdsShr_Test.mdsshr.mdsCompress(new Range(0, 99999, 2).getData()).decompile());
     }
 
     @Test

@@ -130,8 +130,8 @@ public class TreeShr_Test{
         final Pointer save = TreeShr_Test.treeshr.treeSaveContext();
         Assert.assertEquals(TreeShr_Test.mds.decompile(save), save.decompile());
         Assert.assertTrue(save.decompile().matches("Pointer\\(0x[a-f0-9]+\\)"));
-        Assert.assertArrayEquals(save.serializeArray(), TreeShr_Test.mds.mdsValue("_b=*;_s=MdsShr->MdsSerializeDscOut(xd((_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_a;)),xd(_b));_b", Descriptor.class, save.serializeDsc()).toByteArray());
-        Assert.assertArrayEquals(TreeShr_Test.mds.mdsValue("$", Descriptor.class, save).serializeArray(), save.serializeArray());
+        Assert.assertArrayEquals(save.serializeArray(), TreeShr_Test.mds.getByteArray("_b=*;_s=MdsShr->MdsSerializeDscOut(xd((_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_a;)),xd(_b));_b", save.serializeDsc()));
+        Assert.assertArrayEquals(TreeShr_Test.mds.getDescriptor("$", Descriptor.class, save).serializeArray(), save.serializeArray());
         String line0, line1;
         System.out.println(line0 = TreeShr_Test.mds.getString("_t='';_s=TCL('show db',_t);_t"));
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeOpen(AllTests.tree, TreeShr_Test.shot, true));
@@ -199,7 +199,7 @@ public class TreeShr_Test{
 
     @Test
     public final void test156TreeGetXNci() throws MdsException {
-        Assert.assertEquals("myattr", TreeShr_Test.treeshr.treeGetXNci(1).toString());
+        Assert.assertEquals("[\"myattr\"]", TreeShr_Test.treeshr.treeGetXNci(1).decompile());
     }
 
     @Test
@@ -249,8 +249,14 @@ public class TreeShr_Test{
                                 for(int i1 = 0; i1 < dims[1]; i1++)
                                     for(int i0 = 0; i0 < dims[0]; i0++)
                                         data[i++] = i7 * 10000000 + i6 * 1000000 + i5 * 100000 + i4 * 10000 + i3 * 1000 + i2 * 100 + i1 * 10 + i0;
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treePutRecord(47, new Signal(new Uint32Array(dims, data), null, new Uint64Array(dim))));
-        Assert.assertEquals("Build_Signal(Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)), *, [0X100000018QU])", TreeShr_Test.treeshr.treeGetRecord(47).decompile());
+        final Signal signal = new Signal(new Uint32Array(dims, data), null, new Uint64Array(dim));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treePutRecord(47, signal));
+        Assert.assertEquals(signal.decompile(), signal.serializeDsc().deserialize().decompile());
+        final String hex = "Build_Signal(Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)), *, [0Xe8d4a51000QU])";
+        final String dec = "Build_Signal(Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)), *, [1000000000000QU])";
+        Assert.assertEquals(hex, TreeShr_Test.mds.getString("_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_s=TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a", signal.serializeDsc()));
+        Assert.assertEquals(hex, TreeShr_Test.mds.getString("_a=GETNCI(47,'RECORD');_s=TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a"));
+        Assert.assertEquals(dec, TreeShr_Test.treeshr.treeGetRecord(47).decompile());
     }
 
     @Test

@@ -37,13 +37,13 @@ public final class Descriptor_Test{
         final int shot = 1;
         final String node = "\\TEST::TOP.TEST";
         final Nid nid;
-        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("treeopennew('%s',%d)", AllTests.tree, shot)).toInt());
-        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("tcl('add node %s/usage=any')", node.split("\\.", 2)[1])).toInt());
-        Assert.assertEquals(1, Descriptor_Test.mds.mdsValue(String.format("TreeShr->TreeWriteTree(ref('%s'),val(%d))", AllTests.tree, shot)).toInt());
-        Assert.assertEquals(134348817, Descriptor_Test.mds.mdsValue(String.format("tcl('quit')")).toInt());
-        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue(String.format("treeopen('%s',%d)", AllTests.tree, shot)).toInt());
-        Assert.assertNotNull(nid = (Nid)Descriptor_Test.mds.mdsValue(String.format("GetNci(%s,'NID_NUMBER')", node), Nid.class));
-        Assert.assertEquals(265388041, Descriptor_Test.mds.mdsValue("TreePutRecord", nid, new Int32Array(1, 2, 3, 4, 5, 6)).toInt());
-        Assert.assertEquals("[1,2,3,4,5,6]", Descriptor_Test.mds.mdsValue("GETNCI(1,'RECORD')").decompile());
+        Assert.assertEquals(265388041, Descriptor_Test.mds.getInteger(String.format("treeopennew('%s',%d)", AllTests.tree, shot)));
+        Assert.assertEquals(265388041, Descriptor_Test.mds.getInteger(String.format("tcl('add node %s/usage=any')", node.split("\\.", 2)[1])));
+        Assert.assertEquals(1, Descriptor_Test.mds.getInteger(String.format("TreeShr->TreeWriteTree(ref('%s'),val(%d))", AllTests.tree, shot)));
+        Assert.assertEquals(134348817, Descriptor_Test.mds.getInteger(String.format("tcl('quit')")));
+        Assert.assertEquals(265388041, Descriptor_Test.mds.getInteger(String.format("treeopen('%s',%d)", AllTests.tree, shot)));
+        Assert.assertNotNull(nid = (Nid)Descriptor_Test.mds.getDescriptor(String.format("GetNci(%s,'NID_NUMBER')", node), Nid.class));
+        Assert.assertEquals(265388041, Descriptor_Test.mds.getInteger("TreePutRecord", nid, new Int32Array(1, 2, 3, 4, 5, 6)));
+        Assert.assertEquals("[1,2,3,4,5,6]", Descriptor_Test.mds.getDescriptor("GETNCI(1,'RECORD')").decompile());
     }
 }
