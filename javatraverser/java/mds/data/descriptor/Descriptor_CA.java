@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import debug.DEBUG;
 import mds.MdsException;
+import mds.data.descriptor_a.EmptyArray;
 import mds.mdsip.Message;
 
 /** Compressed Array Descriptor (-61 : 195) **/
@@ -50,10 +51,11 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
             int size = ca.pointer * 2 + preview;
             if(size > ca.b.limit()) size = ca.b.limit();
             final ByteBuffer buf = ByteBuffer.allocate(size).order(Descriptor.BYTEORDER);
+            final ByteBuffer src = ca.b.duplicate().order(ca.b.order());
             for(int i = 0; i < size; i++)
-                buf.put(ca.serialize().get());
+                buf.put(src.get());
             buf.putInt(ARRAY._aszI, preview * ca.length).rewind();
-            this.out_dsc = this.mdsXpand(ca.arsize / ca.length, pack_dsc, new Descriptor_CA(buf, ca.payload));
+            this.out_dsc = this.mdsXpand(preview, pack_dsc, new Descriptor_CA(buf, ca.payload));
         }
 
         /** MdsUnpk expects LittleEndian buffers **/
@@ -220,16 +222,28 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         this.payload = payload;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         if(this.payload == null) return this.substitute(pout);
         try{
-            return new DECOMPRESS(this, 1).out_dsc.decompile(prec, pout, mode);
+            final Descriptor_A that = (this.decmprs = new DECOMPRESS(this, 1).out_dsc);
+            if(pout.capacity() < 1024) pout.ensureCapacity(1024);
+            if(that.format()) pout.append(this.getDTypeName()).append('(');
+            pout.append("Set_Range(");
+            if(that.dimct == 0 || ((that.dims != null) && (that.dims.length == 0))) pout.append("0,");
+            else if(that.dims == null) pout.append(that.arsize / that.length);
+            else for(final int dim : that.dims)
+                pout.append(Integer.toString(dim)).append(',');
+            that.decompileT(pout, that.getValue(0));
+            if(that.format()) pout.append(that.getSuffix());
+            pout.append(" /*** etc. ***/)");
+            if(that.format()) pout.append(')');
+            return pout;
         }catch(final MdsException e){
             e.printStackTrace();
             return this.payload.decompile(prec, pout, mode);
         }
-        // TODO: decompile DSC_CA data like TDI "Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)"
     }
 
     @Override
@@ -282,13 +296,13 @@ public class Descriptor_CA extends ARRAY<ByteBuffer>{
         return this.unpack().toShortArray();
     }
 
-    public final Descriptor unpack() {
+    public final Descriptor_A unpack() {
         if(this.decmprs != null) return this.decmprs;
         try{
             return(this.decmprs = new DECOMPRESS(this).out_dsc);
         }catch(final MdsException e){
             e.printStackTrace();
-            return this.payload;
+            return EmptyArray.NEW;
         }
     }
 }
