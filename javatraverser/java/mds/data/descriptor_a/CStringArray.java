@@ -32,8 +32,8 @@ public final class CStringArray extends Descriptor_A<String>{
     }
 
     @Override
-    protected final String decompileT(final String t) {
-        return new StringBuilder(t.length() + 2).append('\"').append(t).append('\"').toString();
+    protected StringBuilder decompileT(final StringBuilder pout, final String t) {
+        return pout.append('\"').append(t).append('\"');
     }
 
     @Override
