@@ -44,6 +44,11 @@ public final class CStringArray extends Descriptor_A<String>{
     }
 
     @Override
+    protected final String getSuffix() {
+        return "";
+    }
+
+    @Override
     protected final String[] initArray(final int size) {
         return new String[size];
     }

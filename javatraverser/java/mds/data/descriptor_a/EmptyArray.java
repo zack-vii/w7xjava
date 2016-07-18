@@ -6,6 +6,8 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 
 public final class EmptyArray extends Descriptor_A{
+    public static final EmptyArray NEW = new EmptyArray();
+
     public EmptyArray(){
         super(DTYPE.MISSING, ByteBuffer.allocate(0).order(Descriptor.BYTEORDER));
     }
@@ -22,6 +24,11 @@ public final class EmptyArray extends Descriptor_A{
     @Override
     protected final Object getElement(final ByteBuffer b) {
         return null;
+    }
+
+    @Override
+    protected final String getSuffix() {
+        return "";
     }
 
     @Override

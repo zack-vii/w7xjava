@@ -185,6 +185,8 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
 
     protected abstract T getElement(ByteBuffer b);
 
+    protected abstract String getSuffix();
+
     @Override
     protected final T[] getValue(final ByteBuffer b) {
         return this.getValue(0, this.arsize);

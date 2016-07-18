@@ -38,6 +38,11 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     }
 
     @Override
+    protected final String getSuffix() {
+        return "";
+    }
+
+    @Override
     protected final Descriptor[] initArray(final int size) {
         return new Descriptor[size];
     }
