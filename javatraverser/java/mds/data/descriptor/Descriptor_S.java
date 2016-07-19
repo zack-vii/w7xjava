@@ -27,8 +27,8 @@ import mds.data.descriptor_s.Uint8;
 /** Fixed-Length (static) Descriptor (1) **/
 @SuppressWarnings("deprecation")
 public abstract class Descriptor_S<T>extends Descriptor<T>{
-    public static final byte     CLASS    = 1;
-    private static final boolean isatomic = true;
+    public static final byte     CLASS  = 1;
+    private static final boolean atomic = true;
 
     public static final Descriptor_S deserialize(final ByteBuffer b) throws MdsException {
         switch(b.get(Descriptor._typB)){
@@ -113,7 +113,7 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
 
     @Override
     public final boolean isAtomic() {
-        return Descriptor_S.isatomic;
+        return Descriptor_S.atomic;
     }
 
     @Override

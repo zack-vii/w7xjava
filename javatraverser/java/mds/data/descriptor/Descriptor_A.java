@@ -58,7 +58,8 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
             return this.pout.toString();
         }
     }
-    public static final byte CLASS = 4;
+    private static final boolean atomic = true;
+    public static final byte     CLASS  = 4;
 
     public static Descriptor_A deserialize(final ByteBuffer b) throws MdsException {
         switch(b.get(Descriptor._typB)){
@@ -216,6 +217,11 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     }
 
     protected abstract T[] initArray(int size);
+
+    @Override
+    public boolean isAtomic() {
+        return Descriptor_A.atomic;
+    }
 
     protected abstract void setElement(ByteBuffer b, T value);
 

@@ -21,7 +21,7 @@ public abstract class Descriptor<T>{
     protected static final int    DECO_STR  = 1;
     protected static final int    DECO_STRX = Descriptor.DECO_X | Descriptor.DECO_STR;
     protected static final int    DECO_X    = 2;
-    public static final boolean   isatomic  = false;
+    public static final boolean   atomic    = false;
     protected static final byte   P_ARG     = 88;
     protected static final byte   P_STMT    = 96;
     protected static final byte   P_SUBS    = 0;
@@ -249,7 +249,7 @@ public abstract class Descriptor<T>{
 
     @SuppressWarnings("static-method")
     public boolean isAtomic() {
-        return Descriptor.isatomic;
+        return Descriptor.atomic;
     }
 
     /** Returns serialized byte stream as ByteBuffer **/

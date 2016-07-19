@@ -5,8 +5,9 @@ import mds.MdsException;
 
 /** Array of Descriptor (-60 : 196) **/
 public class Descriptor_APD extends Descriptor_A<Descriptor>{
-    public static final byte   CLASS = -60;
-    public static final String name  = "APD";
+    public static final byte     CLASS  = -60;
+    public static final String   name   = "APD";
+    private static final boolean atomic = false;
 
     public static Descriptor_A deserialize(final ByteBuffer b) throws MdsException {
         return new Descriptor_APD(b);
@@ -45,6 +46,11 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     @Override
     protected final Descriptor[] initArray(final int size) {
         return new Descriptor[size];
+    }
+
+    @Override
+    public boolean isAtomic() {
+        return Descriptor_APD.atomic;
     }
 
     @Override
