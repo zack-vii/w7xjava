@@ -128,9 +128,9 @@ public class TreeShr_Test{
         final String deco = TreeShr_Test.treeshr.treeCtx().decompile();
         Assert.assertTrue(deco, deco.matches("Pointer\\(0x[a-f0-9]+\\)"));
         final Pointer save = TreeShr_Test.treeshr.treeSaveContext();
-        Assert.assertEquals(TreeShr_Test.mds.decompile(save), save.decompile());
+        Assert.assertEquals(TreeShr_Test.mds.getString("Decompile($)", save), save.decompile());
         Assert.assertTrue(save.decompile().matches("Pointer\\(0x[a-f0-9]+\\)"));
-        Assert.assertArrayEquals(save.serializeArray(), TreeShr_Test.mds.getByteArray("_b=*;_s=MdsShr->MdsSerializeDscOut(xd((_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_a;)),xd(_b));_b", save.serializeDsc()));
+        Assert.assertArrayEquals(save.serializeArray(), TreeShr_Test.mds.getByteArray("_b=*;_s=MdsShr->MdsSerializeDscOut(xd($),xd(_b));_b", save));
         Assert.assertArrayEquals(TreeShr_Test.mds.getDescriptor("$", Descriptor.class, save).serializeArray(), save.serializeArray());
         String line0, line1;
         System.out.println(line0 = TreeShr_Test.mds.getString("_t='';_s=TCL('show db',_t);_t"));
@@ -234,7 +234,46 @@ public class TreeShr_Test{
     }
 
     @Test
-    public final void test164TreePutRecordMultiDim() throws MdsException {
+    public final void test165TreePutRow() throws MdsException {
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRow(1, 1 << 10, 1000009000000l, new Float32Array(.9f)));
+    }
+
+    @Test
+    public final void test166TreeMakeSegment() throws MdsException {
+        final long t0 = 1000010000000l;
+        final long[] dim = new long[10];
+        for(int i = 0; i < 10; i++)
+            dim[i] = t0 + i * 1000000l;
+        Assert.assertEquals(1, TreeShr_Test.treeshr.treeGetNumSegments(1));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(dim), new Float32Array(1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f)));
+        Assert.assertEquals(2, TreeShr_Test.treeshr.treeGetNumSegments(1));
+        for(int i = 0; i < 10; i++)
+            dim[i] = t0 + i * 1000000l + 10000000l;
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(dim), new Float32Array(2.0f, 2.1f, 2.2f, 2.3f, 2.4f, 2.5f, 2.6f, 2.7f, 2.8f, 2.9f)));
+        Assert.assertEquals(3, TreeShr_Test.treeshr.treeGetNumSegments(1));
+        Assert.assertEquals("[1000010000000Q,1000019000000Q]", TreeShr_Test.treeshr.treeGetSegmentLimits(1, 1).decompile());
+    }
+
+    @Test
+    public final void test170TreeSetTimeContext_TreeGetRecord() throws MdsException {
+        Assert.assertEquals(1, TreeShr_Test.treeshr.treeSetTimeContext(1000001000000l, 1000007000000l, 2000000l));
+        Assert.assertArrayEquals(new float[]{.3f, .5f, .7f}, TreeShr_Test.treeshr.treeGetRecord(1).toFloatArray(), 1e-9f);
+        Assert.assertEquals(1, TreeShr_Test.treeshr.treeSetTimeContext());
+        Assert.assertArrayEquals(new float[]{.0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f}, TreeShr_Test.treeshr.treeGetSegment(1, 0).toFloatArray(), 1e-9f);
+    }
+
+    @Test
+    public final void test171TreeGetSegment() throws MdsException {
+        Assert.assertArrayEquals(new int[]{10}, TreeShr_Test.treeshr.treeGetSegment(1, 0).getShape());
+    }
+
+    @Test
+    public final void test172TreeGetSegmentInfo() throws MdsException {
+        Assert.assertEquals(DTYPE.FLOAT, TreeShr_Test.treeshr.treeGetSegmentInfo(1, 0).dtype);
+    }
+
+    @Test
+    public final void test175TreePutRecordMultiDim() throws MdsException {
         final long t0 = 1000000000000l;
         final int[] dims = {8, 7, 6, 5, 4, 3, 2, 1};
         final long[] dim = {t0};
@@ -254,32 +293,9 @@ public class TreeShr_Test{
         Assert.assertEquals(signal.decompile(), signal.serializeDsc().deserialize().decompile());
         final String hex = "Build_Signal(Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)), *, [0Xe8d4a51000QU])";
         final String dec = "Build_Signal(Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)), *, [1000000000000QU])";
-        Assert.assertEquals(hex, TreeShr_Test.mds.getString("_a=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));_s=TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a", signal.serializeDsc()));
+        Assert.assertEquals(hex, TreeShr_Test.mds.getString("_a=*;_s=TdiShr->TdiDecompile(xd($),xd(_a),val(-1));_a", signal));
         Assert.assertEquals(hex, TreeShr_Test.mds.getString("_a=GETNCI(47,'RECORD');_s=TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a"));
         Assert.assertEquals(dec, TreeShr_Test.treeshr.treeGetRecord(47).decompile());
-    }
-
-    @Test
-    public final void test169TreePutRow() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treePutRow(1, 1 << 10, 1000010000000l, new Float32Array(.9f)));
-    }
-
-    @Test
-    public final void test170TreeSetTimeContext_TreeGetRecord() throws MdsException {
-        Assert.assertEquals(1, TreeShr_Test.treeshr.treeSetTimeContext(1000001000000l, 1000007000000l, 2000000l));
-        Assert.assertArrayEquals(new float[]{.3f, .5f, .7f}, TreeShr_Test.treeshr.treeGetRecord(1).toFloatArray(), 1e-9f);
-        Assert.assertEquals(1, TreeShr_Test.treeshr.treeSetTimeContext());
-        Assert.assertArrayEquals(new float[]{.0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f}, TreeShr_Test.treeshr.treeGetRecord(1).toFloatArray(), 1e-9f);
-    }
-
-    @Test
-    public final void test171TreeGetSegment() throws MdsException {
-        Assert.assertArrayEquals(new int[]{10}, TreeShr_Test.treeshr.treeGetSegment(1, 0).getShape());
-    }
-
-    @Test
-    public final void test172TreeGetSegmentInfo() throws MdsException {
-        Assert.assertEquals(DTYPE.FLOAT, TreeShr_Test.treeshr.treeGetSegmentInfo(1, 0).dtype);
     }
 
     @Test
@@ -313,6 +329,6 @@ public class TreeShr_Test{
 
     @Test
     public final void test221TreeGetDatafileSize() throws MdsException {
-        Assert.assertEquals(11155, TreeShr_Test.treeshr.treeGetDatafileSize());
+        Assert.assertEquals(11187, TreeShr_Test.treeshr.treeGetDatafileSize());
     }
 }

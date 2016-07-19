@@ -31,7 +31,7 @@ public class Connection_Test{
         Assert.assertEquals("Set_Range(1000,0. /*** etc. ***/)", Connection_Test.mds.getDescriptor("Array([1000],0.)").toString());
         Assert.assertEquals("[[[1.1],[2.1]],[[3.1],[4.1]]]", Connection_Test.mds.getDescriptor("[[[1.1],[2.1]],[[3.1],[4.1]]]").toString());
         final Descriptor array = new Int16Array(new short[]{1, 2, 3, 4, 5});
-        Assert.assertEquals(Connection_Test.mds.compile("WORD([1, 2, 3, 4, 5])").decompile(), array.decompile());
+        Assert.assertEquals(Connection_Test.mds.getDescriptor("WORD([1, 2, 3, 4, 5])").decompile(), array.decompile());
         Assert.assertEquals("Word([1,2,3,4,5])", Connection_Test.mds.getDescriptor("$", array).decompile());
         Assert.assertEquals("\"123456789\"", Connection_Test.mds.getDescriptor("concat", new CString("123"), new CString("456"), new CString("789")).decompile());
     }

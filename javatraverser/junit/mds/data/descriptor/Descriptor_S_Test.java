@@ -34,12 +34,12 @@ public final class Descriptor_S_Test{
 
     @Test
     public final void testComplex() throws MdsException {
-        Assert.assertEquals("Cmplx(100.,30000.)", Descriptor_S_Test.mds.compile("cmplx(1.e2,3.e4)").decompile());
+        Assert.assertEquals("Cmplx(100.,30000.)", Descriptor_S_Test.mds.getDescriptor("cmplx(1.e2,3.e4)").decompile());
     }
 
     @Test
     public final void testFloat32() throws MdsException {
-        Assert.assertEquals("7.", Descriptor_S_Test.mds.compile("7.0").decompile());
+        Assert.assertEquals("7.", Descriptor_S_Test.mds.getDescriptor("7.0").decompile());
     }
 
     @Test
@@ -50,8 +50,7 @@ public final class Descriptor_S_Test{
 
     @Test
     public final void testTString() throws MdsException {
-        Assert.assertEquals("\"test\"", Descriptor_S_Test.mds.compile("'test'").decompile());
-        Assert.assertEquals("\"test\" // TEXT(1) // \"test\"", Descriptor_S_Test.mds.compile("'test'//text(1)//\"test\"").decompile());
-        Assert.assertEquals("'\"test\"'", Descriptor_S_Test.mds.compile("'\\\"test\\\"'").decompile());
+        Assert.assertEquals("\"test\"", Descriptor_S_Test.mds.getDescriptor("'test'").decompile());
+        Assert.assertEquals("'\"test\"'", Descriptor_S_Test.mds.getDescriptor("'\\\"test\\\"'").decompile());
     }
 }
