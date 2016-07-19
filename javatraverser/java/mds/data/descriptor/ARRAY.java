@@ -129,6 +129,7 @@ public abstract class ARRAY<T>extends Descriptor<T>{
         }else this.bounds = null;
     }
 
+    /** Returns the number of elements contained in the Array **/
     public final int getLength() {
         if(this.dimct == 0) return 0;
         int length = 1;
