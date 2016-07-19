@@ -119,9 +119,13 @@ public class DecompileTree{
             final DOMSource source = new DOMSource(tree);
             final File newXML = new File(filename);
             final FileOutputStream os = new FileOutputStream(newXML);
-            final StreamResult result = new StreamResult(os);
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.transform(source, result);
+            try{
+                final StreamResult result = new StreamResult(os);
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                transformer.transform(source, result);
+            }finally{
+                os.close();
+            }
         }catch(final Exception e){
             System.err.println(this.error = e.toString());
         }
