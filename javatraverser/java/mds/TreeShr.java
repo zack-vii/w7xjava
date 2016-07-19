@@ -3,7 +3,7 @@ package mds;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
-import mds.data.descriptor_a.Uint64Array;
+import mds.data.descriptor_a.Int64Array;
 import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.NUMBER;
 import mds.data.descriptor_s.Pointer;
@@ -154,16 +154,24 @@ public final class TreeShr{
         return this.connection.getDescriptor(String.format("_a=*;_s=TreeShr->TreeGetXNci(val(%d),ref('%s'),xd(_a));_a", nid, name));
     }
 
-    public final int treeMakeTimestampedSegment(final int nid, final Uint64Array timestamps, final Descriptor_A values) throws MdsException {
-        return this.treeMakeTimestampedSegment(nid, timestamps, values, -1, values.getLength());
+    public final int treeMakeTimestampedSegment(final int nid, final Int64Array timestamps, final Descriptor_A values) throws MdsException {
+        return this.treeMakeTimestampedSegment(nid, timestamps, values, -1);
     }
 
-    public final int treeMakeTimestampedSegment(final int nid, final Uint64Array timestamps, final Descriptor_A values, final int idx) throws MdsException {
-        return this.treeMakeTimestampedSegment(nid, timestamps, values, idx, values.getLength());
+    public final int treeMakeTimestampedSegment(final int nid, final Int64Array timestamps, final Descriptor_A values, final int idx) throws MdsException {
+        return this.treeMakeTimestampedSegment(nid, timestamps, values, idx, timestamps.getLength());
     }
 
-    public final int treeMakeTimestampedSegment(final int nid, final Uint64Array timestamps, final Descriptor_A values, final int idx, final int rows_filled) throws MdsException {
+    public final int treeMakeTimestampedSegment(final int nid, final Int64Array timestamps, final Descriptor_A values, final int idx, final int rows_filled) throws MdsException {
         return this.connection.getInteger(String.format("_s=TreeShr->TreeMakeTimestampedSegment(val(%d),ref($),xd($),val(%d),val(%d))", nid, idx, rows_filled), timestamps, values);
+    }
+
+    public final int treeMakeTimestampedSegment(final int nid, final long[] timestamps, final Descriptor_A values) throws MdsException {
+        return this.treeMakeTimestampedSegment(nid, new Int64Array(timestamps), values);
+    }
+
+    public final int treeMakeTimestampedSegment(final int nid, final long[] timestamps, final Descriptor_A values, final int idx) throws MdsException {
+        return this.treeMakeTimestampedSegment(nid, new Int64Array(timestamps), values, idx);
     }
 
     public final int treeOpen(final String expt, final int shot, final boolean readonly) throws MdsException {
