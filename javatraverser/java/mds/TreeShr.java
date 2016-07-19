@@ -126,20 +126,24 @@ public final class TreeShr{
         return this.connection.getIntegerArray("_i=-1;_s=TreeShr->TreeGetDefaultNid(ref(_i));[_s,_i]");
     }
 
+    public final int treeGetNumSegments(final int nid) throws MdsException {
+        return this.connection.getInteger(String.format("_a=0;_s=TreeShr->TreeGetNumSegments(val(%d),ref(_a));_a", nid));
+    }
+
     public final Descriptor treeGetRecord(final int nid) throws MdsException {
-        return this.connection.evaluate(String.format("_d=*;_s=TreeShr->TreeGetRecord(val(%d),xd(_d));_d", nid));
+        return this.connection.getDescriptor(String.format("_d=*;_s=TreeShr->TreeGetRecord(val(%d),xd(_d));_d", nid));
     }
 
     public final Signal treeGetSegment(final int nid, final int idx) throws MdsException {
         return (Signal)this.connection.getDescriptor(String.format("_a=_t=*;_s=TreeShr->TreeGetSegment(val(%d),val(%d),xd(_a),xd(_t));make_signal(_a,*,_t)", nid, idx), Signal.class);
     }
 
-    public final Descriptor treeGetSegmentedRecord(final int nid) throws MdsException {
-        return this.connection.getDescriptor(String.format("_d=*;_s=TreeShr->TreeGetSegmentedRecord(val(%d),xd(_d));_d", nid));
-    }
-
     public final SegmentInfo treeGetSegmentInfo(final int nid, final int idx) throws MdsException {
         return new SegmentInfo(this.connection.getIntegerArray(String.format("_a=0B;_b=0B;_d=zero(8,0);_i=0;_s=TreeShr->TreeGetSegmentInfo(val(%d),val(%d),ref(_a),ref(_b),ref(_d),ref(_i));[_a,_b,_d[0],_d[1],_d[2],_d[3],_d[4],_d[5],_d[6],_d[7],_i]", nid, idx)));
+    }
+
+    public final Descriptor treeGetSegmentLimits(final int nid, final int idx) throws MdsException {
+        return this.connection.getDescriptor(String.format("_a=_b=*;_s=TreeShr->TreeGetSegmentLimits(val(%d),val(%d),xd(_a),xd(_b));[_a,_b]", nid, idx));
     }
 
     public final Descriptor treeGetXNci(final int nid) throws MdsException {
@@ -147,11 +151,19 @@ public final class TreeShr{
     }
 
     public final Descriptor treeGetXNci(final int nid, final String name) throws MdsException {
-        return this.connection.getDescriptor(String.format("_d=*;_s=TreeShr->TreeGetXNci(val(%d),ref('%s'),xd(_d));_d", nid, name));
+        return this.connection.getDescriptor(String.format("_a=*;_s=TreeShr->TreeGetXNci(val(%d),ref('%s'),xd(_a));_a", nid, name));
     }
 
-    public final int treeMakeTimestampedSegment(final int nid, final Uint64Array timestamps, final Descriptor_A initialValue, final int idx, final int rows_filled) throws MdsException {
-        return this.connection.getInteger(String.format("_s=TreeShr->TreeMakeTimestampedSegment(val(%d),ref($),xd($),val(%d),val(%d))", nid, idx, rows_filled), timestamps, initialValue);
+    public final int treeMakeTimestampedSegment(final int nid, final Uint64Array timestamps, final Descriptor_A values) throws MdsException {
+        return this.treeMakeTimestampedSegment(nid, timestamps, values, -1, values.getLength());
+    }
+
+    public final int treeMakeTimestampedSegment(final int nid, final Uint64Array timestamps, final Descriptor_A values, final int idx) throws MdsException {
+        return this.treeMakeTimestampedSegment(nid, timestamps, values, idx, values.getLength());
+    }
+
+    public final int treeMakeTimestampedSegment(final int nid, final Uint64Array timestamps, final Descriptor_A values, final int idx, final int rows_filled) throws MdsException {
+        return this.connection.getInteger(String.format("_s=TreeShr->TreeMakeTimestampedSegment(val(%d),ref($),xd($),val(%d),val(%d))", nid, idx, rows_filled), timestamps, values);
     }
 
     public final int treeOpen(final String expt, final int shot, final boolean readonly) throws MdsException {
@@ -173,7 +185,7 @@ public final class TreeShr{
 
     public final int treePutRecord(final int nid, final Descriptor dsc, final int utility_update) throws MdsException {
         if(dsc == null) return this.connection.getInteger(String.format("_s=TreeShr->TreePutRecord(val(%d),*,val(%d))", nid, utility_update));
-        return this.connection.getInteger(String.format("_d=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_d));_s=TreeShr->TreePutRecord(val(%d),xd(_d),val(%d))", nid, utility_update), dsc.serializeDsc());
+        return this.connection.getInteger(String.format("_s=TreeShr->TreePutRecord(val(%d),xd($),val(%d))", nid, utility_update), dsc);
     }
 
     /** adds row to segmented node **/
