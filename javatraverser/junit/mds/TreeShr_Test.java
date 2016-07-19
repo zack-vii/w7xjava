@@ -12,7 +12,6 @@ import jtraverser.NodeInfo;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_a.Float32Array;
-import mds.data.descriptor_a.Int64Array;
 import mds.data.descriptor_a.Uint32Array;
 import mds.data.descriptor_a.Uint64Array;
 import mds.data.descriptor_r.Action;
@@ -231,7 +230,7 @@ public class TreeShr_Test{
         final long[] dim = new long[10];
         for(int i = 0; i < 10; i++)
             dim[i] = t0 + i * 1000000l;
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(dim), new Float32Array(.0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, Float.NaN), -1, 9));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, dim, new Float32Array(.0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, Float.NaN), -1, 9));
     }
 
     @Test
@@ -246,11 +245,11 @@ public class TreeShr_Test{
         for(int i = 0; i < 10; i++)
             dim[i] = t0 + i * 1000000l;
         Assert.assertEquals(1, TreeShr_Test.treeshr.treeGetNumSegments(1));
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Uint64Array(dim), new Float32Array(1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f)));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, dim, new Float32Array(1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f)));
         Assert.assertEquals(2, TreeShr_Test.treeshr.treeGetNumSegments(1));
         for(int i = 0; i < 10; i++)
             dim[i] = t0 + i * 1000000l + 10000000l;
-        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, new Int64Array(dim), new Float32Array(2.0f, 2.1f, 2.2f, 2.3f, 2.4f, 2.5f, 2.6f, 2.7f, 2.8f, 2.9f)));
+        Assert.assertEquals(TreeShr_Test.success, TreeShr_Test.treeshr.treeMakeTimestampedSegment(1, dim, new Float32Array(2.0f, 2.1f, 2.2f, 2.3f, 2.4f, 2.5f, 2.6f, 2.7f, 2.8f, 2.9f)));
         Assert.assertEquals(3, TreeShr_Test.treeshr.treeGetNumSegments(1));
         Assert.assertEquals("[1000010000000Q,1000019000000Q]", TreeShr_Test.treeshr.treeGetSegmentLimits(1, 1).decompile());
     }

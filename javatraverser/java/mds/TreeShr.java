@@ -174,6 +174,10 @@ public final class TreeShr{
         return this.treeMakeTimestampedSegment(nid, new Int64Array(timestamps), values, idx);
     }
 
+    public final int treeMakeTimestampedSegment(final int nid, final long[] timestamps, final Descriptor_A values, final int idx, final int rows_filled) throws MdsException {
+        return this.treeMakeTimestampedSegment(nid, new Int64Array(timestamps), values, idx, rows_filled);
+    }
+
     public final int treeOpen(final String expt, final int shot, final boolean readonly) throws MdsException {
         return this.connection.getInteger(String.format("_s=TreeShr->TreeOpen(ref('%s'),val(%d),val(%d))", expt, shot, readonly ? 1 : 0));
     }
