@@ -226,6 +226,10 @@ public class Connection{
             return this.host.equalsIgnoreCase(provider.host) && this.port == provider.port;
         }
 
+        public final Connection getConnection() {
+            return new Connection(this);
+        }
+
         @Override
         public final int hashCode() {
             return this.host.toLowerCase().hashCode() + this.port;
@@ -236,8 +240,10 @@ public class Connection{
             return new StringBuilder(this.user.length() + this.host.length() + 7).append(this.user).append('@').append(this.host).append(':').append(this.port).toString();
         }
     }
-    public static final int LOGIN_OK       = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
-    static final int        MAX_NUM_EVENTS = 256;
+    private static Connection  active;
+    public static final int    LOGIN_OK       = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
+    static final int           MAX_NUM_EVENTS = 256;
+    public static final String serialStr      = "(_d=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_d));_d;)";
 
     private static <D extends Descriptor> Descriptor bufferToClass(final ByteBuffer b, final Class<D> cls) throws MdsException {
         if(b.capacity() == 0) return null;// NoData
@@ -248,6 +254,10 @@ public class Connection{
         }catch(final Exception e){
             throw new MdsException(cls.getSimpleName(), e);
         }
+    }
+
+    public static final Connection getActiveConnection() {
+        return Connection.active;// TODO: always up to date?
     }
     private boolean                                 connected           = false;
     private transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
@@ -505,6 +515,7 @@ public class Connection{
     public final Message getMessage(final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
+        this.setActive();
         byte idx = 0;
         final Message msg;
         final StringBuffer cmd = new StringBuffer(expr.length() + 128);
@@ -642,6 +653,10 @@ public class Connection{
         }catch(final IOException e){
             throw new MdsException("Connection.sendArg", e);
         }
+    }
+
+    public final Connection setActive() {
+        return Connection.active = this;
     }
 
     @Override
