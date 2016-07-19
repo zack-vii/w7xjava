@@ -77,7 +77,6 @@ public final class jScopeWaveContainer extends WaveformContainer{
             this.notify();
         }
     }
-    private static final int MAX_COLUMN = 4;
 
     public static DataServerItem buildDataServerItem(final Properties pr, final String prompt) {
         DataServerItem server_item = null;
@@ -358,12 +357,12 @@ public final class jScopeWaveContainer extends WaveformContainer{
 
     public void fromFile(final Properties pr, final String prompt, final int colorMapping[], final ColorMapDialog cmd) throws IOException {
         String prop;
-        final int read_rows[] = {0, 0, 0, 0};
+        final int[] read_rows = new int[RowColumnLayout.MAX_COLUMN];
         this.resetMaximizeComponent();
         prop = pr.getProperty(prompt + ".columns");
         if(prop == null) throw(new IOException("missing columns keyword"));
         this.columns = new Integer(prop).intValue();
-        this.pw = new float[jScopeWaveContainer.MAX_COLUMN];
+        this.pw = new float[RowColumnLayout.MAX_COLUMN];
         this.title = pr.getProperty(prompt + ".title");
         this.event = pr.getProperty(prompt + ".update_event");
         this.print_event = pr.getProperty(prompt + ".print_event");
@@ -373,7 +372,7 @@ public final class jScopeWaveContainer extends WaveformContainer{
             if(server_item_conf != null) this.server_item = server_item_conf;
             else this.server_item = server_item;
         }
-        for(int c = 1; c <= jScopeWaveContainer.MAX_COLUMN; c++){
+        for(int c = 1; c <= RowColumnLayout.MAX_COLUMN; c++){
             prop = pr.getProperty(prompt + ".rows_in_column_" + c);
             if(prop == null){
                 if(c == 1) throw(new IOException("missing rows_in_column_1 keyword"));
@@ -431,7 +430,7 @@ public final class jScopeWaveContainer extends WaveformContainer{
         }
         this.resetDrawPanel(read_rows);
         jScopeMultiWave w;
-        for(int c = 0, k = 0; c < 4; c++){
+        for(int c = 0, k = 0; c < read_rows.length; c++){
             for(int r = 0; r < read_rows[c]; r++){
                 w = (jScopeMultiWave)this.getGridComponent(k);
                 ((jScopeWaveInterface)w.wi).fromFile(pr, "Scope.plot_" + (r + 1) + "_" + (c + 1), cmd);
@@ -442,20 +441,19 @@ public final class jScopeWaveContainer extends WaveformContainer{
         }
         // Evaluate real number of columns
         int r_columns = 0;
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < read_rows.length; i++)
             if(read_rows[i] != 0) r_columns = i + 1;
         // Silent file configuration correction
         // possible define same warning information
         if(this.columns != r_columns){
             this.columns = r_columns;
-            this.pw = new float[jScopeWaveContainer.MAX_COLUMN];
+            this.pw = new float[RowColumnLayout.MAX_COLUMN];
             for(int i = 0; i < this.columns; i++)
                 this.pw[i] = (float)1. / this.columns;
         }else{
-            if(this.columns == 4) this.pw[3] = Math.abs((float)((1000 - this.pw[2]) / 1000.));
-            if(this.columns >= 3) this.pw[2] = Math.abs((float)(((this.pw[2] != 0) ? (this.pw[2] - this.pw[1]) : 1000 - this.pw[1]) / 1000.));
-            if(this.columns >= 2) this.pw[1] = Math.abs((float)(((this.pw[1] != 0) ? (this.pw[1] - this.pw[0]) : 1000 - this.pw[0]) / 1000.));
-            if(this.columns >= 1) this.pw[0] = Math.abs((float)(((this.pw[0] == 0) ? 1000 : this.pw[0]) / 1000.));
+            if(this.columns == RowColumnLayout.MAX_COLUMN) this.pw[7] = Math.abs((float)((1000 - this.pw[7]) / 1000.));
+            for(int i = RowColumnLayout.MAX_COLUMN - 2; i-- > 0;)
+                if(this.columns > i) this.pw[i + 1] = Math.abs((float)(((this.pw[i + 1] != 0) ? (this.pw[i + 1] - this.pw[i]) : 1000 - this.pw[i]) / 1000.));
         }
         this.updateHeight();
     }

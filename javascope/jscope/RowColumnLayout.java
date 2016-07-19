@@ -106,6 +106,7 @@ final public class RowColumnLayout implements LayoutManager{
      * Vertical mode item
      */
     static final int VERTICAL   = 2;
+    static final int MAX_COLUMN = 8;
 
     /**
      * Draw vertical line at x position on component
@@ -128,7 +129,7 @@ final public class RowColumnLayout implements LayoutManager{
     }
 
     /**
-     * Draw horizontal n_lines lines firt at y position next at y+ith*space on component
+     * Draw horizontal n_lines lines first at y position next at y+ith*space on component
      * where ith came form 1 to n_lines. Multi horizontal line must be draw when more
      * than 1 component is resized.
      *
@@ -163,11 +164,11 @@ final public class RowColumnLayout implements LayoutManager{
      */
     private final int bx_pos          = 25;
     /**
-     * Canvas resize objet y position
+     * Canvas resize object y position
      */
     private final int by_pos          = 20;
     /**
-     * current culomn idx to be resized
+     * current column idx to be resized
      */
     private int       col_idx;
     /**
@@ -175,19 +176,19 @@ final public class RowColumnLayout implements LayoutManager{
      */
     private int       column;
     /**
-     * Current componet to be resized
+     * Current component to be resized
      */
     private int       comp_idx;
     /**
-     * Horizontal componet space in pixel
+     * Horizontal component space in pixel
      */
     private final int hgap            = 0;
     /**
-     * Boolean resize flag true if must be computed size vomponent
+     * Boolean resize flag true if must be computed size component
      */
     private boolean   init_resize     = true;
     /**
-     * Parent component containr
+     * Parent component container
      */
     private Container main_p;
     /**
@@ -248,7 +249,7 @@ final public class RowColumnLayout implements LayoutManager{
      */
     private int       row[];
     /**
-     * Unknow size boolean flag
+     * Unknown size boolean flag
      */
     private boolean   sizeUnknown     = true;
     /**
@@ -257,8 +258,8 @@ final public class RowColumnLayout implements LayoutManager{
     private final int vgap            = 0;
 
     /**
-     * Costruct a RowColumnLayout with a column number defined by _column
-     * argument and number of object per culomn defined by row[] vector
+     * Construct a RowColumnLayout with a column number defined by _column
+     * argument and number of object per column defined by row[] vector
      *
      * @param column
      *            Number of column
@@ -270,11 +271,11 @@ final public class RowColumnLayout implements LayoutManager{
     }
 
     /**
-     * Costruct a RowColumnLayout with a column number defined by _column
+     * Construct a RowColumnLayout with a column number defined by _column
      * argument and number of object per column defined by row[] vector.
-     * The width size of ith column is defined by pw[i] value and height size
-     * of jth component is defuned by pw[j]. The pw[i] and ph[j] value are normalize
-     * value in rangeform 0 to 1.
+     * The width size of i-th column is defined by pw[i] value and height size
+     * of j-th component is defined by pw[j]. The pw[i] and ph[j] value are normalize
+     * value in range form 0 to 1.
      *
      * @param row
      *            row[i] define number of component in column i
@@ -303,7 +304,7 @@ final public class RowColumnLayout implements LayoutManager{
     }
 
     /**
-     * Method to draw orizontal or vertical line during resize componet or
+     * Method to draw horizontal or vertical line during resize component or
      * column. Line/s are drow on the component only if double buffering
      * is supported on component. RowColumnLayout manager check double buffering
      * component capability by isDoubleBuffered() method of component.
@@ -809,7 +810,7 @@ final public class RowColumnLayout implements LayoutManager{
     public void setPanelSize(final float ph[], final float pw[]) {
         if(ph != null && pw != null){
             if(ph.length < this.b_comp + 1 || pw.length < this.row.length) // column)
-            return; // define exception
+                return; // define exception
             this.percent_height = new float[this.b_comp + 1];
             this.percent_width = new float[this.row.length];
             // int MaxWidth = maxWidth - (column - 1) * hgap;

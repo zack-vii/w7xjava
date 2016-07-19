@@ -66,7 +66,7 @@ public class RowColumnContainer extends JComponent{
     /**
      * number of component in column
      */
-    protected int               rows[]        = {1, 0, 0, 0};
+    protected int[]             rows;
     private Point               split_pos     = null;
 
     /**
@@ -74,6 +74,8 @@ public class RowColumnContainer extends JComponent{
      */
     public RowColumnContainer(){
         this.setName("RowColumnContainer");
+        this.rows = new int[RowColumnLayout.MAX_COLUMN];
+        this.rows[0] = 1;
         this.row_col_layout = new RowColumnLayout(this.rows);
         this.setLayout(this.row_col_layout);
     }
@@ -113,8 +115,8 @@ public class RowColumnContainer extends JComponent{
     }
 
     /**
-     * Add componets to the container. The array componet length must
-     * be equals to the componet needed on the row column grid.
+     * Add components to the container. The array component length must
+     * be equals to the component needed on the row column grid.
      *
      * @param c
      *            an array of component
@@ -422,7 +424,7 @@ public class RowColumnContainer extends JComponent{
     }
 
     /*
-    
+
      private void upadateRealPosition(Point p)
      {
         for(int j = 1; j < real_position.size(); j+=2)

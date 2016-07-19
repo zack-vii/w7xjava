@@ -814,7 +814,8 @@ public final class jScopeFacade extends JFrame implements ActionListener, ItemLi
     }
 
     protected final jScopeWaveContainer buildWaveContainer() {
-        final int rows[] = {1, 0, 0, 0};
+        final int rows[] = new int[RowColumnLayout.MAX_COLUMN];
+        rows[0] = 1;
         return(new jScopeWaveContainer(rows, this.def_values));
     }
 
@@ -2537,13 +2538,12 @@ class ServerDialog extends JDialog implements ActionListener{
 
 @SuppressWarnings("serial")
 class WindowDialog extends JDialog implements ActionListener{
-    boolean      changed   = false;
-    int          in_row[];
+    boolean      changed = false;
+    int[]        in_row, out_row;
     JLabel       label;
     JButton      ok, apply, cancel;
-    int          out_row[] = new int[4];
     jScopeFacade parent;
-    JSlider      row_1, row_2, row_3, row_4;
+    JSlider[]    rows;
     JTextField   titleText, eventText, printEventText;
 
     WindowDialog(final JFrame dw, final String title){
@@ -2561,44 +2561,28 @@ class WindowDialog extends JDialog implements ActionListener{
         final JPanel p = new JPanel();
         p.setLayout(new FlowLayout(FlowLayout.LEFT));
         c.gridwidth = GridBagConstraints.BOTH;
-        this.row_1 = new JSlider(SwingConstants.VERTICAL, 1, 16, 1);
-        // row_1.setMajorTickSpacing(4);
-        this.row_1.setMinorTickSpacing(1);
-        this.row_1.setPaintTicks(true);
-        this.row_1.setPaintLabels(true);
-        final Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-        labelTable.put(new Integer(1), new JLabel("1"));
-        labelTable.put(new Integer(4), new JLabel("4"));
-        labelTable.put(new Integer(8), new JLabel("8"));
-        labelTable.put(new Integer(12), new JLabel("12"));
-        labelTable.put(new Integer(16), new JLabel("16"));
-        this.row_1.setLabelTable(labelTable);
-        this.row_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
-        this.row_2 = new JSlider(SwingConstants.VERTICAL, 0, 16, 0);
-        this.row_2.setMajorTickSpacing(4);
-        this.row_2.setMinorTickSpacing(1);
-        this.row_2.setPaintTicks(true);
-        this.row_2.setPaintLabels(true);
-        this.row_2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
-        this.row_3 = new JSlider(SwingConstants.VERTICAL, 0, 16, 0);
-        this.row_3.setMajorTickSpacing(4);
-        this.row_3.setMinorTickSpacing(1);
-        this.row_3.setPaintTicks(true);
-        this.row_3.setPaintLabels(true);
-        this.row_3.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
-        this.row_4 = new JSlider(SwingConstants.VERTICAL, 0, 16, 0);
-        this.row_4.setMajorTickSpacing(4);
-        this.row_4.setMinorTickSpacing(1);
-        this.row_4.setPaintTicks(true);
-        this.row_4.setPaintLabels(true);
-        this.row_4.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
+        this.rows = new JSlider[RowColumnLayout.MAX_COLUMN];
+        for(int i = 0; i < RowColumnLayout.MAX_COLUMN; i++){
+            final int min = i == 0 ? 1 : 0;
+            this.rows[i] = new JSlider(SwingConstants.VERTICAL, min, 16, min);
+            this.rows[i].setMinorTickSpacing(1);
+            this.rows[i].setPaintTicks(true);
+            this.rows[i].setPaintLabels(true);
+            if(i == 0){
+                final Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+                labelTable.put(new Integer(1), new JLabel("1"));
+                labelTable.put(new Integer(4), new JLabel("4"));
+                labelTable.put(new Integer(8), new JLabel("8"));
+                labelTable.put(new Integer(12), new JLabel("12"));
+                labelTable.put(new Integer(16), new JLabel("16"));
+                this.rows[i].setLabelTable(labelTable);
+            }else this.rows[i].setMajorTickSpacing(4);
+            this.rows[i].setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
+            p.add(this.rows[i]);
+        }
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(p, c);
         this.getContentPane().add(p);
-        p.add(this.row_1);
-        p.add(this.row_2);
-        p.add(this.row_3);
-        p.add(this.row_4);
         c.gridwidth = GridBagConstraints.BOTH;
         this.label = new JLabel("Title");
         gridbag.setConstraints(this.label, c);
@@ -2648,11 +2632,10 @@ class WindowDialog extends JDialog implements ActionListener{
                 event = new String(this.printEventText.getText().trim());
                 this.parent.wave_panel.setPrintEvent(this.parent, event);
                 this.parent.setWindowTitle("");
-                this.out_row[0] = this.row_1.getValue();
-                this.out_row[1] = this.row_2.getValue();
-                this.out_row[2] = this.row_3.getValue();
-                this.out_row[3] = this.row_4.getValue();
-                for(int i = 0; i < 4; i++)
+                this.out_row = new int[this.in_row.length];
+                for(int i = 0; i < this.in_row.length; i++)
+                    this.out_row[i] = this.rows[i].getValue();
+                for(int i = 0; i < this.in_row.length; i++)
                     if(this.out_row[i] != this.in_row[i]){
                         this.changed = true;
                         break;
@@ -2674,13 +2657,12 @@ class WindowDialog extends JDialog implements ActionListener{
         if(this.parent.wave_panel.getEvent() != null) this.eventText.setText(this.parent.wave_panel.getEvent());
         if(this.parent.wave_panel.getPrintEvent() != null) this.printEventText.setText(this.parent.wave_panel.getPrintEvent());
         final int in_row[] = this.parent.wave_panel.getComponentsInColumns();
-        this.row_1.setValue(in_row[0]);
-        this.row_2.setValue(in_row[1]);
-        this.row_3.setValue(in_row[2]);
-        this.row_4.setValue(in_row[3]);
         this.in_row = new int[in_row.length];
-        for(int i = 0; i < in_row.length; i++)
-            this.in_row[i] = in_row[i];
+        for(int i = 0; i < this.rows.length; i++)
+            if(i < in_row.length){
+                this.rows[i].setValue(this.in_row[i] = in_row[i]);
+                this.rows[i].setVisible(true);
+            }else this.rows[i].setVisible(false);
         this.setLocationRelativeTo(this.parent);
         this.setVisible(true);
         return this.changed;

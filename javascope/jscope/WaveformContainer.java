@@ -523,7 +523,7 @@ public class WaveformContainer extends RowColumnContainer implements WaveformMan
                     final double y = e.point_y;
                     if(w.isImage()) x = e.delta_x;
                     else if(e.is_mb2) this.allSameXScaleAutoY(w);
-                    // Set x to time_value allows pannels synchronization from 2D
+                    // Set x to time_value allows panels synchronization from 2D
                     // signal viewed in MODE_YX
                     if(!tf.equals(nan_d)) x = e.time_value;
                     this.updatePoints(x, y, (Waveform)e.getSource());
