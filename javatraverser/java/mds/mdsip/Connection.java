@@ -328,10 +328,6 @@ public class Connection{
         return eventid;
     }
 
-    public Descriptor compile(final String expr) throws MdsException {
-        return this.getDescriptor("COMPILE($)", new CString(expr));
-    }
-
     public final boolean connect() {
         if(this.connectThread == null || !this.connectThread.isAlive()){
             this.connectThread = new MdsConnect();
@@ -362,10 +358,6 @@ public class Connection{
         this.sock.setTcpNoDelay(true);
         this.dis = new BufferedInputStream(this.sock.getInputStream());
         this.dos = new DataOutputStream(new BufferedOutputStream(this.sock.getOutputStream()));
-    }
-
-    public String decompile(final Descriptor dsc) throws MdsException {
-        return this.getString("DECOMPILE($)", dsc);
     }
 
     public final boolean disconnect() {
@@ -413,14 +405,6 @@ public class Connection{
         if(this.hashEventName.containsKey(eventName)) this.dispatchUpdateEvent(this.hashEventName.get(eventName));
     }
 
-    public final Descriptor evaluate(final Descriptor desc) throws MdsException {
-        return this.getDescriptor("EVALUATE($)", desc);
-    }
-
-    public final Descriptor evaluate(final String expr) throws MdsException {
-        return this.getDescriptor(String.format("EVALUATE((%s;))", expr), Descriptor.class);
-    }
-
     @Override
     public void finalize() throws Throwable {
         try{
@@ -453,10 +437,6 @@ public class Connection{
 
     public ByteBuffer getByteBuffer(final String expr, final Descriptor... args) throws MdsException {
         return this.getMessage(expr, false, args).body;
-    }
-
-    public final Descriptor getData(final String expr, final Descriptor... args) throws MdsException {
-        return Descriptor.readMessage(this.getMessage(expr, false, args));
     }
 
     public final <D extends Descriptor> Descriptor getDescriptor(final String expr, final Class<D> cls, final Descriptor... args) throws MdsException {
