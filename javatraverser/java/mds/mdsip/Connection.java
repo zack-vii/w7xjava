@@ -12,6 +12,8 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import debug.DEBUG;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
@@ -504,16 +506,28 @@ public class Connection{
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
         byte idx = 0;
-        Message msg;
+        final Message msg;
         final StringBuffer cmd = new StringBuffer(expr.length() + 128);
         if(serialize) cmd.append("_ans=*;MdsShr->MdsSerializeDscOut(xd((");
-        cmd.append(expr);
-        if(args != null && args.length > 0 && expr.indexOf("$") == -1){ // If no $ args specified, build argument list
-            cmd.append("($");
-            for(int i = 1; i < args.length; i++)
-                cmd.append(",$");
-            cmd.append(')');
-        }
+        if(args != null && args.length > 0){
+            final boolean[] atomic = new boolean[args.length];
+            for(int i = 0; i < args.length; i++)
+                if(!(atomic[i] = args[i].isAtomic())) args[i] = args[i].serializeDsc();
+            if(expr.indexOf("$") == -1){ // If no $ args specified, build argument list
+                cmd.append(expr);
+                for(int i = 0; i < args.length; i++)
+                    cmd.append(i == 0 ? '(' : ',').append(atomic[i] ? "$" : Connection.serialStr);
+                cmd.append(')');
+            }else{
+                final Matcher m = Pattern.compile("\\$").matcher(expr);
+                int pos = 0;
+                for(int i = 0; i < args.length && m.find(); i++){
+                    cmd.append(expr.substring(pos, m.start())).append(atomic[i] ? "$" : Connection.serialStr);
+                    pos = m.end();
+                }
+                cmd.append(expr.substring(pos));
+            }
+        }else cmd.append(expr);
         if(serialize) cmd.append(";)),xd(_ans));_ans");
         try{
             if(args != null && args.length > 0){
@@ -524,7 +538,7 @@ public class Connection{
             }else new Message(cmd.toString()).send(this.dos);
             msg = this.getAnswer();
         }catch(final IOException e){
-            throw new MdsException("Connection.mdsIO", e);
+            throw new MdsException("Connection.getMessage", e);
         }
         if(msg == null) throw new MdsException("Could not get IO for " + this.provider.host, 0);
         return msg;
