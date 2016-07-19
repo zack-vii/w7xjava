@@ -13,9 +13,9 @@ import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
+import mds.data.descriptor_s.Pointer;
 import mds.mdsip.Connection;
 
-@SuppressWarnings("static-method")
 public final class Database{
     @SuppressWarnings("serial")
     public final class TagList extends HashMap<String, Nid>{
@@ -36,7 +36,6 @@ public final class Database{
     private static final Map<Connection.Provider, Connection> connections = new HashMap<Connection.Provider, Connection>(16);
     private static int                                        cshot       = 0;
     public static final int                                   EDITABLE    = 2;
-    private static Connection                                 mds;
     public static final int                                   NEW         = 3;
     public static final int                                   NORMAL      = 1;
     public static final int                                   READONLY    = 0;
@@ -47,46 +46,26 @@ public final class Database{
         return (parts.length > 1) ? parts[0] : Connection.Provider.DEFAULT_HOST;
     }
 
+    public static final ByteBuffer getByteBuffer(final String expr) throws MdsException {
+        if(expr == null || expr.isEmpty()) return null;
+        return Connection.getActiveConnection().getByteBuffer(expr);
+    }
+
     public static final String getCurrentProvider() {
-        return Database.mds.getProvider();
+        return Connection.getActiveConnection().getProvider();
     }
 
     public static final String getDatabase() throws MdsException {
-        if(!Database.mds.isConnected()) return "Not connected.";
-        final String result = Database.mds.getString("_t=*;TCL('show db',_t);_t");
+        if(!Connection.getActiveConnection().isConnected()) return "Not connected.";
+        final String result = Connection.getActiveConnection().getString("_t=*;TCL('show db',_t);_t");
         return result.trim();
-    }
-
-    public static final String getFullPath(final int nid) throws MdsException {
-        try{
-            return Database.mds.getString(String.format("GETNCI(%d,'FULLPATH')", nid));
-        }catch(final MdsException e){
-            return String.format("<nid %d>", nid);
-        }
-    }
-
-    public static final String getMinPath(final int nid) throws MdsException {
-        if(Database.mds == null) throw new MdsException("Offline");
-        return Database.mds.getString(String.format("GETNCI(%d,'MINPATH')", nid));
-    }
-
-    public static final String getPath(final int nid) throws MdsException {
-        try{
-            return Database.mds.getString(String.format("GETNCI(%d,'PATH')", nid));
-        }catch(final MdsException e){
-            return String.format("<nid %d>", nid);
-        }
-    }
-
-    public static final int getTreeCtx() throws MdsException {
-        return Database.mds.getInteger("TreeShr->TreeCtx()");
     }
 
     private static final Connection setupConnection(final String provider_in) {
         final Connection.Provider provider = new Connection.Provider(provider_in);
-        if(Database.connections.containsKey(provider)) return Database.mds = Database.connections.get(provider);
-        Database.connections.put(provider, Database.mds = new Connection(provider));
-        return Database.mds;
+        if(Database.connections.containsKey(provider)) return Database.connections.get(provider).setActive();
+        Database.connections.put(provider, new Connection(provider).setActive());
+        return Connection.getActiveConnection();
     }
 
     private static final void stderr(final String line, final Exception exc) {
@@ -97,44 +76,10 @@ public final class Database{
         jTraverserFacade.stdout(line);
     }
 
-    public static final Descriptor tdiCompile(final String expr) throws MdsException {
-        if(expr == null || expr.isEmpty()) return null;
-        return Database.mds.compile(expr);
-    }
-
-    public static final String tdiDecompile(final Descriptor data) throws MdsException {
-        if(data == null) return "*";
-        return Descriptor.decompile(data);
-    }
-
-    public static final String tdiEvalDeco(final String expr) throws MdsException {
-        if(expr == null || expr.isEmpty()) return "*";
-        try{
-            return Database.mds.getString(String.format("_t=*;TdiShr->TdiDecompile(xd(EVALUATE((%s;))),xd(_t),val(-1));_t", expr));
-        }catch(final MdsException e){
-            return "<" + e.getMessage() + ">";
-        }
-    }
-
-    public static final Descriptor tdiEvaluate(final Descriptor data) throws MdsException {
-        if(data == null) return null;
-        return Database.mds.evaluate(data.decompile());
-    }
-
-    public static final Descriptor tdiEvaluate(final String expr) throws MdsException {
-        if(expr == null || expr.isEmpty()) return null;
-        return Database.mds.evaluate(expr);
-    }
-
-    public static final ByteBuffer tdiSerialize(final String expr) throws MdsException {
-        if(expr == null || expr.isEmpty()) return null;
-        return Database.mds.getMessage(expr, true).body;
-    }
-
     private static final void updateCurrent() throws MdsException {
         try{
-            Database.cshot = Database.mds.getInteger("$SHOT");
-            Database.cexpt = Database.mds.getString("$EXPT").trim();
+            Database.cshot = Connection.getActiveConnection().getInteger("$SHOT");
+            Database.cexpt = Connection.getActiveConnection().getString("$EXPT").trim();
         }catch(final MdsException de){
             Database.cshot = 0;
             Database.cexpt = null;
@@ -147,11 +92,13 @@ public final class Database{
     private final int        shot;
     private final TreeShr    treeshr;
     private final MdsShr     mdsshr;
+    private final TdiShr     tdishr;
 
     public Database(final String provider) throws MdsException{
         this.con = Database.setupConnection(provider);
         this.treeshr = new TreeShr(this.con);
         this.mdsshr = new MdsShr(this.con);
+        this.tdishr = new TdiShr(this.con);
         this.expt = null;
         this.shot = 0;
         this.mode = 0;
@@ -169,6 +116,7 @@ public final class Database{
         this.con = Database.setupConnection(provider);
         this.treeshr = new TreeShr(this.con);
         this.mdsshr = new MdsShr(this.con);
+        this.tdishr = new TdiShr(this.con);
         this.expt = expt.toUpperCase();
         this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
         if(mode == Database.NEW){
@@ -188,8 +136,6 @@ public final class Database{
 
     private final void _connect() throws MdsException {
         if(!this.con.isConnected()) throw new MdsException("Not connected");
-        if(Database.mds != this.con) Database.mds = this.con;
-        Database.updateCurrent();
     }
 
     /* Low level MDS database management routines, will be  masked by the Node class*/
@@ -227,7 +173,7 @@ public final class Database{
 
     public final String[] allTags(final Nid nid) throws MdsException {
         this._checkContext();
-        final String str = Database.mds.getString(String.format("_i=-1;_q=0Q,_a='',_t='',_j=0,WHILE(AND(TreeShr->TreeFindTagWildDsc(ref('***'),ref(_i),ref(_q),xd(_t)),_i<%d)) IF(OR(%d==0,_i==%d)) _a=(_j++;_a//','//_t;);_a", nid.getValue(), nid.getValue()));
+        final String str = this.con.getString(String.format("_i=-1;_q=0Q,_a='',_t='',_j=0,WHILE(AND(TreeShr->TreeFindTagWildDsc(ref('***'),ref(_i),ref(_q),xd(_t)),_i<%d)) IF(OR(%d==0,_i==%d)) _a=(_j++;_a//','//_t;);_a", nid.getValue(), nid.getValue()));
         if(str == null) return new String[0];
         return str.substring(1).split(",");
     }
@@ -246,24 +192,10 @@ public final class Database{
         Database.updateCurrent();
     }
 
-    public final Descriptor compile(final String expr) throws MdsException {
-        this._checkContext();
-        return Database.tdiCompile(expr);
-    }
-
     public final void create(final int shot) throws MdsException {
         this._checkContext();
         final int status = this.treeshr.treeCreateTreeFiles(this.expt, shot, this.shot);
         this.handleStatus(status);
-    }
-
-    public final String decompile(final Descriptor data) throws MdsException {
-        this._checkContext();
-        return Database.tdiDecompile(data);
-    }
-
-    public String decompile_data(final Nid nid) throws MdsException {//
-        return Database.mds.getString(String.format("_a=*;TreeShr->TreeGetRecord(val(%d),xd(_a));TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a", nid.getValue()));
     }
 
     public final void deleteExecute() throws MdsException {
@@ -294,23 +226,13 @@ public final class Database{
 
     public final int doAction(final Nid nid) throws MdsException {
         this._checkContext();
-        return Database.mds.getInteger(String.format("TCL('dispatch/nowait '//GETNCI(%d,'FULL_PATH'))", nid.getValue()));
+        return this.con.getInteger(String.format("TCL('dispatch/nowait '//GETNCI(%d,'FULL_PATH'))", nid.getValue()));
     }
 
     public final void doDeviceMethod(final Nid nid, final String method) throws MdsException {
         this._checkContext();
         // TODO:TreeShr->TreeDoMethod
         throw new MdsException("No implementation");
-    }
-
-    public final Descriptor evaluate(final Descriptor data) throws MdsException {
-        this._checkContext();
-        return Database.tdiEvaluate(data);
-    }
-
-    public final Descriptor evaluate(final String expr) throws MdsException {
-        this._checkContext();
-        return Database.tdiEvaluate(expr);
     }
 
     @Override
@@ -344,17 +266,17 @@ public final class Database{
 
     public final int getFlags(final Nid nid) throws MdsException {
         this._checkContext();
-        return Database.mds.getInteger(String.format("GETNCI(%d,'GET_FLAGS')", nid.getValue()));
+        return this.con.getInteger(String.format("GETNCI(%d,'GET_FLAGS')", nid.getValue()));
     }
 
     public final NodeInfo getInfo(final Nid nid) throws MdsException {
         this._checkContext();
-        final int[] I = Database.mds.getIntegerArray(String.format("_i=%d;[GETNCI(_i,'CLASS'),GETNCI(_i,'DTYPE'),GETNCI(_i,'USAGE'),GETNCI(_i,'GET_FLAGS'),GETNCI(_i,'OWNER_ID'),GETNCI(_i,'LENGTH'),IF_ERROR(SHAPE(GETNCI(GETNCI(_i,'CONGLOMERATE_NID'),'NID_NUMBER'))[0],0),GETNCI(_i,'CONGLOMERATE_ELT')]", nid.getValue()));
-        final String date = Database.mds.getString(String.format("DATE_TIME(GETNCI(%d,'TIME_INSERTED'))", nid.getValue()));
-        final String node_name = Database.mds.getString(String.format("GETNCI(%d,'NODE_NAME')", nid.getValue()));
-        final String fullpath = Database.mds.getString(String.format("GETNCI(%d,'FULLPATH')", nid.getValue()));
-        final String minpath = Database.mds.getString(String.format("GETNCI(%d,'MINPATH')", nid.getValue()));
-        final String path = Database.mds.getString(String.format("GETNCI(%d,'PATH')", nid.getValue()));
+        final int[] I = this.con.getIntegerArray(String.format("_i=%d;[GETNCI(_i,'CLASS'),GETNCI(_i,'DTYPE'),GETNCI(_i,'USAGE'),GETNCI(_i,'GET_FLAGS'),GETNCI(_i,'OWNER_ID'),GETNCI(_i,'LENGTH'),IF_ERROR(SHAPE(GETNCI(GETNCI(_i,'CONGLOMERATE_NID'),'NID_NUMBER'))[0],0),GETNCI(_i,'CONGLOMERATE_ELT')]", nid.getValue()));
+        final String date = this.con.getString(String.format("DATE_TIME(GETNCI(%d,'TIME_INSERTED'))", nid.getValue()));
+        final String node_name = this.con.getString(String.format("GETNCI(%d,'NODE_NAME')", nid.getValue()));
+        final String fullpath = this.con.getString(String.format("GETNCI(%d,'FULLPATH')", nid.getValue()));
+        final String minpath = this.con.getString(String.format("GETNCI(%d,'MINPATH')", nid.getValue()));
+        final String path = this.con.getString(String.format("GETNCI(%d,'PATH')", nid.getValue()));
         return new NodeInfo(nid.getValue(), (byte)I[0], (byte)I[1], (byte)I[2], I[3], I[4], I[5], I[6], I[7], date, node_name, fullpath, minpath, path);
     }
 
@@ -368,7 +290,7 @@ public final class Database{
 
     public final Nid[] getMembers(final Nid nid) throws MdsException {
         this._checkContext();
-        return Nid.getArrayOfNids(Database.mds.getIntegerArray(String.format("IF_ERROR(GETNCI(GETNCI(%d,'MEMBER_NIDS'),'NID_NUMBER'),[])", nid.getValue())));
+        return Nid.getArrayOfNids(this.con.getIntegerArray(String.format("IF_ERROR(GETNCI(GETNCI(%d,'MEMBER_NIDS'),'NID_NUMBER'),[])", nid.getValue())));
     }
 
     public final String getName() {
@@ -377,16 +299,16 @@ public final class Database{
 
     public final String getOriginalPartName(final Nid nid) throws MdsException {
         this._checkContext();
-        return Database.mds.getString(String.format("GETNCI(%d,'ORIGINAL_PART_NAME')", nid.getValue()));
+        return this.con.getString(String.format("GETNCI(%d,'ORIGINAL_PART_NAME')", nid.getValue()));
     }
 
     public final String getProvider() {
         return this.con.getProvider();
     }
 
-    public final Descriptor getRecord(final Nid nid) throws MdsException {// _a=*,TreeShr->TreeGetRecord(val(%d),xd(_a)),_a
+    public final Descriptor getRecord(final Nid nid) throws MdsException {
         this._checkContext();
-        return Database.tdiEvaluate(String.format("GETNCI(%d,'RECORD')", nid.getValue()));
+        return this.treeshr.treeGetRecord(nid.getValue());
     }
 
     public Signal getSegment(final Nid nid, final int segment) throws MdsException {
@@ -399,7 +321,7 @@ public final class Database{
 
     public final Nid[] getSons(final Nid nid) throws MdsException {
         this._checkContext();
-        return Nid.getArrayOfNids(Database.mds.getIntegerArray(String.format("IF_ERROR(GETNCI(GETNCI(%d,'CHILDREN_NIDS'),'NID_NUMBER'),[])", nid.getValue())));
+        return Nid.getArrayOfNids(this.con.getIntegerArray(String.format("IF_ERROR(GETNCI(GETNCI(%d,'CHILDREN_NIDS'),'NID_NUMBER'),[])", nid.getValue())));
     }
 
     public final String[] getTags(final Nid nid) throws MdsException {
@@ -429,13 +351,17 @@ public final class Database{
         return taglist;
     }
 
+    public final Pointer getTreeCtx() throws MdsException {
+        return this.treeshr.treeCtx();
+    }
+
     public final byte[] getType(final String expr) throws MdsException {
-        return Database.mds.getByteArray("_a=As_Is(EXECUTE($));_a=[Class(_a),Kind(_a)]", new CString(expr));
+        return this.con.getByteArray("_a=As_Is(EXECUTE($));_a=[Class(_a),Kind(_a)]", new CString(expr));
     }
 
     public final Nid[] getWild(final int usage_mask) throws MdsException {
-        final Nid[] nids = Nid.getArrayOfNids(Database.mds.getIntegerArray(String.format("_i=-1;_a='[';_q=0Q;WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref('***'),ref(_i),ref(_q),val(%d)),1)==1) _a=_a//TEXT(_i)//',';_a=COMPILE(_a//'*]')", 1 << usage_mask)));
-        if(nids == null) this.handleStatus(Database.mds.getInteger("_s"));
+        final Nid[] nids = Nid.getArrayOfNids(this.con.getIntegerArray(String.format("_i=-1;_a='[';_q=0Q;WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref('***'),ref(_i),ref(_q),val(%d)),1)==1) _a=_a//TEXT(_i)//',';_a=COMPILE(_a//'*]')", 1 << usage_mask)));
+        if(nids == null) this.handleStatus(this.con.getInteger("_s"));
         return nids;
     }
 
@@ -503,12 +429,12 @@ public final class Database{
 
     public final Nid resolve(final Path pad) throws MdsException {
         this._checkContext();
-        return (Nid)Database.mds.getDescriptor(String.format("GETNCI('%s','NID_NUMBER')", pad.getValue()), Nid.class);
+        return (Nid)this.con.getDescriptor(String.format("GETNCI('%s','NID_NUMBER')", pad.getValue()), Nid.class);
     }
 
     public final Nid resolveRefSimple(final Nid nid) throws MdsException {
         this._checkContext();
-        return new Nid(Database.mds.getInteger(String.format("_a=%d;WHILE(IAND(GETNCI(_a,'DTYPE'),-2)==192) _a=GETNCI(_a,'RECORD');GETNCI(_a,'NID_NUMBER')", nid.getValue())));
+        return new Nid(this.con.getInteger(String.format("_a=%d;WHILE(IAND(GETNCI(_a,'DTYPE'),-2)==192) _a=GETNCI(_a,'RECORD');GETNCI(_a,'NID_NUMBER')", nid.getValue())));
     }
 
     /*
@@ -543,8 +469,7 @@ public final class Database{
     }
 
     public final void setEvent(final String event) throws MdsException {
-        final int status = Database.mds.getInteger(String.format("MdsShr->MDSEvent(ref('%s'),val(0),val(0))", event));
-        this.handleStatus(status);
+        this.handleStatus(this.mdsshr.mdsEvent(event));
     }
 
     public final void setFlags(final Nid nid, final int flags) throws MdsException {
@@ -572,6 +497,26 @@ public final class Database{
         if(tags == null) return;
         for(final String tag : tags)
             this.handleStatus(this.treeshr.treeAddTag(nid.getValue(), tag));
+    }
+
+    public final Descriptor tdiCompile(final String expr) throws MdsException {
+        this._checkContext();
+        return this.tdishr.tdiCompile(expr);
+    }
+
+    public final String tdiDecompile(final Descriptor data) throws MdsException {
+        this._checkContext();
+        return this.tdishr.tdiDecompile(data);
+    }
+
+    public final Descriptor tdiEvaluate(final Descriptor data) throws MdsException {
+        this._checkContext();
+        return this.tdishr.tdiEvaluate(data);
+    }
+
+    public final Descriptor tdiExecute(final String expr, final Descriptor... args) throws MdsException {
+        this._checkContext();
+        return this.tdishr.tdiExecute(expr, args);
     }
 
     @Override
