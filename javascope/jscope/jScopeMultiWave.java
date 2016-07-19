@@ -28,7 +28,6 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
             if(!support.isDrop()) return false;
             if(!support.isDataFlavorSupported(DataFlavor.stringFlavor)) return false;
             if((support.getSourceDropActions() & TransferHandler.COPY_OR_MOVE) == 0) return false;
-            // support.setDropAction(TransferHandler.COPY);
             return true;
         }
 
@@ -36,8 +35,8 @@ final public class jScopeMultiWave extends MultiWaveform implements UpdateEventL
         public boolean importData(final TransferHandler.TransferSupport support) {
             if(!this.canImport(support)) return false;
             try{
-                final String[] data = ((String)support.getTransferable().getTransferData(DataFlavor.stringFlavor)).split(":", 2);
-                final String experiment = data[0].equals("null") ? null : data[0];
+                final String[] data = ((String)support.getTransferable().getTransferData(DataFlavor.stringFlavor)).split("::TOP", 2);
+                final String experiment = data[0].equals("\\null") ? null : data[0].substring(1);
                 final String path = data[1];
                 if(support.getDropAction() == TransferHandler.MOVE) jScopeMultiWave.this.wi.erase();
                 jScopeMultiWave.this.wi.setExperiment(experiment);

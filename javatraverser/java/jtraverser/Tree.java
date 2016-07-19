@@ -40,7 +40,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
         @Override
         public final Transferable createTransferable(final JComponent comp) {
             try{
-                return new StringSelection(((Tree)comp).getExpt() + ":" + ((Tree)comp).getCurrentNode().getFullPath());
+                return new StringSelection(((Tree)comp).getCurrentNode().getFullPath());
             }catch(final Exception exc){
                 return null;
             }
