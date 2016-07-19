@@ -1,11 +1,10 @@
 package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
-import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 
-public final class Nid extends Int32{
+public final class Nid extends TREENODE<Integer>{
     public static final Nid[] getArrayOfNids(final int[] nid_nums) {
         final Nid[] nids = new Nid[nid_nums.length];
         for(int i = 0; i < nids.length; i++)
@@ -18,7 +17,7 @@ public final class Nid extends Int32{
     }
 
     public Nid(final int integer){
-        super(DTYPE.NID, integer);
+        super(DTYPE.NID, NUMBER.toByteBuffer(integer));
     }
 
     public Nid(final Nid nid, final int relative){
@@ -28,7 +27,7 @@ public final class Nid extends Int32{
     @Override
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         try{
-            return pout.append(Database.getMinPath(this.getValue()));
+            return pout.append(this.getMinPath());
         }catch(final MdsException e){
             return pout.append("<nid ").append(this.getValue()).append('>');
         }catch(final Exception e){
@@ -37,31 +36,28 @@ public final class Nid extends Int32{
         }
     }
 
-    public final String getFullPath() {
-        try{
-            return Database.getFullPath(this.getValue());
-        }catch(final MdsException e){
-            return null;
-        }
+    @Override
+    public final Integer getValue(final ByteBuffer b) {
+        return b.getInt(0);
     }
 
     @Override
     public double[] toDoubleArray() {
-        return this.evaluate().toDoubleArray();
+        return this.getRecord().toDoubleArray();
     }
 
     @Override
     public float[] toFloatArray() {
-        return this.evaluate().toFloatArray();
+        return this.getRecord().toFloatArray();
     }
 
     @Override
     public int[] toIntArray() {
-        return this.evaluate().toIntArray();
+        return this.getRecord().toIntArray();
     }
 
     @Override
     public long[] toLongArray() {
-        return this.evaluate().toLongArray();
+        return this.getRecord().toLongArray();
     }
 }

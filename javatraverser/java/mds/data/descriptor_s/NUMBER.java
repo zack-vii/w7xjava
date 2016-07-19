@@ -51,7 +51,7 @@ public abstract class NUMBER<T extends Number>extends Descriptor_S<T>{
         return ByteBuffer.allocate(Float.BYTES * 2).order(Descriptor.BYTEORDER).putFloat(0, real).putFloat(Float.BYTES, imag);
     }
 
-    private static final ByteBuffer toByteBuffer(final int value) {
+    static final ByteBuffer toByteBuffer(final int value) {
         return ByteBuffer.allocate(Integer.BYTES).order(Descriptor.BYTEORDER).putInt(0, value);
     }
 
