@@ -5,6 +5,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_S;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Int32;
+import mds.data.descriptor_s.Missing;
 import mds.mdsip.Connection;
 
 public final class TdiShr{
@@ -33,12 +34,22 @@ public final class TdiShr{
         return this.connection.getIntegerArray(expr.append(')').toString(), args.toArray(new Descriptor[args.size()]));
     }
 
+    public final Descriptor tdiCompile(final String expr) throws MdsException {
+        if(expr == null || expr.isEmpty()) return Missing.NEW;
+        return this.connection.getDescriptor("Compile($)", new CString(expr));
+    }
+
     public final String tdiDecompile(final Descriptor dsc) throws MdsException {
         return this.connection.getString("TdiShr->TdiDecompile(xd($),xd(_a),val(-1)", dsc);
     }
 
-    public final String tdiDecompile(final String expr) throws MdsException {
-        if(expr == null || expr.isEmpty()) return "*";
-        return this.connection.getString(String.format("_a=*;TdiShr->TdiDecompile(xd(EVALUATE($)),xd(_a),val(-1));_a", new CString(expr)));
+    public final Descriptor tdiEvaluate(final Descriptor data) throws MdsException {
+        if(data == null || data == Missing.NEW) return Missing.NEW;
+        return this.connection.getDescriptor("Evaluate($)", data);
+    }
+
+    public final Descriptor tdiExecute(final String expr, final Descriptor... args) throws MdsException {
+        if(expr == null || expr.isEmpty()) return Missing.NEW;
+        return this.connection.getDescriptor(new StringBuilder(expr.length() + 13).append("Evaluate((").append(expr).append(";))").toString(), args);
     }
 }
