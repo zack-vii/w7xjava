@@ -2,7 +2,6 @@ package mds;
 
 import java.util.ArrayList;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor.Descriptor_CA;
 import mds.data.descriptor.Descriptor_R;
 import mds.data.descriptor_a.Int8Array;
@@ -26,18 +25,7 @@ public final class MdsShr{
     }
 
     public final Descriptor mdsCompress(final String image, final String entry, final Descriptor input) throws MdsException {
-        final StringBuilder cmd = new StringBuilder(128).append("_a=*;");
-        final String in;
-        Descriptor_A argin;
-        if(input instanceof Descriptor_A){
-            in = "$";
-            argin = (Descriptor_A)input;
-        }else{
-            cmd.append("_s=MdsShr->MdsSerializeDscIn(ref($),xd(_a));");
-            in = "_a";
-            argin = input.serializeDsc();
-        }
-        cmd.append("_s=MdsShr->MdsCompress(");
+        final StringBuilder cmd = new StringBuilder(128).append("_a=*;_s=MdsShr->MdsCompress(");
         final ArrayList<Descriptor> args = new ArrayList<Descriptor>(3);
         if(image == null) cmd.append("0,");
         else{
@@ -49,8 +37,8 @@ public final class MdsShr{
             cmd.append("ref($),");
             args.add(new CString(entry));
         }
-        cmd.append("xd(").append(in).append("),xd(_a));_a");
-        args.add(argin);
+        cmd.append("xd($),xd(_a));_a");
+        args.add(input);
         final Descriptor result = this.connection.getDescriptor(cmd.toString(), args.toArray(new Descriptor[0]));
         return (result == null || result == Missing.NEW) ? input : result;
     }
