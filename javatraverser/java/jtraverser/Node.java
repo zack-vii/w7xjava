@@ -499,11 +499,7 @@ public class Node{
 
     public final boolean isSegmented() {
         if(this.info.isSegmented()) return true;
-        try{
-            return this.database.evaluate(new StringBuilder(32).append("GetNumSegments(").append(this.nid.getValue()).append(')').toString()).toInt() > 0;
-        }catch(final MdsException e){
-            return false;
-        }
+        return this.nid.getNumSegments() > 0;
     }
 
     public final boolean isSetup() {

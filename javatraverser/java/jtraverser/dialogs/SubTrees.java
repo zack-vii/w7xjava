@@ -168,11 +168,17 @@ public class SubTrees extends JDialog{
         JCheckBox cb;
         for(int i = 0; i < nids.length; i++){
             final Nid nid = nids[i];
-            final String fullpath = nid.getFullPath();
-            this.checkBoxes[i] = cb = new JCheckBox(nid.toString());
-            cb.putClientProperty("nid", nid);
-            cb.putClientProperty("fullpath", fullpath);
-            cb.addActionListener(new CheckBoxListener());
+            try{
+                String fullpath;
+                fullpath = nid.getFullPath();
+                this.checkBoxes[i] = cb = new JCheckBox(nid.toString());
+                cb.putClientProperty("nid", nid);
+                cb.putClientProperty("fullpath", fullpath);
+                cb.addActionListener(new CheckBoxListener());
+            }catch(final MdsException e){
+                System.err.println(nid.decompile());
+                e.printStackTrace();
+            }
         }
         this.subtrees.setListData(this.checkBoxes);
         this.update();

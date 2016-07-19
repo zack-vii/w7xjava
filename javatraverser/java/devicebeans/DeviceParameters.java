@@ -16,11 +16,11 @@ public class DeviceParameters extends DeviceMultiComponent{
             this.subtree.setDefault(nidData);
             Nid currNid;
             currNid = this.subtree.resolve(new Path(":DESCRIPTION"));
-            final String description = this.subtree.evaluate(currNid).toString();
+            final String description = this.subtree.tdiEvaluate(currNid).toString();
             currNid = this.subtree.resolve(new Path(":TYPE"));
-            final String typeStr = this.subtree.evaluate(currNid).toString();
+            final String typeStr = this.subtree.tdiEvaluate(currNid).toString();
             currNid = this.subtree.resolve(new Path(":DIMS"));
-            final int[] dims = this.subtree.evaluate(currNid).toIntArray();
+            final int[] dims = this.subtree.tdiEvaluate(currNid).toIntArray();
             currNid = this.subtree.resolve(new Path(":DATA"));
             if(dims[0] == 0) // Scalar
             {
@@ -99,7 +99,7 @@ public class DeviceParameters extends DeviceMultiComponent{
             this.subtree.setDefault(nidData);
             Nid currNid;
             currNid = this.subtree.resolve(new Path(parName + ":NAME"));
-            parName = this.subtree.evaluate(currNid).toString();
+            parName = this.subtree.tdiEvaluate(currNid).toString();
             this.subtree.setDefault(prevDefNid);
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(this, "Error getting Component Name in DeviceParameters: " + exc);
@@ -136,7 +136,7 @@ public class DeviceParameters extends DeviceMultiComponent{
             this.subtree.setDefault(nidData);
             Nid currNid;
             currNid = this.subtree.resolve(new Path(":NUM_ACTIVE"));
-            final int numComponents = this.subtree.evaluate(currNid).toInt();
+            final int numComponents = this.subtree.tdiEvaluate(currNid).toInt();
             this.subtree.setDefault(prevDefNid);
             return numComponents;
         }catch(final Exception exc){

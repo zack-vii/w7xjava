@@ -72,10 +72,6 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
         }
     };
 
-    public static final Descriptor compile(final String expr) throws MdsException {
-        return Database.tdiCompile(expr);
-    }
-
     public static final String decompile(final Descriptor data) {
         return data.toString();
     }
@@ -348,7 +344,12 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
     }
 
     public final DefaultMutableTreeNode findNid(final Nid nid) {
-        return this.findPath(nid.getFullPath());
+        try{
+            return this.findPath(nid.getFullPath());
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public final DefaultMutableTreeNode findPath(final String path) {

@@ -17,10 +17,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
+import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
 public class DeviceField extends DeviceComponent{
@@ -102,7 +102,7 @@ public class DeviceField extends DeviceComponent{
         if(data != null){
             String textString = data.decompile();
             if(this.displayEvaluated) try{
-                this.initialField = textString = Database.tdiEvalDeco(textString);
+                this.initialField = textString = Connection.getActiveConnection().getDescriptor(textString).decompile();
             }catch(final Exception exc){}
             if(textString != null){
                 if(this.textOnly && textString.charAt(0) == '"') this.textF.setText(textString.substring(1, textString.length() - 1));
@@ -119,11 +119,8 @@ public class DeviceField extends DeviceComponent{
         final String dataString = this.textF.getText();
         if(dataString == null) return null;
         try{
-            if(this.textOnly){ // If it begins with a [ it is assumed to be an array of strings
-                if(dataString.trim().startsWith("[")) return Database.tdiCompile(dataString);
-                return new CString(dataString);
-            }
-            return Database.tdiCompile(dataString);
+            if(this.textOnly && !dataString.trim().startsWith("[")) return new CString(dataString);
+            return Connection.getActiveConnection().getDescriptor(dataString);
         }catch(final MdsException e){}
         return null;
     }
@@ -266,11 +263,7 @@ public class DeviceField extends DeviceComponent{
         if(this.editable || !this.displayEvaluated || this.data == null) return;
         // Nothing to do if the field is not editable and displays evaluated data
         String textString;
-        try{
-            textString = Database.tdiEvalDeco(this.data.decompile());
-        }catch(final Exception exc){
-            textString = this.data.decompile();
-        }
+        textString = this.data.decompile();
         if(textString != null){
             if(this.textOnly && textString.charAt(0) == '"') this.textF.setText(textString.substring(1, textString.length() - 1));
             else this.textF.setText(textString);

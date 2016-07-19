@@ -85,7 +85,7 @@ public class LoadPulse{
         try{
             final Nid rootNid = this.tree.resolve(new Path("\\PM_SETUP"));
             final Nid unitsNid = new Nid(rootNid, +5);
-            final Descriptor unitsData = this.tree.evaluate(unitsNid);
+            final Descriptor unitsData = this.tree.tdiEvaluate(unitsNid);
             final String units = unitsData.toString();
             final StringTokenizer st = new StringTokenizer(units, " ,\"");
             return st.countTokens();
@@ -99,7 +99,7 @@ public class LoadPulse{
         try{
             final Nid rootNid = this.tree.resolve(new Path("\\PC_SETUP"));
             final Nid connectionNid = new Nid(rootNid, +2);
-            final Descriptor connectionData = this.tree.evaluate(connectionNid);
+            final Descriptor connectionData = this.tree.tdiEvaluate(connectionNid);
             this.PCconnection = connectionData.toString();
         }catch(final Exception exc){
             System.out.println("Error getting PC connection: " + exc);
@@ -110,7 +110,7 @@ public class LoadPulse{
         try{
             final Nid rootNid = this.tree.resolve(new Path("\\PV_SETUP"));
             final Nid connectionNid = new Nid(rootNid, +2);
-            final Descriptor connectionData = this.tree.evaluate(connectionNid);
+            final Descriptor connectionData = this.tree.tdiEvaluate(connectionNid);
             this.PVconnection = connectionData.toString();
         }catch(final Exception exc){
             System.out.println("Error getting PV connection: " + exc);
@@ -121,7 +121,7 @@ public class LoadPulse{
         try{
             final Nid rootNid = this.tree.resolve(new Path("\\P_CONFIG"));
             final Nid rTransferNid = new Nid(rootNid, +20);
-            final Descriptor rTransferData = this.tree.evaluate(rTransferNid);
+            final Descriptor rTransferData = this.tree.tdiEvaluate(rTransferNid);
             this.rTransfer = rTransferData.toFloat();
         }catch(final Exception exc){
             System.out.println("Error getting R transfer: " + exc);
@@ -305,7 +305,7 @@ public class LoadPulse{
                     final Nid currNid = this.tree.resolve(new Path(currNode.getPath()));
                     // if(currNode.isNoWriteModel()) System.out.println("NO WRITE MODEL!!" + currNode.getPath());
                     if(currNode.getDecompiled() != null && !currNode.isNoWriteModel()){
-                        final Descriptor currData = this.tree.compile(currNode.getDecompiled());
+                        final Descriptor currData = this.tree.tdiCompile(currNode.getDecompiled());
                         this.tree.putData(currNid, currData);
                     }
                     if(currNode.isOn() && currNode.isParentOn()) this.tree.setOn(currNid, true);

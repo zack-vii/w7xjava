@@ -147,7 +147,7 @@ public class DeviceDispatch extends DeviceComponent{
         for(this.i = this.j = this.num_actions = 0; this.i < num_components; this.i++){
             if(nodeInfos[this.i].getUsage() == NodeInfo.USAGE_ACTION){
                 try{
-                    this.actions[this.j] = this.subtree.evaluate(currNid);
+                    this.actions[this.j] = this.subtree.tdiEvaluate(currNid);
                 }catch(final Exception e){
                     System.out.println("Cannot read device actions: " + e);
                     return;

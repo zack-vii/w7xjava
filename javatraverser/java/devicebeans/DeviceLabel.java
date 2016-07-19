@@ -7,10 +7,10 @@ import java.awt.FontMetrics;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
+import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
 public class DeviceLabel extends DeviceComponent{
@@ -134,7 +134,7 @@ public class DeviceLabel extends DeviceComponent{
             String textString;
             if(this.displayEvaluated){
                 try{
-                    this.initialField = textString = this.subtree.evaluate(data).toString();
+                    this.initialField = textString = this.subtree.tdiEvaluate(data).toString();
                 }catch(final Exception exc){
                     textString = data.toString();
                 }
@@ -161,8 +161,8 @@ public class DeviceLabel extends DeviceComponent{
     else
       return Tree.dataFromExpr(dataString);
       }
-
-
+    
+    
       protected boolean getState()
       {
     if (!showState)
@@ -170,7 +170,7 @@ public class DeviceLabel extends DeviceComponent{
     else
       return checkB.isSelected();
       }
-
+    
       public void setEnabled(boolean state)
       {
     if (!editable && state)
@@ -194,7 +194,7 @@ public class DeviceLabel extends DeviceComponent{
         try{
             if(dataString == null) return null;
             if(this.textOnly) return new CString(dataString);
-            return Database.tdiCompile(dataString);
+            return Connection.getActiveConnection().getDescriptor(dataString);
         }catch(final MdsException e){
             e.printStackTrace();
             return null;
@@ -206,7 +206,7 @@ public class DeviceLabel extends DeviceComponent{
       {
     this.editable = editable;
       }
-
+    
       public boolean getEditable()
       {
     return editable;
@@ -244,14 +244,14 @@ public class DeviceLabel extends DeviceComponent{
         // initialField = data.toString();
         /*
            Container parent = getParent();
-
+        
            if (parent.getLayout() == null)
            {
              isGridBag = false;
            }
            else
              isGridBag = true;
-
+        
            GridBagConstraints gc = null;
            if (isGridBag)
            {
@@ -305,7 +305,7 @@ public class DeviceLabel extends DeviceComponent{
         reportingChange = false;
               }
             });
-
+        
             textF.setEnabled(editable);
             textF.setEditable(editable);
             if (preferredWidth > 0)

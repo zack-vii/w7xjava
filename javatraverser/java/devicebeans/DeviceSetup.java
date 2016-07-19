@@ -25,8 +25,10 @@ import jtraverser.NodeInfo;
 import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
+import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
+import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
 public class DeviceSetup extends JDialog{
@@ -217,7 +219,7 @@ public class DeviceSetup extends JDialog{
         }
         for(idx = 0; idx < num_expr; idx++){
             try{
-                if(Database.tdiEvaluate(varExpr + expressions[idx]).toInt() == 0){
+                if(Connection.getActiveConnection().getInteger(varExpr + expressions[idx]) == 0){
                     JOptionPane.showMessageDialog(this, messages[idx], "Error in device configuration", JOptionPane.WARNING_MESSAGE);
                     return false;
                 }
@@ -487,7 +489,7 @@ public class DeviceSetup extends JDialog{
             }
         }
         if(this.device_components.size() > 0) try{
-            Database.tdiEvaluate(varExpr.toString());
+            Connection.getActiveConnection().getDescriptor("Execute($)", new CString(varExpr.toString()));
         }catch(final MdsException e){
             e.printStackTrace();
         }

@@ -19,10 +19,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
-import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
+import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
 public class ExprEditor extends JPanel implements Editor{
@@ -46,7 +46,7 @@ public class ExprEditor extends JPanel implements Editor{
                         PopupAdapter.this.pop.setVisible(false);
                         String eval;
                         try{
-                            final Descriptor data = Database.tdiEvaluate(expr);
+                            final Descriptor data = Connection.getActiveConnection().getDescriptor(expr);
                             if(data == null) eval = "no data";
                             else eval = data.toString();
                         }catch(final MdsException de){
@@ -170,7 +170,7 @@ public class ExprEditor extends JPanel implements Editor{
         else this.expr = this.text_field.getText().trim();
         if(this.expr.isEmpty()) return null;
         if(this.quotes_added) return new CString(this.expr);
-        return Database.tdiCompile(this.expr);
+        return Connection.getActiveConnection().getDescriptor(this.expr);
     }
 
     @Override

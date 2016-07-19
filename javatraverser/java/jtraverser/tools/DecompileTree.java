@@ -148,7 +148,7 @@ public class DecompileTree{
             try{
                 info = this.database.getInfo(nid);
             }catch(final Exception exc){
-                System.err.println(this.error = "Error getting info for " + Database.getFullPath(nid.getValue()) + ": " + exc);
+                System.err.println(this.error = "Error getting info for " + nid.getFullPath() + ": " + exc);
                 return;
             }
             String[] tags;
@@ -183,7 +183,7 @@ public class DecompileTree{
                     try{
                         final NodeInfo currInfo = this.database.getInfo(son);
                         if(currInfo.getConglomerateElt() == 1) // Descendant NOT belonging to the device
-                        subtreeNodes.addElement(son);
+                            subtreeNodes.addElement(son);
                     }catch(final Exception exc){}
                 }
                 final Vector<Nid> subtreeMembers = new Vector<Nid>();
@@ -196,12 +196,12 @@ public class DecompileTree{
                     try{
                         final NodeInfo currInfo = this.database.getInfo(member);
                         if(currInfo.getConglomerateElt() == 1) // Descendant NOT belonging to the device
-                        subtreeMembers.addElement(member);
+                            subtreeMembers.addElement(member);
                     }catch(final Exception exc){}
                 }
                 if((!info.isOn() && info.isParentOn()) || (info.isOn() && !info.isParentOn()) || (info.isSetup() && data != null) || tags.length > 0 || subtreeNodes.size() > 0 || subtreeMembers.size() > 0 || isFull
                 // TACON
-                || info.getName().endsWith("_GAIN")) // show it only at these conditions
+                        || info.getName().endsWith("_GAIN")) // show it only at these conditions
                 {
                     final Element fieldNode = this.document.createElement("field");
                     node.appendChild(fieldNode);

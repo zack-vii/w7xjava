@@ -76,7 +76,7 @@ public class TreeManager extends JScrollPane{
             @Override
             public void actionPerformed(final ActionEvent ae) {
                 try{
-                    final Descriptor sig = DisplayMenu.this.treeman.getCurrentDatabase().evaluate(DisplayMenu.this.treeman.getCurrentNode().getFullPath());
+                    final Descriptor sig = DisplayMenu.this.treeman.getCurrentNode().getData();
                     GraphPanel.newPlot(sig, DisplayMenu.this.treeman, DisplayMenu.this.treeman.getCurrentDatabase().getName(), DisplayMenu.this.treeman.getCurrentDatabase().getShot(), DisplayMenu.this.treeman.getCurrentNode().getFullPath());
                 }catch(final MdsException e){}
             }
@@ -193,8 +193,8 @@ public class TreeManager extends JScrollPane{
             public void actionPerformed(final ActionEvent e) {
                 try{
                     JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), Database.getDatabase(), //
-                    Database.getCurrentProvider(), //
-                    JOptionPane.PLAIN_MESSAGE);
+                            Database.getCurrentProvider(), //
+                            JOptionPane.PLAIN_MESSAGE);
                 }catch(final Exception ex){
                     ex.printStackTrace();
                 }
@@ -211,9 +211,9 @@ public class TreeManager extends JScrollPane{
             public void actionPerformed(final ActionEvent e) {
                 try{
                     JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), //
-                    ExtrasMenu.this.treeman.getCurrentDatabase().getTagsWild("***", 255).toString(), //
-                    ExtrasMenu.this.treeman.getCurrentDatabase().toString(), //
-                    JOptionPane.PLAIN_MESSAGE);
+                            ExtrasMenu.this.treeman.getCurrentDatabase().getTagsWild("***", 255).toString(), //
+                            ExtrasMenu.this.treeman.getCurrentDatabase().toString(), //
+                            JOptionPane.PLAIN_MESSAGE);
                 }catch(final Exception ex){
                     ex.printStackTrace();
                 }
@@ -429,7 +429,6 @@ public class TreeManager extends JScrollPane{
                 this.items.get(i).setEnabled(mask[i]);
         }
     }
-
     static{
         ToolTipManager.sharedInstance().setDismissDelay(60000);
     }
