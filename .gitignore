@@ -3,7 +3,7 @@ Makefile.inc
 *.class
 *.jar
 *.uid
-java/
+java/*
 javascope/scripts/
 # Emacs autosave files
 \#*#
