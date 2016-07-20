@@ -40,7 +40,7 @@ public class StoreFile{
         }
         final Nid nid;
         try{
-            nid = tree.resolve(new Path(nodeName));
+            nid = new Path(nodeName).toNid();
         }catch(final Exception exc){
             System.err.println("Cannot find node " + nodeName);
             System.exit(0);

@@ -84,7 +84,7 @@ public class LoadPulse{
 
     int countPMUnits() {
         try{
-            final Nid rootNid = this.tree.resolve(new Path("\\PM_SETUP"));
+            final Nid rootNid = new Path("\\PM_SETUP").toNid();
             final Nid unitsNid = new Nid(rootNid, +5);
             final Descriptor unitsData = this.tree.tdiEvaluate(unitsNid);
             final String units = unitsData.toString();
@@ -98,7 +98,7 @@ public class LoadPulse{
 
     void evaluatePCConnection() {
         try{
-            final Nid rootNid = this.tree.resolve(new Path("\\PC_SETUP"));
+            final Nid rootNid = new Path("\\PC_SETUP").toNid();
             final Nid connectionNid = new Nid(rootNid, +2);
             final Descriptor connectionData = this.tree.tdiEvaluate(connectionNid);
             this.PCconnection = connectionData.toString();
@@ -109,7 +109,7 @@ public class LoadPulse{
 
     void evaluatePVConnection() {
         try{
-            final Nid rootNid = this.tree.resolve(new Path("\\PV_SETUP"));
+            final Nid rootNid = new Path("\\PV_SETUP").toNid();
             final Nid connectionNid = new Nid(rootNid, +2);
             final Descriptor connectionData = this.tree.tdiEvaluate(connectionNid);
             this.PVconnection = connectionData.toString();
@@ -120,7 +120,7 @@ public class LoadPulse{
 
     void evaluateRTransfer() {
         try{
-            final Nid rootNid = this.tree.resolve(new Path("\\P_CONFIG"));
+            final Nid rootNid = new Path("\\P_CONFIG").toNid();
             final Nid rTransferNid = new Nid(rootNid, +20);
             final Descriptor rTransferData = this.tree.tdiEvaluate(rTransferNid);
             this.rTransfer = rTransferData.toFloat();
@@ -146,7 +146,7 @@ public class LoadPulse{
             try{
                 final StringTokenizer st = new StringTokenizer(basePathLine, " ");
                 basePath = st.nextToken();
-                currNid = this.tree.resolve(new Path(basePath));
+                currNid = new Path(basePath).toNid();
                 outPath = null;
                 if(st.hasMoreTokens()){
                     final String next = st.nextToken();
@@ -280,7 +280,7 @@ public class LoadPulse{
             while(pathNamesEn.hasMoreElements()){
                 final String currPath = pathNamesEn.nextElement();
                 try{
-                    final Nid currNid = tree.resolve(new Path(currPath));
+                    final Nid currNid = new Path(currPath).toNid();
                     final String currAbsPath = currNid.getNciFullPath();
                     setupHash.put(currAbsPath, currSetupHash.get(currPath));
                 }catch(final Exception exc){
@@ -302,7 +302,7 @@ public class LoadPulse{
             for(int i = 0; i < nodesV.size(); i++){
                 final NodeDescriptor currNode = nodesV.elementAt(i);
                 try{
-                    final Nid currNid = this.tree.resolve(new Path(currNode.getPath()));
+                    final Nid currNid = new Path(currNode.getPath()).toNid();
                     // if(currNode.isNoWriteModel()) System.out.println("NO WRITE MODEL!!" + currNode.getPath());
                     if(currNode.getDecompiled() != null && !currNode.isNoWriteModel()){
                         final Descriptor currData = this.tree.tdiCompile(currNode.getDecompiled());

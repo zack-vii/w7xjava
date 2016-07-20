@@ -45,8 +45,8 @@ public class DeviceSetup extends JDialog{
         }
         Nid nid;
         try{
-            nid = tree.resolve(new Path(rootName));
-        }catch(final Exception exc){
+            nid = new Path(rootName).toNid();
+        }catch(final MdsException exc){
             JOptionPane.showMessageDialog(null, "Cannot find node " + rootName + ": " + exc, "Error in Device Setup", JOptionPane.ERROR_MESSAGE);
             return;
         }

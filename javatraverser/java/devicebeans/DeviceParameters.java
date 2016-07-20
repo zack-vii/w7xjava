@@ -14,31 +14,31 @@ public class DeviceParameters extends DeviceMultiComponent{
     protected void addParameter(final JPanel jp, final Nid nidData) {
         try{
             this.subtree.setDefault(nidData);
-            Nid currNid;
-            currNid = this.subtree.resolve(new Path(":DESCRIPTION"));
-            final String description = this.subtree.tdiEvaluate(currNid).toString();
-            currNid = this.subtree.resolve(new Path(":TYPE"));
-            final String typeStr = this.subtree.tdiEvaluate(currNid).toString();
-            currNid = this.subtree.resolve(new Path(":DIMS"));
-            final int[] dims = this.subtree.tdiEvaluate(currNid).toIntArray();
-            currNid = this.subtree.resolve(new Path(":DATA"));
+            Nid currNode;
+            currNode = new Path(":DESCRIPTION").toNid();
+            final String description = currNode.getRecord().toString();
+            currNode = new Path(":TYPE").toNid();
+            final String typeStr = currNode.getRecord().toString();
+            currNode = new Path(":DIMS").toNid();
+            final int[] dims = currNode.getRecord().toIntArray();
+            currNode = new Path(":DATA").toNid();
             if(dims[0] == 0) // Scalar
             {
                 final DeviceField currField = new DeviceField();
                 currField.setSubtree(this.subtree);
-                currField.setBaseNid(currNid.getValue());
+                currField.setBaseNid(currNode.getNidNumber());
                 currField.setOffsetNid(0);
                 currField.setLabelString(description);
                 final JPanel jp1 = new JPanel();
                 jp1.add(currField);
                 jp.add(jp1);
-                currField.configure(currNid.getValue());
+                currField.configure(currNode.getNidNumber());
                 this.parameters.addElement(currField);
             }else // Array or Matrix, use DeviceTable
             {
                 final DeviceTable currField = new DeviceTable();
                 currField.setSubtree(this.subtree);
-                currField.setBaseNid(currNid.getValue());
+                currField.setBaseNid(currNode.getNidNumber());
                 currField.setOffsetNid(0);
                 if(typeStr.toUpperCase().trim().equals("BINARY")) currField.setBinary(true);
                 else currField.setBinary(false);
@@ -67,7 +67,7 @@ public class DeviceParameters extends DeviceMultiComponent{
                 }
                 currField.setColumnNames(colNames);
                 jp.add(currField);
-                currField.configure(currNid.getValue());
+                currField.configure(currNode.getNidNumber());
                 this.parameters.addElement(currField);
             }
         }catch(final Exception exc){
@@ -97,9 +97,9 @@ public class DeviceParameters extends DeviceMultiComponent{
         try{
             prevDefNid = this.subtree.getDefault();
             this.subtree.setDefault(nidData);
-            Nid currNid;
-            currNid = this.subtree.resolve(new Path(parName + ":NAME"));
-            parName = this.subtree.tdiEvaluate(currNid).toString();
+            Nid currNode;
+            currNode = new Path(parName + ":NAME").toNid();
+            parName = this.subtree.tdiEvaluate(currNode).toString();
             this.subtree.setDefault(prevDefNid);
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(this, "Error getting Component Name in DeviceParameters: " + exc);
@@ -119,10 +119,10 @@ public class DeviceParameters extends DeviceMultiComponent{
         try{
             prevDefNid = this.subtree.getDefault();
             this.subtree.setDefault(nidData);
-            Nid currNid;
-            currNid = this.subtree.resolve(new Path(parName));
+            Nid currNode;
+            currNode = new Path(parName).toNid();
             this.subtree.setDefault(prevDefNid);
-            return currNid;
+            return currNode;
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(this, "Error getting Component Nid in DeviceParameters: " + exc);
             return null;
@@ -134,9 +134,9 @@ public class DeviceParameters extends DeviceMultiComponent{
         try{
             final Nid prevDefNid = this.subtree.getDefault();
             this.subtree.setDefault(nidData);
-            Nid currNid;
-            currNid = this.subtree.resolve(new Path(":NUM_ACTIVE"));
-            final int numComponents = this.subtree.tdiEvaluate(currNid).toInt();
+            Nid currNode;
+            currNode = new Path(":NUM_ACTIVE").toNid();
+            final int numComponents = this.subtree.tdiEvaluate(currNode).toInt();
             this.subtree.setDefault(prevDefNid);
             return numComponents;
         }catch(final Exception exc){

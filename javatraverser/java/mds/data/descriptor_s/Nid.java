@@ -55,23 +55,15 @@ public final class Nid extends TREENODE<Integer>{
         return b.getInt(0);
     }
 
-    @Override
-    public double[] toDoubleArray() {
-        return this.getRecord().toDoubleArray();
+    public final Path toFullPath() throws MdsException {
+        return new Path(this.getNciFullPath(), this.connection);
     }
 
-    @Override
-    public float[] toFloatArray() {
-        return this.getRecord().toFloatArray();
+    public final Path toMinPath() throws MdsException {
+        return new Path(this.getNciMinPath(), this.connection);
     }
 
-    @Override
-    public int[] toIntArray() {
-        return this.getRecord().toIntArray();
-    }
-
-    @Override
-    public long[] toLongArray() {
-        return this.getRecord().toLongArray();
+    public final Path toPath() throws MdsException {
+        return new Path(this.getNciPath(), this.connection);
     }
 }

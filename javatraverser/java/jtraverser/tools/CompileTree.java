@@ -156,7 +156,7 @@ public class CompileTree extends Thread{
                 }catch(final Exception exc){}
             }else if(type.equals("field")){
                 try{
-                    nid = this.tree.resolve(new Path(name));
+                    nid = new Path(name).toNid();
                     this.tree.setDefault(nid);
                     success = true;
                 }catch(final Exception e){
@@ -263,7 +263,7 @@ public class CompileTree extends Thread{
             final String offsetStr = this.renamedFieldNids.elementAt(i);
             try{
                 final int deviceOffset = Integer.parseInt(offsetStr);
-                final Nid deviceNid = this.tree.resolve(new Path(deviceName));
+                final Nid deviceNid = new Path(deviceName).toNid();
                 final Nid renamedNid = new Nid(deviceNid, +deviceOffset);
                 this.tree.renameNode(renamedNid, newName);
             }catch(final Exception e){

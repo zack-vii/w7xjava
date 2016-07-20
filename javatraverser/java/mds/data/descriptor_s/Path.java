@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
+import mds.mdsip.Connection;
 
 public final class Path extends TREENODE<String>{
     public Path(final ByteBuffer b){
@@ -12,6 +13,10 @@ public final class Path extends TREENODE<String>{
 
     public Path(final String path){
         super(DTYPE.PATH, ByteBuffer.wrap(path.getBytes()).order(Descriptor.BYTEORDER));
+    }
+
+    public Path(final String path, final Connection connection){
+        super(DTYPE.PATH, ByteBuffer.wrap(path.getBytes()).order(Descriptor.BYTEORDER), connection);
     }
 
     @Override
@@ -31,33 +36,7 @@ public final class Path extends TREENODE<String>{
         return new String(buf);
     }
 
-    @Override
-    public byte[] toByteArray() {
-        return this.getRecord().toByteArray();
-    }
-
-    @Override
-    public double[] toDoubleArray() {
-        return this.getRecord().toDoubleArray();
-    }
-
-    @Override
-    public float[] toFloatArray() {
-        return this.getRecord().toFloatArray();
-    }
-
-    @Override
-    public int[] toIntArray() {
-        return this.getRecord().toIntArray();
-    }
-
-    @Override
-    public long[] toLongArray() {
-        return this.getRecord().toLongArray();
-    }
-
-    @Override
-    public short[] toShortArray() {
-        return this.getRecord().toShortArray();
+    public final Nid toNid() throws MdsException {
+        return new Nid(this.getNidNumber(), this.connection);
     }
 }

@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.TreeShr;
 import mds.data.descriptor.Descriptor;
+import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor.Descriptor_S;
 import mds.data.descriptor_a.NidArray;
 import mds.data.descriptor_r.Signal;
@@ -118,23 +119,24 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
             return (this.flags & Flags.WRITE_ONCE) != 0;
         }
     }
-    public static final byte USAGE_MAXIMUM       = 12;
-    public static final byte USAGE_ANY           = 0;
-    public static final byte USAGE_STRUCTURE     = 1;
-    public static final byte USAGE_ACTION        = 2;
-    public static final byte USAGE_DEVICE        = 3;
-    public static final byte USAGE_DISPATCH      = 4;
-    public static final byte USAGE_NUMERIC       = 5;
-    public static final byte USAGE_SIGNAL        = 6;
-    public static final byte USAGE_TASK          = 7;
-    public static final byte USAGE_TEXT          = 8;
-    public static final byte USAGE_WINDOW        = 9;
-    public static final byte USAGE_AXIS          = 10;
-    public static final byte USAGE_SUBTREE       = 11;
-    public static final byte USAGE_COMPOUND_DATA = 12;
-    public static final int  CHILD               = 1;
-    public static final int  MEMBER              = 2;
-    private final Connection connection;
+    public static final byte   USAGE_MAXIMUM       = 12;
+    public static final byte   USAGE_ANY           = 0;
+    public static final byte   USAGE_STRUCTURE     = 1;
+    public static final byte   USAGE_ACTION        = 2;
+    public static final byte   USAGE_DEVICE        = 3;
+    public static final byte   USAGE_DISPATCH      = 4;
+    public static final byte   USAGE_NUMERIC       = 5;
+    public static final byte   USAGE_SIGNAL        = 6;
+    public static final byte   USAGE_TASK          = 7;
+    public static final byte   USAGE_TEXT          = 8;
+    public static final byte   USAGE_WINDOW        = 9;
+    public static final byte   USAGE_AXIS          = 10;
+    public static final byte   USAGE_SUBTREE       = 11;
+    public static final byte   USAGE_COMPOUND_DATA = 12;
+    public static final int    CHILD               = 1;
+    public static final int    MEMBER              = 2;
+    protected final Connection connection;
+    protected final TreeShr    treeshr;
 
     public TREENODE(final byte dtype, final ByteBuffer data){
         this(dtype, data, Connection.getActiveConnection());
@@ -143,6 +145,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     public TREENODE(final byte dtype, final ByteBuffer data, final Connection connection){
         super(dtype, data);
         this.connection = connection;
+        this.treeshr = new TreeShr(connection);
     }
 
     public TREENODE(final ByteBuffer b){
@@ -152,6 +155,19 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     public TREENODE(final ByteBuffer b, final Connection connection){
         super(b);
         this.connection = connection;
+        this.treeshr = new TreeShr(connection);
+    }
+
+    public final int addTag(final String tag) throws MdsException {
+        return this.treeshr.treeAddTag(this.getNidNumber(), tag);
+    }
+
+    public final int clearFlags(final int flags) throws MdsException {
+        return this.treeshr.treeSetNciItm(this.getNidNumber(), false, flags & 0x7FFFFFFC);
+    }
+
+    public final int clearTags() throws MdsException {
+        return this.treeshr.treeRemoveNodesTags(this.getNidNumber());
     }
 
     public final Connection getConnection() {
@@ -271,7 +287,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     }
 
     public final String getNciOriginalPartName() throws MdsException {
-        return this.getNci("ORIGINAL_PART_NAME").toString();
+        return this.getNci("ORIGINAL_PART_NAME").toString().trim();
     }
 
     public final int getNciOwnerId() throws MdsException {
@@ -333,37 +349,104 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     public abstract int getNidNumber() throws MdsException;
 
     public final int getNumSegments() throws MdsException {
-        return new TreeShr(this.connection).treeGetNumSegments(this.getNidNumber());
+        return this.treeshr.treeGetNumSegments(this.getNidNumber());
     }
 
-    public final Descriptor getRecord() {
+    public final Descriptor getRecord() throws MdsException {
+        return this.treeshr.treeGetRecord(this.getNidNumber());
+    }
+
+    public final Signal getSegment(final int idx) throws MdsException {
+        return this.treeshr.treeGetSegment(this.getNidNumber(), idx);
+    }
+
+    public final Descriptor getXNci(final String name) throws MdsException {
+        return this.treeshr.treeGetXNci(this.getNidNumber(), name);
+    }
+
+    public final int putRecord(final Descriptor data) throws MdsException {
+        return this.treeshr.treePutRecord(this.getNidNumber(), data);
+    }
+
+    public final int putRow(final long time, final Descriptor_A data) throws MdsException {
+        return this.treeshr.treePutRow(this.getNidNumber(), 1 << 20, time, data);
+    }
+
+    public final int setDefault() throws MdsException {
+        return this.treeshr.treeSetDefault(this.getNidNumber());
+    }
+
+    public final int setFlags(final int flags) throws MdsException {
+        return this.treeshr.treeSetNciItm(this.getNidNumber(), true, flags & 0x7FFFFFFC);
+    }
+
+    public final int setPath(final String path) throws MdsException {
+        return this.treeshr.treeRenameNode(this.getNidNumber(), path);
+    }
+
+    public final int setSubtree() throws MdsException {
+        return this.treeshr.treeSetSubtree(this.getNidNumber());
+    }
+
+    @Override
+    public final byte[] toByteArray() {
         try{
-            return this.getTreeShr().treeGetRecord(this.getNidNumber());
+            return this.getRecord().toByteArray();
         }catch(final MdsException e){
-            e.printStackTrace();
             return null;
         }
     }
 
-    public final Signal getSegment(final int idx) {
+    @Override
+    public final double[] toDoubleArray() {
         try{
-            return this.getTreeShr().treeGetSegment(this.getNidNumber(), idx);
+            return this.getRecord().toDoubleArray();
         }catch(final MdsException e){
-            e.printStackTrace();
             return null;
         }
     }
 
-    public final TreeShr getTreeShr() {
-        return new TreeShr(this.getConnection());
+    @Override
+    public final float[] toFloatArray() {
+        try{
+            return this.getRecord().toFloatArray();
+        }catch(final MdsException e){
+            return null;
+        }
     }
 
-    public final Descriptor getXNci(final String name) {
+    @Override
+    public final int[] toIntArray() {
         try{
-            return this.getTreeShr().treeGetXNci(this.getNidNumber(), name);
+            return this.getRecord().toIntArray();
         }catch(final MdsException e){
-            e.printStackTrace();
-            return Missing.NEW;
+            return null;
         }
+    }
+
+    @Override
+    public final long[] toLongArray() {
+        try{
+            return this.getRecord().toLongArray();
+        }catch(final MdsException e){
+            return null;
+        }
+    }
+
+    @Override
+    public final short[] toShortArray() {
+        try{
+            return this.getRecord().toShortArray();
+        }catch(final MdsException e){
+            return null;
+        }
+    }
+
+    public final int turnOff() throws MdsException {
+        return this.treeshr.treeTurnOff(this.getNidNumber());
+    }
+
+    public final int turnOn() throws MdsException {
+        return this.treeshr.treeTurnOn(this.getNidNumber());
     }
 }
