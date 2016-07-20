@@ -27,13 +27,18 @@ public final class Nid extends TREENODE<Integer>{
     @Override
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         try{
-            return pout.append(this.getMinPath());
+            return pout.append(this.getNciMinPath());
         }catch(final MdsException e){
             return pout.append("<nid ").append(this.getValue()).append('>');
         }catch(final Exception e){
             e.printStackTrace();
             return pout.append(e.toString());
         }
+    }
+
+    @Override
+    public final int getNidNumber() throws MdsException {
+        return this.getValue();
     }
 
     @Override

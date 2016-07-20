@@ -1,6 +1,7 @@
 package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
+import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 
@@ -16,6 +17,11 @@ public final class Path extends TREENODE<String>{
     @Override
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         return pout.append(this.getValue());
+    }
+
+    @Override
+    public final int getNidNumber() throws MdsException {
+        return this.getNciNidNumber();
     }
 
     @Override
