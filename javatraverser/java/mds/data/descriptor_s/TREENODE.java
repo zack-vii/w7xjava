@@ -137,13 +137,21 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     private final Connection connection;
 
     public TREENODE(final byte dtype, final ByteBuffer data){
+        this(dtype, data, Connection.getActiveConnection());
+    }
+
+    public TREENODE(final byte dtype, final ByteBuffer data, final Connection connection){
         super(dtype, data);
-        this.connection = Connection.getActiveConnection();
+        this.connection = connection;
     }
 
     public TREENODE(final ByteBuffer b){
+        this(b, Connection.getActiveConnection());
+    }
+
+    public TREENODE(final ByteBuffer b, final Connection connection){
         super(b);
-        this.connection = Connection.getActiveConnection();
+        this.connection = connection;
     }
 
     public final Connection getConnection() {
@@ -174,11 +182,11 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
         return this.getNci("CLASS_STR").toString();
     }
 
-    public final short getNciConglometateElt() throws MdsException {
+    public final short getNciConglomerateElt() throws MdsException {
         return this.getNci("CONGLOMERATE_ELT").toShort();
     }
 
-    public final NidArray getNciConglometateNids() throws MdsException {
+    public final NidArray getNciConglomerateNids() throws MdsException {
         return (NidArray)this.getNci("CONGLOMERATE_NIDS");
     }
 
@@ -247,7 +255,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     }
 
     public final String getNciNodeName() throws MdsException {
-        return this.getNci("NODE_NAME").toString();
+        return this.getNci("NODE_NAME").toString().trim();
     }
 
     public final int getNciNumberOfChildren() throws MdsException {

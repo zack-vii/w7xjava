@@ -21,7 +21,6 @@ import javax.swing.JPopupMenu;
 import jtraverser.DataChangeEvent;
 import jtraverser.DataChangeListener;
 import jtraverser.Node;
-import jtraverser.NodeInfo;
 import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
@@ -249,8 +248,7 @@ public class DeviceSetup extends JDialog{
         this.subtree = subtree;
         String path = null;
         try{
-            final NodeInfo info = subtree.getInfo(new Nid(baseNid));
-            path = info.getFullPath();
+            path = new Nid(baseNid).getNciFullPath();
         }catch(final Exception exc){
             System.out.println(exc);
         }

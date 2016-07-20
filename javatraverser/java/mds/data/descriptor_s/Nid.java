@@ -3,12 +3,17 @@ package mds.data.descriptor_s;
 import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
+import mds.mdsip.Connection;
 
 public final class Nid extends TREENODE<Integer>{
     public static final Nid[] getArrayOfNids(final int[] nid_nums) {
+        return Nid.getArrayOfNids(nid_nums, Connection.getActiveConnection());
+    }
+
+    public static final Nid[] getArrayOfNids(final int[] nid_nums, final Connection connection) {
         final Nid[] nids = new Nid[nid_nums.length];
         for(int i = 0; i < nids.length; i++)
-            nids[i] = new Nid(nid_nums[i]);
+            nids[i] = new Nid(nid_nums[i], connection);
         return nids;
     }
 
@@ -20,8 +25,12 @@ public final class Nid extends TREENODE<Integer>{
         super(DTYPE.NID, NUMBER.toByteBuffer(integer));
     }
 
+    public Nid(final int integer, final Connection connection){
+        super(DTYPE.NID, NUMBER.toByteBuffer(integer), connection);
+    }
+
     public Nid(final Nid nid, final int relative){
-        this(nid.getValue() + relative);
+        this(nid.getValue() + relative, nid.getConnection());
     }
 
     @Override

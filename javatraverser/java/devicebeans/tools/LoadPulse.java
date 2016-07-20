@@ -12,7 +12,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import jtraverser.NodeInfo;
 import mds.Database;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
@@ -153,9 +152,8 @@ public class LoadPulse{
                     final String next = st.nextToken();
                     if(next.toUpperCase().equals("STATE")) // If only state has to be retrieved
                     {
-                        final NodeInfo currInfo = this.tree.getInfo(currNid);
-                        final Flags flags = currInfo.getFlags();
-                        currPath = currInfo.getFullPath();
+                        final Flags flags = new Flags(currNid.getNciFlags());
+                        currPath = currNid.getNciFullPath();
                         try{
                             nodesV.addElement(new NodeDescriptor(currPath, null, flags.isOn(), flags.isParentOn(), flags.isNoWriteModel() || flags.isWriteOnce()));
                         }catch(final Exception exc){
@@ -196,9 +194,8 @@ public class LoadPulse{
                     nids[j++] = element;
                 this.tree.setDefault(defNid);
                 for(int i = 0; i < nids.length; i++){
-                    final NodeInfo currInfo = this.tree.getInfo(nids[i]);
-                    final Flags flags = currInfo.getFlags();
-                    currPath = currInfo.getFullPath();
+                    final Flags flags = new Flags(nids[i].getNciFlags());
+                    currPath = nids[i].getNciFullPath();
                     if(i == (nids.length - 1))// If IT IS the node described in LoadPulse.congf (and not any descendant)
                     {
                         if(outPath != null){
@@ -284,8 +281,7 @@ public class LoadPulse{
                 final String currPath = pathNamesEn.nextElement();
                 try{
                     final Nid currNid = tree.resolve(new Path(currPath));
-                    final NodeInfo currInfo = tree.getInfo(currNid);
-                    final String currAbsPath = currInfo.getFullPath();
+                    final String currAbsPath = currNid.getNciFullPath();
                     setupHash.put(currAbsPath, currSetupHash.get(currPath));
                 }catch(final Exception exc){
                     System.out.println("LoadSetup: Cannot expand path name " + currPath + " : " + exc);

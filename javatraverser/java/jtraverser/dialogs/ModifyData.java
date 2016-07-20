@@ -191,8 +191,8 @@ public class ModifyData extends NodeEditor{
         if(this.node.isOn()) this.onoff.setText("Node is On   ");
         else this.onoff.setText("Node is Off  ");
         try{
-            if(this.is_editable) this.frame.setTitle("Modify data of " + this.node.getInfo().getFullPath());
-            else this.frame.setTitle("Display data of " + this.node.getInfo().getFullPath());
+            if(this.is_editable) this.frame.setTitle("Modify data of " + this.node.getFullPath());
+            else this.frame.setTitle("Display data of " + this.node.getFullPath());
         }catch(final Exception exc){}
         this.tags.setText(ModifyData.tagList(this.node.getTags()));
     }

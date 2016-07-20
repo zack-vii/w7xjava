@@ -7,6 +7,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.TREENODE.Flags;
 
 @SuppressWarnings("serial")
 public class TreeNodeLabel extends JLabel{
@@ -32,13 +33,14 @@ public class TreeNodeLabel extends JLabel{
     public TreeNodeLabel(final Node node, final String name, final Icon icon, final boolean isSelected){
         super((node.isDefault() ? new StringBuilder(node.getName().length() + 2).append('(').append(node).append(')').toString() : node.toString()), icon, SwingConstants.LEFT);
         this.node = node;
-        if(node.getUsage() == TREENODE.USAGE_SUBTREE) this.setForeground(node.isIncludeInPulse() ? this.CInclude : this.CExclude);
+        final Flags flags = node.getFlags();
+        if(node.getUsage() == TREENODE.USAGE_SUBTREE) this.setForeground(flags.isIncludeInPulse() ? this.CInclude : this.CExclude);
         else{
-            if(node.isNoWriteModel() & node.isNoWriteModel()) this.setForeground(this.CNoWrite);
-            else if(node.isNoWriteModel()) this.setForeground(node.tree.isModel() ? (node.isWriteOnce() ? this.CNoWriteO : this.CNoWrite) : (node.isWriteOnce() ? this.CWriteO : this.CWrite));
-            else if(node.isNoWriteShot()) this.setForeground(!node.tree.isModel() ? (node.isWriteOnce() ? this.CNoWriteO : this.CNoWrite) : (node.isWriteOnce() ? this.CWriteO : this.CWrite));
-            else if(node.isSetup()) this.setForeground(node.tree.isModel() ? (node.isWriteOnce() ? this.CMSetupO : this.CMSetup) : (node.isWriteOnce() ? this.CSSetupO : this.CSSetup));
-            else this.setForeground(node.isWriteOnce() ? this.CNormO : this.CNorm);
+            if(flags.isNoWriteModel() & flags.isNoWriteModel()) this.setForeground(this.CNoWrite);
+            else if(flags.isNoWriteModel()) this.setForeground(node.tree.isModel() ? (flags.isWriteOnce() ? this.CNoWriteO : this.CNoWrite) : (flags.isWriteOnce() ? this.CWriteO : this.CWrite));
+            else if(flags.isNoWriteShot()) this.setForeground(!node.tree.isModel() ? (flags.isWriteOnce() ? this.CNoWriteO : this.CNoWrite) : (flags.isWriteOnce() ? this.CWriteO : this.CWrite));
+            else if(flags.isSetup()) this.setForeground(node.tree.isModel() ? (flags.isWriteOnce() ? this.CMSetupO : this.CMSetup) : (flags.isWriteOnce() ? this.CSSetupO : this.CSSetup));
+            else this.setForeground(flags.isWriteOnce() ? this.CNormO : this.CNorm);
         }
         this.setFont(node.isOn() ? TreeNodeLabel.bold_f : TreeNodeLabel.plain_f);
         this.setBorder(BorderFactory.createLineBorder(isSelected ? Color.black : Color.white, 1));

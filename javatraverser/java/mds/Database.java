@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import jtraverser.NodeInfo;
 import jtraverser.jTraverserFacade;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
@@ -267,17 +266,6 @@ public final class Database{
     public final int getFlags(final Nid nid) throws MdsException {
         this._checkContext();
         return this.con.getInteger(String.format("GETNCI(%d,'GET_FLAGS')", nid.getValue()));
-    }
-
-    public final NodeInfo getInfo(final Nid nid) throws MdsException {
-        this._checkContext();
-        final int[] I = this.con.getIntegerArray(String.format("_i=%d;[GETNCI(_i,'CLASS'),GETNCI(_i,'DTYPE'),GETNCI(_i,'USAGE'),GETNCI(_i,'GET_FLAGS'),GETNCI(_i,'OWNER_ID'),GETNCI(_i,'LENGTH'),IF_ERROR(SHAPE(GETNCI(GETNCI(_i,'CONGLOMERATE_NID'),'NID_NUMBER'))[0],0),GETNCI(_i,'CONGLOMERATE_ELT')]", nid.getValue()));
-        final String date = this.con.getString(String.format("DATE_TIME(GETNCI(%d,'TIME_INSERTED'))", nid.getValue()));
-        final String node_name = this.con.getString(String.format("GETNCI(%d,'NODE_NAME')", nid.getValue()));
-        final String fullpath = this.con.getString(String.format("GETNCI(%d,'FULLPATH')", nid.getValue()));
-        final String minpath = this.con.getString(String.format("GETNCI(%d,'MINPATH')", nid.getValue()));
-        final String path = this.con.getString(String.format("GETNCI(%d,'PATH')", nid.getValue()));
-        return new NodeInfo(nid.getValue(), (byte)I[0], (byte)I[1], (byte)I[2], I[3], I[4], I[5], I[6], I[7], date, node_name, fullpath, minpath, path);
     }
 
     public final String getMdsMessage(final int status) {

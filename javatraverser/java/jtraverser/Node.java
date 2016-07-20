@@ -13,6 +13,7 @@ import javax.swing.tree.DefaultTreeModel;
 import devicebeans.DeviceSetup;
 import mds.Database;
 import mds.MdsException;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Action;
 import mds.data.descriptor_r.Conglom;
@@ -98,7 +99,6 @@ public class Node{
     public static void updateCell() {}
     private Descriptor             data;
     private final Database         database;
-    private NodeInfo               info;
     private final boolean          is_member;
     private boolean                is_on;
     private TreeNodeLabel          label;
@@ -112,6 +112,10 @@ public class Node{
     private String                 ToolTipText  = null;
     public final Tree              tree;
     private DefaultMutableTreeNode treenode;
+    private int                    length, ownerid;
+    private String                 name, minpath, path, fullpath, timeinserted;
+    private byte                   usage, dtype, dclass;
+    private Flags                  flags;
 
     public Node(final Database database, final Tree tree, final Node parent, final boolean is_member, final Nid nid){
         this.database = database;
@@ -119,11 +123,6 @@ public class Node{
         this.parent = parent;
         this.is_member = is_member;
         this.nid = nid;
-        try{
-            this.info = database.getInfo(this.nid);
-        }catch(final Exception exc){
-            jTraverserFacade.stderr("Error getting info", exc);
-        }
         this.sons = new Node[0];
         this.members = new Node[0];
     }
@@ -133,7 +132,6 @@ public class Node{
         this.tree = tree;
         if(this.database.isRealtime()) this.nid = new Nid(1);
         else this.nid = new Nid(0);
-        this.info = this.database.getInfo(this.nid);
         this.parent = null;
         this.is_member = false;
         this.sons = new Node[0];
@@ -149,7 +147,6 @@ public class Node{
         final Nid prev_default = this.database.getDefault();
         this.database.setDefault(this.nid);
         try{
-            if(this.info == null) this.info = this.database.getInfo(this.nid);
             new_nid = this.database.addDevice(name, type);
         }finally{
             this.database.setDefault(prev_default);
@@ -199,7 +196,6 @@ public class Node{
         try{
             final String sep = this.is_member ? ":" : ".";
             this.database.renameNode(this.nid, newParent.getFullPath() + sep + newName);
-            this.info = this.database.getInfo(this.nid);
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(this.tree, "Error changing node path: " + exc, "Error changing node path", JOptionPane.WARNING_MESSAGE);
             return false;
@@ -219,7 +215,6 @@ public class Node{
 
     public final void clearFlags(final int flags) throws MdsException {
         this.database.clearFlags(this.nid, flags);
-        this.info.setFlags(this.database.getFlags(this.nid));
     }
 
     public final void copy() {
@@ -298,14 +293,6 @@ public class Node{
         }
     }
 
-    public final int getConglomerateElt() {
-        return this.info.getConglomerateElt();
-    }
-
-    public final int getConglomerateNids() {
-        return this.info.getConglomerateNids();
-    }
-
     public final Descriptor getData() throws MdsException {
         if(this.isSegmented()) this.data = this.database.getSegment(this.nid, 0);
         else this.data = this.database.getData(this.nid);
@@ -313,57 +300,99 @@ public class Node{
     }
 
     public final String getDate() {
-        return this.info.getDate();
+        try{
+            return this.timeinserted = this.nid.getNciTimeInsertedStr();
+        }catch(final MdsException e){
+            jTraverserFacade.stderr("Error updating timeinserted", e);
+            return this.timeinserted;
+        }
     }
 
     public final byte getDClass() {
-        return this.info.getDClass();
+        try{
+            return this.dclass = this.nid.getNciClass();
+        }catch(final MdsException e){
+            jTraverserFacade.stderr("Error updating class", e);
+            return this.dclass;
+        }
     }
 
-    // info interface
     public final byte getDType() {
-        return this.info.getDType();
+        try{
+            return this.dtype = this.nid.getNciDType();
+        }catch(final MdsException e){
+            jTraverserFacade.stderr("Error updating dtype", e);
+            return this.dtype;
+        }
     }
 
     public final Flags getFlags() {
         try{
-            this.info.setFlags(this.nid.getNciFlags());
-        }catch(final Exception exc){
-            jTraverserFacade.stderr("Error updating flags", exc);
+            return this.flags = new Flags(this.nid.getNciFlags());
+        }catch(final Exception e){
+            jTraverserFacade.stderr("Error updating flags", e);
+            return this.flags;
         }
-        return this.info.getFlags();
     }
 
     public final String getFullPath() {
         try{
-            return this.nid.getNciFullPath();
+            return this.fullpath = this.nid.getNciFullPath();
         }catch(final MdsException e){
-            return this.info.getFullPath();
+            jTraverserFacade.stderr("Error updating fullpath", e);
+            return this.fullpath;
         }
     }
 
     public final Component getIcon(final boolean isSelected) {
-        if(this.info == null) return null;
         final int usage = this.getUsage();
         final Icon icon = usage <= Node.ICONS.length ? Node.ICONS[usage] : null;
         this.label = new TreeNodeLabel(this, this.getName(), icon, isSelected);
         return this.label;
     }
 
-    public final NodeInfo getInfo() throws MdsException {
-        try{
-            this.info = this.database.getInfo(this.nid);
-        }catch(final Exception exc){
-            jTraverserFacade.stderr("Error checking info", exc);
+    public final String getInfoTextBox() {
+        final StringBuffer sb = new StringBuffer("<html><table width=\"240\"> <tr><td width=\"60\" align=\"left\"/><nobr>full path:</nobr></td><td align=\"left\">");
+        sb.append(this.getFullPath());
+        sb.append(" (").append(this.nid).append(")");
+        sb.append("</td></tr><tr><td align=\"left\" valign=\"top\">Status:</td><td align=\"left\"><nobr>");
+        final String sep = "</nobr>, <nobr>";
+        Flags flags;
+        flags = this.getFlags();
+        sb.append(flags.isOn() ? "on" : "off");
+        sb.append(sep).append("parent is ").append(flags.isParentOn() ? "on" : "off");
+        if(flags.isSetup()) sb.append(sep).append("setup");
+        if(flags.isEssential()) sb.append(sep).append("essential");
+        if(flags.isCached()) sb.append(sep).append("cached");
+        if(flags.isVersion()) sb.append(sep).append("version");
+        if(flags.isSegmented()) sb.append(sep).append("segmented");
+        if(flags.isWriteOnce()) sb.append(sep).append("write once");
+        if(flags.isCompressible()) sb.append(sep).append("compressible");
+        if(flags.isDoNotCompress()) sb.append(sep).append("do not compress");
+        if(flags.isCompressOnPut()) sb.append(sep).append("compress on put");
+        if(flags.isNoWriteModel()) sb.append(sep).append("no write model");
+        if(flags.isNoWriteShot()) sb.append(sep).append("no write shot");
+        if(flags.isPathReference()) sb.append(sep).append("path reference");
+        if(flags.isNidReference()) sb.append(sep).append("nid reference");
+        if(flags.isCompressSegments()) sb.append(sep).append("compress segments");
+        if(flags.isIncludeInPulse()) sb.append(sep).append("include in pulse");
+        sb.append("</nobr></td></tr><tr><td align=\"left\">Data:</td><td align=\"left\">");
+        if(this.getLength() == 0) sb.append("<nobr>There is no data stored for this this</nobr>");
+        else{
+            final String dtype = DTYPE.getName(this.getDType());
+            final String dclass = Descriptor.getDClassName(this.getDClass());
+            sb.append("<nobr>").append(dtype).append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(dclass).append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(this.getLength()).append(" Bytes</nobr>");
+            sb.append("</td></tr><tr><td align=\"left\">Inserted:</td><td align=\"left\">");
+            sb.append(this.getDate());
         }
-        return this.info;
+        return sb.append("</td></tr></table></html>").toString();
     }
 
     public final int getLength() {
         try{
-            return this.nid.getNciLength();
+            return this.length = this.nid.getNciLength();
         }catch(final MdsException e){
-            return this.info.getLength();
+            return this.length;
         }
     }
 
@@ -373,25 +402,33 @@ public class Node{
 
     public final String getMinPath() {
         try{
-            return this.nid.getNciMinPath();
+            return this.minpath = this.nid.getNciMinPath();
         }catch(final MdsException e){
-            return this.info.getMinPath();
+            return this.minpath;
         }
     }
 
     public final String getName() {
-        return this.info.getName();
+        try{
+            return this.name = this.nid.getNciNodeName();
+        }catch(final MdsException e){
+            return this.name;
+        }
     }
 
     public final int getOwner() {
-        return this.info.getOwner();
+        try{
+            return this.ownerid = this.nid.getNciOwnerId();
+        }catch(final MdsException e){
+            return this.ownerid;
+        }
     }
 
     public final String getPath() {
         try{
-            return this.nid.getNciPath();
+            return this.path = this.nid.getNciPath();
         }catch(final MdsException e){
-            return this.info.getPath();
+            return this.path;
         }
     }
 
@@ -409,38 +446,29 @@ public class Node{
     }
 
     public final String getToolTipText() {
-        /*if(false){
-            final String tags[] = this.node.getTags();
-            if(tags == null || tags.length == 0) return null;
-            final String text;
-            if(tags.length > 32) text = String.join("<br>", Arrays.copyOfRange(tags, 0, 32)) + "<br>...";
-            else text = String.join("<br>", tags);
-            return new StringBuilder("<html>").append(text).append("</html>").toString();
-        }else*/{
-            final long now = System.nanoTime();
-            if(this.ToolTipText == null || now > this.ToolTipLife || this.ToolTipDefault != this.tree.getDefault()){
-                String text, info;
-                final int defaultnid = this.tree.getDefault();
-                try{
-                    info = this.getInfo().toString();
-                    if(this.getUsage() == TREENODE.USAGE_STRUCTURE || this.getUsage() == TREENODE.USAGE_SUBTREE) text = null;
-                    else{
-                        final Descriptor data = this.getData();
-                        if(data == null) text = null;
-                        else text = data.toStringX().replace("<", "&lt;").replace(">", "&gt;").replace("\t", "&nbsp&nbsp&nbsp&nbsp ").replace("\n", "<br>");
-                    }
-                }catch(final MdsException e){
-                    return e.toString();
+        final long now = System.nanoTime();
+        if(this.ToolTipText == null || now > this.ToolTipLife || this.ToolTipDefault != this.tree.getDefault()){
+            String text, info;
+            final int defaultnid = this.tree.getDefault();
+            try{
+                info = this.getInfoTextBox();
+                if(this.getUsage() == TREENODE.USAGE_STRUCTURE || this.getUsage() == TREENODE.USAGE_SUBTREE) text = null;
+                else{
+                    final Descriptor data = this.getData();
+                    if(data == null) text = null;
+                    else text = data.toStringX().replace("<", "&lt;").replace(">", "&gt;").replace("\t", "&nbsp&nbsp&nbsp&nbsp ").replace("\n", "<br>");
                 }
-                if(text == null) return info;
-                final StringBuilder sb = new StringBuilder().append(info.substring(0, info.length() - 7)).append("<hr><table");
-                if(text.length() > 80) sb.append(" width=\"320\"");
-                this.ToolTipText = sb.append(">").append(text).append("</table></html>").toString();
-                this.ToolTipLife = now + 30000000000l;
-                this.ToolTipDefault = defaultnid;
+            }catch(final MdsException e){
+                return e.toString();
             }
-            return this.ToolTipText;
+            if(text == null) return info;
+            final StringBuilder sb = new StringBuilder().append(info.substring(0, info.length() - 7)).append("<hr><table");
+            if(text.length() > 80) sb.append(" width=\"320\"");
+            this.ToolTipText = sb.append(">").append(text).append("</table></html>").toString();
+            this.ToolTipLife = now + 30000000000l;
+            this.ToolTipDefault = defaultnid;
         }
+        return this.ToolTipText;
     }
 
     public final DefaultMutableTreeNode getTreeNode() {
@@ -448,58 +476,22 @@ public class Node{
     }
 
     public final byte getUsage() {
-        return this.info.getUsage();
-    }
-
-    public final boolean isCached() {
-        return this.getFlags().isCached();
-    }
-
-    public final boolean isCompressible() {
-        return this.getFlags().isCompressible();
-    }
-
-    public final boolean isCompressOnPut() {
-        return this.getFlags().isCompressOnPut();
-    }
-
-    public final boolean isCompressSegments() {
-        return this.getFlags().isCompressSegments();
+        try{
+            return this.usage = this.nid.getNciUsage();
+        }catch(final MdsException e){
+            return this.usage;
+        }
     }
 
     public final boolean isDefault() {
         return this.tree.getDefault() == this.nid.getValue();
     }
 
-    public final boolean isDoNotCompress() {
-        return this.getFlags().isDoNotCompress();
-    }
-
-    public final boolean isEssential() {
-        return this.getFlags().isEssential();
-    }
-
-    public final boolean isIncludeInPulse() {
-        return this.getFlags().isIncludeInPulse();
-    }
-
-    public final boolean isNidReference() {
-        return this.getFlags().isNidReference();
-    }
-
-    public final boolean isNoWriteModel() {
-        return this.getFlags().isNoWriteModel();
-    }
-
-    public final boolean isNoWriteShot() {
-        return this.getFlags().isNoWriteShot();
-    }
-
     public final boolean isOn() {
         if(this.needsOnCheck){
             this.needsOnCheck = false;
             try{
-                this.is_on = this.database.isOn(this.nid);
+                return this.is_on = !this.nid.getNciStatus();
             }catch(final Exception exc){
                 jTraverserFacade.stderr("Error checking state", exc);
             }
@@ -507,16 +499,8 @@ public class Node{
         return this.is_on;
     }
 
-    public final boolean isParentState() {
-        return this.getFlags().isParentState();
-    }
-
-    public final boolean isPathReference() {
-        return this.getFlags().isPathReference();
-    }
-
     public final boolean isSegmented() {
-        if(this.getFlags().isSegmented()) return true;
+        if(this.flags.isSegmented()) return true;
         try{
             return this.nid.getNumSegments() > 0;
         }catch(final MdsException e){
@@ -525,24 +509,8 @@ public class Node{
         }
     }
 
-    public final boolean isSetup() {
-        return this.getFlags().isSetup();
-    }
-
-    public final boolean isState() {
-        return this.getFlags().isState();
-    }
-
     public final boolean isSubTree() {
-        return this.info.isSubTree();
-    }
-
-    public final boolean isVersion() {
-        return this.getFlags().isVersion();
-    }
-
-    public final boolean isWriteOnce() {
-        return this.getFlags().isWriteOnce();
+        return this.getUsage() == TREENODE.USAGE_SUBTREE;
     }
 
     final boolean move(final Node newParent) {
@@ -592,10 +560,7 @@ public class Node{
 
     public final void setFlags(final int flags) throws MdsException {
         this.database.setFlags(this.nid, flags);
-        this.info.setFlags(this.database.getFlags(this.nid));
     }
-
-    public final void setInfo(final NodeInfo info) throws MdsException {}
 
     final void setOnUnchecked() {
         this.needsOnCheck = true;
@@ -607,12 +572,7 @@ public class Node{
 
     public void setSubtree() throws MdsException {
         this.database.setSubtree(this.nid);
-        try{
-            this.info = this.database.getInfo(this.nid);
-            this.label = null;
-        }catch(final Exception exc){
-            jTraverserFacade.stderr("Error getting info", exc);
-        }
+        this.label = null;
     }
 
     public final void setTags(final String[] tags) throws MdsException {
@@ -673,7 +633,6 @@ public class Node{
         final int clear = isflags & flags, set = (~isflags) & flags;
         if(set != 0) this.database.setFlags(this.nid, set);
         if(clear != 0) this.database.clearFlags(this.nid, clear);
-        this.info.setFlags(this.database.getFlags(this.nid));
     }
 
     @Override
@@ -701,9 +660,5 @@ public class Node{
 
     public final void updateData() throws MdsException {
         this.data = this.database.getData(this.nid);
-    }
-
-    public final void updateInfo() throws MdsException {
-        this.info = this.database.getInfo(this.nid);
     }
 }

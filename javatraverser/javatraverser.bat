@@ -87,7 +87,6 @@ SET TRAV_SRC=^
   jtraverser\DataChangeEvent.java ^
   jtraverser\DataChangeListener.java ^
   jtraverser\Node.java ^
-  jtraverser\NodeInfo.java ^
   jtraverser\Tree.java ^
   jtraverser\TreeManager.java ^
   jtraverser\TreeNodeLabel.java ^

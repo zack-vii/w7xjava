@@ -1,29 +1,70 @@
 package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
+import mds.data.descriptor.Descriptor_A;
+import mds.data.descriptor_s.Nid;
 
-public final class NidArray extends NUMBERArray<Integer>{
+public final class NidArray extends Descriptor_A<Nid>{
     public NidArray(final ByteBuffer b){
         super(b);
     }
 
     @Override
-    protected final Integer getElement(final ByteBuffer b) {
-        return b.getInt();
+    protected final Nid getElement(final ByteBuffer b) {
+        return new Nid(b.getInt());
     }
 
     @Override
-    protected final Integer[] initArray(final int size) {
-        return new Integer[size];
+    protected String getSuffix() {
+        return "";
     }
 
     @Override
-    public final Integer parse(final String in) {
-        return Integer.decode(in);
+    protected final Nid[] initArray(final int size) {
+        return new Nid[size];
     }
 
     @Override
-    protected final void setElement(final ByteBuffer b, final Integer value) {
-        b.putInt(value);
+    protected final void setElement(final ByteBuffer b, final Nid value) {
+        b.putInt(value.getValue());
+    }
+
+    public final Nid[] toArray() {
+        return this.getValue(0, this.getLength());
+    }
+
+    @Override
+    public byte toByte(final Nid t) {
+        return t.toByte();
+    }
+
+    @Override
+    public double toDouble(final Nid t) {
+        return t.toDouble();
+    }
+
+    @Override
+    public float toFloat(final Nid t) {
+        return t.toFloat();
+    }
+
+    @Override
+    public int toInt(final Nid t) {
+        return t.toInt();
+    }
+
+    @Override
+    public long toLong(final Nid t) {
+        return t.toLong();
+    }
+
+    @Override
+    public short toShort(final Nid t) {
+        return t.toShort();
+    }
+
+    @Override
+    protected String TtoString(final Nid t) {
+        return t.toString();
     }
 }

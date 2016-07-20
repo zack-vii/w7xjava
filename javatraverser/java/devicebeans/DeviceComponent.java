@@ -77,7 +77,7 @@ public abstract class DeviceComponent extends JPanel{
                     this.subtree.putData(currNidData, this.curr_data);
                 }catch(final Exception e){
                     System.err.println("Error writing device data: " + e);
-                    System.err.println("at node: " + this.subtree.getInfo(currNidData).getFullPath());
+                    System.err.println("at node: " + currNidData.getNciFullPath());
                     System.err.println(this.curr_data);
                     throw e;
                 }

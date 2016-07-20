@@ -101,7 +101,7 @@ public class CompileTree extends Thread{
             if(originalDevice != null && deviceOffsetStr != null && !originalDevice.equals("") && !deviceOffsetStr.equals("")){
                 String newName;
                 try{
-                    newName = (this.tree.getInfo(parentNid)).getFullPath();
+                    newName = parentNid.getNciFullPath();
                 }catch(final Exception exc){
                     System.err.println("Error getting renamed path: " + exc);
                     return;

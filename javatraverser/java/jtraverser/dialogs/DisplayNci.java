@@ -43,7 +43,7 @@ public class DisplayNci extends NodeEditor implements ActionListener{
         this.node = node;
         this.frame.setTitle("Display Nci information");
         try{
-            this.label.setText(node.getInfo().toString());
+            this.label.setText(node.getInfoTextBox());
         }catch(final Exception exc){
             jTraverserFacade.stderr("Error retieving Nci", exc);
         }

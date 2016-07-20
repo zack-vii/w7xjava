@@ -12,7 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-import jtraverser.NodeInfo;
+import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.TREENODE;
@@ -119,63 +119,52 @@ public class DeviceDispatch extends DeviceComponent{
     // The class will search actions stored in the device
     // and create and manage their dispatch configurations
     {
-        this.initializing = true;
-        NodeInfo nodeInfo;
-        if(this.subtree == null) return;
         try{
-            nodeInfo = this.subtree.getInfo(this.nidData);
-        }catch(final Exception e){
-            System.out.println("Cannot read device NCI: " + e);
-            return;
-        }
-        Nid currNid = new Nid(this.baseNid.getValue());
-        int num_components = nodeInfo.getConglomerateNids();
-        final NodeInfo nodeInfos[] = new NodeInfo[num_components + 1];
-        for(this.i = this.num_actions = 0; this.i < num_components; this.i++){
-            try{
-                nodeInfos[this.i] = this.subtree.getInfo(currNid);
-            }catch(final Exception e){
-                System.out.println("Cannot read device NCI 1: " + e + " " + currNid.getValue() + " " + this.num_actions + " " + num_components);
-                num_components = this.i;
-                break;
+            this.initializing = true;
+            if(this.subtree == null) return;
+            Nid currNid = new Nid(this.baseNid.getValue());
+            final Nid[] components = this.nidData.getNciConglomerateNids().toArray();
+            for(this.i = this.num_actions = 0; this.i < components.length; this.i++){
+                if(components[this.i].getNciUsage() == TREENODE.USAGE_ACTION) this.num_actions++;
+                currNid = new Nid(currNid.getValue() + 1);
             }
-            if(nodeInfos[this.i].getUsage() == TREENODE.USAGE_ACTION) this.num_actions++;
-            currNid = new Nid(currNid.getValue() + 1);
-        }
-        this.actions = new Descriptor[this.num_actions];
-        this.dispatch_fields = new DeviceDispatchField[this.num_actions];
-        currNid = new Nid(this.nidData.getValue());
-        for(this.i = this.j = this.num_actions = 0; this.i < num_components; this.i++){
-            if(nodeInfos[this.i].getUsage() == TREENODE.USAGE_ACTION){
-                try{
-                    this.actions[this.j] = this.subtree.tdiEvaluate(currNid);
-                }catch(final Exception e){
-                    System.out.println("Cannot read device actions: " + e);
-                    return;
+            this.actions = new Descriptor[this.num_actions];
+            this.dispatch_fields = new DeviceDispatchField[this.num_actions];
+            currNid = new Nid(this.nidData.getValue());
+            for(this.i = this.j = this.num_actions = 0; this.i < components.length; this.i++){
+                if(components[this.i].getNciUsage() == TREENODE.USAGE_ACTION){
+                    try{
+                        this.actions[this.j] = this.subtree.tdiEvaluate(currNid);
+                    }catch(final Exception e){
+                        System.out.println("Cannot read device actions: " + e);
+                        return;
+                    }
+                    this.dispatch_fields[this.j] = new DeviceDispatchField();
+                    this.dispatch_fields[this.j].setSubtree(this.subtree);
+                    this.dispatch_fields[this.j].setOffsetNid(this.i);
+                    this.dispatch_fields[this.j].configure(this.nidData.getValue());
+                    this.j++;
                 }
-                this.dispatch_fields[this.j] = new DeviceDispatchField();
-                this.dispatch_fields[this.j].setSubtree(this.subtree);
-                this.dispatch_fields[this.j].setOffsetNid(this.i);
-                this.dispatch_fields[this.j].configure(this.nidData.getValue());
-                this.j++;
+                currNid = new Nid(currNid.getValue() + 1);
             }
-            currNid = new Nid(currNid.getValue() + 1);
+            for(this.i = 0; this.i < components.length; this.i++){
+                if(components[this.i].getNciUsage() == TREENODE.USAGE_ACTION){
+                    final String name = components[this.i].getNciNodeName();
+                    this.menu.addItem(name);
+                }
+            }
+            this.menu.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    final int idx = DeviceDispatch.this.menu.getSelectedIndex();
+                    if(idx < 0 || idx >= DeviceDispatch.this.dispatch_fields.length) return;
+                    DeviceDispatch.this.activateForm(DeviceDispatch.this.dispatch_fields[DeviceDispatch.this.menu.getSelectedIndex()], (String)DeviceDispatch.this.menu.getSelectedItem());
+                }
+            });
+            this.initializing = false;
+        }catch(final MdsException e){
+            e.printStackTrace();
         }
-        for(this.i = 0; this.i < num_components; this.i++){
-            if(nodeInfos[this.i].getUsage() == TREENODE.USAGE_ACTION){
-                final String name = nodeInfos[this.i].getName();
-                this.menu.addItem(name);
-            }
-        }
-        this.menu.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int idx = DeviceDispatch.this.menu.getSelectedIndex();
-                if(idx < 0 || idx >= DeviceDispatch.this.dispatch_fields.length) return;
-                DeviceDispatch.this.activateForm(DeviceDispatch.this.dispatch_fields[DeviceDispatch.this.menu.getSelectedIndex()], (String)DeviceDispatch.this.menu.getSelectedItem());
-            }
-        });
-        this.initializing = false;
     }
 
     @Override
