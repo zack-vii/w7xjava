@@ -15,6 +15,7 @@ import javax.swing.border.LineBorder;
 import jtraverser.NodeInfo;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
+import mds.data.descriptor_s.TREENODE;
 
 @SuppressWarnings("serial")
 public class DeviceDispatch extends DeviceComponent{
@@ -138,14 +139,14 @@ public class DeviceDispatch extends DeviceComponent{
                 num_components = this.i;
                 break;
             }
-            if(nodeInfos[this.i].getUsage() == NodeInfo.USAGE_ACTION) this.num_actions++;
+            if(nodeInfos[this.i].getUsage() == TREENODE.USAGE_ACTION) this.num_actions++;
             currNid = new Nid(currNid.getValue() + 1);
         }
         this.actions = new Descriptor[this.num_actions];
         this.dispatch_fields = new DeviceDispatchField[this.num_actions];
         currNid = new Nid(this.nidData.getValue());
         for(this.i = this.j = this.num_actions = 0; this.i < num_components; this.i++){
-            if(nodeInfos[this.i].getUsage() == NodeInfo.USAGE_ACTION){
+            if(nodeInfos[this.i].getUsage() == TREENODE.USAGE_ACTION){
                 try{
                     this.actions[this.j] = this.subtree.tdiEvaluate(currNid);
                 }catch(final Exception e){
@@ -161,7 +162,7 @@ public class DeviceDispatch extends DeviceComponent{
             currNid = new Nid(currNid.getValue() + 1);
         }
         for(this.i = 0; this.i < num_components; this.i++){
-            if(nodeInfos[this.i].getUsage() == NodeInfo.USAGE_ACTION){
+            if(nodeInfos[this.i].getUsage() == TREENODE.USAGE_ACTION){
                 final String name = nodeInfos[this.i].getName();
                 this.menu.addItem(name);
             }

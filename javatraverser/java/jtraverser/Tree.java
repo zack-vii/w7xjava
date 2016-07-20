@@ -32,6 +32,7 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
+import mds.data.descriptor_s.TREENODE;
 
 @SuppressWarnings("serial")
 public final class Tree extends JTree implements TreeSelectionListener, DataChangeListener{
@@ -39,11 +40,18 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
     private static final class FromTransferHandler extends TransferHandler{
         @Override
         public final Transferable createTransferable(final JComponent comp) {
-            try{
-                return new StringSelection(((Tree)comp).getCurrentNode().getFullPath());
-            }catch(final Exception exc){
-                return null;
+            if(!(comp instanceof Tree)) return null;
+            final Tree tree = ((Tree)comp);
+            final Node node = tree.getCurrentNode();
+            switch(tree.treeman.copy_format){
+                case TreeManager.ExtrasMenu.CopyFormat.FULLPATH:
+                    return new StringSelection(node.getFullPath());
+                case TreeManager.ExtrasMenu.CopyFormat.PATH:
+                    return new StringSelection(node.getPath());
+                case TreeManager.ExtrasMenu.CopyFormat.MINPATH:
+                    return new StringSelection(node.getMinPath());
             }
+            return null;
         }
 
         @Override
@@ -405,7 +413,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
 
     public final Nid[] getSubTrees() {
         try{
-            return this.database.getWild(NodeInfo.USAGE_SUBTREE);
+            return this.database.getWild(TREENODE.USAGE_SUBTREE);
         }catch(final MdsException e){
             e.printStackTrace();
             return null;
@@ -431,7 +439,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
                 usedNames[idx++] = son.getName();
             for(final Node member : toNode.getMembers())
                 usedNames[idx++] = member.getName();
-            if(fromNode.getUsage() == NodeInfo.USAGE_DEVICE){
+            if(fromNode.getUsage() == TREENODE.USAGE_DEVICE){
                 final Conglom conglom = (Conglom)fromNode.getData();
                 final Node newNode = this.addDevice((isMember ? ":" : ".") + Node.getUniqueName(fromNode.getName(), usedNames), conglom.getModel().toString(), toNode);
                 newNode.expand();
@@ -442,7 +450,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
                 newNode.expand();
                 try{
                     final Descriptor data = fromNode.getData();
-                    if(data != null && fromNode.getUsage() != NodeInfo.USAGE_ACTION) newNode.setData(data);
+                    if(data != null && fromNode.getUsage() != TREENODE.USAGE_ACTION) newNode.setData(data);
                 }catch(final Exception exc){}
                 for(final Node son : fromNode.getSons()){
                     this.pasteSubtree(son, newNode, false);

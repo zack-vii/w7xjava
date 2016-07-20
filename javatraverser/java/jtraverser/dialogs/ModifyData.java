@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import jtraverser.Node;
-import jtraverser.NodeInfo;
 import jtraverser.editor.ActionEditor;
 import jtraverser.editor.DataEditor;
 import jtraverser.editor.DispatchEditor;
@@ -24,6 +23,7 @@ import jtraverser.editor.WindowEditor;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Range;
+import mds.data.descriptor_s.TREENODE;
 
 @SuppressWarnings("serial")
 public class ModifyData extends NodeEditor{
@@ -144,37 +144,37 @@ public class ModifyData extends NodeEditor{
             data = null;
         }
         switch(this.node.getUsage()){
-            case NodeInfo.USAGE_SIGNAL:
+            case TREENODE.USAGE_SIGNAL:
                 if(this.signal_edit == null) this.signal_edit = new SignalEditor(data, this.frame);
                 else this.signal_edit.setData(data);
                 this.signal_edit.setEditable(this.is_editable);
                 this.replace(this.signal_edit);
                 break;
-            case NodeInfo.USAGE_ACTION:
+            case TREENODE.USAGE_ACTION:
                 if(this.action_edit == null) this.action_edit = new ActionEditor(data, this.frame);
                 else this.action_edit.setData(data);
                 this.action_edit.setEditable(this.is_editable);
                 this.replace(this.action_edit);
                 break;
-            case NodeInfo.USAGE_DISPATCH:
+            case TREENODE.USAGE_DISPATCH:
                 if(this.dispatch_edit == null) this.dispatch_edit = new DispatchEditor(data, this.frame);
                 else this.dispatch_edit.setData(data);
                 this.replace(this.dispatch_edit);
                 this.dispatch_edit.setEditable(this.is_editable);
                 break;
-            case NodeInfo.USAGE_TASK:
+            case TREENODE.USAGE_TASK:
                 if(this.task_edit == null) this.task_edit = new TaskEditor(data, this.frame);
                 else this.task_edit.setData(data);
                 this.replace(this.task_edit);
                 this.task_edit.setEditable(this.is_editable);
                 break;
-            case NodeInfo.USAGE_WINDOW:
+            case TREENODE.USAGE_WINDOW:
                 if(this.window_edit == null) this.window_edit = new WindowEditor(data, this.frame);
                 else this.window_edit.setData(data);
                 this.replace(this.window_edit);
                 this.window_edit.setEditable(this.is_editable);
                 break;
-            case NodeInfo.USAGE_AXIS:
+            case TREENODE.USAGE_AXIS:
                 if(data instanceof Range){
                     if(this.range_edit == null) this.range_edit = new RangeEditor((Range)data);
                     else this.range_edit.setData((Range)data);

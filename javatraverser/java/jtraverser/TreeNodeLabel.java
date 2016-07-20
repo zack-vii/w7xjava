@@ -6,11 +6,11 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import mds.data.descriptor_s.TREENODE;
 
 @SuppressWarnings("serial")
 public class TreeNodeLabel extends JLabel{
     static Font plain_f, bold_f;
-
     static{
         TreeNodeLabel.plain_f = new Font("Serif", Font.PLAIN, 12);
         TreeNodeLabel.bold_f = new Font("Serif", Font.BOLD, 12);
@@ -32,7 +32,7 @@ public class TreeNodeLabel extends JLabel{
     public TreeNodeLabel(final Node node, final String name, final Icon icon, final boolean isSelected){
         super((node.isDefault() ? new StringBuilder(node.getName().length() + 2).append('(').append(node).append(')').toString() : node.toString()), icon, SwingConstants.LEFT);
         this.node = node;
-        if(node.getUsage() == NodeInfo.USAGE_SUBTREE) this.setForeground(node.isIncludeInPulse() ? this.CInclude : this.CExclude);
+        if(node.getUsage() == TREENODE.USAGE_SUBTREE) this.setForeground(node.isIncludeInPulse() ? this.CInclude : this.CExclude);
         else{
             if(node.isNoWriteModel() & node.isNoWriteModel()) this.setForeground(this.CNoWrite);
             else if(node.isNoWriteModel()) this.setForeground(node.tree.isModel() ? (node.isWriteOnce() ? this.CNoWriteO : this.CNoWrite) : (node.isWriteOnce() ? this.CWriteO : this.CWrite));

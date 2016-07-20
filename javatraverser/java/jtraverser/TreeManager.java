@@ -14,12 +14,14 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -39,6 +41,7 @@ import jtraverser.tools.DecompileTree;
 import mds.Database;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
+import mds.data.descriptor_s.TREENODE;
 
 @SuppressWarnings("serial")
 public class TreeManager extends JScrollPane{
@@ -61,8 +64,32 @@ public class TreeManager extends JScrollPane{
                 AddNodeMenu.this.treeman.dialogs.addNode.open(AddNodeMenu.this.treeman.getCurrentNode(), this.usage);
             }
         }
-        private final String[] name  = new String[]{"Structure", "Subtree", "Action", "Any", "Axis", "Dispatch", "Numeric", "Signal", "Task", "Text", "Window"};
-        private final byte[]   usage = new byte[]{NodeInfo.USAGE_STRUCTURE, NodeInfo.USAGE_SUBTREE, NodeInfo.USAGE_ACTION, NodeInfo.USAGE_ANY, NodeInfo.USAGE_AXIS, NodeInfo.USAGE_DISPATCH, NodeInfo.USAGE_NUMERIC, NodeInfo.USAGE_SIGNAL, NodeInfo.USAGE_TASK, NodeInfo.USAGE_TEXT, NodeInfo.USAGE_WINDOW};
+        private final String[] name  = new String[]{   //
+                "Structure",                           //
+                "Subtree",                             //
+                "Action",                              //
+                "Any",                                 //
+                "Axis",                                //
+                "Dispatch",                            //
+                "Numeric",                             //
+                "Signal",                              //
+                "Task",                                //
+                "Text",                                //
+                "Window"                               //
+        };
+        private final byte[]   usage = new byte[]{     //
+                TREENODE.USAGE_STRUCTURE,              //
+                TREENODE.USAGE_SUBTREE,                //
+                TREENODE.USAGE_ACTION,                 //
+                TREENODE.USAGE_ANY,                    //
+                TREENODE.USAGE_AXIS,                   //
+                TREENODE.USAGE_DISPATCH,               //
+                TREENODE.USAGE_NUMERIC,                //
+                TREENODE.USAGE_SIGNAL,                 //
+                TREENODE.USAGE_TASK,                   //
+                TREENODE.USAGE_TEXT,                   //
+                TREENODE.USAGE_WINDOW                  //
+        };
 
         public AddNodeMenu(final TreeManager treeman, final JComponent menu){
             super(treeman);
@@ -118,8 +145,8 @@ public class TreeManager extends JScrollPane{
             boolean[] mask = new boolean[this.items.size()];
             if(node != null){
                 final int usage = node.getUsage();
-                final boolean enable = !(usage == NodeInfo.USAGE_STRUCTURE || usage == NodeInfo.USAGE_SUBTREE);
-                final boolean enable2 = (usage == NodeInfo.USAGE_SIGNAL);
+                final boolean enable = !(usage == TREENODE.USAGE_STRUCTURE || usage == TREENODE.USAGE_SUBTREE);
+                final boolean enable2 = (usage == TREENODE.USAGE_SIGNAL);
                 mask = new boolean[]{enable, enable2, true, true, true, true};
             }
             for(int i = 0; i < mask.length; i++)
@@ -180,7 +207,7 @@ public class TreeManager extends JScrollPane{
             boolean[] mask = new boolean[this.items.size()];
             if(node != null){
                 final int usage = node.getUsage();
-                final boolean isst = usage == NodeInfo.USAGE_SUBTREE;
+                final boolean isst = usage == TREENODE.USAGE_SUBTREE;
                 mask = new boolean[]{!isst || node.nid.getValue() == 0, node.nid.getValue() != 0, !isst, !isst, node.nid.getValue() > 0, Node.isCopied()};
             }
             for(int i = 0; i < mask.length; i++)
@@ -188,7 +215,32 @@ public class TreeManager extends JScrollPane{
         }
     }
     public static final class ExtrasMenu extends Menu{
-        public final class showDatabase implements ActionListener{
+        public final class CopyFormat extends JMenu implements ActionListener{
+            public static final int    FULLPATH = 0;
+            public static final int    PATH     = 1;
+            public static final int    MINPATH  = 2;
+            final JRadioButtonMenuItem fullpath, path, minpath;
+
+            public CopyFormat(){
+                super("Copy Format");
+                final ButtonGroup group = new ButtonGroup();
+                group.add(this.add(this.fullpath = new JRadioButtonMenuItem("FullPath")));
+                group.add(this.add(this.path = new JRadioButtonMenuItem("Path")));
+                group.add(this.add(this.minpath = new JRadioButtonMenuItem("MinPath")));
+                this.fullpath.setSelected(true);
+                this.fullpath.addActionListener(this);
+                this.path.addActionListener(this);
+                this.minpath.addActionListener(this);
+            }
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                if(e.getSource().equals(CopyFormat.this.fullpath)) ExtrasMenu.this.treeman.copy_format = CopyFormat.FULLPATH;
+                else if(e.getSource().equals(CopyFormat.this.path)) ExtrasMenu.this.treeman.copy_format = CopyFormat.PATH;
+                else if(e.getSource().equals(CopyFormat.this.minpath)) ExtrasMenu.this.treeman.copy_format = CopyFormat.MINPATH;
+            }
+        }
+        public final class ShowDatabase implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
                 try{
@@ -200,13 +252,13 @@ public class TreeManager extends JScrollPane{
                 }
             }
         }
-        public final class showSubTrees implements ActionListener{
+        public final class ShowSubTrees implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
                 new SubTrees(ExtrasMenu.this.treeman, ExtrasMenu.this.treeman.getFrame());
             }
         }
-        public final class showTags implements ActionListener{
+        public final class ShowTags implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
                 try{
@@ -222,9 +274,10 @@ public class TreeManager extends JScrollPane{
 
         public ExtrasMenu(final TreeManager treeman, final JComponent menu){
             super(treeman);
-            menu.add(this.addMenuItem("Show DataBase", new showDatabase()));
-            menu.add(this.addMenuItem("Show SubTrees", new showSubTrees()));
-            menu.add(this.addMenuItem("Show Tags", new showTags()));
+            menu.add(new CopyFormat());
+            menu.add(this.addMenuItem("Show DataBase", new ShowDatabase()));
+            menu.add(this.addMenuItem("Show SubTrees", new ShowSubTrees()));
+            menu.add(this.addMenuItem("Show Tags", new ShowTags()));
         }
 
         @Override
@@ -244,7 +297,7 @@ public class TreeManager extends JScrollPane{
         /*private final class compile implements ActionListener{
         @Override
         public void actionPerformed(final ActionEvent e) {
-            FileMenu.this.treeman.compile();
+        FileMenu.this.treeman.compile();
         }
         }*/
         private final class decompile implements ActionListener{
@@ -355,7 +408,7 @@ public class TreeManager extends JScrollPane{
                 pop.show((Component)e.getSource(), e.getX(), e.getY());
             }else if((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && (e.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK)) != 0){
                 if(currnode.isSubTree()) try{
-                    currnode.toggleFlags(NodeInfo.INCLUDE_IN_PULSE);
+                    currnode.toggleFlags(TREENODE.INCLUDE_IN_PULSE);
                 }catch(final MdsException e1){
                     jTraverserFacade.stderr("INCLUDE_IN_PULSE", e1);
                 }
@@ -420,9 +473,9 @@ public class TreeManager extends JScrollPane{
             boolean[] mask = new boolean[this.items.size()];
             if(node != null){
                 final int usage = node.getUsage();
-                final boolean isst = usage == NodeInfo.USAGE_STRUCTURE || usage == NodeInfo.USAGE_SUBTREE;
-                final boolean isact = usage == NodeInfo.USAGE_ACTION || usage == NodeInfo.USAGE_TASK;
-                final boolean isdev = usage == NodeInfo.USAGE_DEVICE;
+                final boolean isst = usage == TREENODE.USAGE_STRUCTURE || usage == TREENODE.USAGE_SUBTREE;
+                final boolean isact = usage == TREENODE.USAGE_ACTION || usage == TREENODE.USAGE_TASK;
+                final boolean isdev = usage == TREENODE.USAGE_DEVICE;
                 mask = new boolean[]{!isst, true, true, true, isdev, isact};
             }
             for(int i = 0; i < mask.length; i++)
@@ -432,6 +485,7 @@ public class TreeManager extends JScrollPane{
     static{
         ToolTipManager.sharedInstance().setDismissDelay(60000);
     }
+    public int                     copy_format;
     public final Dialogs           dialogs;
     private final jTraverserFacade frame;
     private final TreeOpenDialog   open_dialog;;

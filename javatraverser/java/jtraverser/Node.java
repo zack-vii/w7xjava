@@ -18,6 +18,7 @@ import mds.data.descriptor_r.Action;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
+import mds.data.descriptor_s.TREENODE;
 
 public class Node{
     private static Node              copied;
@@ -139,7 +140,7 @@ public class Node{
     }
 
     public final Node addChild(final String name) throws MdsException {
-        return this.addNode(name, NodeInfo.USAGE_STRUCTURE);
+        return this.addNode(name, TREENODE.USAGE_STRUCTURE);
     }
 
     public final Node addDevice(final String name, final String type) throws MdsException {
@@ -152,11 +153,11 @@ public class Node{
         }finally{
             this.database.setDefault(prev_default);
         }
-        return this.addNode(new_nid, NodeInfo.USAGE_DEVICE);
+        return this.addNode(new_nid, TREENODE.USAGE_DEVICE);
     }
 
     private final Node addNode(final Nid new_nid, final int usage) {
-        final boolean ismember = usage != NodeInfo.USAGE_STRUCTURE || usage != NodeInfo.USAGE_SUBTREE;
+        final boolean ismember = usage != TREENODE.USAGE_STRUCTURE || usage != TREENODE.USAGE_SUBTREE;
         final Node newNode = new Node(this.database, this.tree, this, ismember, new_nid);
         this.expand();
         if(ismember){
@@ -333,7 +334,11 @@ public class Node{
     }
 
     public final String getFullPath() {
-        return this.info.getFullPath();
+        try{
+            return this.nid.getFullPath();
+        }catch(final MdsException e){
+            return this.info.getFullPath();
+        }
     }
 
     public final Component getIcon(final boolean isSelected) {
@@ -362,7 +367,11 @@ public class Node{
     }
 
     public final String getMinPath() {
-        return this.info.getMinPath();
+        try{
+            return this.nid.getMinPath();
+        }catch(final MdsException e){
+            return this.info.getMinPath();
+        }
     }
 
     public final String getName() {
@@ -374,7 +383,11 @@ public class Node{
     }
 
     public final String getPath() {
-        return this.info.getPath();
+        try{
+            return this.nid.getPath();
+        }catch(final MdsException e){
+            return this.info.getPath();
+        }
     }
 
     public final Node[] getSons() {
@@ -405,7 +418,7 @@ public class Node{
                 final int defaultnid = this.tree.getDefault();
                 try{
                     info = this.getInfo().toString();
-                    if(this.getUsage() == NodeInfo.USAGE_STRUCTURE || this.getUsage() == NodeInfo.USAGE_SUBTREE) text = null;
+                    if(this.getUsage() == TREENODE.USAGE_STRUCTURE || this.getUsage() == TREENODE.USAGE_SUBTREE) text = null;
                     else{
                         final Descriptor data = this.getData();
                         if(data == null) text = null;
@@ -499,7 +512,12 @@ public class Node{
 
     public final boolean isSegmented() {
         if(this.info.isSegmented()) return true;
-        return this.nid.getNumSegments() > 0;
+        try{
+            return this.nid.getNumSegments() > 0;
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public final boolean isSetup() {

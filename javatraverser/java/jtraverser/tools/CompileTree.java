@@ -12,11 +12,11 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import jtraverser.NodeInfo;
 import mds.Database;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
+import mds.data.descriptor_s.TREENODE;
 
 public class CompileTree extends Thread{
     public static void main(final String args[]) {
@@ -116,7 +116,7 @@ public class CompileTree extends Thread{
             if(type.equals("node")){
                 try{
                     if(name.length() > 12) name = name.substring(0, 12);
-                    nid = this.tree.addNode(name, NodeInfo.USAGE_STRUCTURE);
+                    nid = this.tree.addNode(name, TREENODE.USAGE_STRUCTURE);
                     if(usageStr != null && usageStr.equals("SUBTREE")) this.subtreeNids.addElement(nid);
                     this.tree.setDefault(nid);
                     success = true;
@@ -124,16 +124,16 @@ public class CompileTree extends Thread{
                     System.err.println("Error adding member " + name + " : " + e);
                 }
             }else if(type.equals("member")){
-                byte usage = NodeInfo.USAGE_NONE;
-                if(usageStr.equals("NONE")) usage = NodeInfo.USAGE_NONE;
-                if(usageStr.equals("ACTION")) usage = NodeInfo.USAGE_ACTION;
-                if(usageStr.equals("NUMERIC")) usage = NodeInfo.USAGE_NUMERIC;
-                if(usageStr.equals("SIGNAL")) usage = NodeInfo.USAGE_SIGNAL;
-                if(usageStr.equals("TASK")) usage = NodeInfo.USAGE_TASK;
-                if(usageStr.equals("TEXT")) usage = NodeInfo.USAGE_TEXT;
-                if(usageStr.equals("WINDOW")) usage = NodeInfo.USAGE_WINDOW;
-                if(usageStr.equals("AXIS")) usage = NodeInfo.USAGE_AXIS;
-                if(usageStr.equals("DISPATCH")) usage = NodeInfo.USAGE_DISPATCH;
+                byte usage = TREENODE.USAGE_NONE;
+                if(usageStr.equals("NONE")) usage = TREENODE.USAGE_NONE;
+                if(usageStr.equals("ACTION")) usage = TREENODE.USAGE_ACTION;
+                if(usageStr.equals("NUMERIC")) usage = TREENODE.USAGE_NUMERIC;
+                if(usageStr.equals("SIGNAL")) usage = TREENODE.USAGE_SIGNAL;
+                if(usageStr.equals("TASK")) usage = TREENODE.USAGE_TASK;
+                if(usageStr.equals("TEXT")) usage = TREENODE.USAGE_TEXT;
+                if(usageStr.equals("WINDOW")) usage = TREENODE.USAGE_WINDOW;
+                if(usageStr.equals("AXIS")) usage = TREENODE.USAGE_AXIS;
+                if(usageStr.equals("DISPATCH")) usage = TREENODE.USAGE_DISPATCH;
                 try{
                     if(name.length() > 12) name = name.substring(0, 12);
                     nid = this.tree.addNode(":" + name, usage);
@@ -185,11 +185,11 @@ public class CompileTree extends Thread{
                     final StringTokenizer st = new StringTokenizer(flagsStr, ", ");
                     while(st.hasMoreTokens()){
                         final String flag = st.nextToken();
-                        if(flag.equals("WRITE_ONCE")) flags |= NodeInfo.WRITE_ONCE;
-                        if(flag.equals("COMPRESSIBLE")) flags |= NodeInfo.COMPRESSIBLE;
-                        if(flag.equals("COMPRESS_ON_PUT")) flags |= NodeInfo.COMPRESS_ON_PUT;
-                        if(flag.equals("NO_WRITE_MODEL")) flags |= NodeInfo.NO_WRITE_MODEL;
-                        if(flag.equals("NO_WRITE_SHOT")) flags |= NodeInfo.NO_WRITE_SHOT;
+                        if(flag.equals("WRITE_ONCE")) flags |= TREENODE.WRITE_ONCE;
+                        if(flag.equals("COMPRESSIBLE")) flags |= TREENODE.COMPRESSIBLE;
+                        if(flag.equals("COMPRESS_ON_PUT")) flags |= TREENODE.COMPRESS_ON_PUT;
+                        if(flag.equals("NO_WRITE_MODEL")) flags |= TREENODE.NO_WRITE_MODEL;
+                        if(flag.equals("NO_WRITE_SHOT")) flags |= TREENODE.NO_WRITE_SHOT;
                     }
                     try{
                         this.tree.setFlags(nid, flags);

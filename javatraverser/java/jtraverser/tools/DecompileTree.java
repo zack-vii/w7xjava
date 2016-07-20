@@ -23,6 +23,7 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
+import mds.data.descriptor_s.TREENODE;
 
 public class DecompileTree{
     public static final void main(final String args[]) {
@@ -104,8 +105,8 @@ public class DecompileTree{
             Element docMember = null;
             try{
                 final NodeInfo info = this.database.getInfo(member);
-                if(info.getUsage() == NodeInfo.USAGE_DEVICE) docMember = this.document.createElement("device");
-                if(info.getUsage() == NodeInfo.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
+                if(info.getUsage() == TREENODE.USAGE_DEVICE) docMember = this.document.createElement("device");
+                if(info.getUsage() == TREENODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
                 else docMember = this.document.createElement("member");
             }catch(final Exception e){
                 System.err.println(this.error = e.toString());
@@ -247,7 +248,7 @@ public class DecompileTree{
             } // End management of device fields
             else{
                 node.setAttribute("NAME", info.getName());
-                if(info.getUsage() == NodeInfo.USAGE_DEVICE || info.getUsage() == NodeInfo.USAGE_COMPOUND_DATA){
+                if(info.getUsage() == TREENODE.USAGE_DEVICE || info.getUsage() == TREENODE.USAGE_COMPOUND_DATA){
                     Conglom deviceData = null;
                     try{
                         deviceData = (Conglom)this.database.getData(nid);
@@ -296,37 +297,37 @@ public class DecompileTree{
                 if(flags.length() > 0) node.setAttribute("FLAGS", flags);
                 // usage
                 final int usage = info.getUsage();
-                if(usage != NodeInfo.USAGE_STRUCTURE && usage != NodeInfo.USAGE_DEVICE && usage != NodeInfo.USAGE_COMPOUND_DATA){
+                if(usage != TREENODE.USAGE_STRUCTURE && usage != TREENODE.USAGE_DEVICE && usage != TREENODE.USAGE_COMPOUND_DATA){
                     String usageStr = "";
                     switch(usage){
-                        case NodeInfo.USAGE_NONE:
+                        case TREENODE.USAGE_NONE:
                             usageStr = "NONE";
                             break;
-                        case NodeInfo.USAGE_ACTION:
+                        case TREENODE.USAGE_ACTION:
                             usageStr = "ACTION";
                             break;
-                        case NodeInfo.USAGE_DISPATCH:
+                        case TREENODE.USAGE_DISPATCH:
                             usageStr = "DISPATCH";
                             break;
-                        case NodeInfo.USAGE_NUMERIC:
+                        case TREENODE.USAGE_NUMERIC:
                             usageStr = "NUMERIC";
                             break;
-                        case NodeInfo.USAGE_SIGNAL:
+                        case TREENODE.USAGE_SIGNAL:
                             usageStr = "SIGNAL";
                             break;
-                        case NodeInfo.USAGE_TASK:
+                        case TREENODE.USAGE_TASK:
                             usageStr = "TASK";
                             break;
-                        case NodeInfo.USAGE_TEXT:
+                        case TREENODE.USAGE_TEXT:
                             usageStr = "TEXT";
                             break;
-                        case NodeInfo.USAGE_WINDOW:
+                        case TREENODE.USAGE_WINDOW:
                             usageStr = "WINDOW";
                             break;
-                        case NodeInfo.USAGE_AXIS:
+                        case TREENODE.USAGE_AXIS:
                             usageStr = "AXIS";
                             break;
-                        case NodeInfo.USAGE_SUBTREE:
+                        case TREENODE.USAGE_SUBTREE:
                             usageStr = "SUBTREE";
                             break;
                     }
@@ -348,14 +349,14 @@ public class DecompileTree{
                     }
                 }
                 // handle descendants, if not subtree
-                if(usage != NodeInfo.USAGE_SUBTREE){
+                if(usage != TREENODE.USAGE_SUBTREE){
                     Nid[] sons;
                     try{
                         sons = this.database.getSons(nid);
                     }catch(final Exception exc){
                         sons = new Nid[0];
                     }
-                    if(info.getUsage() == NodeInfo.USAGE_DEVICE || info.getUsage() == NodeInfo.USAGE_COMPOUND_DATA){
+                    if(info.getUsage() == TREENODE.USAGE_DEVICE || info.getUsage() == TREENODE.USAGE_COMPOUND_DATA){
                         // int numFields = info.getConglomerateNids() - 1;
                         final int numFields = info.getConglomerateNids();
                         for(int i = 1; i < numFields; i++)
@@ -375,8 +376,8 @@ public class DecompileTree{
                         for(final Nid member : members){
                             Element docMember;
                             final NodeInfo currInfo = this.database.getInfo(member);
-                            if(currInfo.getUsage() == NodeInfo.USAGE_DEVICE) docMember = this.document.createElement((currInfo.getUsage() == NodeInfo.USAGE_DEVICE) ? "device" : "compound_data");
-                            else if(currInfo.getUsage() == NodeInfo.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
+                            if(currInfo.getUsage() == TREENODE.USAGE_DEVICE) docMember = this.document.createElement((currInfo.getUsage() == TREENODE.USAGE_DEVICE) ? "device" : "compound_data");
+                            else if(currInfo.getUsage() == TREENODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
                             else docMember = this.document.createElement("member");
                             node.appendChild(docMember);
                             this.recDecompile(member, docMember, false, isFull);

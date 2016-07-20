@@ -14,6 +14,7 @@ import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 import mds.data.descriptor_s.Pointer;
+import mds.data.descriptor_s.TREENODE;
 import mds.mdsip.Connection;
 
 public final class Database{
@@ -167,7 +168,7 @@ public final class Database{
         final int[] res = this.treeshr.treeAddNode(path, usage);
         this.handleStatus(res[0]);
         final Nid nid = new Nid(res[1]);
-        if(usage == NodeInfo.USAGE_SUBTREE) this.setSubtree(nid);
+        if(usage == TREENODE.USAGE_SUBTREE) this.setSubtree(nid);
         return nid;
     }
 
@@ -380,7 +381,7 @@ public final class Database{
     }
 
     public final boolean isOn(final Nid nid) throws MdsException {
-        return 0 == (this.getFlags(nid) & NodeInfo.STATE);
+        return 0 == (this.getFlags(nid) & TREENODE.STATE);
     }
 
     public final boolean isOpen() {
