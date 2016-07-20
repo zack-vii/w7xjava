@@ -258,13 +258,13 @@ SET TRAV_GIF=^
   jtraverser\window.gif
 
 SET JARDIR=%CD%\..\java\classes
-SET SRCDIR=.\java
+SET SRCDIR=%CD%\java
 SET CLASSPATH=-classpath "." ||rem ;%JARDIR%\jScope.jar"
 SET JAVAC="%JDK_HOME%\bin\javac.exe" ||rem -Xlint -deprecation
 SET JCFLAGS= -O -source 1.6 -target 1.6 -g:none||rem -Xlint -deprecation
 SET JAR="%JDK_HOME%\bin\jar.exe"
-SET DBMANIFEST=devicebeans\MANIFEST.mf
-SET JTMANIFEST=jtraverser\MANIFEST.mf
+SET DBMANIFEST=%CD%\DBMANIFEST.mf
+SET JTMANIFEST=%JARDIR%\JTMANIFEST.mf
 MKDIR %JARDIR% 2>NUL
 SET DEVICE_CLS=%DEVICE_SRC:.java=*.class%
 SET TRAV_CLS=%TRAV_SRC:.java=*.class%
@@ -286,9 +286,8 @@ MKDIR %JARDIR%\jTraverser 2>NUL
 COPY /Y %SRCDIR%\devicebeans\*.gif %JARDIR%\devicebeans>NUL
 rem COPY /Y %SRCDIR%\devicebeans\devicewave\*.gif %JARDIR%\devicebeans\devicewave>NUL
 COPY /Y %SRCDIR%\jtraverser\*.gif  %JARDIR%\jtraverser>NUL
-COPY /Y %SRCDIR%\%DBMANIFEST% %JARDIR%\%DBMANIFEST% >NUL
-COPY /Y %SRCDIR%\%JTMANIFEST% %JARDIR%\%JTMANIFEST% >NUL
-ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>%JARDIR%\%JTMANIFEST%
+COPY /Y %CD%\JTMANIFEST.mf %JTMANIFEST% >NUL
+ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>%JTMANIFEST%
 
 ECHO creating jar packages
 PUSHD %JARDIR%
