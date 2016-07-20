@@ -1,4 +1,5 @@
 @ECHO OFF
+PUSHD %~dp0|rem temporally creates a network drive if executed from a network path
 <!-- : --- get date Script ---------------------------
 FOR /F "delims=" %%x IN ('cscript //nologo "%~f0?.wsf"') DO %%x
 GOTO:rest
@@ -25,11 +26,13 @@ SET /A ERROR=1
 GOTO:end
 
 :start
-SET SRCDIR=%CD%
+SET SRCDIR=%CD%\java
+SET JARDIR=%CD%\..\java\classes
 SET JAR="%JDK_HOME%\bin\jar.exe"
-SET JARDIR=..\java\classes
+SET JSFMANIFEST=%JARDIR%\JSFMANIFEST.MF
 
 echo merge to jScopeFull.jar
+COPY /Y %CD%\JSFMANIFEST.MF %JSFMANIFEST% >NUL
 PUSHD %JARDIR%
 RMDIR /S /Q full 2>nul
 MKDIR full 2>NUL
@@ -41,15 +44,15 @@ ECHO unpacking MdsDataProvider.jar
 ECHO unpacking W7XDataProvider.jar
 %JAR% -xf ..\W7XDataProvider.jar
 DEL META-INF\MANIFEST.MF
+ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>%JSFMANIFEST%
 POPD
-COPY /Y %SRCDIR%\MANIFEST.MF .\MANIFEST.MF >NUL
-ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>MANIFEST.MF
 
 ECHO packing jScopeFull.jar
-%JAR% -cmf MANIFEST.MF jScopeFull.jar -C full .
+%JAR% -cmf %JSFMANIFEST% jScopeFull.jar -C full .
+
 ECHO cleaning up
 RMDIR /S /Q full 2>nul
-DEL MANIFEST.MF
+DEL %JSFMANIFEST%
 POPD
 :jscope
 ECHO start jScopeFull?

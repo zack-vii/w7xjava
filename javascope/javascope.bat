@@ -1,4 +1,5 @@
 @ECHO OFF
+PUSHD %~dp0|rem temporally creates a network drive if executed from a network path
 <!-- : --- get date Script ---------------------------
 FOR /F "delims=" %%x IN ('cscript //nologo "%~f0?.wsf"') DO %%x
 GOTO:rest
@@ -192,32 +193,33 @@ jscope\FontPanel.class ^
 jscope\ServerDialog*.class ^
 jscope\WindowDialog.class
 
+SET SRCDIR=%CD%\java
+SET JARDIR=%CD%\..\java\classes
 SET CLASSPATH=-classpath ".;mds\MindTerm.jar;w7x\swingx.jar;w7x\W7XDataProvider.jar"
 SET JAVAC="%JDK_HOME%\bin\javac.exe"
 SET JCFLAGS=-O -source 1.6 -target 1.6 -g:none||rem-Xlint -deprecation
-SET SRCDIR=%CD%
 SET JAR="%JDK_HOME%\bin\jar.exe"
-SET JSMANIFEST=jscope\MANIFEST.mf
-SET JARDIR=..\java\classes
+SET JSMANIFEST=%JARDIR%\JSMANIFEST.mf
 
 ECHO compiling *.java to *.class . . .
+PUSHD %SRCDIR%
 %JAVAC% %JCFLAGS% -d %JARDIR% %CLASSPATH% %COMMON_SRC% %JSCOPE_SRC% %WAVEDISPLAY_SRC%
 SET /A ERROR=%ERRORLEVEL%
+POPD
 IF %ERROR% NEQ 0 GOTO:cleanup
 
 :gather
 ECHO gathering data
-COPY /Y jScope.properties %JARDIR%\>NUL
-MKDIR  %JARDIR%\docs 2>NUL
-MKDIR  %JARDIR%\jars 2>NUL
-FOR %%F IN (%DOCS%) DO COPY /Y %%F /D %JARDIR%\docs>NUL
-FOR %%F IN (%JSCOPE_RES%) DO COPY /Y %%F /D %JARDIR%\jscope>NUL
-COPY %CD%\Mds\MindTerm.jar %JARDIR%\MdsDataProvider.jar>NUL
-rem COPY %CD%\w7x\swingx.jar %JARDIR%>NUL || rem included in W7XDataProvider
-COPY %CD%\w7x\W7XDataProvider.jar %JARDIR%>NUL
-COPY /Y %JSMANIFEST% %JARDIR%\%JSMANIFEST% >NUL
-COPY /Y %JSMANIFEST% %JARDIR%\%JSMANIFEST% >NUL
-ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>%JARDIR%\%JSMANIFEST%
+COPY /Y %SRCDIR%\jScope.properties %JARDIR%\>NUL
+MKDIR %JARDIR%\docs 2>NUL
+MKDIR %JARDIR%\jars 2>NUL
+FOR %%F IN (%DOCS%) DO COPY /Y %SRCDIR%\%%F /D %JARDIR%\docs>NUL
+FOR %%F IN (%JSCOPE_RES%) DO COPY /Y %SRCDIR%\%%F /D %JARDIR%\jscope>NUL
+COPY %SRCDIR%\mds\MindTerm.jar %JARDIR%\MdsDataProvider.jar>NUL
+rem COPY %SRCDIR%\w7x\swingx.jar %JARDIR%>NUL || rem included in W7XDataProvider
+COPY %SRCDIR%\w7x\W7XDataProvider.jar %JARDIR%>NUL
+COPY /Y %CD%\JSMANIFEST.mf %JSMANIFEST% >NUL
+ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>%JSMANIFEST%
 
 :packjar
 ECHO creating jar packages
@@ -237,6 +239,7 @@ ECHO cleaning up
 PUSHD %JARDIR%
 RMDIR /S /Q docs 2>NUL
 DEL colors.tbl jScope.properties jScope.class 2>NUL
+DEL %JSMANIFEST% 2>NUL
 RMDIR /S /Q jars 2>nul
 RMDIR /S /Q jet 2>nul
 RMDIR /S /Q jscope 2>nul

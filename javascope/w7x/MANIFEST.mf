@@ -1,2 +1,0 @@
-Class-Path: jScope.jar mdsDataProvider.jar
-Main-Class: jScope
