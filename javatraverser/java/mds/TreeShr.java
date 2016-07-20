@@ -126,8 +126,16 @@ public final class TreeShr{
         return this.connection.getIntegerArray("_i=-1;_s=TreeShr->TreeGetDefaultNid(ref(_i));[_s,_i]");
     }
 
+    public final String treeGetMinimumPath(final int nid) throws MdsException {
+        return this.connection.getString(String.format("TreeShr->TreeGetMinimumPath:T(val(0),val(%d))", nid));
+    }
+
     public final int treeGetNumSegments(final int nid) throws MdsException {
         return this.connection.getInteger(String.format("_a=0;_s=TreeShr->TreeGetNumSegments(val(%d),ref(_a));_a", nid));
+    }
+
+    public final String treeGetPath(final int nid) throws MdsException {
+        return this.connection.getString(String.format("TreeShr->TreeGetPath:T(val(%d))", nid));
     }
 
     public final Descriptor treeGetRecord(final int nid) throws MdsException {
@@ -152,6 +160,10 @@ public final class TreeShr{
 
     public final Descriptor treeGetXNci(final int nid, final String name) throws MdsException {
         return this.connection.getDescriptor(String.format("_a=*;_s=TreeShr->TreeGetXNci(val(%d),ref('%s'),xd(_a));_a", nid, name));
+    }
+
+    public final int treeIsOn(final int nid) throws MdsException {
+        return this.connection.getInteger(String.format("TreeShr->TreeIsOn(val(%d))", nid));
     }
 
     public final int treeMakeTimestampedSegment(final int nid, final Int64Array timestamps, final Descriptor_A values) throws MdsException {
