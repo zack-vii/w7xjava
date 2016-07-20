@@ -15,9 +15,10 @@ import javax.swing.JPanel;
 import jtraverser.Node;
 import jtraverser.TreeManager;
 import jtraverser.jTraverserFacade;
+import mds.data.descriptor_s.TREENODE.Flags;
 
 @SuppressWarnings("serial")
-public final class Flags extends JDialog{
+public final class ModifyFlags extends JDialog{
     private final static boolean[] intToBool(final int iflags) {
         final boolean[] bflags = new boolean[32];
         for(byte i = 0; i < 32; i++)
@@ -30,11 +31,11 @@ public final class Flags extends JDialog{
     private final TreeManager treeman;
     private final JButton     update_b;
 
-    public Flags(final TreeManager treeman){
+    public ModifyFlags(final TreeManager treeman){
         this(treeman, treeman.getFrame());
     }
 
-    public Flags(final TreeManager treeman, final Frame frame){
+    public ModifyFlags(final TreeManager treeman, final Frame frame){
         super(frame);
         this.treeman = treeman;
         this.setFocusableWindowState(false);
@@ -66,11 +67,11 @@ public final class Flags extends JDialog{
         this.flag[0].addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final Node currnode = Flags.this.treeman.getCurrentNode();
+                final Node currnode = ModifyFlags.this.treeman.getCurrentNode();
                 if(currnode == null) return;
-                if(Flags.this.flag[0].isSelected()) currnode.turnOff();
+                if(ModifyFlags.this.flag[0].isSelected()) currnode.turnOff();
                 else currnode.turnOn();
-                Flags.this.treeman.reportChange();
+                ModifyFlags.this.treeman.reportChange();
             }
         });
         for(byte i = 1; i < 32; i++)
@@ -79,8 +80,8 @@ public final class Flags extends JDialog{
                 this.flag[i].addActionListener(new ActionListener(){
                     @Override
                     public void actionPerformed(final ActionEvent e) {
-                        Flags.this.editFlag(ii);
-                        Flags.this.treeman.reportChange();
+                        ModifyFlags.this.editFlag(ii);
+                        ModifyFlags.this.treeman.reportChange();
                     }
                 });
             }
@@ -91,14 +92,14 @@ public final class Flags extends JDialog{
         this.close_b.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                Flags.this.close();
+                ModifyFlags.this.close();
             }
         });
         jp3.add(this.update_b = new JButton("Refresh"));
         this.update_b.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(final ActionEvent e) {
-                Flags.this.update();
+                ModifyFlags.this.update();
             }
         });
         jp.add(jp3, BorderLayout.SOUTH);
@@ -106,7 +107,7 @@ public final class Flags extends JDialog{
         this.addKeyListener(new KeyAdapter(){
             @Override
             public void keyTyped(final KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) Flags.this.setVisible(false);
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) ModifyFlags.this.setVisible(false);
             }
         });
         this.pack();
@@ -118,7 +119,7 @@ public final class Flags extends JDialog{
     }
 
     private final void editFlag(final byte idx) {
-        final Node currnode = Flags.this.treeman.getCurrentTree().getCurrentNode();
+        final Node currnode = ModifyFlags.this.treeman.getCurrentTree().getCurrentNode();
         if(currnode == null) return;
         if(this.flag[idx].isSelected()) try{
             currnode.setFlag(idx);
@@ -139,33 +140,33 @@ public final class Flags extends JDialog{
         this.update();
     }
 
-    private int readFlags() throws Exception {
-        final Node currnode = Flags.this.treeman.getCurrentTree().getCurrentNode();
-        if(currnode == null) return Integer.MIN_VALUE;
-        final int iflags = currnode.getFlags();
-        if(iflags < 0) jTraverserFacade.stderr("MdsJava returned -1.", null);
-        return iflags;
+    private Flags readFlags() throws Exception {
+        final Node currnode = ModifyFlags.this.treeman.getCurrentTree().getCurrentNode();
+        if(currnode == null) return new Flags();
+        final Flags flags = currnode.getFlags();
+        if(flags.isError()) jTraverserFacade.stderr("Error getting Flags", null);
+        return flags;
     }
 
     public final void update() {
         if(!this.isVisible()) return;
         int iflags;
         try{
-            iflags = this.readFlags();
+            iflags = this.readFlags().flags;
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error getting flags", exc);
+            jTraverserFacade.stderr("Error getting modifyFlags", exc);
             this.close();
             return;
         }
-        final boolean[] bflags = Flags.intToBool(iflags);
-        final Node currnode = Flags.this.treeman.getCurrentTree().getCurrentNode();
-        final boolean is_ok = !(Flags.this.treeman.getCurrentTree().isReadOnly() || (currnode == null));
+        final boolean[] bflags = ModifyFlags.intToBool(iflags);
+        final Node currnode = ModifyFlags.this.treeman.getCurrentTree().getCurrentNode();
+        final boolean is_ok = !(ModifyFlags.this.treeman.getCurrentTree().isReadOnly() || (currnode == null));
         for(int i = 0; i < 32; i++){
             this.flag[i].setSelected(bflags[i]);
             this.flag[i].setEnabled(is_ok && this.settable_flag[i]);
         }
-        if(currnode == null) this.setTitle("Flags of <none selected>");
-        else this.setTitle(new StringBuilder(128).append("Flags of ").append(currnode.getFullPath())//
+        if(currnode == null) this.setTitle("ModifyFlags of <none selected>");
+        else this.setTitle(new StringBuilder(128).append("ModifyFlags of ").append(currnode.getFullPath())//
                 .append(" (0x").append(Integer.toHexString(iflags)).append(')').toString());
     }
 }

@@ -19,6 +19,7 @@ import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.TREENODE.Flags;
 
 public class Node{
     private static Node              copied;
@@ -324,9 +325,9 @@ public class Node{
         return this.info.getDType();
     }
 
-    public final int getFlags() {
+    public final Flags getFlags() {
         try{
-            this.info.setFlags(this.database.getFlags(this.nid));
+            this.info.setFlags(this.nid.getNciFlags());
         }catch(final Exception exc){
             jTraverserFacade.stderr("Error updating flags", exc);
         }
@@ -335,7 +336,7 @@ public class Node{
 
     public final String getFullPath() {
         try{
-            return this.nid.getFullPath();
+            return this.nid.getNciFullPath();
         }catch(final MdsException e){
             return this.info.getFullPath();
         }
@@ -359,7 +360,11 @@ public class Node{
     }
 
     public final int getLength() {
-        return this.info.getLength();
+        try{
+            return this.nid.getNciLength();
+        }catch(final MdsException e){
+            return this.info.getLength();
+        }
     }
 
     public final Node[] getMembers() {
@@ -368,7 +373,7 @@ public class Node{
 
     public final String getMinPath() {
         try{
-            return this.nid.getMinPath();
+            return this.nid.getNciMinPath();
         }catch(final MdsException e){
             return this.info.getMinPath();
         }
@@ -384,7 +389,7 @@ public class Node{
 
     public final String getPath() {
         try{
-            return this.nid.getPath();
+            return this.nid.getNciPath();
         }catch(final MdsException e){
             return this.info.getPath();
         }
@@ -447,19 +452,19 @@ public class Node{
     }
 
     public final boolean isCached() {
-        return this.info.isCached();
+        return this.getFlags().isCached();
     }
 
     public final boolean isCompressible() {
-        return this.info.isCompressible();
+        return this.getFlags().isCompressible();
     }
 
     public final boolean isCompressOnPut() {
-        return this.info.isCompressOnPut();
+        return this.getFlags().isCompressOnPut();
     }
 
     public final boolean isCompressSegments() {
-        return this.info.isCompressSegments();
+        return this.getFlags().isCompressSegments();
     }
 
     public final boolean isDefault() {
@@ -467,27 +472,27 @@ public class Node{
     }
 
     public final boolean isDoNotCompress() {
-        return this.info.isDoNotCompress();
+        return this.getFlags().isDoNotCompress();
     }
 
     public final boolean isEssential() {
-        return this.info.isEssential();
+        return this.getFlags().isEssential();
     }
 
     public final boolean isIncludeInPulse() {
-        return this.info.isIncludeInPulse();
+        return this.getFlags().isIncludeInPulse();
     }
 
     public final boolean isNidReference() {
-        return this.info.isNidReference();
+        return this.getFlags().isNidReference();
     }
 
     public final boolean isNoWriteModel() {
-        return this.info.isNoWriteModel();
+        return this.getFlags().isNoWriteModel();
     }
 
     public final boolean isNoWriteShot() {
-        return this.info.isNoWriteShot();
+        return this.getFlags().isNoWriteShot();
     }
 
     public final boolean isOn() {
@@ -503,15 +508,15 @@ public class Node{
     }
 
     public final boolean isParentState() {
-        return this.info.isParentState();
+        return this.getFlags().isParentState();
     }
 
     public final boolean isPathReference() {
-        return this.info.isPathReference();
+        return this.getFlags().isPathReference();
     }
 
     public final boolean isSegmented() {
-        if(this.info.isSegmented()) return true;
+        if(this.getFlags().isSegmented()) return true;
         try{
             return this.nid.getNumSegments() > 0;
         }catch(final MdsException e){
@@ -521,11 +526,11 @@ public class Node{
     }
 
     public final boolean isSetup() {
-        return this.info.isSetup();
+        return this.getFlags().isSetup();
     }
 
     public final boolean isState() {
-        return this.info.isState();
+        return this.getFlags().isState();
     }
 
     public final boolean isSubTree() {
@@ -533,11 +538,11 @@ public class Node{
     }
 
     public final boolean isVersion() {
-        return this.info.isVersion();
+        return this.getFlags().isVersion();
     }
 
     public final boolean isWriteOnce() {
-        return this.info.isWriteOnce();
+        return this.getFlags().isWriteOnce();
     }
 
     final boolean move(final Node newParent) {

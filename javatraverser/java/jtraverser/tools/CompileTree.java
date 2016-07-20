@@ -124,16 +124,16 @@ public class CompileTree extends Thread{
                     System.err.println("Error adding member " + name + " : " + e);
                 }
             }else if(type.equals("member")){
-                byte usage = TREENODE.USAGE_NONE;
-                if(usageStr.equals("NONE")) usage = TREENODE.USAGE_NONE;
+                final byte usage;
                 if(usageStr.equals("ACTION")) usage = TREENODE.USAGE_ACTION;
-                if(usageStr.equals("NUMERIC")) usage = TREENODE.USAGE_NUMERIC;
-                if(usageStr.equals("SIGNAL")) usage = TREENODE.USAGE_SIGNAL;
-                if(usageStr.equals("TASK")) usage = TREENODE.USAGE_TASK;
-                if(usageStr.equals("TEXT")) usage = TREENODE.USAGE_TEXT;
-                if(usageStr.equals("WINDOW")) usage = TREENODE.USAGE_WINDOW;
-                if(usageStr.equals("AXIS")) usage = TREENODE.USAGE_AXIS;
-                if(usageStr.equals("DISPATCH")) usage = TREENODE.USAGE_DISPATCH;
+                else if(usageStr.equals("NUMERIC")) usage = TREENODE.USAGE_NUMERIC;
+                else if(usageStr.equals("SIGNAL")) usage = TREENODE.USAGE_SIGNAL;
+                else if(usageStr.equals("TASK")) usage = TREENODE.USAGE_TASK;
+                else if(usageStr.equals("TEXT")) usage = TREENODE.USAGE_TEXT;
+                else if(usageStr.equals("WINDOW")) usage = TREENODE.USAGE_WINDOW;
+                else if(usageStr.equals("AXIS")) usage = TREENODE.USAGE_AXIS;
+                else if(usageStr.equals("DISPATCH")) usage = TREENODE.USAGE_DISPATCH;
+                else usage = TREENODE.USAGE_ANY;
                 try{
                     if(name.length() > 12) name = name.substring(0, 12);
                     nid = this.tree.addNode(":" + name, usage);
@@ -185,11 +185,11 @@ public class CompileTree extends Thread{
                     final StringTokenizer st = new StringTokenizer(flagsStr, ", ");
                     while(st.hasMoreTokens()){
                         final String flag = st.nextToken();
-                        if(flag.equals("WRITE_ONCE")) flags |= TREENODE.WRITE_ONCE;
-                        if(flag.equals("COMPRESSIBLE")) flags |= TREENODE.COMPRESSIBLE;
-                        if(flag.equals("COMPRESS_ON_PUT")) flags |= TREENODE.COMPRESS_ON_PUT;
-                        if(flag.equals("NO_WRITE_MODEL")) flags |= TREENODE.NO_WRITE_MODEL;
-                        if(flag.equals("NO_WRITE_SHOT")) flags |= TREENODE.NO_WRITE_SHOT;
+                        if(flag.equals("WRITE_ONCE")) flags |= TREENODE.Flags.WRITE_ONCE;
+                        if(flag.equals("COMPRESSIBLE")) flags |= TREENODE.Flags.COMPRESSIBLE;
+                        if(flag.equals("COMPRESS_ON_PUT")) flags |= TREENODE.Flags.COMPRESS_ON_PUT;
+                        if(flag.equals("NO_WRITE_MODEL")) flags |= TREENODE.Flags.NO_WRITE_MODEL;
+                        if(flag.equals("NO_WRITE_SHOT")) flags |= TREENODE.Flags.NO_WRITE_SHOT;
                     }
                     try{
                         this.tree.setFlags(nid, flags);

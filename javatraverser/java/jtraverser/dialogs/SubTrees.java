@@ -138,8 +138,8 @@ public class SubTrees extends JDialog{
             final Nid nid = (Nid)checkbox.getClientProperty("nid");
             final Tree tree = SubTrees.this.treeman.getCurrentTree();
             try{
-                if(checkbox.isSelected()) SubTrees.this.treeman.getCurrentDatabase().setFlags(nid, TREENODE.INCLUDE_IN_PULSE);
-                else SubTrees.this.treeman.getCurrentDatabase().clearFlags(nid, TREENODE.INCLUDE_IN_PULSE);
+                if(checkbox.isSelected()) SubTrees.this.treeman.getCurrentDatabase().setFlags(nid, TREENODE.Flags.INCLUDE_IN_PULSE);
+                else SubTrees.this.treeman.getCurrentDatabase().clearFlags(nid, TREENODE.Flags.INCLUDE_IN_PULSE);
                 ((Node)tree.findPath((String)checkbox.getClientProperty("fullpath")).getUserObject()).getFlags();
             }catch(final MdsException me){}
         }
@@ -152,7 +152,7 @@ public class SubTrees extends JDialog{
         for(final JCheckBox cb : this.checkBoxes){
             final Nid nid = (Nid)cb.getClientProperty("nid");
             try{
-                cb.setSelected((tree.getDatabase().getFlags(nid) & TREENODE.INCLUDE_IN_PULSE) != 0);
+                cb.setSelected((tree.getDatabase().getFlags(nid) & TREENODE.Flags.INCLUDE_IN_PULSE) != 0);
                 cb.setEnabled(true);
             }catch(final MdsException e){
                 cb.setEnabled(false);
@@ -170,7 +170,7 @@ public class SubTrees extends JDialog{
             final Nid nid = nids[i];
             try{
                 String fullpath;
-                fullpath = nid.getFullPath();
+                fullpath = nid.getNciFullPath();
                 this.checkBoxes[i] = cb = new JCheckBox(nid.toString());
                 cb.putClientProperty("nid", nid);
                 cb.putClientProperty("fullpath", fullpath);

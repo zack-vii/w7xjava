@@ -353,7 +353,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
 
     public final DefaultMutableTreeNode findNid(final Nid nid) {
         try{
-            return this.findPath(nid.getFullPath());
+            return this.findPath(nid.getNciFullPath());
         }catch(final MdsException e){
             e.printStackTrace();
             return null;

@@ -18,6 +18,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.TREENODE.Flags;
 
 public class LoadPulse{
     static class NodeDescriptor{
@@ -153,9 +154,10 @@ public class LoadPulse{
                     if(next.toUpperCase().equals("STATE")) // If only state has to be retrieved
                     {
                         final NodeInfo currInfo = this.tree.getInfo(currNid);
+                        final Flags flags = currInfo.getFlags();
                         currPath = currInfo.getFullPath();
                         try{
-                            nodesV.addElement(new NodeDescriptor(currPath, null, currInfo.isOn(), currInfo.isParentOn(), currInfo.isNoWriteModel() || currInfo.isWriteOnce()));
+                            nodesV.addElement(new NodeDescriptor(currPath, null, flags.isOn(), flags.isParentOn(), flags.isNoWriteModel() || flags.isWriteOnce()));
                         }catch(final Exception exc){
                             System.out.println("Error reading state of " + currPath + ": " + exc);
                         }
@@ -195,6 +197,7 @@ public class LoadPulse{
                 this.tree.setDefault(defNid);
                 for(int i = 0; i < nids.length; i++){
                     final NodeInfo currInfo = this.tree.getInfo(nids[i]);
+                    final Flags flags = currInfo.getFlags();
                     currPath = currInfo.getFullPath();
                     if(i == (nids.length - 1))// If IT IS the node described in LoadPulse.congf (and not any descendant)
                     {
@@ -212,10 +215,10 @@ public class LoadPulse{
                         }
                         if(currData != null){
                             final String currDecompiled = currData.toString();
-                            nodesV.addElement(new NodeDescriptor(currPath, currDecompiled, currInfo.isOn(), currInfo.isParentOn(), currInfo.isNoWriteModel() || currInfo.isWriteOnce()));
-                        }else nodesV.addElement(new NodeDescriptor(currPath, null, currInfo.isOn(), currInfo.isParentOn(), currInfo.isNoWriteModel() || currInfo.isWriteOnce()));
+                            nodesV.addElement(new NodeDescriptor(currPath, currDecompiled, flags.isOn(), flags.isParentOn(), flags.isNoWriteModel() || flags.isWriteOnce()));
+                        }else nodesV.addElement(new NodeDescriptor(currPath, null, flags.isOn(), flags.isParentOn(), flags.isNoWriteModel() || flags.isWriteOnce()));
                     }catch(final Exception exc){
-                        nodesV.addElement(new NodeDescriptor(currPath, null, currInfo.isOn(), currInfo.isParentOn(), currInfo.isNoWriteModel() || currInfo.isWriteOnce()));
+                        nodesV.addElement(new NodeDescriptor(currPath, null, flags.isOn(), flags.isParentOn(), flags.isNoWriteModel() || flags.isWriteOnce()));
                     }
                 }
             }catch(final Exception exc){

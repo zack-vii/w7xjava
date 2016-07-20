@@ -5,12 +5,13 @@ import java.io.Serializable;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.TREENODE.Flags;
 
 @SuppressWarnings("serial")
 public class NodeInfo implements Serializable{
     private final String date_inserted, name, fullpath, minpath, path;
     private final byte   dtype, dclass, usage;
-    private int          flags;
+    private Flags        flags;
     private final int    nid, owner, length, conglomerate_elt, conglomerate_nids;
 
     public NodeInfo(final int nid, final byte dclass, final byte dtype, final byte usage, final int flags, final int owner, final int length, final int conglomerate_nids, final int conglomerate_elt, final String date_inserted, final String name, final String fullpath, final String minpath, final String path){
@@ -18,7 +19,7 @@ public class NodeInfo implements Serializable{
         this.dclass = dclass;
         this.dtype = dtype;
         this.usage = usage;
-        this.flags = flags;
+        this.flags = new Flags(flags);
         this.owner = owner;
         this.length = length;
         this.conglomerate_nids = conglomerate_nids;
@@ -50,7 +51,7 @@ public class NodeInfo implements Serializable{
         return this.dtype;
     }
 
-    public final int getFlags() {
+    public final Flags getFlags() {
         return this.flags;
     }
 
@@ -82,88 +83,12 @@ public class NodeInfo implements Serializable{
         return this.usage;
     }
 
-    public final boolean isCached() {
-        return (this.flags & TREENODE.CACHED) != 0;
-    }
-
-    public final boolean isCompressible() {
-        return (this.flags & TREENODE.COMPRESSIBLE) != 0;
-    }
-
-    public final boolean isCompressOnPut() {
-        return (this.flags & TREENODE.COMPRESS_ON_PUT) != 0;
-    }
-
-    public final boolean isCompressSegments() {
-        return (this.flags & TREENODE.COMPRESS_SEGMENTS) != 0;
-    }
-
-    public final boolean isDoNotCompress() {
-        return (this.flags & TREENODE.DO_NOT_COMPRESS) != 0;
-    }
-
-    public final boolean isEssential() {
-        return (this.flags & TREENODE.ESSENTIAL) != 0;
-    }
-
-    public final boolean isIncludeInPulse() {
-        return (this.flags & TREENODE.INCLUDE_IN_PULSE) != 0;
-    }
-
-    public final boolean isNidReference() {
-        return (this.flags & TREENODE.NID_REFERENCE) != 0;
-    }
-
-    public final boolean isNoWriteModel() {
-        return (this.flags & TREENODE.NO_WRITE_MODEL) != 0;
-    }
-
-    public final boolean isNoWriteShot() {
-        return (this.flags & TREENODE.NO_WRITE_SHOT) != 0;
-    }
-
-    public final boolean isOn() {
-        return !this.isState();
-    }
-
-    public final boolean isParentOn() {
-        return !this.isParentState();
-    }
-
-    public final boolean isParentState() {
-        return (this.flags & TREENODE.PARENT_STATE) != 0;
-    }
-
-    public final boolean isPathReference() {
-        return (this.flags & TREENODE.PATH_REFERENCE) != 0;
-    }
-
-    public final boolean isSegmented() {
-        return (this.flags & TREENODE.SEGMENTED) != 0;
-    }
-
-    public final boolean isSetup() {
-        return (this.flags & TREENODE.SETUP) != 0;
-    }
-
-    public final boolean isState() {
-        return (this.flags & TREENODE.STATE) != 0;
-    }
-
     public final boolean isSubTree() {
-        return (this.usage & TREENODE.USAGE_SUBTREE) != 0;
-    }
-
-    public final boolean isVersion() {
-        return (this.flags & TREENODE.VERSION) != 0;
-    }
-
-    public final boolean isWriteOnce() {
-        return (this.flags & TREENODE.WRITE_ONCE) != 0;
+        return this.usage == TREENODE.USAGE_SUBTREE;
     }
 
     public final void setFlags(final int flags) {
-        this.flags = flags;
+        this.flags = new Flags(flags);
     }
 
     @Override
@@ -173,26 +98,26 @@ public class NodeInfo implements Serializable{
         sb.append(" (").append(this.nid).append(")");
         sb.append("</td></tr><tr><td align=\"left\" valign=\"top\">Status:</td><td align=\"left\"><nobr>");
         final String sep = "</nobr>, <nobr>";
-        if(this.isOn()) sb.append("on");
+        if(this.flags.isOn()) sb.append("on");
         else sb.append("off");
         sb.append(sep).append("parent is ");
-        if(this.isParentState()) sb.append("off");
+        if(this.flags.isParentState()) sb.append("off");
         else sb.append("on");
-        if(this.isSetup()) sb.append(sep).append("setup");
-        if(this.isEssential()) sb.append(sep).append("essential");
-        if(this.isCached()) sb.append(sep).append("cached");
-        if(this.isVersion()) sb.append(sep).append("version");
-        if(this.isSegmented()) sb.append(sep).append("segmented");
-        if(this.isWriteOnce()) sb.append(sep).append("write once");
-        if(this.isCompressible()) sb.append(sep).append("compressible");
-        if(this.isDoNotCompress()) sb.append(sep).append("do not compress");
-        if(this.isCompressOnPut()) sb.append(sep).append("compress on put");
-        if(this.isNoWriteModel()) sb.append(sep).append("no write model");
-        if(this.isNoWriteShot()) sb.append(sep).append("no write shot");
-        if(this.isPathReference()) sb.append(sep).append("path reference");
-        if(this.isNidReference()) sb.append(sep).append("nid reference");
-        if(this.isCompressSegments()) sb.append(sep).append("compress segments");
-        if(this.isIncludeInPulse()) sb.append(sep).append("include in pulse");
+        if(this.flags.isSetup()) sb.append(sep).append("setup");
+        if(this.flags.isEssential()) sb.append(sep).append("essential");
+        if(this.flags.isCached()) sb.append(sep).append("cached");
+        if(this.flags.isVersion()) sb.append(sep).append("version");
+        if(this.flags.isSegmented()) sb.append(sep).append("segmented");
+        if(this.flags.isWriteOnce()) sb.append(sep).append("write once");
+        if(this.flags.isCompressible()) sb.append(sep).append("compressible");
+        if(this.flags.isDoNotCompress()) sb.append(sep).append("do not compress");
+        if(this.flags.isCompressOnPut()) sb.append(sep).append("compress on put");
+        if(this.flags.isNoWriteModel()) sb.append(sep).append("no write model");
+        if(this.flags.isNoWriteShot()) sb.append(sep).append("no write shot");
+        if(this.flags.isPathReference()) sb.append(sep).append("path reference");
+        if(this.flags.isNidReference()) sb.append(sep).append("nid reference");
+        if(this.flags.isCompressSegments()) sb.append(sep).append("compress segments");
+        if(this.flags.isIncludeInPulse()) sb.append(sep).append("include in pulse");
         sb.append("</nobr></td></tr><tr><td align=\"left\">Data:</td><td align=\"left\">");
         if(this.getLength() == 0) sb.append("<nobr>There is no data stored for this this</nobr>");
         else{

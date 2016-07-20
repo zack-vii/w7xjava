@@ -24,6 +24,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.TREENODE.Flags;
 
 public class DecompileTree{
     public static final void main(final String args[]) {
@@ -146,10 +147,12 @@ public class DecompileTree{
             final Nid prevNid = this.database.getDefault();
             this.database.setDefault(nid);
             NodeInfo info = null;
+            final Flags flags;
             try{
                 info = this.database.getInfo(nid);
+                flags = info.getFlags();
             }catch(final Exception exc){
-                System.err.println(this.error = "Error getting info for " + nid.getFullPath() + ": " + exc);
+                System.err.println(this.error = "Error getting info for " + nid.getNciFullPath() + ": " + exc);
                 return;
             }
             String[] tags;
@@ -163,7 +166,7 @@ public class DecompileTree{
                 Descriptor data = null;
                 // TACON
                 if(info.getName().endsWith("_GAIN")) System.out.println("TACON: " + info.getName());
-                if(info.isSetup() || isFull || info.getName().endsWith("_GAIN"))
+                if(flags.isSetup() || isFull || info.getName().endsWith("_GAIN"))
                 // if(info.isSetup() || isFull)
                 {
                     try{
@@ -200,7 +203,7 @@ public class DecompileTree{
                             subtreeMembers.addElement(member);
                     }catch(final Exception exc){}
                 }
-                if((!info.isOn() && info.isParentOn()) || (info.isOn() && !info.isParentOn()) || (info.isSetup() && data != null) || tags.length > 0 || subtreeNodes.size() > 0 || subtreeMembers.size() > 0 || isFull
+                if((!flags.isOn() && flags.isParentOn()) || (flags.isOn() && !flags.isParentOn()) || (flags.isSetup() && data != null) || tags.length > 0 || subtreeNodes.size() > 0 || subtreeMembers.size() > 0 || isFull
                 // TACON
                         || info.getName().endsWith("_GAIN")) // show it only at these conditions
                 {
@@ -220,8 +223,8 @@ public class DecompileTree{
                     if(fieldPath.startsWith(devicePath)) // if the field has not been renamed
                     {
                         fieldNode.setAttribute("NAME", fieldPath.substring(devicePath.length(), fieldPath.length()));
-                        if(!info.isOn() && info.isParentOn()) fieldNode.setAttribute("STATE", "OFF");
-                        if(info.isOn() && !info.isParentOn()) fieldNode.setAttribute("STATE", "ON");
+                        if(!flags.isOn() && flags.isParentOn()) fieldNode.setAttribute("STATE", "OFF");
+                        if(flags.isOn() && !flags.isParentOn()) fieldNode.setAttribute("STATE", "ON");
                         if(tags.length > 0){
                             String tagList = "";
                             for(int i = 0; i < tags.length; i++)
@@ -285,24 +288,23 @@ public class DecompileTree{
                     node.setAttribute("TAGS", tagList);
                 }
                 // state
-                if(!info.isOn() && info.isParentOn()) node.setAttribute("STATE", "OFF");
-                if(info.isOn() && !info.isParentOn()) node.setAttribute("STATE", "ON");
+                if(!flags.isOn() && flags.isParentOn()) node.setAttribute("STATE", "OFF");
+                if(flags.isOn() && !flags.isParentOn()) node.setAttribute("STATE", "ON");
                 // flags
-                String flags = "";
-                if(info.isWriteOnce()) flags += (flags.length() > 0) ? ",WRITE_ONCE" : "WRITE_ONCE";
-                if(info.isCompressible()) flags += (flags.length() > 0) ? ",COMPRESSIBLE" : "COMPRESSIBLE";
-                if(info.isCompressOnPut()) flags += (flags.length() > 0) ? ",COMPRESS_ON_PUT" : "COMPRESS_ON_PUT";
-                if(info.isNoWriteModel()) flags += (flags.length() > 0) ? ",NO_WRITE_MODEL" : "NO_WRITE_MODEL";
-                if(info.isNoWriteShot()) flags += (flags.length() > 0) ? ",NO_WRITE_SHOT" : "NO_WRITE_SHOT";
-                if(flags.length() > 0) node.setAttribute("FLAGS", flags);
+                String flagsStr = "";
+                if(flags.isWriteOnce()) flagsStr += (flagsStr.length() > 0) ? ",WRITE_ONCE" : "WRITE_ONCE";
+                if(flags.isCompressible()) flagsStr += (flagsStr.length() > 0) ? ",COMPRESSIBLE" : "COMPRESSIBLE";
+                if(flags.isCompressOnPut()) flagsStr += (flagsStr.length() > 0) ? ",COMPRESS_ON_PUT" : "COMPRESS_ON_PUT";
+                if(flags.isNoWriteModel()) flagsStr += (flagsStr.length() > 0) ? ",NO_WRITE_MODEL" : "NO_WRITE_MODEL";
+                if(flags.isNoWriteShot()) flagsStr += (flagsStr.length() > 0) ? ",NO_WRITE_SHOT" : "NO_WRITE_SHOT";
+                if(flagsStr.length() > 0) node.setAttribute("FLAGS", flagsStr);
                 // usage
                 final int usage = info.getUsage();
                 if(usage != TREENODE.USAGE_STRUCTURE && usage != TREENODE.USAGE_DEVICE && usage != TREENODE.USAGE_COMPOUND_DATA){
-                    String usageStr = "";
+                    String usageStr;
                     switch(usage){
-                        case TREENODE.USAGE_NONE:
-                            usageStr = "NONE";
-                            break;
+                        default:
+                            usageStr = "ANY";
                         case TREENODE.USAGE_ACTION:
                             usageStr = "ACTION";
                             break;

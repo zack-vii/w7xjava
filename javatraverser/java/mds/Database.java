@@ -139,7 +139,6 @@ public final class Database{
         if(!this.con.isConnected()) throw new MdsException("Not connected");
     }
 
-    /* Low level MDS database management routines, will be  masked by the Node class*/
     private final void _open() throws MdsException {
         final int status;
         if(this.isEditable()) status = this.treeshr.treeOpenEdit(this.expt, this.shot);
@@ -381,7 +380,7 @@ public final class Database{
     }
 
     public final boolean isOn(final Nid nid) throws MdsException {
-        return 0 == (this.getFlags(nid) & TREENODE.STATE);
+        return 0 == (this.getFlags(nid) & TREENODE.Flags.STATE);
     }
 
     public final boolean isOpen() {

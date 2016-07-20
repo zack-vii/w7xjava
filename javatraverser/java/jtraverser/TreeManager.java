@@ -111,7 +111,7 @@ public class TreeManager extends JScrollPane{
         public final class modifyFlags implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
-                DisplayMenu.this.treeman.dialogs.flags.open();
+                DisplayMenu.this.treeman.dialogs.modifyFlags.open();
             }
         }
         public final class setDefault implements ActionListener{
@@ -133,7 +133,7 @@ public class TreeManager extends JScrollPane{
             menu.add(this.addMenuItem("Display Data", new Menu.NodeEditorAL(DisplayData.class)));
             menu.add(this.addMenuItem("Display Signal", new DisplaySignal()));
             menu.add(this.addMenuItem("Display Nci", new Menu.NodeEditorAL(DisplayNci.class)));
-            menu.add(this.addMenuItem("Display Flags", new modifyFlags()));
+            menu.add(this.addMenuItem("Display ModifyFlags", new modifyFlags()));
             menu.add(this.addMenuItem("Display Tags", new Menu.NodeEditorAL(DisplayTags.class)));
             if(menu instanceof JPopupMenu) ((JPopupMenu)menu).addSeparator();
             menu.add(this.addMenuItem("Set Default", new DisplayMenu.setDefault()));
@@ -408,7 +408,7 @@ public class TreeManager extends JScrollPane{
                 pop.show((Component)e.getSource(), e.getX(), e.getY());
             }else if((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && (e.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK)) != 0){
                 if(currnode.isSubTree()) try{
-                    currnode.toggleFlags(TREENODE.INCLUDE_IN_PULSE);
+                    currnode.toggleFlags(TREENODE.Flags.INCLUDE_IN_PULSE);
                 }catch(final MdsException e1){
                     jTraverserFacade.stderr("INCLUDE_IN_PULSE", e1);
                 }
@@ -427,7 +427,7 @@ public class TreeManager extends JScrollPane{
         public final class modifyFlags implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e1) {
-                ModifyMenu.this.treeman.dialogs.flags.open();
+                ModifyMenu.this.treeman.dialogs.modifyFlags.open();
             }
         }
         public final class setupDevice implements ActionListener{
@@ -460,7 +460,7 @@ public class TreeManager extends JScrollPane{
         public ModifyMenu(final TreeManager treeman, final JComponent menu){
             super(treeman);
             menu.add(this.addMenuItem("Modify Data", new Menu.NodeEditorAL(ModifyData.class)));
-            menu.add(this.addMenuItem("Modify Flags", new modifyFlags()));
+            menu.add(this.addMenuItem("Modify ModifyFlags", new modifyFlags()));
             menu.add(this.addMenuItem("Turn On", new turnOn()));
             menu.add(this.addMenuItem("Turn Off", new turnOff()));
             menu.add(this.addMenuItem("Setup Device", new setupDevice()));
