@@ -354,7 +354,7 @@ public class Node{
     public final String getInfoTextBox() {
         final StringBuffer sb = new StringBuffer("<html><table width=\"240\"> <tr><td width=\"60\" align=\"left\"/><nobr>full path:</nobr></td><td align=\"left\">");
         sb.append(this.getFullPath());
-        sb.append(" (").append(this.nid).append(")");
+        sb.append(" (").append(this.nid.getValue()).append(")");
         sb.append("</td></tr><tr><td align=\"left\" valign=\"top\">Status:</td><td align=\"left\"><nobr>");
         final String sep = "</nobr>, <nobr>";
         Flags flags;
