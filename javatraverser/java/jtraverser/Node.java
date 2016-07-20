@@ -428,7 +428,8 @@ public class Node{
         else{
             final String dtype = DTYPE.getName(this.getDType());
             final String dclass = Descriptor.getDClassName(this.getDClass());
-            sb.append("<nobr>").append(dtype).append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(dclass).append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(this.getLength()).append(" Bytes</nobr>");
+            final String tab = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+            sb.append("<nobr>").append(dtype).append(tab).append(dclass).append(tab).append(this.getLength()).append(" Bytes</nobr>");
             sb.append("</td></tr><tr><td align=\"left\">Inserted:</td><td align=\"left\">");
             sb.append(this.getDate());
         }
@@ -512,7 +513,7 @@ public class Node{
             final StringBuilder sb = new StringBuilder().append(info.substring(0, info.length() - 7)).append("<hr><table");
             if(text.length() > 80) sb.append(" width=\"320\"");
             this.ToolTipText = sb.append(">").append(text).append("</table></html>").toString();
-            this.ToolTipLife = now + 30000000000l;
+            this.ToolTipLife = now + 10000000000l;
             this.ToolTipDefault = defaultnid;
         }
         return this.ToolTipText;
