@@ -460,7 +460,7 @@ public class TreeManager extends JScrollPane{
         public ModifyMenu(final TreeManager treeman, final JComponent menu){
             super(treeman);
             menu.add(this.addMenuItem("Modify Data", new Menu.NodeEditorAL(ModifyData.class)));
-            menu.add(this.addMenuItem("Modify ModifyFlags", new modifyFlags()));
+            menu.add(this.addMenuItem("Modify Flags", new modifyFlags()));
             menu.add(this.addMenuItem("Turn On", new turnOn()));
             menu.add(this.addMenuItem("Turn Off", new turnOff()));
             menu.add(this.addMenuItem("Setup Device", new setupDevice()));
