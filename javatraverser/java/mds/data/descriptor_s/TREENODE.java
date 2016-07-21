@@ -187,6 +187,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     }
 
     public final NidArray getNciChildrenNids() throws MdsException {
+        if(this.getNciNumberOfChildren() == 0) return new NidArray();
         return (NidArray)this.getNci("CHILDREN_NIDS");
     }
 
@@ -259,6 +260,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     }
 
     public final NidArray getNciMemberNids() throws MdsException {
+        if(this.getNciNumberOfMembers() == 0) return new NidArray();
         return (NidArray)this.getNci("MEMBER_NIDS");
     }
 

@@ -199,7 +199,7 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
     }
 
     protected final T[] getValue(int begin, int count) {
-        if(begin < 0 || count < 0) return this.initArray(0);
+        if(begin < 0 || count <= 0) return this.initArray(0);
         final ByteBuffer buf = this.getBuffer();
         final int arrlength = buf.limit() / this.length;
         if(begin >= arrlength) return this.initArray(0);

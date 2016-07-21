@@ -325,7 +325,7 @@ public class Node{
             int i;
             Nid sons_nid[] = this.database.getSons(this.nid);
             if(sons_nid == null) sons_nid = new Nid[0];
-            Nid members_nid[] = this.database.getMembers(this.nid);
+            Nid members_nid[] = this.nid.getNciMemberNids().toArray();
             if(members_nid == null) members_nid = new Nid[0];
             this.sons = new Node[sons_nid.length];
             this.members = new Node[members_nid.length];

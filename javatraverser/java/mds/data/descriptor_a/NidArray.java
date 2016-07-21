@@ -1,10 +1,15 @@
 package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_s.Nid;
 
 public final class NidArray extends Descriptor_A<Nid>{
+    public NidArray(){
+        super(DTYPE.NID, ByteBuffer.allocate(0));
+    }
+
     public NidArray(final ByteBuffer b){
         super(b);
     }
