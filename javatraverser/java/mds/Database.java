@@ -152,7 +152,7 @@ public final class Database{
     synchronized private final boolean _saveContext() throws MdsException {
         if(DEBUG.D) System.err.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));
         this.saveslot = this.treeshr.treeSaveContext();
-        System.err.println(this.saveslot);
+        if(DEBUG.D) System.err.println(this.saveslot);
         if(this.saveslot.toLong() != 0l){
             this.ctx = this.treeshr.treeCtx();
             return true;
