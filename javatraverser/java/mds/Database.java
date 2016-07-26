@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import debug.DEBUG;
 import jtraverser.jTraverserFacade;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
@@ -142,14 +143,14 @@ public final class Database{
     }
 
     synchronized private final boolean _restoreContext() throws MdsException {
-        System.err.println(String.format("restore: %s(%03d) from %s", this.expt, this.shot, this.saveslot.toString()));
+        if(DEBUG.D) System.err.println(String.format("restore: %s(%03d) from %s", this.expt, this.shot, this.saveslot.toString()));
         final boolean success = (this.saveslot == null || this.saveslot.isNull()) ? false : (this.treeshr.treeRestoreContext(this.saveslot) & 1) != 0;
         this.saveslot = null;
         return success;
     }
 
     synchronized private final boolean _saveContext() throws MdsException {
-        System.err.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));
+        if(DEBUG.D) System.err.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));
         this.saveslot = this.treeshr.treeSaveContext();
         System.err.println(this.saveslot);
         if(this.saveslot.toLong() != 0l){
