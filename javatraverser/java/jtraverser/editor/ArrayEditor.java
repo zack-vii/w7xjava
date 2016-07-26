@@ -75,7 +75,7 @@ public class ArrayEditor extends JPanel implements ActionListener, Editor, Chang
             column.setHeaderValue("");
             this.addColumn(column);
             column.setCellRenderer(new RowNumberRenderer());
-            this.getColumnModel().getColumn(0).setPreferredWidth(50);
+            this.getColumnModel().getColumn(0).setPreferredWidth(60);
             this.setPreferredScrollableViewportSize(this.getPreferredSize());
         }
 
