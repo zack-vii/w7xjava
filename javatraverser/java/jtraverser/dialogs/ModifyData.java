@@ -145,8 +145,8 @@ public class ModifyData extends NodeEditor{
         }
         switch(this.node.getUsage()){
             case TREENODE.USAGE_SIGNAL:
-                if(this.signal_edit == null) this.signal_edit = new SignalEditor(data, this.frame);
-                else this.signal_edit.setData(data);
+                if(this.signal_edit == null) this.signal_edit = new SignalEditor(this.node.nid, this.frame);
+                else this.signal_edit.setNode(this.node.nid);
                 this.signal_edit.setEditable(this.is_editable);
                 this.replace(this.signal_edit);
                 break;
