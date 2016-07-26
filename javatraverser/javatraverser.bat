@@ -89,14 +89,13 @@ SET TRAV_SRC=^
   jtraverser\Node.java ^
   jtraverser\Tree.java ^
   jtraverser\TreeManager.java ^
-  jtraverser\TreeNodeLabel.java ^
   jtraverser\dialogs\AddNode.java ^
   jtraverser\dialogs\DialogSet.java ^
   jtraverser\dialogs\Dialogs.java ^
   jtraverser\dialogs\DisplayData.java ^
   jtraverser\dialogs\DisplayNci.java ^
   jtraverser\dialogs\DisplayTags.java ^
-  jtraverser\dialogs\Flags.java ^
+  jtraverser\dialogs\ModifyFlags.java ^
   jtraverser\dialogs\GraphPanel.java ^
   jtraverser\dialogs\ModifyData.java ^
   jtraverser\dialogs\ModifyTags.java ^
