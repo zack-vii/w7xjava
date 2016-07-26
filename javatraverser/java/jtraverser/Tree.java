@@ -6,6 +6,8 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
@@ -148,6 +150,10 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
         this.setCellRenderer(new MDSCellRenderer());
         this.addTreeSelectionListener(this);
         this.addMouseListener(treeman.getContextMenu());
+        this.addComponentListener(new ComponentAdapter(){
+            @Override
+            public void componentResized(final ComponentEvent e) {}
+        });
         this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
 
@@ -285,7 +291,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
         Tree.this.treeDidChange();
     }
 
-    public final void close() {
+    public final Tree close() {
         try{
             this.database.close();
         }catch(final Exception e){
@@ -313,21 +319,12 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
                 }
             }else JOptionPane.showMessageDialog(this.treeman.getFrame(), "Error closing tree", e.getMessage(), JOptionPane.WARNING_MESSAGE);
         }
-    }
-
-    @SuppressWarnings("static-method")
-    public final void compile() {
-        return;
+        return this;
     }
 
     @Override
     public void dataChanged(final DataChangeEvent e) {
         this.treeman.reportChange();
-    }
-
-    @SuppressWarnings("static-method")
-    public final void decompile() {
-        return;
     }
 
     public final void deleteNode() {

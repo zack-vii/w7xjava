@@ -30,7 +30,7 @@ public final class Nid extends TREENODE<Integer>{
     }
 
     public Nid(final Nid nid, final int relative){
-        this(nid.getValue() + relative, nid.getConnection());
+        this(nid.getValue() + relative, nid.connection);
     }
 
     @Override

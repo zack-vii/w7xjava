@@ -61,7 +61,7 @@ public class Node{
                 else if(flags.isSetup()) this.setForeground(node.tree.isModel() ? (flags.isWriteOnce() ? this.CMSetupO : this.CMSetup) : (flags.isWriteOnce() ? this.CSSetupO : this.CSSetup));
                 else this.setForeground(flags.isWriteOnce() ? this.CNormO : this.CNorm);
             }
-            this.setFont(node.isOn() ? TreeNodeLabel.bold_f : TreeNodeLabel.plain_f);
+            this.setFont(flags.isOn() && flags.isParentOn() ? TreeNodeLabel.bold_f : TreeNodeLabel.plain_f);
             this.setBorder(BorderFactory.createLineBorder(isSelected ? Color.black : Color.white, 1));
         }
 
@@ -160,9 +160,9 @@ public class Node{
     public final Tree              tree;
     private DefaultMutableTreeNode treenode;
     private int                    length, ownerid;
-    private String                 name, minpath, path, fullpath, timeinserted;
-    private byte                   usage, dtype, dclass;
-    private Flags                  flags;
+    private String                 name         = null, minpath = null, path = null, fullpath = null, timeinserted = null;
+    private byte                   usage        = -1, dtype = -1, dclass = -1;
+    private Flags                  flags        = null;
 
     public Node(final Database database, final Tree tree, final Node parent, final boolean is_member, final Nid nid){
         this.database = database;
@@ -392,6 +392,7 @@ public class Node{
     }
 
     public final Component getIcon(final boolean isSelected) {
+        // if(!this.tree.isUpdating() && this.label != null) return this.label;
         final int usage = this.getUsage();
         final Icon icon = usage <= Node.ICONS.length ? Node.ICONS[usage] : null;
         this.label = new TreeNodeLabel(this, this.getName(), icon, isSelected);

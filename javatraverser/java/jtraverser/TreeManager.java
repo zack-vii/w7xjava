@@ -19,11 +19,13 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.ToolTipManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import devicebeans.DeviceSetup;
 import jtraverser.dialogs.Dialogs;
@@ -44,7 +46,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.TREENODE;
 
 @SuppressWarnings("serial")
-public class TreeManager extends JScrollPane{
+public class TreeManager extends JTabbedPane{
     public static final class AddNodeMenu extends Menu{
         private final class addDevice implements ActionListener{
             @Override
@@ -488,7 +490,7 @@ public class TreeManager extends JScrollPane{
     public int                     copy_format;
     public final Dialogs           dialogs;
     private final jTraverserFacade frame;
-    private final TreeOpenDialog   open_dialog;;
+    private final TreeOpenDialog   open_dialog;
     private final Stack<Tree>      trees = new Stack<Tree>();
 
     public TreeManager(final jTraverserFacade frame){
@@ -501,18 +503,27 @@ public class TreeManager extends JScrollPane{
         this.setBackground(Color.white);
         this.open_dialog = new TreeOpenDialog(this);
         this.dialogs = new Dialogs(this);
+        this.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(final ChangeEvent ce) {
+                final Database database = TreeManager.this.getCurrentDatabase();
+                if(database == null) return;
+                database.updateContext();
+                TreeManager.this.reportChange();
+            }
+        });
     }
 
     public final void close() {
         if(this.getCurrentTree() == null) return;
-        this.trees.pop().close();
-        final Tree tree = this.getCurrentTree();
-        this.setViewportView(tree == null ? new JPanel() : tree);
-        this.frame.reportChange(tree);
+        this.close(this.getSelectedIndex());
+    }
+
+    public final void close(final int idx) {
+        if(idx >= this.getTabCount() || idx < 0) return;
+        this.trees.remove(this.getTreeAt(idx).close());
         DeviceSetup.closeOpenDevices();
-        this.dialogs.update();
-        this.frame.pack();
-        this.frame.repaint();
+        this.removeTabAt(idx);
     }
 
     public final Point dialogLocation() {
@@ -536,24 +547,29 @@ public class TreeManager extends JScrollPane{
     }
 
     public final Tree getCurrentTree() {
-        if(this.trees.empty()) return null;
-        return this.trees.peek();
+        if(this.getTabCount() == 0) return null;
+        return (Tree)((JScrollPane)this.getSelectedComponent()).getViewport().getView();
     }
 
     public final Frame getFrame() {
         return this.frame;
     }
 
+    private final Tree getTreeAt(final int index) {
+        return (Tree)((JScrollPane)this.getComponentAt(index)).getViewport().getView();
+    }
+
     public final void openTree(final String provider, final String expt, int shot, final int mode) {
         this.open_dialog.setFields(provider, expt, shot);
         // first we need to check if the tree is already open
-        for(final Tree tree : this.trees){
+        for(int i = 0; i < this.getTabCount(); i++){
+            final Tree tree = this.getTreeAt(i);
             if(!tree.getExpt().equalsIgnoreCase(expt)) continue;
             try{
                 if(shot == 0) shot = tree.getDatabase().getCurrentShot();
                 if(tree.getShot() == shot){
                     tree.close();
-                    this.trees.remove(tree);
+                    this.remove(i);
                     break;
                 }
             }catch(final Exception exc){}
@@ -566,11 +582,8 @@ public class TreeManager extends JScrollPane{
             return;
         }
         tree.expandRow(0);
-        this.setViewportView(tree);
-        this.trees.push(tree);
-        this.frame.reportChange(tree);
-        this.dialogs.update();
-        this.repaint();
+        this.addTab(tree.toString(), new JScrollPane(tree));
+        this.setSelectedIndex(this.getTabCount() - 1);
     }
 
     public final void quit() {
@@ -579,12 +592,14 @@ public class TreeManager extends JScrollPane{
         System.exit(0);
     }
 
-    public final void reportChange() {
+    synchronized public final void reportChange() {
         if(this.getCurrentTree() != null){
             this.getCurrentTree().treeDidChange();
             this.getCurrentTree().updateUI();
         }
         this.dialogs.update();
+        this.frame.reportChange(this.getCurrentTree());
+        this.frame.repaint();
     }
 
     public final void write() {

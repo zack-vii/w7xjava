@@ -31,9 +31,7 @@ public final class Database{
             return str.toString();
         }
     }
-    private static String                                     cexpt       = null;
     private static final Map<Connection.Provider, Connection> connections = new HashMap<Connection.Provider, Connection>(16);
-    private static int                                        cshot       = 0;
     public static final int                                   EDITABLE    = 2;
     public static final int                                   NEW         = 3;
     public static final int                                   NORMAL      = 1;
@@ -74,16 +72,7 @@ public final class Database{
     private static final void stdout(final String line) {
         jTraverserFacade.stdout(line);
     }
-
-    private static final void updateCurrent() throws MdsException {
-        try{
-            Database.cshot = Connection.getActiveConnection().getInteger("$SHOT");
-            Database.cexpt = Connection.getActiveConnection().getString("$EXPT").trim();
-        }catch(final MdsException de){
-            Database.cshot = 0;
-            Database.cexpt = null;
-        }
-    }
+    private Pointer          ctx     = null;
     private final Connection con;
     private final String     expt;
     private boolean          is_open = false;
@@ -92,6 +81,7 @@ public final class Database{
     private final TreeShr    treeshr;
     private final MdsShr     mdsshr;
     private final TdiShr     tdishr;
+    private Pointer          saveslot;
 
     public Database(final String provider) throws MdsException{
         this.con = Database.setupConnection(provider);
@@ -123,14 +113,12 @@ public final class Database{
             this._open_new();
             this.mode = Database.EDITABLE;
         }else this.mode = mode;
-        this._checkContext();
+        this.open();
     }
 
     private final void _checkContext() throws MdsException {
         this._connect();
-        Database.updateCurrent();
-        if(this.shot == Database.cshot && this.expt.equals(Database.cexpt)) return;// && Database.cctx == Database.getTreeCtx()
-        this._open();
+        if(!this.isOpen() || this.ctx == null) this._open(); // !this.ctx.equals(this.getTreeCtx())
     }
 
     private final void _connect() throws MdsException {
@@ -142,15 +130,33 @@ public final class Database{
         if(this.isEditable()) status = this.treeshr.treeOpenEdit(this.expt, this.shot);
         else status = this.treeshr.treeOpen(this.expt, this.shot, this.isReadonly());
         this.handleStatus(status);
+        this._saveContext();
         this.is_open = true;
-        Database.updateCurrent();
     }
 
     private final void _open_new() throws MdsException {
         final int status = this.treeshr.treeOpenNew(this.expt, this.shot);
         this.handleStatus(status);
+        this._saveContext();
         this.is_open = true;
-        Database.updateCurrent();
+    }
+
+    synchronized private final boolean _restoreContext() throws MdsException {
+        System.err.println(String.format("restore: %s(%03d) from %s", this.expt, this.shot, this.saveslot.toString()));
+        final boolean success = (this.saveslot == null || this.saveslot.isNull()) ? false : (this.treeshr.treeRestoreContext(this.saveslot) & 1) != 0;
+        this.saveslot = null;
+        return success;
+    }
+
+    synchronized private final boolean _saveContext() throws MdsException {
+        System.err.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));
+        this.saveslot = this.treeshr.treeSaveContext();
+        System.err.println(this.saveslot);
+        if(this.saveslot.toLong() != 0l){
+            this.ctx = this.treeshr.treeCtx();
+            return true;
+        }
+        return false;
     }
 
     public final Nid addDevice(final String path, final String model) throws MdsException {
@@ -182,11 +188,10 @@ public final class Database{
     }
 
     public final void close() throws MdsException {
-        this._checkContext();
+        if(this.saveslot != null && !this.saveslot.isNull()) this._restoreContext();
         final int status = this.treeshr.treeClose(this.expt, this.shot);
         this.handleStatus(status);
         this.is_open = false;
-        Database.updateCurrent();
     }
 
     public final void create(final int shot) throws MdsException {
@@ -412,21 +417,6 @@ public final class Database{
         return new Nid(this.con.getInteger(String.format("_a=%d;WHILE(IAND(GETNCI(_a,'DTYPE'),-2)==192) _a=GETNCI(_a,'RECORD');GETNCI(_a,'NID_NUMBER')", nid.getValue())));
     }
 
-    /*
-    private final boolean restoreContext() throws MdsException {
-        System.out.println(String.format("restore: %s(%03d) from %12d", this.expt, this.shot, this.saveslot));
-        final boolean success = (this.saveslot == 0) ? false : this.mds.getInteger(String.format("TreeShr->TreeRestoreContext(val(%d))", this.saveslot)) != 0;
-        this.saveContext();
-        return success;
-    }
-    private final boolean saveContext() throws MdsException {
-        this.saveslot = 0;
-        System.out.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));
-        this.saveslot = this.mds.getInteger("TreeShr->TreeSaveContext()");
-        System.out.println(String.format("%12d", this.saveslot));
-        return(this.saveslot != 0);
-    }
-    */
     public final void setCurrentShot(final int shot) throws MdsException {
         this.setCurrentShot(this.expt, shot);
     }
@@ -500,6 +490,18 @@ public final class Database{
         sb.append(')');
         if(this.con != null) sb.append(" on ").append(this.con.getProvider());
         return sb.toString();
+    }
+
+    synchronized public final boolean updateContext() {
+        boolean success;
+        try{
+            success = this._restoreContext();
+            this._saveContext();
+        }catch(final MdsException e){
+            e.printStackTrace();
+            return false;
+        }
+        return success;
     }
 
     public final void write() throws MdsException {
