@@ -135,7 +135,7 @@ public class TreeManager extends JTabbedPane{
             menu.add(this.addMenuItem("Display Data", new Menu.NodeEditorAL(DisplayData.class)));
             menu.add(this.addMenuItem("Display Signal", new DisplaySignal()));
             menu.add(this.addMenuItem("Display Nci", new Menu.NodeEditorAL(DisplayNci.class)));
-            menu.add(this.addMenuItem("Display ModifyFlags", new modifyFlags()));
+            menu.add(this.addMenuItem("Display Flags", new modifyFlags()));
             menu.add(this.addMenuItem("Display Tags", new Menu.NodeEditorAL(DisplayTags.class)));
             if(menu instanceof JPopupMenu) ((JPopupMenu)menu).addSeparator();
             menu.add(this.addMenuItem("Set Default", new DisplayMenu.setDefault()));
@@ -391,12 +391,12 @@ public class TreeManager extends JTabbedPane{
         public mlContextMenu(){}
 
         @Override
-        public final void mouseClicked(final MouseEvent e) {
-            final Tree tree = (Tree)e.getSource();
-            final DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode)tree.getClosestPathForLocation(e.getX(), e.getY()).getLastPathComponent();
+        public final void mouseClicked(final MouseEvent ev) {
+            final Tree tree = (Tree)ev.getSource();
+            final DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode)tree.getClosestPathForLocation(ev.getX(), ev.getY()).getLastPathComponent();
             final Node currnode = Node.getNode(tree_node);
             tree.setCurrentNode(currnode);
-            if((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0){
+            if((ev.getModifiers() & InputEvent.BUTTON3_MASK) != 0){
                 final JPopupMenu pop = new JPopupMenu();
                 new TreeManager.DisplayMenu(TreeManager.this, pop).checkSupport();
                 if(!tree.isReadOnly()){
@@ -407,12 +407,12 @@ public class TreeManager extends JTabbedPane{
                     pop.addSeparator();
                     new TreeManager.EditMenu(TreeManager.this, pop).checkSupport();
                 }
-                pop.show((Component)e.getSource(), e.getX(), e.getY());
-            }else if((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && (e.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK)) != 0){
+                pop.show((Component)ev.getSource(), ev.getX(), ev.getY());
+            }else if((ev.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && (ev.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK)) != 0){
                 if(currnode.isSubTree()) try{
                     currnode.toggleFlags(TREENODE.Flags.INCLUDE_IN_PULSE);
-                }catch(final MdsException e1){
-                    jTraverserFacade.stderr("INCLUDE_IN_PULSE", e1);
+                }catch(final MdsException e){
+                    jTraverserFacade.stderr("INCLUDE_IN_PULSE", e);
                 }
             }
             tree.treeDidChange();
@@ -428,7 +428,7 @@ public class TreeManager extends JTabbedPane{
         };
         public final class modifyFlags implements ActionListener{
             @Override
-            public void actionPerformed(final ActionEvent e1) {
+            public void actionPerformed(final ActionEvent e) {
                 ModifyMenu.this.treeman.dialogs.modifyFlags.open();
             }
         }

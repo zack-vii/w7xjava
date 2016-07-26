@@ -154,7 +154,7 @@ public final class ModifyFlags extends JDialog{
         try{
             iflags = this.readFlags().flags;
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error getting modifyFlags", exc);
+            jTraverserFacade.stderr("Error getting flags", exc);
             this.close();
             return;
         }
@@ -165,8 +165,8 @@ public final class ModifyFlags extends JDialog{
             this.flag[i].setSelected(bflags[i]);
             this.flag[i].setEnabled(is_ok && this.settable_flag[i]);
         }
-        if(currnode == null) this.setTitle("ModifyFlags of <none selected>");
-        else this.setTitle(new StringBuilder(128).append("ModifyFlags of ").append(currnode.getFullPath())//
+        if(currnode == null) this.setTitle("Flags of <none selected>");
+        else this.setTitle(new StringBuilder(128).append("Flags of ").append(currnode.getFullPath())//
                 .append(" (0x").append(Integer.toHexString(iflags)).append(')').toString());
     }
 }
