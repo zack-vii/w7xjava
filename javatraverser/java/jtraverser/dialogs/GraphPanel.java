@@ -92,17 +92,15 @@ public class GraphPanel extends JPanel{
 
     private float getMaxScore() {
         float maxScore = Float.MIN_VALUE;
-        for(final Float score : this.scores){
+        for(final Float score : this.scores)
             maxScore = Math.max(maxScore, score);
-        }
         return maxScore;
     }
 
     private float getMinScore() {
         float minScore = Float.MAX_VALUE;
-        for(final Float score : this.scores){
+        for(final Float score : this.scores)
             minScore = Math.min(minScore, score);
-        }
         return minScore;
     }
 
@@ -121,12 +119,18 @@ public class GraphPanel extends JPanel{
         if(this.scores == null) return;
         final Graphics2D g2 = (Graphics2D)g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        final float xScale = ((float)this.getWidth() - (2 * this.padding) - this.labelPadding) / (this.scores.size() - 1);
-        final float yScale = ((float)this.getHeight() - 2 * this.padding - this.labelPadding) / (this.getMaxScore() - this.getMinScore());
+        float max = this.getMaxScore(), min = this.getMinScore(), delta = max - min;
+        if(delta == 0.){
+            delta = 1;
+            max += .5;
+            min -= .5;
+        }
+        final float xScale = ((float)this.getWidth() - 2 * this.padding - this.labelPadding) / (this.scores.size() - 1);
+        final float yScale = ((float)this.getHeight() - 2 * this.padding - this.labelPadding) / delta;
         final List<Point> graphPoints = new ArrayList<Point>();
         for(int i = 0; i < this.scores.size(); i++){
             final int x1 = (int)(i * xScale + this.padding + this.labelPadding);
-            final int y1 = (int)((this.getMaxScore() - this.scores.get(i)) * yScale + this.padding);
+            final int y1 = (int)((max - this.scores.get(i)) * yScale + this.padding);
             graphPoints.add(new Point(x1, y1));
         }
         // draw white background
@@ -143,7 +147,7 @@ public class GraphPanel extends JPanel{
                 g2.setColor(this.gridColor);
                 g2.drawLine(this.padding + this.labelPadding + 1 + this.pointWidth, y0, this.getWidth() - this.padding, y1);
                 g2.setColor(Color.BLACK);
-                final String yLabel = ((int)((this.getMinScore() + (this.getMaxScore() - this.getMinScore()) * ((i * 1.0f) / this.numberYDivisions)) * 100)) / 100.0f + "";
+                final String yLabel = ((int)((min + delta * ((i * 1.0f) / this.numberYDivisions)) * 100)) / 100.0f + "";
                 final FontMetrics metrics = g2.getFontMetrics();
                 final int labelWidth = metrics.stringWidth(yLabel);
                 g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
