@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import jtraverser.TreeManager.Menu;
@@ -43,7 +44,6 @@ public final class jTraverserFacade extends JFrame{
     }
     private static final JLabel status;
     private static final String TitleNoTree = "jTraverser - no tree open";
-
     static{
         String builddate = "unknown";
         try{
@@ -90,6 +90,7 @@ public final class jTraverserFacade extends JFrame{
     private final TreeManager treeman;;
 
     public jTraverserFacade(final String server, final String exp_name, final String shot_name, String access){
+        JOptionPane.setRootFrame(this);
         this.setTitle("jTraverser - no tree open");
         int mode = Database.NORMAL;
         if(access != null){
