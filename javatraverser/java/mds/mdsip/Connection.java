@@ -10,7 +10,10 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,7 +67,6 @@ public class Connection{
                 while(!this.close)
                     try{
                         Connection.this.connectToServer();
-                        Connection.this.connectToMds(Connection.this.use_compression);
                         this.setTried(true);
                         synchronized(this){
                             this.wait();
@@ -105,17 +107,17 @@ public class Connection{
             if(DEBUG.D) System.out.println("GetMessage()");
             long time;
             if(DEBUG.D) time = System.nanoTime();
+            final Message msg;
             synchronized(this){
                 while(!this.killed && this.message == null)
                     try{
                         this.wait();
                     }catch(final InterruptedException e){}
+                if(this.killed) return null;
+                msg = this.message;
+                this.message = null;
             }
-            if(this.killed) return null;
-            if(DEBUG.D) time = System.nanoTime() - time;
-            final Message msg = this.message;
-            this.message = null;
-            if(DEBUG.D) System.out.println(msg.msglen + "B in " + time / 1e9 + "sec" + (msg.body.capacity() == 0 ? "" : " (" + msg.asString().substring(0, (msg.body.capacity() < 64) ? msg.body.capacity() : 64) + ")"));
+            if(DEBUG.D) System.out.println(msg.msglen + "B in " + (System.nanoTime() - time) / 1e9 + "sec" + (msg.body.capacity() == 0 ? "" : " (" + msg.asString().substring(0, (msg.body.capacity() < 64) ? msg.body.capacity() : 64) + ")"));
             return msg;
         }
 
@@ -240,10 +242,11 @@ public class Connection{
             return new StringBuilder(this.user.length() + this.host.length() + 7).append(this.user).append('@').append(this.host).append(':').append(this.port).toString();
         }
     }
-    private static Connection  active;
-    public static final int    LOGIN_OK       = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
-    static final int           MAX_NUM_EVENTS = 256;
-    public static final String serialStr      = "(_d=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_d));_d;)";
+    private static final List<Connection> open_connections = Collections.synchronizedList(new ArrayList<Connection>());
+    private static Connection             active;
+    public static final int               LOGIN_OK         = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
+    static final int                      MAX_NUM_EVENTS   = 256;
+    public static final String            serialStr        = "(_d=*;_s=MdsShr->MdsSerializeDscIn(ref($),xd(_d));_d;)";
 
     private static <D extends Descriptor> Descriptor bufferToClass(final ByteBuffer b, final Class<D> cls) throws MdsException {
         if(b.capacity() == 0) return null;// NoData
@@ -256,8 +259,28 @@ public class Connection{
         }
     }
 
+    public static final int closeSharedConnections() {
+        for(final Connection con : Connection.open_connections)
+            con.disconnect();
+        final int size = Connection.open_connections.size();
+        Connection.open_connections.clear();
+        return size;
+    }
+
     public static final Connection getActiveConnection() {
         return Connection.active;// TODO: always up to date?
+    }
+
+    synchronized public static Connection sharedConnection(final Provider provider) {
+        for(final Connection con : Connection.open_connections)
+            if(con.provider.equals(provider)) return con;
+        final Connection con = new Connection(provider);
+        Connection.open_connections.add(con);
+        return con;
+    }
+
+    public static Connection sharedConnection(final String provider) {
+        return Connection.sharedConnection(new Provider(provider));
     }
     private boolean                                 connected           = false;
     private transient Vector<ConnectionListener>    connection_listener = new Vector<ConnectionListener>();
@@ -274,34 +297,17 @@ public class Connection{
     private boolean                                 use_compression     = false;
 
     public Connection(final Provider provider){
-        this(provider, false, null);
+        this(provider, null);
     }
 
-    public Connection(final Provider provider, final boolean use_compression){
-        this(provider, use_compression, null);
-    }
-
-    public Connection(final Provider provider, final boolean use_compression, final ConnectionListener cl){
-        this.addConnectionListener(cl);
-        this.use_compression = use_compression;
-        this.provider = provider;
-        this.connect();
-    }
-
+    /** main constructor of the Connection class **/
     public Connection(final Provider provider, final ConnectionListener cl){
-        this(provider, false, cl);
+        this.addConnectionListener(cl);
+        this.provider = provider;
     }
 
     public Connection(final String provider){
         this(new Provider(provider));
-    }
-
-    public Connection(final String provider, final boolean use_compression){
-        this(new Provider(provider), use_compression);
-    }
-
-    public Connection(final String provider, final boolean use_compression, final ConnectionListener cl){
-        this(new Provider(provider), use_compression, cl);
     }
 
     public Connection(final String provider, final ConnectionListener cl){
@@ -328,6 +334,7 @@ public class Connection{
         return eventid;
     }
 
+    /** re-/connects to the servers mdsip service **/
     public final boolean connect() {
         if(this.connectThread == null || !this.connectThread.isAlive()){
             this.connectThread = new MdsConnect();
@@ -338,10 +345,22 @@ public class Connection{
         return this.connected;
     }
 
-    private final void connectToMds(final boolean use_compression) throws IOException {
+    /** re-/connects to the servers mdsip service **/
+    public final boolean connect(final boolean use_compression) {
         this.use_compression = use_compression;
+        return this.connect();
+    }
+
+    private final void connectToServer() throws IOException {
+        /* connect to server */
+        this.sock = new Socket(this.provider.host, this.provider.port);
+        System.out.println(this.sock.toString());
+        this.sock.setTcpNoDelay(true);
+        this.dis = new BufferedInputStream(this.sock.getInputStream());
+        this.dos = new DataOutputStream(new BufferedOutputStream(this.sock.getOutputStream()));
+        /* connect to mdsip */
         final Message message = new Message(this.provider.user);
-        message.useCompression(use_compression);
+        message.useCompression(this.use_compression);
         message.send(this.dos);
         this.sock.setSoTimeout(3000);
         Message.receive(this.dis, null);
@@ -352,14 +371,7 @@ public class Connection{
         Connection.this.dispatchConnectionEvent(new ConnectionEvent(this, "connected"));
     }
 
-    private final void connectToServer() throws IOException {
-        this.sock = new Socket(this.provider.host, this.provider.port);
-        System.out.println(this.sock.toString());
-        this.sock.setTcpNoDelay(true);
-        this.dis = new BufferedInputStream(this.sock.getInputStream());
-        this.dos = new DataOutputStream(new BufferedOutputStream(this.sock.getOutputStream()));
-    }
-
+    /** disconnect from server and close **/
     public final boolean disconnect() {
         if(this.connectThread != null) this.connectThread.close();
         this.connectThread = null;
@@ -492,7 +504,7 @@ public class Connection{
         return this.getNumberArray(expr, args).toLongArray();
     }
 
-    public final Message getMessage(final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
+    synchronized public final Message getMessage(final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
         this.setActive();
@@ -624,6 +636,10 @@ public class Connection{
             }
         }
         return eventid;
+    }
+
+    public final void removeFromShare() {
+        if(Connection.open_connections.contains(this)) Connection.open_connections.remove(this);
     }
 
     private final void sendArg(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte body[]) throws MdsException {

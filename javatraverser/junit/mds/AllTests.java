@@ -43,7 +43,7 @@ public class AllTests{
     }
 
     public static Connection setUpBeforeClass() throws Exception {
-        final Connection mds = new Connection("localhost:" + AllTests.port);
+        final Connection mds = Connection.sharedConnection("localhost:" + AllTests.port);
         if(!mds.isConnected()){
             System.out.println("Started new local mdsip server");
             final ProcessBuilder pb = new ProcessBuilder("mdsip", "-h", System.getenv("userprofile") + "/mdsip.hosts", "-m", "-p", String.valueOf(AllTests.port)).inheritIO();

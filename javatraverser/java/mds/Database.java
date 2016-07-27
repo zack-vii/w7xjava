@@ -32,12 +32,11 @@ public final class Database{
             return str.toString();
         }
     }
-    private static final Map<Connection.Provider, Connection> connections = new HashMap<Connection.Provider, Connection>(16);
-    public static final int                                   EDITABLE    = 2;
-    public static final int                                   NEW         = 3;
-    public static final int                                   NORMAL      = 1;
-    public static final int                                   READONLY    = 0;
-    public static final int                                   REALTIME    = 4;
+    public static final int EDITABLE = 2;
+    public static final int NEW      = 3;
+    public static final int NORMAL   = 1;
+    public static final int READONLY = 0;
+    public static final int REALTIME = 4;
 
     private static final String extractProvider(final String expt) {
         final String[] parts = System.getenv(String.format("%s_path", expt.toLowerCase())).split("::", 2);
@@ -59,13 +58,6 @@ public final class Database{
         return result.trim();
     }
 
-    private static final Connection setupConnection(final String provider_in) {
-        final Connection.Provider provider = new Connection.Provider(provider_in);
-        if(Database.connections.containsKey(provider)) return Database.connections.get(provider).setActive();
-        Database.connections.put(provider, new Connection(provider).setActive());
-        return Connection.getActiveConnection();
-    }
-
     private static final void stderr(final String line, final Exception exc) {
         jTraverserFacade.stderr(line, exc);
     }
@@ -84,14 +76,21 @@ public final class Database{
     private final TdiShr     tdishr;
     private Pointer          saveslot;
 
-    public Database(final String provider) throws MdsException{
-        this.con = Database.setupConnection(provider);
+    public Database(final Connection con, final String expt, final int shot, final int mode) throws MdsException{
+        this.con = con.setActive();
         this.treeshr = new TreeShr(this.con);
         this.mdsshr = new MdsShr(this.con);
         this.tdishr = new TdiShr(this.con);
-        this.expt = null;
-        this.shot = 0;
-        this.mode = 0;
+        this.expt = expt.toUpperCase();
+        this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
+        if(mode == Database.NEW){
+            this._connect();
+            this.mode = Database.EDITABLE;
+            this._open_new();
+        }else{
+            this.mode = mode;
+            this.open();
+        }
     }
 
     public Database(final String expt, final int shot) throws MdsException{
@@ -103,18 +102,7 @@ public final class Database{
     }
 
     public Database(final String provider, final String expt, final int shot, final int mode) throws MdsException{
-        this.con = Database.setupConnection(provider);
-        this.treeshr = new TreeShr(this.con);
-        this.mdsshr = new MdsShr(this.con);
-        this.tdishr = new TdiShr(this.con);
-        this.expt = expt.toUpperCase();
-        this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
-        if(mode == Database.NEW){
-            this._connect();
-            this._open_new();
-            this.mode = Database.EDITABLE;
-        }else this.mode = mode;
-        this.open();
+        this(Connection.sharedConnection(provider), expt, shot, mode);
     }
 
     private final void _checkContext() throws MdsException {

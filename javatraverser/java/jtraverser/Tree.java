@@ -35,6 +35,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.TREENODE;
+import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
 public final class Tree extends JTree implements TreeSelectionListener, DataChangeListener{
@@ -89,6 +90,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
     private JTextField             add_device_type, add_device_name;
     private Node                   curr_node;
     private final Database         database;
+    private final Connection       connection;
     private int                    default_nid = 0;
     private String                 lastName;
     private DefaultMutableTreeNode top;
@@ -97,14 +99,15 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
     public Tree(final TreeManager treeman, final String provider, final String expt, final int shot, final int mode) throws MdsException{
         super();
         this.treeman = treeman;
+        this.connection = Connection.sharedConnection(provider);
         Database database;
         try{
-            database = new Database(provider, expt, shot, mode);
+            database = new Database(this.connection, expt, shot, mode);
         }catch(final MdsException me){
             if(mode != Database.EDITABLE || me.getStatus() != MdsException.TREE_E_FOPENW) throw me;
             final int n = JOptionPane.showConfirmDialog(this, "Tree " + expt + " cannot be opened in edit mode. Create new instead?", "Editing Tree ", JOptionPane.YES_NO_OPTION);
             if(n != JOptionPane.YES_OPTION) throw me;
-            database = new Database(provider, expt, shot, Database.NEW);
+            database = new Database(this.connection, expt, shot, Database.NEW);
         }
         this.database = database;
         final DefaultTreeModel model = (DefaultTreeModel)this.getModel();
@@ -378,6 +381,10 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
         return null;
     }
 
+    public final Connection getConnection() {
+        return this.connection;
+    }
+
     public final Node getCurrentNode() {
         return this.curr_node;
     }
@@ -401,7 +408,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
     }
 
     public final String getProvider() {
-        return this.database.getProvider();
+        return this.connection.getProvider();
     }
 
     public final long getShot() {

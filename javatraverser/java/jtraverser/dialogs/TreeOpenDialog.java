@@ -155,7 +155,9 @@ public class TreeOpenDialog extends JDialog{
             public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
                 TreeOpenDialog.this.shot.removeAllItems();
                 TreeOpenDialog.this.shot.addItem("model");
-                final Connection mds = new Connection(TreeOpenDialog.this.provider.getText());
+                final Connection mds = Connection.sharedConnection(TreeOpenDialog.this.provider.getText());
+                final boolean wasconnected = mds.isConnected();
+                if(!wasconnected) mds.connect();
                 try{
                     int[] shots;
                     try{
@@ -167,7 +169,7 @@ public class TreeOpenDialog extends JDialog{
                     for(final int shot : shots)
                         TreeOpenDialog.this.shot.addItem(Integer.toString(shot));
                 }finally{
-                    mds.disconnect();
+                    if(!wasconnected) mds.disconnect();
                 }
             }
         });
