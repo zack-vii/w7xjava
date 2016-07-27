@@ -75,9 +75,12 @@ public class Connection{
                         this.setTried(true);
                         try{
                             Thread.sleep(3000);
-                        }catch(final InterruptedException ie){}
+                        }catch(final InterruptedException ie){
+                            System.err.println(this.getName() + ": isInterrupted1");
+                        }
                     }
             }catch(final InterruptedException ie){
+                System.err.println(this.getName() + ": isInterrupted2");
                 this.close = true;
             }catch(final IOException e){
                 System.err.print("MdsConnect - No IO for " + Connection.this.provider.host + ":\n" + e.getMessage());
@@ -108,14 +111,18 @@ public class Connection{
             long time;
             if(DEBUG.D) time = System.nanoTime();
             final Message msg;
+            boolean interrupted = false;
             synchronized(this){
                 while(!this.killed && this.message == null)
                     try{
                         this.wait();
-                    }catch(final InterruptedException e){}
+                    }catch(final InterruptedException e){
+                        interrupted = true;
+                    }
                 if(this.killed) return null;
                 msg = this.message;
                 this.message = null;
+                if(interrupted) Thread.currentThread().interrupt();
             }
             if(DEBUG.D) System.out.println(msg.msglen + "B in " + (System.nanoTime() - time) / 1e9 + "sec" + (msg.body.capacity() == 0 ? "" : " (" + msg.asString().substring(0, (msg.body.capacity() < 64) ? msg.body.capacity() : 64) + ")"));
             return msg;
@@ -164,7 +171,9 @@ public class Connection{
             while(!this.killed)
                 try{
                     this.wait();
-                }catch(final InterruptedException exc){}
+                }catch(final InterruptedException exc){
+                    System.err.println(this.getName() + ": isInterrupted");
+                }
         }
     } // End MRT class
     class PMET extends Thread // Process mds Event Thread
@@ -664,6 +673,8 @@ public class Connection{
     synchronized private void waitTried() {
         if(!this.connectThread.tried) try{
             this.wait();
-        }catch(final InterruptedException e){}
+        }catch(final InterruptedException e){
+            Thread.currentThread().interrupt();
+        }
     }
 }
