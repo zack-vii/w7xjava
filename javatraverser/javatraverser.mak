@@ -107,6 +107,7 @@ TOOLS_SRC= \
 
 MDSIP_SRC= \
   mds/Database.java \
+  mds/ITreeShr.java \
   mds/MdsException.java \
   mds/MdsShr.java \
   mds/TdiShr.java \

@@ -140,10 +140,10 @@ TOOLS_SRC= \
 
 MDSIP_SRC= \
   mds/Database.java \
+  mds/ITreeShr.java \
   mds/MdsException.java \
   mds/MdsShr.java \
   mds/TdiShr.java \
-  mds/TreeShr.java \
   mds/data/descriptor/ARRAY.java \
   mds/data/descriptor/DTYPE.java \
   mds/data/descriptor/OPC.java \
