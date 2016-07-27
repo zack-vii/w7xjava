@@ -23,9 +23,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import devicebeans.DeviceSetup;
 import jtraverser.dialogs.Dialogs;
@@ -41,9 +43,11 @@ import jtraverser.dialogs.TreeOpenDialog;
 import jtraverser.editor.NodeEditor;
 import jtraverser.tools.DecompileTree;
 import mds.Database;
+import mds.ITreeShr.TagNidStatus;
 import mds.MdsException;
 import mds.TreeShr;
 import mds.data.descriptor.Descriptor;
+import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.TREENODE;
 import mds.mdsip.Connection;
 
@@ -248,7 +252,7 @@ public class TreeManager extends JTabbedPane{
             @Override
             public void actionPerformed(final ActionEvent e) {
                 try{
-                    JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), Database.getDatabase(), //
+                    JOptionPane.showMessageDialog(null, Database.getDatabase(), //
                             Database.getCurrentProvider(), //
                             JOptionPane.PLAIN_MESSAGE);
                 }catch(final Exception ex){
@@ -266,10 +270,36 @@ public class TreeManager extends JTabbedPane{
             @Override
             public void actionPerformed(final ActionEvent e) {
                 try{
-                    JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), //
-                            ExtrasMenu.this.treeman.getCurrentDatabase().getTagsWild("***", 255).toString(), //
+                    final DefaultTableModel model = new DefaultTableModel(0, 2);
+                    final JTable table = new JTable(model);
+                    table.getColumnModel().getColumn(0).setPreferredWidth(100);;
+                    table.getColumnModel().getColumn(1).setPreferredWidth(300);;
+                    final JScrollPane scollpane = new JScrollPane(table);
+                    scollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                    scollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+                    final Thread thread = new Thread("ShowTags"){
+                        {/** worker to list the tags and the full path of the target node **/
+                            this.setDaemon(true);
+                            this.setPriority(Thread.MIN_PRIORITY);
+                        }
+
+                        @Override
+                        public final void run() {
+                            final Tree tree = ExtrasMenu.this.treeman.getCurrentTree();
+                            final TreeShr treeshr = new TreeShr(tree.getConnection());
+                            TagNidStatus tag = TagNidStatus.init;
+                            try{
+                                while(!this.isInterrupted() && (tag = treeshr.treeFindTagWild("***", tag)).status != 0){
+                                    model.addRow(new String[]{"\\" + tag.data.split("::")[1], new Nid(tag.nid).toString()});
+                                }
+                            }catch(final MdsException e){}
+                        }
+                    };
+                    thread.start();
+                    JOptionPane.showMessageDialog(null, scollpane, //
                             ExtrasMenu.this.treeman.getCurrentDatabase().toString(), //
                             JOptionPane.PLAIN_MESSAGE);
+                    thread.interrupt();
                 }catch(final Exception ex){
                     ex.printStackTrace();
                 }
