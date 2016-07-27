@@ -42,8 +42,10 @@ import jtraverser.editor.NodeEditor;
 import jtraverser.tools.DecompileTree;
 import mds.Database;
 import mds.MdsException;
+import mds.TreeShr;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.TREENODE;
+import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
 public class TreeManager extends JTabbedPane{
@@ -524,6 +526,7 @@ public class TreeManager extends JTabbedPane{
         this.trees.remove(this.getTreeAt(idx).close());
         DeviceSetup.closeOpenDevices();
         this.removeTabAt(idx);
+        if(this.getTabCount() == 0) this.frame.reportChange(null);
     }
 
     public final Point dialogLocation() {
@@ -562,17 +565,18 @@ public class TreeManager extends JTabbedPane{
     public final void openTree(final String provider, final String expt, int shot, final int mode) {
         this.open_dialog.setFields(provider, expt, shot);
         // first we need to check if the tree is already open
-        for(int i = 0; i < this.getTabCount(); i++){
+        final Connection con = Connection.sharedConnection(provider);
+        if(!con.isConnected()) con.connect();
+        if(shot == 0) try{
+            shot = new TreeShr(con).treeGetCurrentShotId(expt);
+        }catch(final MdsException e){}
+        for(int i = this.getTabCount(); i-- > 0;){
             final Tree tree = this.getTreeAt(i);
+            if(!tree.getConnection().equals(con)) continue;
             if(!tree.getExpt().equalsIgnoreCase(expt)) continue;
-            try{
-                if(shot == 0) shot = tree.getDatabase().getCurrentShot();
-                if(tree.getShot() == shot){
-                    tree.close();
-                    this.remove(i);
-                    break;
-                }
-            }catch(final Exception exc){}
+            if(tree.getShot() != shot) continue;
+            tree.close();
+            this.remove(i);
         }
         Tree tree;
         try{
