@@ -252,7 +252,8 @@ public class TreeManager extends JTabbedPane{
             @Override
             public void actionPerformed(final ActionEvent e) {
                 try{
-                    JOptionPane.showMessageDialog(null, Database.getDatabase(), //
+                    JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), //
+                            Database.getDatabase(), //
                             Database.getCurrentProvider(), //
                             JOptionPane.PLAIN_MESSAGE);
                 }catch(final Exception ex){
@@ -269,40 +270,40 @@ public class TreeManager extends JTabbedPane{
         public final class ShowTags implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
-                try{
-                    final DefaultTableModel model = new DefaultTableModel(0, 2);
-                    final JTable table = new JTable(model);
-                    table.getColumnModel().getColumn(0).setPreferredWidth(100);;
-                    table.getColumnModel().getColumn(1).setPreferredWidth(300);;
-                    final JScrollPane scollpane = new JScrollPane(table);
-                    scollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                    scollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-                    final Thread thread = new Thread("ShowTags"){
-                        {/** worker to list the tags and the full path of the target node **/
-                            this.setDaemon(true);
-                            this.setPriority(Thread.MIN_PRIORITY);
-                        }
+                final DefaultTableModel model = new DefaultTableModel(0, 2);
+                final JTable table = new JTable(model);
+                table.getColumnModel().getColumn(0).setPreferredWidth(100);;
+                table.getColumnModel().getColumn(1).setPreferredWidth(300);;
+                final JScrollPane scollpane = new JScrollPane(table);
+                scollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                scollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+                final Thread thread = new Thread("ShowTags"){
+                    {/** worker to list the tags and the full path of the target node **/
+                        this.setDaemon(true);
+                        this.setPriority(Thread.MIN_PRIORITY);
+                    }
 
-                        @Override
-                        public final void run() {
-                            final Tree tree = ExtrasMenu.this.treeman.getCurrentTree();
-                            final TreeShr treeshr = new TreeShr(tree.getConnection());
-                            TagNidStatus tag = TagNidStatus.init;
-                            try{
-                                while(!this.isInterrupted() && (tag = treeshr.treeFindTagWild("***", tag)).status != 0){
-                                    model.addRow(new String[]{"\\" + tag.data.split("::")[1], new Nid(tag.nid).toString()});
+                    @Override
+                    public final void run() {
+                        final Tree tree = ExtrasMenu.this.treeman.getCurrentTree();
+                        final TreeShr treeshr = new TreeShr(tree.getConnection());
+                        TagNidStatus tag = TagNidStatus.init;
+                        try{
+                            while((tag = treeshr.treeFindTagWild("***", tag)).status != 0){
+                                model.addRow(new String[]{"\\" + tag.data.split("::")[1], new Nid(tag.nid).toString()});
+                                synchronized(this){
+                                    if(this.isInterrupted()) return;
                                 }
-                            }catch(final MdsException e){}
-                        }
-                    };
-                    thread.start();
-                    JOptionPane.showMessageDialog(null, scollpane, //
-                            ExtrasMenu.this.treeman.getCurrentDatabase().toString(), //
-                            JOptionPane.PLAIN_MESSAGE);
-                    thread.interrupt();
-                }catch(final Exception ex){
-                    ex.printStackTrace();
-                }
+                            }
+                        }catch(final MdsException e){}
+                    }
+                };
+                thread.start();
+                JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), //
+                        scollpane, //
+                        ExtrasMenu.this.treeman.getCurrentDatabase().toString(), //
+                        JOptionPane.PLAIN_MESSAGE);
+                if(thread.isAlive()) thread.interrupt();
             }
         }
 
