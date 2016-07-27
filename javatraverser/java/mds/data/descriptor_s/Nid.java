@@ -36,7 +36,7 @@ public final class Nid extends TREENODE<Integer>{
     @Override
     public final StringBuilder decompile(final int prec, final StringBuilder pout, final int mode) {
         try{
-            return pout.append(this.getNciMinPath());
+            return pout.append(this.getNciFullPath());
         }catch(final MdsException e){
             return pout.append("<nid ").append(this.getValue()).append('>');
         }catch(final Exception e){
