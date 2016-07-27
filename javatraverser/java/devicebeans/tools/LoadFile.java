@@ -32,7 +32,7 @@ public class LoadFile{
         }
         final Database tree;
         try{
-            tree = new Database(null, expt, shot, Database.READONLY);
+            tree = new Database(expt, shot, Database.READONLY);
         }catch(final Exception exc){
             System.err.println("Cannot open experiment " + expt + " shot " + shot + ": " + exc);
             System.exit(0);
