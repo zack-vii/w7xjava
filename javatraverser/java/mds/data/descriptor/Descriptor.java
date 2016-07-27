@@ -148,6 +148,7 @@ public abstract class Descriptor<T>{
     public final byte          dclass;
     /** (4,i) address of first byte of data element **/
     public final int           pointer;
+    protected Descriptor       VALUE;
 
     public Descriptor(final ByteBuffer b){
         this.b = b.slice().order(b.order());
@@ -247,6 +248,10 @@ public abstract class Descriptor<T>{
 
     /** Returns value<T> from given ByteBuffer **/
     protected abstract T getValue(ByteBuffer b);
+
+    public Descriptor getVALUE() {
+        return this.VALUE.getVALUE();
+    }
 
     @SuppressWarnings("static-method")
     public boolean isAtomic() {

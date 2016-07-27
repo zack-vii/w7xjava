@@ -98,6 +98,7 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
     private final Descriptor[] dscptrs;
     protected final int        ndesc;
 
+    @SuppressWarnings("unchecked")
     public Descriptor_R(final byte dtype, final ByteBuffer data, final Descriptor... args){
         super((short)(data == null ? 0 : data.limit()), dtype, Descriptor_R.CLASS, data, Descriptor_R._dscoffIa + (args == null ? 0 : args.length * Integer.BYTES), Descriptor_R.joinSize(args));
         this.b.put(Descriptor_R._ndescB, (byte)(this.ndesc = args == null ? 0 : args.length));
@@ -124,6 +125,7 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
                         e.printStackTrace();
                         this.dscptrs[i] = Missing.NEW;
                     }
+                    this.dscptrs[i].VALUE = this;
                 }
             }
         }
@@ -134,6 +136,7 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
         this(dtype, data, Descriptor_R.joinArrays(args0, args1));
     }
 
+    @SuppressWarnings("unchecked")
     public Descriptor_R(final ByteBuffer b){
         super(b);
         this.ndesc = b.get();
@@ -149,6 +152,7 @@ public abstract class Descriptor_R<T extends Number>extends Descriptor<T>{
                 b.position(this.desc_ptr[i]).limit(end);
                 try{
                     this.dscptrs[i] = Descriptor.deserialize(b);
+                    this.dscptrs[i].VALUE = this;
                 }catch(final MdsException e){
                     e.printStackTrace();
                 }

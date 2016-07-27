@@ -9,6 +9,8 @@ import org.junit.Test;
 import mds.AllTests;
 import mds.MdsException;
 import mds.TdiShr;
+import mds.data.descriptor_a.Int32Array;
+import mds.data.descriptor_a.Uint64Array;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -35,6 +37,13 @@ public final class Function_Test{
     @Test
     public final void $p0() throws MdsException {
         Assert.assertEquals("Build_With_Units(101325., \"Pa\")", Function_Test.tdi.tdiCompile("$P0").evaluate().decompile());
+    }
+
+    @Test
+    public final void $value() throws MdsException {
+        Assert.assertEquals("[1]", new Signal(Function.$VALUE(), new Int32Array(1), new Uint64Array(1l)).getData().decompile());
+        Assert.assertEquals("[1.]", new Signal(Function.Float(Function.$VALUE()), new Int32Array(1), new Uint64Array(1l)).getData().decompile());
+        Assert.assertEquals("[1D0]", new Signal(Function.FT_Float(Function.$VALUE()), new Int32Array(1), new Uint64Array(1l)).getData().decompile());
     }
 
     @Test

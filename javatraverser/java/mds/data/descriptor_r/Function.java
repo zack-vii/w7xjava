@@ -12,6 +12,7 @@ import mds.data.descriptor_s.Complex32;
 import mds.data.descriptor_s.Float32;
 import mds.data.descriptor_s.Missing;
 import mds.data.descriptor_s.Uint8;
+import mds.mdsip.Connection;
 
 public final class Function extends Descriptor_R<Short>{
     public static final class op_rec{
@@ -73,126 +74,116 @@ public final class Function extends Descriptor_R<Short>{
     };
 
     public static final Function $2PI() {
-        return new Function((short)377);
+        return new Function(OPC.Opc2Pi);
     }
 
     public static final Function $A0() {
-        return new Function((short)1);
+        return new Function(OPC.OpcA0);
     }
 
     public static final Function $ALPHA() {
-        return new Function((short)2);
+        return new Function(OPC.OpcAlpha);
     }
 
     public static final Function $AMU() {
-        return new Function((short)3);
+        return new Function(OPC.OpcAmu);
     }
 
     public static final Function $C() {
-        return new Function((short)4);
+        return new Function(OPC.OpcC);
     }
 
     public static final Function $CAL() {
-        return new Function((short)5);
+        return new Function(OPC.OpcCal);
     }
 
     public static final Function $DEGREE() {
-        return new Function((short)6);
+        return new Function(OPC.OpcDegree);
     }
 
     public static final Function $FALSE() {
-        return new Function((short)7);
+        return new Function(OPC.OpcFalse);
     }
 
     public static final Function $FARADAY() {
-        return new Function((short)8);
+        return new Function(OPC.OpcFaraday);
     }
 
     public static final Function $G() {
-        return new Function((short)9);
+        return new Function(OPC.OpcG);
     }
 
     public static final Function $GAS() {
-        return new Function((short)10);
+        return new Function(OPC.OpcGas);
     }
 
     public static final Function $H() {
-        return new Function((short)11);
+        return new Function(OPC.OpcH);
     }
 
     public static final Function $HBAR() {
-        return new Function((short)12);
+        return new Function(OPC.OpcHbar);
     }
 
     public static final Function $I() {
-        return new Function((short)13);
+        return new Function(OPC.OpcI);
     }
 
     public static final Function $K() {
-        return new Function((short)14);
+        return new Function(OPC.OpcK);
     }
 
     public static final Function $MISSING() {
-        return new Function((short)15);
+        return new Function(OPC.OpcMissing);
     }
 
     public static final Function $MP() {
-        return new Function((short)16);
+        return new Function(OPC.OpcMp);
     }
 
     public static final Function $N0() {
-        return new Function((short)17);
+        return new Function(OPC.OpcN0);
     }
 
     public static final Function $NA() {
-        return new Function((short)18);
+        return new Function(OPC.OpcNa);
     }
 
     public static final Function $P0() {
-        return new Function((short)19);
+        return new Function(OPC.OpcP0);
     }
 
     public static final Function $PI() {
-        return new Function((short)20);
+        return new Function(OPC.OpcPi);
     }
 
     public static final Function $QE() {
-        return new Function((short)21);
+        return new Function(OPC.OpcQe);
     }
 
     public static final Function $RE() {
-        return new Function((short)22);
+        return new Function(OPC.OpcRe);
     }
 
     public static final Function $ROPRAND() {
-        return new Function((short)23);
+        return new Function(OPC.OpcRoprand);
     }
 
     public static final Function $RYDBERG() {
-        return new Function((short)24);
+        return new Function(OPC.OpcRydberg);
     }
 
     public static final Function $TORR() {
-        return new Function((short)25);
+        return new Function(OPC.OpcTorr);
     }
 
     public static final Function $TRUE() {
-        return new Function((short)26);
+        return new Function(OPC.OpcTrue);
     }
 
     public static final Function $VALUE() {
-        return new Function((short)27);
+        return new Function(OPC.OpcValue);
     }
-    /*
-    private static final Stack<Descriptor> $value    = new Stack<Descriptor>();
-    public final static void popValue() {
-        Function.$value.pop();
-    }
-
-    public final static void pushValue(final Descriptor descpr) {
-        Function.$value.push(descpr);
-    }
-    */
 
     public static final Function abs(final Descriptor... dscptrs) {
         return new Function(OPC.OpcAbs, dscptrs);
@@ -240,6 +231,22 @@ public final class Function extends Descriptor_R<Short>{
         Function.addIndent(0, pout);
     }
 
+    public static final Function Byte(final Descriptor value) {
+        return new Function(OPC.OpcByte, value);
+    }
+
+    public static final Function Byte_Unsigned(final Descriptor value) {
+        return new Function(OPC.OpcByteUnsigned, value);
+    }
+
+    public static final Function D_Float(final Descriptor value) {
+        return new Function(OPC.OpcDFloat, value);
+    }
+
+    public static final Function Dble(final Descriptor value) {
+        return new Function(OPC.OpcDble, value);
+    }
+
     private final static void deIndent(final StringBuilder pout) {
         int fin;
         for(fin = pout.length() - 1; fin >= 0; fin--){
@@ -247,6 +254,58 @@ public final class Function extends Descriptor_R<Short>{
             if(!(t == '\t' || t == '\r' || t == '\n')) break;
         }
         pout.setLength(fin + 1);
+    }
+
+    public static final Function F_Float(final Descriptor value) {
+        return new Function(OPC.OpcFFloat, value);
+    }
+
+    public static final Function Float(final Descriptor value) {
+        return new Function(OPC.OpcFloat, value);
+    }
+
+    public static final Function FS_Float(final Descriptor value) {
+        return new Function(OPC.OpcFS_float, value);
+    }
+
+    public static final Function FT_Float(final Descriptor value) {
+        return new Function(OPC.OpcFT_float, value);
+    }
+
+    public static final Function G_Float(final Descriptor value) {
+        return new Function(OPC.OpcGFloat, value);
+    }
+
+    public static final Function Long(final Descriptor value) {
+        return new Function(OPC.OpcLong, value);
+    }
+
+    public static final Function Long_Unsigned(final Descriptor value) {
+        return new Function(OPC.OpcLongUnsigned, value);
+    }
+
+    public static final Function Octaword(final Descriptor value) {
+        return new Function(OPC.OpcOctaword, value);
+    }
+
+    public static final Function Octaword_Unsigned(final Descriptor value) {
+        return new Function(OPC.OpcOctawordUnsigned, value);
+    }
+
+    public static final Function Quadword(final Descriptor value) {
+        return new Function(OPC.OpcQuadword, value);
+    }
+
+    public static final Function Quadword_Unsigned(final Descriptor value) {
+        return new Function(OPC.OpcQuadwordUnsigned, value);
+    }
+
+    public static final Function Word(final Descriptor value) {
+        return new Function(OPC.OpcWord, value);
+    }
+
+    public static final Function Word_Unsigned(final Descriptor value) {
+        return new Function(OPC.OpcWordUnsigned, value);
     }
 
     public Function(final ByteBuffer b) throws MdsException{
@@ -526,7 +585,17 @@ public final class Function extends Descriptor_R<Short>{
     public Descriptor evaluate() {
         switch(this.getOpCode()){
             default:
-                return super.evaluate();
+                Descriptor eval;
+                final String deco = this.decompile();
+                try{
+                    eval = Connection.getActiveConnection().getDescriptor(deco);
+                }catch(final MdsException e){
+                    eval = super.evaluate();
+                }
+                if(deco.equals(eval.decompile())) return Missing.NEW;
+                return eval;
+            case OPC.OpcValue:
+                return this.VALUE.getVALUE();
             case OPC.Opc2Pi:
                 return new Float32(6.2831853072f);
             case OPC.OpcA0:
