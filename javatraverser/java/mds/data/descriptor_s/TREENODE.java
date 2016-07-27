@@ -351,19 +351,19 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     public abstract int getNidNumber() throws MdsException;
 
     public final int getNumSegments() throws MdsException {
-        return this.treeshr.treeGetNumSegments(this.getNidNumber());
+        return this.treeshr.treeGetNumSegments(this.getNidNumber()).data;
     }
 
     public final Descriptor getRecord() throws MdsException {
-        return this.treeshr.treeGetRecord(this.getNidNumber());
+        return this.treeshr.treeGetRecord(this.getNidNumber()).data;
     }
 
     public final Signal getSegment(final int idx) throws MdsException {
-        return this.treeshr.treeGetSegment(this.getNidNumber(), idx);
+        return this.treeshr.treeGetSegment(this.getNidNumber(), idx).data;
     }
 
     public final Descriptor getXNci(final String name) throws MdsException {
-        return this.treeshr.treeGetXNci(this.getNidNumber(), name);
+        return this.treeshr.treeGetXNci(this.getNidNumber(), name).data;
     }
 
     public final int putRecord(final Descriptor data) throws MdsException {
