@@ -272,6 +272,9 @@ public class TreeManager extends JTabbedPane{
             public void actionPerformed(final ActionEvent e) {
                 final DefaultTableModel model = new DefaultTableModel(0, 2);
                 final JTable table = new JTable(model);
+                table.setPreferredScrollableViewportSize(new Dimension(600, 500));
+                table.getColumnModel().getColumn(0).setHeaderValue("Tag");
+                table.getColumnModel().getColumn(1).setHeaderValue("Full Path");
                 table.getColumnModel().getColumn(0).setPreferredWidth(100);;
                 table.getColumnModel().getColumn(1).setPreferredWidth(300);;
                 final JScrollPane scollpane = new JScrollPane(table);
@@ -289,8 +292,10 @@ public class TreeManager extends JTabbedPane{
                         final TreeShr treeshr = new TreeShr(tree.getConnection());
                         TagNidStatus tag = TagNidStatus.init;
                         try{
+                            final String expt = tree.getExpt();
+                            final String root = new StringBuilder(expt.length() + 3).append("\\").append(expt).append("::").toString();
                             while((tag = treeshr.treeFindTagWild("***", tag)).status != 0){
-                                model.addRow(new String[]{"\\" + tag.data.split("::")[1], new Nid(tag.nid).toString()});
+                                model.addRow(new String[]{tag.data.replace(root, "\\"), new Nid(tag.nid).toString()});
                                 synchronized(this){
                                     if(this.isInterrupted()) return;
                                 }
