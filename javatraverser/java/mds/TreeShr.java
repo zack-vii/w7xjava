@@ -166,7 +166,7 @@ public final class TreeShr implements ITreeShr{
     @Override
     public final DescriptorStatus treeGetXNci(final int nid, final String name) throws MdsException {
         synchronized(this.connection){
-            final int status = this.connection.getInteger(String.format("_a=*;TreeShr->TreeGetXNci(val(%d),ref('%s'),xd(_a))", nid, name));
+            final int status = this.connection.getInteger(String.format("_a=*;TreeShr->TreeGetXNci(val(%d),ref($),xd(_a))", nid), new CString(name));
             if((status & 1) == 0) return new DescriptorStatus(null, status);
             return new DescriptorStatus(this.connection.getDescriptor("_a"), status);
         }
@@ -324,7 +324,7 @@ public final class TreeShr implements ITreeShr{
 
     @Override
     public final int treeSetXNci(final int nid, final String name, final Descriptor value) throws MdsException {
-        return this.connection.getInteger(String.format("TreeShr->TreeSetXNci(val(%d),ref('%s'),xd($))", nid, name), value.getData());
+        return this.connection.getInteger(String.format("TreeShr->TreeSetXNci(val(%d),ref($),xd($))", nid), new CString(name), value.getData());
     }
 
     @Override
@@ -354,6 +354,6 @@ public final class TreeShr implements ITreeShr{
 
     @Override
     public final int treeWriteTree(final String expt, final int shot) throws MdsException {
-        return this.connection.getInteger(String.format("TreeShr->TreeWriteTree(ref('%s'),val(%d))", expt, shot));
+        return this.connection.getInteger(String.format("TreeShr->TreeWriteTree(ref($),val(%d))", shot), new CString(expt));
     }
 }
