@@ -343,13 +343,13 @@ public final class TreeShr implements ITreeShr{
     }
 
     @Override
-    public final boolean treeUsePrivateCtx(final boolean state) throws MdsException {
-        return this.connection.getInteger(String.format("TreeShr->TreeUsePrivateCtx(%d)", state ? 1 : 0)) == 1;
+    public final int treeUsePrivateCtx(final boolean state) throws MdsException {
+        return this.connection.getInteger(String.format("TreeShr->TreeUsePrivateCtx(%d)", state ? 1 : 0));
     }
 
     @Override
-    public final boolean treeUsingPrivateCtx(final boolean state) throws MdsException {
-        return this.connection.getInteger("TreeShr->TreeUseingPrivateCtx()") == 1;
+    public final int treeUsingPrivateCtx(final boolean state) throws MdsException {
+        return this.connection.getInteger("TreeShr->TreeUsingPrivateCtx()");
     }
 
     @Override
