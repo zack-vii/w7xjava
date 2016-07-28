@@ -38,6 +38,11 @@ public final class TreeShr implements ITreeShr{
     }
 
     @Override
+    public final Pointer treeCheckOutContext(final Pointer treectx) throws MdsException {
+        return (Pointer)this.connection.getDescriptor("TreeShr->TreeRestoreContext(val($));TreeShr->TreeSaveContext:P()", Pointer.class, treectx);
+    }
+
+    @Override
     public final int treeCleanDatafile(final String expt, final int shot) throws MdsException {
         return this.connection.getInteger(String.format("TreeShr->TreeCleanDatafile(ref($),val(%d))", shot), new CString(expt));
     }

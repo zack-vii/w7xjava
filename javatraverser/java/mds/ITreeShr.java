@@ -121,6 +121,13 @@ public interface ITreeShr{
     public int treeBeginTimestampedSegment(final int nid, Descriptor_A initialValue, int idx) throws MdsException;
 
     /**
+     * restores a saved context and saves it again
+     *
+     * @return Pointer: pointer to saved context
+     **/
+    public Pointer treeCheckOutContext(Pointer treectx) throws MdsException;
+
+    /**
      * cleans the data file by removing unreferenced data
      *
      * @return int: status
