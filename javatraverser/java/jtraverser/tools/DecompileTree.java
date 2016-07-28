@@ -17,7 +17,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-import mds.Database;
 import mds.MdsException;
 import mds.TREE;
 import mds.data.descriptor.Descriptor;
@@ -25,6 +24,7 @@ import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.TREENODE;
 import mds.data.descriptor_s.TREENODE.Flags;
+import mds.mdsip.Connection;
 
 public class DecompileTree{
     public static final void main(final String args[]) {
@@ -56,21 +56,29 @@ public class DecompileTree{
             System.exit(-1);
         }
     }
-    private Database database = null;
+    private TREE     tree     = null;
     private Document document = null;
     public String    error    = null;
 
-    public int decompile(final Database database, final Component parent, final boolean isFull) {
+    public final int decompile(final String provider, final String expt, final int shot, final String filename, final boolean isFull) throws MdsException {
+        final TREE tree = new TREE(new Connection(provider), expt, shot);
+        tree.open();
+        final int result = this.decompile(tree, filename, isFull);
+        tree.close();
+        return result;
+    }
+
+    public int decompile(final TREE tree, final Component parent, final boolean isFull) {
         final JFileChooser fc = new JFileChooser();
         fc.addChoosableFileFilter(new FileNameExtensionFilter("XML file", "xml"));
         fc.setFileFilter(new FileNameExtensionFilter("XML document", "xml"));
         final int returnVal = fc.showSaveDialog(parent);
         if(returnVal != JFileChooser.APPROVE_OPTION) return 0;
-        return this.decompile(database, fc.getSelectedFile().getAbsolutePath(), isFull);
+        return this.decompile(tree, fc.getSelectedFile().getAbsolutePath(), isFull);
     }
 
-    public final int decompile(final Database database, String filename, final boolean isFull) {
-        this.database = database;
+    public final int decompile(final TREE dtree, String filename, final boolean isFull) {
+        this.tree = dtree;
         if(!filename.contains(".")) filename += ".xml";
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try{
@@ -81,44 +89,41 @@ public class DecompileTree{
             this.document = null;
             return -1;
         }
-        final Element tree = this.document.createElement("tree");
-        final Nid topNid = new Nid(0);
-        Nid[] sons;
+        final Element etree = this.document.createElement("tree");
+        final Nid topNid = this.tree.getTop();
         try{
-            sons = this.database.getSons(topNid);
-        }catch(final Exception e){
+            final Nid[] sons = topNid.getNciChildrenNids().toArray();
+            for(final Nid son : sons){
+                final Element docSon = this.document.createElement("node");
+                etree.appendChild(docSon);
+                this.recDecompile(son, docSon, false, isFull);
+            }
+        }catch(final MdsException e){
             System.err.println(this.error = "Error setting sons: " + e);
-            sons = new Nid[0];
-        }
-        for(final Nid son : sons){
-            final Element docSon = this.document.createElement("node");
-            tree.appendChild(docSon);
-            this.recDecompile(son, docSon, false, isFull);
         }
         Nid[] members;
         try{
-            members = this.database.getMembers(topNid);
+            members = topNid.getNciMemberNids().toArray();
+            for(final Nid member : members){
+                Element docMember = null;
+                try{
+                    final byte usage = member.getNciUsage();
+                    if(usage == TREENODE.USAGE_DEVICE) docMember = this.document.createElement("device");
+                    else if(usage == TREENODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
+                    else docMember = this.document.createElement("member");
+                }catch(final Exception e){
+                    System.err.println(this.error = e.toString());
+                }
+                etree.appendChild(docMember);
+                this.recDecompile(member, docMember, false, isFull);
+            }
         }catch(final Exception e){
             System.err.println(this.error = "Error setting members: " + e);
-            members = new Nid[0];
-        }
-        for(final Nid member : members){
-            Element docMember = null;
-            try{
-                final byte usage = member.getNciUsage();
-                if(usage == TREENODE.USAGE_DEVICE) docMember = this.document.createElement("device");
-                else if(usage == TREENODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
-                else docMember = this.document.createElement("member");
-            }catch(final Exception e){
-                System.err.println(this.error = e.toString());
-            }
-            tree.appendChild(docMember);
-            this.recDecompile(member, docMember, false, isFull);
         }
         final TransformerFactory transFactory = TransformerFactory.newInstance();
         try{
             final Transformer transformer = transFactory.newTransformer();
-            final DOMSource source = new DOMSource(tree);
+            final DOMSource source = new DOMSource(etree);
             final File newXML = new File(filename);
             final FileOutputStream os = new FileOutputStream(newXML);
             try{
@@ -134,18 +139,10 @@ public class DecompileTree{
         return 0;
     }
 
-    public final int decompile(final String provider, final String expt, final int shot, final String filename, final boolean isFull) throws MdsException {
-        final Database database;
-        database = new Database(provider, expt, shot, TREE.READONLY);
-        final int result = this.decompile(database, filename, isFull);
-        database.close();
-        return result;
-    }
-
     private void recDecompile(final Nid nid, final Element node, final boolean isDeviceField, final boolean isFull) {
         try{
-            final Nid prevNid = this.database.getDefault();
-            this.database.setDefault(nid);
+            final Nid prevNid = this.tree.getDefault();
+            nid.setDefault();
             final Flags flags;
             try{
                 flags = new Flags(nid.getNciFlags());
@@ -155,7 +152,7 @@ public class DecompileTree{
             }
             String[] tags;
             try{
-                tags = this.database.getTags(nid);
+                tags = nid.getTags();
             }catch(final Exception exc){
                 tags = new String[0];
             }
@@ -169,37 +166,32 @@ public class DecompileTree{
                 // if(info.isSetup() || isFull)
                 {
                     try{
-                        data = this.database.getData(nid);
+                        data = nid.getRecord();
                     }catch(final MdsException exc){
                         data = null;
                     }
                 }
                 // Handle Possible non-device subtree. Never, never do that!!.....
-                Nid sons[], members[];
                 final Vector<Nid> subtreeNodes = new Vector<Nid>();
                 try{
-                    sons = this.database.getSons(nid);
-                }catch(final Exception exc){
-                    sons = new Nid[0];
-                }
-                for(final Nid son : sons){
-                    try{
-                        if(son.getNciConglomerateElt() == 1) // Descendant NOT belonging to the device
-                            subtreeNodes.addElement(son);
-                    }catch(final MdsException exc){}
-                }
+                    final Nid[] sons = nid.getNciChildrenNids().toArray();
+                    for(final Nid son : sons){
+                        try{
+                            if(son.getNciConglomerateElt() == 1) // Descendant NOT belonging to the device
+                                subtreeNodes.addElement(son);
+                        }catch(final MdsException exc){}
+                    }
+                }catch(final Exception exc){}
                 final Vector<Nid> subtreeMembers = new Vector<Nid>();
                 try{
-                    members = this.database.getMembers(nid);
-                }catch(final MdsException exc){
-                    members = new Nid[0];
-                }
-                for(final Nid member : members){
-                    try{
-                        if(member.getNciConglomerateElt() == 1) // Descendant NOT belonging to the device
-                            subtreeMembers.addElement(member);
-                    }catch(final MdsException exc){}
-                }
+                    final Nid[] members = nid.getNciMemberNids().toArray();
+                    for(final Nid member : members){
+                        try{
+                            if(member.getNciConglomerateElt() == 1) // Descendant NOT belonging to the device
+                                subtreeMembers.addElement(member);
+                        }catch(final MdsException exc){}
+                    }
+                }catch(final MdsException exc){}
                 if((!flags.isOn() && flags.isParentOn()) || (flags.isOn() && !flags.isParentOn()) || (flags.isSetup() && data != null) || tags.length > 0 || subtreeNodes.size() > 0 || subtreeMembers.size() > 0 || isFull
                 // TACON
                         || name.endsWith("_GAIN")) // show it only at these conditions
@@ -245,7 +237,7 @@ public class DecompileTree{
                 if(usage == TREENODE.USAGE_DEVICE || usage == TREENODE.USAGE_COMPOUND_DATA){
                     Conglom deviceData = null;
                     try{
-                        deviceData = (Conglom)this.database.getData(nid);
+                        deviceData = (Conglom)nid.getRecord();
                         final String model = deviceData.getModel().toString();
                         node.setAttribute("MODEL", model.substring(1, model.length() - 1));
                     }catch(final Exception exc){
@@ -265,7 +257,7 @@ public class DecompileTree{
                 }
                 // tags
                 try{
-                    tags = this.database.getTags(nid);
+                    tags = nid.getTags();
                 }catch(final Exception exc){
                     System.err.println("Error getting tags: " + exc);
                     tags = new String[0];
@@ -326,7 +318,7 @@ public class DecompileTree{
                     {
                         Descriptor data;
                         try{
-                            data = this.database.getData(nid);
+                            data = nid.getRecord();
                         }catch(final Exception exc){
                             data = null;
                         }
@@ -340,42 +332,36 @@ public class DecompileTree{
                 }
                 // handle descendants, if not subtree
                 if(usage != TREENODE.USAGE_SUBTREE){
-                    Nid[] sons;
-                    try{
-                        sons = this.database.getSons(nid);
-                    }catch(final Exception exc){
-                        sons = new Nid[0];
-                    }
                     if(usage == TREENODE.USAGE_DEVICE || usage == TREENODE.USAGE_COMPOUND_DATA){
                         // int numFields = info.getConglomerateNids() - 1;
                         final Nid[] nids = nid.getNciConglomerateNids().toArray();
                         for(final Nid n : nids)
                             this.recDecompile(n, node, true, isFull);
                     }else{
-                        for(final Nid son : sons){
-                            final Element docSon = this.document.createElement("node");
-                            node.appendChild(docSon);
-                            this.recDecompile(son, docSon, false, isFull);
-                        }
-                        Nid[] members;
                         try{
-                            members = this.database.getMembers(nid);
-                        }catch(final Exception exc){
-                            members = new Nid[0];
-                        }
-                        for(final Nid member : members){
-                            Element docMember;
-                            final byte cusage = member.getNciUsage();
-                            if(cusage == TREENODE.USAGE_DEVICE) docMember = this.document.createElement((cusage == TREENODE.USAGE_DEVICE) ? "device" : "compound_data");
-                            else if(cusage == TREENODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
-                            else docMember = this.document.createElement("member");
-                            node.appendChild(docMember);
-                            this.recDecompile(member, docMember, false, isFull);
-                        }
+                            final Nid[] sons = nid.getNciChildrenNids().toArray();
+                            for(final Nid son : sons){
+                                final Element docSon = this.document.createElement("node");
+                                node.appendChild(docSon);
+                                this.recDecompile(son, docSon, false, isFull);
+                            }
+                        }catch(final Exception exc){}
+                        try{
+                            final Nid[] members = nid.getNciMemberNids().toArray();
+                            for(final Nid member : members){
+                                Element docMember;
+                                final byte cusage = member.getNciUsage();
+                                if(cusage == TREENODE.USAGE_DEVICE) docMember = this.document.createElement((cusage == TREENODE.USAGE_DEVICE) ? "device" : "compound_data");
+                                else if(cusage == TREENODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
+                                else docMember = this.document.createElement("member");
+                                node.appendChild(docMember);
+                                this.recDecompile(member, docMember, false, isFull);
+                            }
+                        }catch(final Exception exc){}
                     }
                 }
             }
-            this.database.setDefault(prevNid);
+            prevNid.setDefault();
         }catch(final Exception exc){
             System.err.println(exc);
         }
