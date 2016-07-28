@@ -43,7 +43,7 @@ import jtraverser.dialogs.TreeOpenDialog;
 import jtraverser.editor.NodeEditor;
 import jtraverser.tools.DecompileTree;
 import mds.Database;
-import mds.ITreeShr.TagNidStatus;
+import mds.ITreeShr.TagRefStatus;
 import mds.MdsException;
 import mds.TreeShr;
 import mds.data.descriptor.Descriptor;
@@ -290,7 +290,7 @@ public class TreeManager extends JTabbedPane{
                     public final void run() {
                         final Tree tree = ExtrasMenu.this.treeman.getCurrentTree();
                         final TreeShr treeshr = new TreeShr(tree.getConnection());
-                        TagNidStatus tag = TagNidStatus.init;
+                        TagRefStatus tag = TagRefStatus.init;
                         try{
                             final String expt = tree.getExpt();
                             final String root = new StringBuilder(expt.length() + 3).append("\\").append(expt).append("::").toString();

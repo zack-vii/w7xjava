@@ -38,11 +38,6 @@ public final class TreeShr implements ITreeShr{
     }
 
     @Override
-    public final Pointer treeCheckOutContext(final Pointer treectx) throws MdsException {
-        return (Pointer)this.connection.getDescriptor("TreeShr->TreeRestoreContext(val($));TreeShr->TreeSaveContext:P()", Pointer.class, treectx);
-    }
-
-    @Override
     public final int treeCleanDatafile(final String expt, final int shot) throws MdsException {
         return this.connection.getInteger(String.format("TreeShr->TreeCleanDatafile(ref($),val(%d))", shot), new CString(expt));
     }
@@ -93,11 +88,20 @@ public final class TreeShr implements ITreeShr{
     }
 
     @Override
-    public final TagNidStatus treeFindTagWild(final String searchstr, final TagNidStatus ref) throws MdsException {
+    public final NodeRefStatus treeFindNodeWild(final String searchstr, final int usage_mask, final NodeRefStatus ref) throws MdsException {
         synchronized(this.connection){
-            final int status = this.connection.getInteger(String.format("_t=*;_q=%dQ;_i=-1;TreeShr->TreeFindTagWildDsc(ref($),ref(_i),ref(_q),xd(_t))", ref.ref), new CString(searchstr));
-            if(status == 0) return TagNidStatus.init;
-            return new TagNidStatus(this.connection.getString("_t"), this.connection.getInteger("_i"), this.connection.getLong("_q"), status);
+            final int status = this.connection.getInteger(String.format("_a=-1;_q=%dQ;TreeShr->TreeFindTagWildDsc(ref($),ref(_a),ref(_q),val(%d))", ref.ref, usage_mask), new CString(searchstr));
+            if(status == 0) return NodeRefStatus.init;
+            return new NodeRefStatus(this.connection.getInteger("_a"), this.connection.getLong("_q"), status);
+        }
+    }
+
+    @Override
+    public final TagRefStatus treeFindTagWild(final String searchstr, final TagRefStatus ref) throws MdsException {
+        synchronized(this.connection){
+            final int status = this.connection.getInteger(String.format("_a=*;_i=-1;_q=%dQ;TreeShr->TreeFindTagWildDsc(ref($),ref(_i),ref(_q),xd(_a))", ref.ref), new CString(searchstr));
+            if(status == 0) return TagRefStatus.init;
+            return new TagRefStatus(this.connection.getString("_a"), this.connection.getInteger("_i"), this.connection.getLong("_q"), status);
         }
     }
 

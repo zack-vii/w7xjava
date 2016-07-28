@@ -8,7 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import mds.ITreeShr.TagNidStatus;
+import mds.ITreeShr.TagRefStatus;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_a.Float32Array;
@@ -166,7 +166,7 @@ public class TreeShr_Test{
 
     @Test
     public final void test131TreeFindTagWildDsc() throws MdsException {
-        TagNidStatus tag = TagNidStatus.init;
+        TagRefStatus tag = TagRefStatus.init;
         Assert.assertEquals("\\TEST::DEVICE", (tag = TreeShr_Test.treeshr.treeFindTagWild("DEVICE", tag)).data);
         Assert.assertEquals(2, tag.nid);
         Assert.assertNull((tag = TreeShr_Test.treeshr.treeFindTagWild("***", tag)).data);
@@ -176,7 +176,7 @@ public class TreeShr_Test{
     @Test
     public final void test132TreeRemoveNodesTags() throws MdsException {
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeRemoveNodesTags(2));
-        Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWild("DEVICE", TagNidStatus.init).data);
+        Assert.assertNull(TreeShr_Test.treeshr.treeFindTagWild("DEVICE", TagRefStatus.init).data);
     }
 
     @Test

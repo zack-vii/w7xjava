@@ -8,7 +8,7 @@ import debug.DEBUG;
 import mds.ITreeShr.DescriptorStatus;
 import mds.ITreeShr.IntegerStatus;
 import mds.ITreeShr.SignalStatus;
-import mds.ITreeShr.TagNidStatus;
+import mds.ITreeShr.TagRefStatus;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_r.Signal;
@@ -323,7 +323,7 @@ public final class Database{
     public final String[] getTags(final Nid nid, final String search, final int max) throws MdsException {
         this._checkContext();
         final List<String> tags = new ArrayList<String>(max);
-        TagNidStatus tag = TagNidStatus.init;
+        TagRefStatus tag = TagRefStatus.init;
         while(tags.size() < max && ((tag = this.treeshr.treeFindTagWild(search, tag))).status != 0){
             this._handleStatus(tag.status);
             if(nid.getValue() == tag.nid){
@@ -337,7 +337,7 @@ public final class Database{
     public final TagList getTagsWild(final String search, final int max) throws MdsException {
         this._checkContext();
         final TagList taglist = new TagList(max);
-        TagNidStatus tag = TagNidStatus.init;
+        TagRefStatus tag = TagRefStatus.init;
         while(taglist.size() < max && (tag = this.treeshr.treeFindTagWild(search, tag)).status != 0){
             this._handleStatus(tag.status);
             taglist.put(tag.data, new Nid(tag.nid));

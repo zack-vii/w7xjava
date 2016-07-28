@@ -30,6 +30,18 @@ public interface ITreeShr{
             this(datastatus[1], datastatus[0]);
         }
     }
+    public static class NodeRefStatus{
+        public static final NodeRefStatus init = new NodeRefStatus(-1, 0, 0);
+        public final int                  data;
+        public final long                 ref;
+        public final int                  status;
+
+        public NodeRefStatus(final int data, final long ref, final int status){
+            this.data = data;
+            this.ref = ref;
+            this.status = status;
+        }
+    }
     public static class SegmentInfo{
         public byte      dtype;
         public byte      dimct;
@@ -76,14 +88,14 @@ public interface ITreeShr{
             this.status = status;
         }
     }
-    public static class TagNidStatus{
-        public static final TagNidStatus init = new TagNidStatus(null, -1, 0, 0);
+    public static class TagRefStatus{
+        public static final TagRefStatus init = new TagRefStatus(null, -1, 0, 0);
         public final String              data;
         public final int                 nid;
         public final long                ref;
         public final int                 status;
 
-        public TagNidStatus(final String data, final int nid, final long ref, final int status){
+        public TagRefStatus(final String data, final int nid, final long ref, final int status){
             this.data = data;
             this.nid = nid;
             this.ref = ref;
@@ -119,13 +131,6 @@ public interface ITreeShr{
      * @return int: status
      **/
     public int treeBeginTimestampedSegment(final int nid, Descriptor_A initialValue, int idx) throws MdsException;
-
-    /**
-     * restores a saved context and saves it again
-     *
-     * @return Pointer: pointer to saved context
-     **/
-    public Pointer treeCheckOutContext(Pointer treectx) throws MdsException;
 
     /**
      * cleans the data file by removing unreferenced data
@@ -194,11 +199,18 @@ public interface ITreeShr{
     public int treeEndConglomerate() throws MdsException;
 
     /**
+     * searches for the next node meeting the criteria of a matching search string and usage mask
+     *
+     * @return NodeRefStatus: next nid-number found
+     **/
+    public NodeRefStatus treeFindNodeWild(final String searchstr, final int usage_mask, final NodeRefStatus ref) throws MdsException;
+
+    /**
      * searches for the next tag in the tag list matching a search string
      *
-     * @return StringStatus: next tag found
+     * @return TagRefStatus: next tag found
      **/
-    public TagNidStatus treeFindTagWild(final String searchstr, final TagNidStatus ref) throws MdsException;
+    public TagRefStatus treeFindTagWild(final String searchstr, final TagRefStatus ref) throws MdsException;
 
     /**
      * resolves the current shot number (0)
