@@ -2,18 +2,18 @@ package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
 import mds.MdsException;
+import mds.TREE;
 import mds.data.descriptor.DTYPE;
-import mds.mdsip.Connection;
 
 public final class Nid extends TREENODE<Integer>{
     public static final Nid[] getArrayOfNids(final int[] nid_nums) {
-        return Nid.getArrayOfNids(nid_nums, Connection.getActiveConnection());
+        return Nid.getArrayOfNids(nid_nums, TREE.getActiveTree());
     }
 
-    public static final Nid[] getArrayOfNids(final int[] nid_nums, final Connection connection) {
+    public static final Nid[] getArrayOfNids(final int[] nid_nums, final TREE tree) {
         final Nid[] nids = new Nid[nid_nums.length];
         for(int i = 0; i < nids.length; i++)
-            nids[i] = new Nid(nid_nums[i], connection);
+            nids[i] = new Nid(nid_nums[i], tree);
         return nids;
     }
 
@@ -25,12 +25,12 @@ public final class Nid extends TREENODE<Integer>{
         super(DTYPE.NID, NUMBER.toByteBuffer(integer));
     }
 
-    public Nid(final int integer, final Connection connection){
-        super(DTYPE.NID, NUMBER.toByteBuffer(integer), connection);
+    public Nid(final int integer, final TREE tree){
+        super(DTYPE.NID, NUMBER.toByteBuffer(integer), tree);
     }
 
     public Nid(final Nid nid, final int relative){
-        this(nid.getValue() + relative, nid.connection);
+        this(nid.getValue() + relative, nid.tree);
     }
 
     @Override
@@ -55,15 +55,23 @@ public final class Nid extends TREENODE<Integer>{
         return b.getInt(0);
     }
 
+    @Override
     public final Path toFullPath() throws MdsException {
-        return new Path(this.getNciFullPath(), this.connection);
+        return new Path(this.getNciFullPath(), this.tree);
     }
 
+    @Override
     public final Path toMinPath() throws MdsException {
-        return new Path(this.getNciMinPath(), this.connection);
+        return new Path(this.getNciMinPath(), this.tree);
     }
 
+    @Override
+    public final Nid toNid() {
+        return this;
+    }
+
+    @Override
     public final Path toPath() throws MdsException {
-        return new Path(this.getNciPath(), this.connection);
+        return new Path(this.getNciPath(), this.tree);
     }
 }

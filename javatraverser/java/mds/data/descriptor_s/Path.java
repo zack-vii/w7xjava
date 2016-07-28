@@ -2,9 +2,9 @@ package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
 import mds.MdsException;
+import mds.TREE;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
-import mds.mdsip.Connection;
 
 public final class Path extends TREENODE<String>{
     public Path(final ByteBuffer b){
@@ -15,8 +15,8 @@ public final class Path extends TREENODE<String>{
         super(DTYPE.PATH, ByteBuffer.wrap(path.getBytes()).order(Descriptor.BYTEORDER));
     }
 
-    public Path(final String path, final Connection connection){
-        super(DTYPE.PATH, ByteBuffer.wrap(path.getBytes()).order(Descriptor.BYTEORDER), connection);
+    public Path(final String path, final TREE tree){
+        super(DTYPE.PATH, ByteBuffer.wrap(path.getBytes()).order(Descriptor.BYTEORDER), tree);
     }
 
     @Override
@@ -36,7 +36,23 @@ public final class Path extends TREENODE<String>{
         return new String(buf);
     }
 
+    @Override
+    public final Path toFullPath() throws MdsException {
+        return new Path(this.getNciFullPath(), this.tree);
+    }
+
+    @Override
+    public final Path toMinPath() throws MdsException {
+        return new Path(this.getNciMinPath(), this.tree);
+    }
+
+    @Override
     public final Nid toNid() throws MdsException {
-        return new Nid(this.getNidNumber(), this.connection);
+        return new Nid(this.getNciNidNumber(), this.tree);
+    }
+
+    @Override
+    public final Path toPath() throws MdsException {
+        return new Path(this.getNciPath(), this.tree);
     }
 }
