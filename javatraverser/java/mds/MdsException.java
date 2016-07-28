@@ -7,6 +7,8 @@ import javax.swing.JLabel;
 @SuppressWarnings("serial")
 public final class MdsException extends IOException{
     private static JLabel   statusLabel          = null;
+    public static final int MdsERROR             = 0;
+    public static final int MdsSUCCESS           = 1;
     /** TdiShr Exceptions **/
     public static final int TdiRECURSIVE         = 265519306;
     public static final int TdiNO_OUTPTR         = 265519274;
@@ -147,6 +149,8 @@ public final class MdsException extends IOException{
             default:
                 return "%MDSPLUS-?-UNKNOWN, Unknown exception " + status;
             /** TdiShr Exceptions **/
+            case MdsSUCCESS:
+                return "%SS-S-SUCCESS, Success";
             case TdiRECURSIVE:
                 return "%TDI-E-RECURSIVE, Overly recursive function, calls itself maybe";
             case TdiNO_OUTPTR:
@@ -460,6 +464,10 @@ public final class MdsException extends IOException{
         MdsException.statusLabel.setText(line);
     }
     private final int status;
+
+    public MdsException(final int status){
+        this(MdsException.getMdsMessage(status), status);
+    }
 
     public MdsException(final String message){
         super(MdsException.parseMessage(message));
