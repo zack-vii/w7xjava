@@ -116,8 +116,15 @@ public class GraphPanel extends JPanel{
     @Override
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
-        if(this.scores == null) return;
         final Graphics2D g2 = (Graphics2D)g;
+        if(this.scores == null || this.scores.size() == 0){
+            g2.drawString("no data", this.getWidth() / 2, this.getHeight() / 2);
+            return;
+        }
+        if(this.scores.size() == 1){
+            g2.drawString(this.scores.get(0).toString(), this.getWidth() / 2, this.getHeight() / 2);
+            return;
+        }
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         float max = this.getMaxScore(), min = this.getMinScore(), delta = max - min;
         if(delta == 0.){
@@ -125,8 +132,8 @@ public class GraphPanel extends JPanel{
             max += .5;
             min -= .5;
         }
-        final float xScale = ((float)this.getWidth() - 2 * this.padding - this.labelPadding) / (this.scores.size() - 1);
-        final float yScale = ((float)this.getHeight() - 2 * this.padding - this.labelPadding) / delta;
+        final float xScale = (this.getWidth() - 2 * this.padding - this.labelPadding) / (float)(this.scores.size() - 1);
+        final float yScale = (this.getHeight() - 2 * this.padding - this.labelPadding) / delta;
         final List<Point> graphPoints = new ArrayList<Point>();
         for(int i = 0; i < this.scores.size(); i++){
             final int x1 = (int)(i * xScale + this.padding + this.labelPadding);
@@ -143,36 +150,37 @@ public class GraphPanel extends JPanel{
             final int x1 = this.pointWidth + this.padding + this.labelPadding;
             final int y0 = this.getHeight() - ((i * (this.getHeight() - this.padding * 2 - this.labelPadding)) / this.numberYDivisions + this.padding + this.labelPadding);
             final int y1 = y0;
-            if(this.scores.size() > 0){
-                g2.setColor(this.gridColor);
-                g2.drawLine(this.padding + this.labelPadding + 1 + this.pointWidth, y0, this.getWidth() - this.padding, y1);
-                g2.setColor(Color.BLACK);
-                final String yLabel = ((int)((min + delta * ((i * 1.0f) / this.numberYDivisions)) * 100)) / 100.0f + "";
-                final FontMetrics metrics = g2.getFontMetrics();
-                final int labelWidth = metrics.stringWidth(yLabel);
-                g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
-            }
+            // if(this.scores.size() > 0){
+            g2.setColor(this.gridColor);
+            g2.drawLine(this.padding + this.labelPadding + 1 + this.pointWidth, y0, this.getWidth() - this.padding, y1);
+            g2.setColor(Color.BLACK);
+            final String yLabel = ((int)((min + delta * ((i * 1f) / this.numberYDivisions)) * 100)) / 100f + "";
+            final FontMetrics metrics = g2.getFontMetrics();
+            final int labelWidth = metrics.stringWidth(yLabel);
+            g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
+            // }
             g2.drawLine(x0, y0, x1, y1);
         }
         // and for x axis
+        final int mod = (int)((this.scores.size() / 20f)) + 1;
+        // if(this.scores.size() > 1){
         for(int i = 0; i < this.scores.size(); i++){
-            if(this.scores.size() > 1){
-                final int x0 = i * (this.getWidth() - this.padding * 2 - this.labelPadding) / (this.scores.size() - 1) + this.padding + this.labelPadding;
-                final int x1 = x0;
-                final int y0 = this.getHeight() - this.padding - this.labelPadding;
-                final int y1 = y0 - this.pointWidth;
-                if((i % ((int)((this.scores.size() / 20.0f)) + 1)) == 0){
-                    g2.setColor(this.gridColor);
-                    g2.drawLine(x0, this.getHeight() - this.padding - this.labelPadding - 1 - this.pointWidth, x1, this.padding);
-                    g2.setColor(Color.BLACK);
-                    final String xLabel = i + "";
-                    final FontMetrics metrics = g2.getFontMetrics();
-                    final int labelWidth = metrics.stringWidth(xLabel);
-                    g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
-                }
-                g2.drawLine(x0, y0, x1, y1);
+            final int x0 = i * (this.getWidth() - this.padding * 2 - this.labelPadding) / (this.scores.size() - 1) + this.padding + this.labelPadding;
+            final int x1 = x0;
+            final int y0 = this.getHeight() - this.padding - this.labelPadding;
+            final int y1 = y0 - this.pointWidth;
+            if((i % mod) == 0){
+                g2.setColor(this.gridColor);
+                g2.drawLine(x0, this.getHeight() - this.padding - this.labelPadding - 1 - this.pointWidth, x1, this.padding);
+                g2.setColor(Color.BLACK);
+                final String xLabel = i + "";
+                final FontMetrics metrics = g2.getFontMetrics();
+                final int labelWidth = metrics.stringWidth(xLabel);
+                g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
             }
+            g2.drawLine(x0, y0, x1, y1);
         }
+        // }
         // create x and y axes
         g2.drawLine(this.padding + this.labelPadding, this.getHeight() - this.padding - this.labelPadding, this.padding + this.labelPadding, this.padding);
         g2.drawLine(this.padding + this.labelPadding, this.getHeight() - this.padding - this.labelPadding, this.getWidth() - this.padding, this.getHeight() - this.padding - this.labelPadding);
