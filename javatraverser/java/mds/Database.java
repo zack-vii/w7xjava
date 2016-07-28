@@ -18,6 +18,7 @@ import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Pointer;
 import mds.data.descriptor_s.TREENODE;
 import mds.mdsip.Connection;
+import mds.mdsip.Connection.Provider;
 
 public final class Database{
     @SuppressWarnings("serial")
@@ -51,7 +52,7 @@ public final class Database{
         return Connection.getActiveConnection().getByteBuffer(expr);
     }
 
-    public static final String getCurrentProvider() {
+    public static final Provider getCurrentProvider() {
         return Connection.getActiveConnection().getProvider();
     }
 
@@ -295,7 +296,7 @@ public final class Database{
         return nid.getNciOriginalPartName();
     }
 
-    public final String getProvider() {
+    public final Provider getProvider() {
         return this.con.getProvider();
     }
 
@@ -312,7 +313,7 @@ public final class Database{
         return res.data;
     }
 
-    public final long getShot() {
+    public final int getShot() {
         return this.shot;
     }
 

@@ -254,7 +254,7 @@ public class TreeManager extends JTabbedPane{
                 try{
                     JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), //
                             Database.getDatabase(), //
-                            Database.getCurrentProvider(), //
+                            Database.getCurrentProvider().toString(), //
                             JOptionPane.PLAIN_MESSAGE);
                 }catch(final Exception ex){
                     ex.printStackTrace();

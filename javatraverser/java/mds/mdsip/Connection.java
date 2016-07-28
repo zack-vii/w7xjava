@@ -574,8 +574,8 @@ public class Connection{
         return this.provider.port;
     }
 
-    public final String getProvider() {
-        return this.provider.toString();
+    public final Provider getProvider() {
+        return this.provider;
     }
 
     public short getShort(final String expr, final Descriptor... args) throws MdsException {

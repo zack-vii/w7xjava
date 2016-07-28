@@ -36,6 +36,7 @@ import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.TREENODE;
 import mds.mdsip.Connection;
+import mds.mdsip.Connection.Provider;
 
 @SuppressWarnings("serial")
 public final class Tree extends JTree implements TreeSelectionListener, DataChangeListener{
@@ -407,11 +408,11 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
         return this.database.getName();
     }
 
-    public final String getProvider() {
+    public final Provider getProvider() {
         return this.connection.getProvider();
     }
 
-    public final long getShot() {
+    public final int getShot() {
         return this.database.getShot();
     }
 
