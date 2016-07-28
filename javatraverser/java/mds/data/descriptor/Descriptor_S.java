@@ -112,7 +112,7 @@ public abstract class Descriptor_S<T>extends Descriptor<T>{
     }
 
     @Override
-    public final boolean isAtomic() {
+    public boolean isAtomic() {
         return Descriptor_S.atomic;
     }
 

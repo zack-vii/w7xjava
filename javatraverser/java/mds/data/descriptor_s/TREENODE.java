@@ -121,25 +121,26 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
             return (this.flags & Flags.WRITE_ONCE) != 0;
         }
     }
-    public static final byte   USAGE_MAXIMUM       = 12;
-    public static final byte   USAGE_ANY           = 0;
-    public static final byte   USAGE_STRUCTURE     = 1;
-    public static final byte   USAGE_ACTION        = 2;
-    public static final byte   USAGE_DEVICE        = 3;
-    public static final byte   USAGE_DISPATCH      = 4;
-    public static final byte   USAGE_NUMERIC       = 5;
-    public static final byte   USAGE_SIGNAL        = 6;
-    public static final byte   USAGE_TASK          = 7;
-    public static final byte   USAGE_TEXT          = 8;
-    public static final byte   USAGE_WINDOW        = 9;
-    public static final byte   USAGE_AXIS          = 10;
-    public static final byte   USAGE_SUBTREE       = 11;
-    public static final byte   USAGE_COMPOUND_DATA = 12;
-    public static final int    CHILD               = 1;
-    public static final int    MEMBER              = 2;
-    protected final Connection connection;
-    protected final TreeShr    treeshr;
-    protected int              flags               = Flags.ERROR;
+    public static final byte     USAGE_MAXIMUM       = 12;
+    public static final byte     USAGE_ANY           = 0;
+    public static final byte     USAGE_STRUCTURE     = 1;
+    public static final byte     USAGE_ACTION        = 2;
+    public static final byte     USAGE_DEVICE        = 3;
+    public static final byte     USAGE_DISPATCH      = 4;
+    public static final byte     USAGE_NUMERIC       = 5;
+    public static final byte     USAGE_SIGNAL        = 6;
+    public static final byte     USAGE_TASK          = 7;
+    public static final byte     USAGE_TEXT          = 8;
+    public static final byte     USAGE_WINDOW        = 9;
+    public static final byte     USAGE_AXIS          = 10;
+    public static final byte     USAGE_SUBTREE       = 11;
+    public static final byte     USAGE_COMPOUND_DATA = 12;
+    public static final int      CHILD               = 1;
+    public static final int      MEMBER              = 2;
+    private static final boolean atomic              = false;
+    protected final Connection   connection;
+    protected final TreeShr      treeshr;
+    protected int                flags               = Flags.ERROR;
 
     public TREENODE(final byte dtype, final ByteBuffer data){
         this(dtype, data, Connection.getActiveConnection());
@@ -373,6 +374,11 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
 
     public final Descriptor getXNci(final String name) throws MdsException {
         return this.treeshr.treeGetXNci(this.getNidNumber(), name).data;
+    }
+
+    @Override
+    public final boolean isAtomic() {
+        return TREENODE.atomic;
     }
 
     public final boolean isNidReference() throws MdsException {
