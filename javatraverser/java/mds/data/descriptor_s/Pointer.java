@@ -5,6 +5,8 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor_s.Uint64.ULong;
 
 public final class Pointer extends NUMBER<Number>{
+    public static final Pointer NULL = new Pointer(0);
+
     public Pointer(final ByteBuffer b){
         super(b);
     }
