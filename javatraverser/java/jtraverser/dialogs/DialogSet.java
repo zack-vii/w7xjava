@@ -3,8 +3,8 @@ package jtraverser.dialogs;
 import java.beans.PropertyEditor;
 import java.util.Vector;
 import jtraverser.Node;
-import jtraverser.jTraverserFacade;
 import jtraverser.editor.NodeEditor;
+import mds.MdsException;
 
 public final class DialogSet{
     private final Vector<TreeDialog> dialogs = new Vector<TreeDialog>();
@@ -24,7 +24,7 @@ public final class DialogSet{
                 curr_editor.setFrame(curr_dialog);
                 this.dialogs.addElement(curr_dialog);
             }catch(final Exception exc){
-                jTraverserFacade.stderr("Error creating node editor", exc);
+                MdsException.stderr("Error creating node editor", exc);
                 return null;
             }
         }

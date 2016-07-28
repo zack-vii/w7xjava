@@ -1,3 +1,38 @@
+def treeshr_exceptions():
+    from MDSplus import mdsExceptions as me
+    for k,v in me.treeshrExceptions.__dict__.iteritems():
+        try:
+            e = v()
+            status = e.status;
+            message = str(e)
+        except:
+            continue
+        #print('public static final int %s = %d;'%(k,status))
+        print('case %s: return "%s";'%(k,message))
+
+def tdishr_exceptions():
+    from MDSplus import mdsExceptions as me
+    for k,v in me.tdishrExceptions.__dict__.iteritems():
+        try:
+            e = v()
+            status = e.status;
+            message = str(e)
+        except:
+            continue
+        print('public static final int %s = %d;'%(k,status))
+        #print('case %s: return "%s";'%(k,message))
+def mdsshr_exceptions():
+    from MDSplus import mdsExceptions as me
+    for k,v in me.mdsshrExceptions.__dict__.iteritems():
+        try:
+            e = v()
+            status = e.status;
+            message = str(e)
+        except:
+            continue
+        #print('public static final int %s = %d;'%(k,status))
+        print('case %s: return "%s";'%(k,message))
+
 def opc(filepath):
     with file(filepath) as f:
         lines = f.readlines()
@@ -153,9 +188,14 @@ def constant(filepath):
             else:
                 print("case OPC.Opc%s:return Missing.NEW;//TODO:set correct return value"%(x,))
 
-#reffun('I:/Git/mdsplus/include/opcbuiltins.h')
-opc('I:/Git/mdsplus/include/opcbuiltins.h')
-binary('I:/Git/mdsplus/tdishr/TdiDecompileR.c')
-unary('I:/Git/mdsplus/tdishr/TdiDecompileR.c')
-defcat('I:/Git/mdsplus/tdishr/TdiDefCat.c')
-constant('I:/Git/mdsplus/tdishr/TdiConstant.c')
+
+
+#treeshr_exceptions()
+#tdishr_exceptions()
+mdsshr_exceptions()
+#reffun('C:/Git/mdsplus/include/opcbuiltins.h')
+#opc('C:/Git/mdsplus/include/opcbuiltins.h')
+#binary('C:/Git/mdsplus/tdishr/TdiDecompileR.c')
+#unary('C:/Git/mdsplus/tdishr/TdiDecompileR.c')
+#defcat('C:/Git/mdsplus/tdishr/TdiDefCat.c')
+#constant('C:/Git/mdsplus/tdishr/TdiConstant.c')

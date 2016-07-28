@@ -130,7 +130,7 @@ public class TreeManager extends JTabbedPane{
                 try{
                     currnode.setDefault();
                 }catch(final Exception exc){
-                    jTraverserFacade.stderr("Error setting default", exc);
+                    MdsException.stderr("Error setting default", exc);
                 }
                 DisplayMenu.this.treeman.reportChange();
             }
@@ -450,7 +450,7 @@ public class TreeManager extends JTabbedPane{
                 if(currnode.isSubTree()) try{
                     currnode.toggleFlags(TREENODE.Flags.INCLUDE_IN_PULSE);
                 }catch(final MdsException e){
-                    jTraverserFacade.stderr("INCLUDE_IN_PULSE", e);
+                    MdsException.stderr("INCLUDE_IN_PULSE", e);
                 }
             }
             tree.treeDidChange();
@@ -461,7 +461,7 @@ public class TreeManager extends JTabbedPane{
         public final class doAction implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
-                jTraverserFacade.stdout("doAction not yet implemented.");
+                MdsException.stdout("doAction not yet implemented.");
             }
         };
         public final class modifyFlags implements ActionListener{

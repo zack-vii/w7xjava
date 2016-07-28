@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import debug.DEBUG;
-import jtraverser.jTraverserFacade;
 import mds.ITreeShr.DescriptorStatus;
 import mds.ITreeShr.IntegerStatus;
 import mds.ITreeShr.SignalStatus;
@@ -58,11 +57,11 @@ public final class Database{
     }
 
     private static final void stderr(final String line, final Exception exc) {
-        jTraverserFacade.stderr(line, exc);
+        MdsException.stderr(line, exc);
     }
 
     private static final void stdout(final String line) {
-        jTraverserFacade.stdout(line);
+        MdsException.stdout(line);
     }
     private Pointer          ctx  = null;
     private final Connection con;

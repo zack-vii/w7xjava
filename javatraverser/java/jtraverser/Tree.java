@@ -106,7 +106,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
         try{
             database = new Database(this.connection, expt, shot, mode);
         }catch(final MdsException me){
-            if(mode != TREE.EDITABLE || me.getStatus() != MdsException.TREE_E_FOPENW) throw me;
+            if(mode != TREE.EDITABLE || me.getStatus() != MdsException.TreeFOPENW) throw me;
             final int n = JOptionPane.showConfirmDialog(this, "Tree " + expt + " cannot be opened in edit mode. Create new instead?", "Editing Tree ", JOptionPane.YES_NO_OPTION);
             if(n != JOptionPane.YES_OPTION) throw me;
             database = new Database(this.connection, expt, shot, TREE.NEW);
@@ -510,7 +510,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
             try{
                 this.getCurrentNode().expand();
             }catch(final Exception exc){
-                jTraverserFacade.stderr("Error expanding tree", exc);
+                MdsException.stderr("Error expanding tree", exc);
             }
             sons = currnode.getSons();
             members = currnode.getMembers();

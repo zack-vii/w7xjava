@@ -24,7 +24,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import jtraverser.TreeManager;
-import jtraverser.jTraverserFacade;
 import mds.MdsException;
 import mds.TREE;
 import mds.data.descriptor_s.CString;
@@ -163,7 +162,7 @@ public class TreeOpenDialog extends JDialog{
                     try{
                         shots = mds.getIntegerArray("getShotDB($)", new CString(TreeOpenDialog.this.expt.getText()));
                     }catch(final MdsException exc){
-                        jTraverserFacade.stderr("getShotDB", exc);
+                        MdsException.stderr("getShotDB", exc);
                         shots = new int[0];
                     }
                     for(final int shot : shots)

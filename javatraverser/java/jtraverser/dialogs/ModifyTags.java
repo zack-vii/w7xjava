@@ -19,7 +19,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import jtraverser.Node;
 import jtraverser.TreeManager;
-import jtraverser.jTraverserFacade;
+import mds.MdsException;
 
 @SuppressWarnings("serial")
 public final class ModifyTags extends JDialog{
@@ -142,7 +142,7 @@ public final class ModifyTags extends JDialog{
         try{
             tags = currnode.getTags();
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error getting tags", exc);
+            MdsException.stderr("Error getting tags", exc);
             tags = new String[0];
         }
         this.curr_taglist_model.clear();

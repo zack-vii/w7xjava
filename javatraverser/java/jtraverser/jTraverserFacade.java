@@ -1,7 +1,6 @@
 package jtraverser;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -18,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import jtraverser.TreeManager.Menu;
+import mds.MdsException;
 import mds.TREE;
 
 @SuppressWarnings("serial")
@@ -60,31 +60,7 @@ public final class jTraverserFacade extends JFrame{
             e.printStackTrace();
         }
         status = new JLabel(new StringBuilder(64).append("jTaverser started (Build-Date ").append(builddate).append(")").toString());
-    }
-
-    public static void stderr(final String line, final Exception exc) {
-        jTraverserFacade.status.setForeground(Color.RED);
-        if(line == null){
-            if(exc == null){
-                jTraverserFacade.status.setText("");
-                return;
-            }
-            final String msg = exc.toString();
-            jTraverserFacade.status.setText(msg);
-            System.err.println(msg);
-        }else if(exc == null){
-            jTraverserFacade.status.setText(String.format("ERROR: %s", line));
-            System.err.println(String.format("%s", line));
-        }else{
-            final String msg = exc.getMessage();
-            jTraverserFacade.status.setText(String.format("ERROR: %s (%s)", line, msg));
-            System.err.println(String.format("%s\n%s", line, msg));
-        }
-    }
-
-    public static void stdout(final String line) {
-        jTraverserFacade.status.setForeground(Color.BLACK);
-        jTraverserFacade.status.setText(line);
+        MdsException.setStatusLabel(jTraverserFacade.status);
     }
     private final List<JMenu> jmenus = new ArrayList<JMenu>(4);
     private final TreeManager treeman;;

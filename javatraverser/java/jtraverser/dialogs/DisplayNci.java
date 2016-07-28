@@ -9,8 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import jtraverser.Node;
-import jtraverser.jTraverserFacade;
 import jtraverser.editor.NodeEditor;
+import mds.MdsException;
 
 @SuppressWarnings("serial")
 public class DisplayNci extends NodeEditor implements ActionListener{
@@ -45,7 +45,7 @@ public class DisplayNci extends NodeEditor implements ActionListener{
         try{
             this.label.setText(node.getInfoTextBox());
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error retieving Nci", exc);
+            MdsException.stderr("Error retieving Nci", exc);
         }
     }
 }

@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import jtraverser.Node;
 import jtraverser.TreeManager;
-import jtraverser.jTraverserFacade;
+import mds.MdsException;
 import mds.data.descriptor_s.TREENODE.Flags;
 
 @SuppressWarnings("serial")
@@ -144,7 +144,7 @@ public final class ModifyFlags extends JDialog{
         final Node currnode = ModifyFlags.this.treeman.getCurrentTree().getCurrentNode();
         if(currnode == null) return new Flags();
         final Flags flags = currnode.getFlags();
-        if(flags.isError()) jTraverserFacade.stderr("Error getting Flags", null);
+        if(flags.isError()) MdsException.stderr("Error getting Flags", null);
         return flags;
     }
 
@@ -154,7 +154,7 @@ public final class ModifyFlags extends JDialog{
         try{
             iflags = this.readFlags().flags;
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error getting flags", exc);
+            MdsException.stderr("Error getting flags", exc);
             this.close();
             return;
         }

@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import jtraverser.Node;
 import jtraverser.TreeManager;
-import jtraverser.jTraverserFacade;
+import mds.MdsException;
 import mds.data.descriptor_s.TREENODE;
 
 @SuppressWarnings("serial")
@@ -69,11 +69,11 @@ public final class AddNode extends JDialog{
                 try{
                     newNode.setTags(new String[]{this.e_tag.getText().trim().toUpperCase()});
                 }catch(final Exception exc){
-                    jTraverserFacade.stderr("Error adding tag", exc);
+                    MdsException.stderr("Error adding tag", exc);
                 }
             }
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error adding node", exc);
+            MdsException.stderr("Error adding node", exc);
         }
         this.close();
     }

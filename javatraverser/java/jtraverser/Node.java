@@ -93,7 +93,7 @@ public class Node{
             fromNode.expand();
             toNode.expand();
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error expanding nodes", exc);
+            MdsException.stderr("Error expanding nodes", exc);
         }
         try{
             final Descriptor data = fromNode.getData();
@@ -266,7 +266,7 @@ public class Node{
     public final void copy() {
         Node.cut = false;
         Node.copied = this;
-        jTraverserFacade.stdout("copy: " + Node.copied + " from " + Node.copied.parent);
+        MdsException.stdout("copy: " + Node.copied + " from " + Node.copied.parent);
     }
 
     public final void copyToClipboard() {
@@ -277,19 +277,19 @@ public class Node{
             content = new StringSelection(path);
             cb.setContents(content, null);
         }catch(final Exception e){
-            jTraverserFacade.stderr("Cannot copy fullPath to Clipboard", e);
+            MdsException.stderr("Cannot copy fullPath to Clipboard", e);
         }
     }
 
     public final void cut() {
         Node.cut = true;
         Node.copied = this;
-        jTraverserFacade.stdout("cut: " + Node.copied + " from " + Node.copied.parent);
+        MdsException.stdout("cut: " + Node.copied + " from " + Node.copied.parent);
     }
 
     public final void delete() {
         if(this.tree.isEditable()) this.tree.deleteNode(this);
-        else jTraverserFacade.stdout("Cannot delete " + this + ". Tree not in edit mode.");
+        else MdsException.stdout("Cannot delete " + this + ". Tree not in edit mode.");
     }
 
     public final boolean deleteExecute() {
@@ -297,7 +297,7 @@ public class Node{
             this.database.deleteExecute();
             return true;
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error executing delete", exc);
+            MdsException.stderr("Error executing delete", exc);
             return false;
         }
     }
@@ -306,7 +306,7 @@ public class Node{
         try{
             return this.database.deleteStart(this.nid);
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error starting delete", exc);
+            MdsException.stderr("Error starting delete", exc);
         }
         return -1;
     }
@@ -333,7 +333,7 @@ public class Node{
             for(i = 0; i < members_nid.length; i++)
                 this.members[i] = new Node(this.database, this.tree, this, true, members_nid[i]);
         }catch(final MdsException e){
-            jTraverserFacade.stderr("expand", e);
+            MdsException.stderr("expand", e);
             this.members = new Node[0];
             this.sons = new Node[0];
         }
@@ -348,7 +348,7 @@ public class Node{
         try{
             return this.timeinserted = this.nid.getNciTimeInsertedStr();
         }catch(final MdsException e){
-            jTraverserFacade.stderr("Error updating timeinserted", e);
+            MdsException.stderr("Error updating timeinserted", e);
             return this.timeinserted;
         }
     }
@@ -357,7 +357,7 @@ public class Node{
         try{
             return this.dclass = this.nid.getNciClass();
         }catch(final MdsException e){
-            jTraverserFacade.stderr("Error updating class", e);
+            MdsException.stderr("Error updating class", e);
             return this.dclass;
         }
     }
@@ -366,7 +366,7 @@ public class Node{
         try{
             return this.dtype = this.nid.getNciDType();
         }catch(final MdsException e){
-            jTraverserFacade.stderr("Error updating dtype", e);
+            MdsException.stderr("Error updating dtype", e);
             return this.dtype;
         }
     }
@@ -375,7 +375,7 @@ public class Node{
         try{
             return this.flags = new Flags(this.nid.getNciFlags());
         }catch(final Exception e){
-            jTraverserFacade.stderr("Error updating flags", e);
+            MdsException.stderr("Error updating flags", e);
             return this.flags;
         }
     }
@@ -384,7 +384,7 @@ public class Node{
         try{
             return this.fullpath = this.nid.getNciFullPath();
         }catch(final MdsException e){
-            jTraverserFacade.stderr("Error updating fullpath", e);
+            MdsException.stderr("Error updating fullpath", e);
             return this.fullpath;
         }
     }
@@ -493,7 +493,7 @@ public class Node{
         try{
             return this.database.getTags(this.nid);
         }catch(final MdsException e){}catch(final Exception e){
-            jTraverserFacade.stderr("getTags", e);
+            MdsException.stderr("getTags", e);
         }
         return new String[0];
     }
@@ -546,7 +546,7 @@ public class Node{
             try{
                 return this.is_on = !this.nid.getNciStatus();
             }catch(final Exception exc){
-                jTraverserFacade.stderr("Error checking state", exc);
+                MdsException.stderr("Error checking state", exc);
             }
         }
         return this.is_on;
@@ -572,13 +572,13 @@ public class Node{
 
     public final void paste() {
         if(this.tree.isEditable()){
-            jTraverserFacade.stdout((Node.cut ? "moved: " : "copied: ") + Node.copied + " from " + Node.copied.parent + " to " + this);
+            MdsException.stdout((Node.cut ? "moved: " : "copied: ") + Node.copied + " from " + Node.copied.parent + " to " + this);
             if(Node.copied != null && Node.copied != this){
                 if(Node.cut){
                     if(Node.copied.move(this)) Node.copied = null;
                 }else this.tree.pasteSubtree(Node.copied, this, true);
             }
-        }else jTraverserFacade.stdout("Cannot paste " + Node.copied + ". Tree not in edit mode.");
+        }else MdsException.stdout("Cannot paste " + Node.copied + ". Tree not in edit mode.");
     }
 
     public final boolean rename(final String newName) {
@@ -696,7 +696,7 @@ public class Node{
         try{
             this.database.setOn(this.nid, false);
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error turning off", exc);
+            MdsException.stderr("Error turning off", exc);
         }
         this.setOnUnchecked();
     }
@@ -705,7 +705,7 @@ public class Node{
         try{
             this.database.setOn(this.nid, true);
         }catch(final Exception exc){
-            jTraverserFacade.stderr("Error turning on", exc);
+            MdsException.stderr("Error turning on", exc);
         }
         this.setOnUnchecked();
     }
