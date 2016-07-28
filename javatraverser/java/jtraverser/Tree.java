@@ -31,6 +31,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import mds.Database;
 import mds.MdsException;
+import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
@@ -105,10 +106,10 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
         try{
             database = new Database(this.connection, expt, shot, mode);
         }catch(final MdsException me){
-            if(mode != Database.EDITABLE || me.getStatus() != MdsException.TREE_E_FOPENW) throw me;
+            if(mode != TREE.EDITABLE || me.getStatus() != MdsException.TREE_E_FOPENW) throw me;
             final int n = JOptionPane.showConfirmDialog(this, "Tree " + expt + " cannot be opened in edit mode. Create new instead?", "Editing Tree ", JOptionPane.YES_NO_OPTION);
             if(n != JOptionPane.YES_OPTION) throw me;
-            database = new Database(this.connection, expt, shot, Database.NEW);
+            database = new Database(this.connection, expt, shot, TREE.NEW);
         }
         this.database = database;
         final DefaultTreeModel model = (DefaultTreeModel)this.getModel();

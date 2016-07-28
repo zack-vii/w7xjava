@@ -36,11 +36,6 @@ public final class Database{
             return str.toString();
         }
     }
-    public static final int EDITABLE = 2;
-    public static final int NEW      = 3;
-    public static final int NORMAL   = 1;
-    public static final int READONLY = 0;
-    public static final int REALTIME = 4;
 
     private static final String extractProvider(final String expt) {
         final String[] parts = System.getenv(String.format("%s_path", expt.toLowerCase())).split("::", 2);
@@ -87,9 +82,9 @@ public final class Database{
         this.tdishr = new TdiShr(this.con);
         this.expt = expt.toUpperCase();
         this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
-        if(mode == Database.NEW){
+        if(mode == TREE.NEW){
             this._connect();
-            this.mode = Database.EDITABLE;
+            this.mode = TREE.EDITABLE;
             this._open_new();
         }else{
             this.mode = mode;
@@ -366,7 +361,7 @@ public final class Database{
     }
 
     public final boolean isEditable() {
-        return this.mode == Database.EDITABLE;
+        return this.mode == TREE.EDITABLE;
     }
 
     public final boolean isOn(final Nid nid) throws MdsException {
@@ -379,11 +374,11 @@ public final class Database{
     }
 
     public final boolean isReadonly() {
-        return this.mode == Database.READONLY;
+        return this.mode == TREE.READONLY;
     }
 
     public final boolean isRealtime() {
-        return this.mode == Database.REALTIME;
+        return this.mode == TREE.REALTIME;
     }
 
     public final void open() throws MdsException {
@@ -484,8 +479,8 @@ public final class Database{
     public final String toString() {
         final StringBuilder sb = new StringBuilder("Tree(\"").append(this.expt);
         sb.append("\", ").append(this.shot == -1 ? "model" : this.shot);
-        if(this.mode == Database.EDITABLE) sb.append(", edit");
-        else if(this.mode == Database.READONLY) sb.append(", readonly");
+        if(this.mode == TREE.EDITABLE) sb.append(", edit");
+        else if(this.mode == TREE.READONLY) sb.append(", readonly");
         sb.append(')');
         if(this.con != null) sb.append(" on ").append(this.con.getProvider());
         return sb.toString();

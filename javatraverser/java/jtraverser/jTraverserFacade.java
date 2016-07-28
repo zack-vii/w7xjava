@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import jtraverser.TreeManager.Menu;
-import mds.Database;
+import mds.TREE;
 
 @SuppressWarnings("serial")
 public final class jTraverserFacade extends JFrame{
@@ -92,11 +92,11 @@ public final class jTraverserFacade extends JFrame{
     public jTraverserFacade(final String server, final String exp_name, final String shot_name, String access){
         JOptionPane.setRootFrame(this);
         this.setTitle("jTraverser - no tree open");
-        int mode = Database.NORMAL;
+        int mode = TREE.NORMAL;
         if(access != null){
             access = access.toLowerCase();
-            if("-edit".startsWith(access)) mode = Database.EDITABLE;
-            else if("-readonly".startsWith(access)) mode = Database.READONLY;
+            if("-edit".startsWith(access)) mode = TREE.EDITABLE;
+            else if("-readonly".startsWith(access)) mode = TREE.READONLY;
         }
         this.treeman = new TreeManager(this);
         final JMenuBar menu_bar = new JMenuBar();

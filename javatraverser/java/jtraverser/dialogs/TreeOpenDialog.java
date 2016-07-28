@@ -25,8 +25,8 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import jtraverser.TreeManager;
 import jtraverser.jTraverserFacade;
-import mds.Database;
 import mds.MdsException;
+import mds.TREE;
 import mds.data.descriptor_s.CString;
 import mds.mdsip.Connection;
 
@@ -239,9 +239,9 @@ public class TreeOpenDialog extends JDialog{
         }
         this.setVisible(false);
         final int mode;
-        if(this.edit.isSelected()) mode = Database.EDITABLE;
-        else if(this.readonly.isSelected()) mode = Database.READONLY;
-        else mode = Database.NORMAL;
+        if(this.edit.isSelected()) mode = TREE.EDITABLE;
+        else if(this.readonly.isSelected()) mode = TREE.READONLY;
+        else mode = TREE.NORMAL;
         if(this.treeman != null) this.treeman.openTree(provider, exp, shot, mode);
     }
 

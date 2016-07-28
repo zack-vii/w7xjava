@@ -8,6 +8,7 @@ package devicebeans.tools;
 // 4) Node name
 import java.io.RandomAccessFile;
 import mds.Database;
+import mds.TREE;
 import mds.data.descriptor_a.Int8Array;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
@@ -32,7 +33,7 @@ public class StoreFile{
         }
         final Database tree;
         try{
-            tree = new Database(experiment, shot, Database.READONLY);
+            tree = new Database(experiment, shot, TREE.READONLY);
         }catch(final Exception exc){
             System.err.println("Cannot open experiment " + experiment + " shot " + shot + ": " + exc);
             System.exit(0);

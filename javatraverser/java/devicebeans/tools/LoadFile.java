@@ -9,6 +9,7 @@ package devicebeans.tools;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import mds.Database;
+import mds.TREE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 
@@ -32,7 +33,7 @@ public class LoadFile{
         }
         final Database tree;
         try{
-            tree = new Database(expt, shot, Database.READONLY);
+            tree = new Database(expt, shot, TREE.READONLY);
         }catch(final Exception exc){
             System.err.println("Cannot open experiment " + expt + " shot " + shot + ": " + exc);
             System.exit(0);

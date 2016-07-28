@@ -13,6 +13,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import mds.Database;
+import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
@@ -225,7 +226,7 @@ public class CompileTree extends Thread{
     @Override
     public void run() {
         try{
-            this.tree = new Database(this.provider, this.experiment, this.shot, Database.NEW);
+            this.tree = new Database(this.provider, this.experiment, this.shot, TREE.NEW);
         }catch(final Exception e){
             System.err.println("Error opening tree " + this.experiment + " : " + e);
             System.exit(0);

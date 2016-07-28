@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import mds.Database;
 import mds.MdsException;
+import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
@@ -135,7 +136,7 @@ public class DecompileTree{
 
     public final int decompile(final String provider, final String expt, final int shot, final String filename, final boolean isFull) throws MdsException {
         final Database database;
-        database = new Database(provider, expt, shot, Database.READONLY);
+        database = new Database(provider, expt, shot, TREE.READONLY);
         final int result = this.decompile(database, filename, isFull);
         database.close();
         return result;

@@ -23,6 +23,7 @@ import jtraverser.DataChangeListener;
 import jtraverser.Node;
 import mds.Database;
 import mds.MdsException;
+import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
@@ -38,7 +39,7 @@ public class DeviceSetup extends JDialog{
     public static void activateDeviceSetup(final String deviceName, final String experiment, final int shot, final String rootName, final int x, final int y) {
         final Database tree;
         try{
-            tree = new Database(experiment, shot, Database.NORMAL);
+            tree = new Database(experiment, shot, TREE.NORMAL);
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(null, "Error opening tree " + experiment + " shot " + shot + ": " + exc, "Error in Device Setup", JOptionPane.ERROR_MESSAGE);
             return;

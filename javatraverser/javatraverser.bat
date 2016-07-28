@@ -140,6 +140,7 @@ SET MDSIP_SRC=^
   mds\MdsShr.java ^
   mds\TdiShr.java ^
   mds\TreeShr.java ^
+  mds\TREE.java ^
   mds\data\descriptor\ARRAY.java ^
   mds\data\descriptor\DTYPE.java ^
   mds\data\descriptor\OPC.java ^
