@@ -3,6 +3,7 @@ package mds.data.descriptor_s;
 import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.TreeShr;
+import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor.Descriptor_S;
@@ -29,6 +30,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
         public static final int NID_REFERENCE     = 1 << 14;
         public static final int INCLUDE_IN_PULSE  = 1 << 15;
         public static final int COMPRESS_SEGMENTS = 1 << 16;
+        public static final int ERROR             = 1 << 31;
         public final int        flags;
 
         public Flags(){
@@ -137,6 +139,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     public static final int    MEMBER              = 2;
     protected final Connection connection;
     protected final TreeShr    treeshr;
+    protected int              flags               = Flags.ERROR;
 
     public TREENODE(final byte dtype, final ByteBuffer data){
         this(dtype, data, Connection.getActiveConnection());
@@ -168,6 +171,12 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
 
     public final int clearTags() throws MdsException {
         return this.treeshr.treeRemoveNodesTags(this.getNidNumber());
+    }
+
+    public final TREENODE followReference() throws MdsException {
+        final byte dtype = this.getNciDType();
+        if(dtype == DTYPE.NID || dtype == DTYPE.PATH) return ((TREENODE)this.getNciRecord()).followReference();
+        return this;
     }
 
     public final Connection getConnection() {
@@ -228,7 +237,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     }
 
     public final int getNciFlags() throws MdsException {
-        return this.getNci("GET_FLAGS").toInt();
+        return this.flags = this.getNci("GET_FLAGS").toInt();
     }
 
     public final String getNciFullPath() throws MdsException {
@@ -364,6 +373,22 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
 
     public final Descriptor getXNci(final String name) throws MdsException {
         return this.treeshr.treeGetXNci(this.getNidNumber(), name).data;
+    }
+
+    public final boolean isNidReference() throws MdsException {
+        if(this.flags == Flags.ERROR) this.getNciFlags();
+        return new Flags(this.flags).isNidReference();
+    }
+
+    public final boolean isPathReference() throws MdsException {
+        if(this.flags == Flags.ERROR) this.getNciFlags();
+        return new Flags(this.flags).isPathReference();
+    }
+
+    public final boolean isSegmented() throws MdsException {
+        if(this.flags == Flags.ERROR) this.getNciFlags();
+        if(new Flags(this.flags).isSegmented()) return true; // cannot be sure due to issue in winter 2015/2016
+        return this.getNumSegments() > 0;
     }
 
     public final int putRecord(final Descriptor data) throws MdsException {
