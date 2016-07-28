@@ -144,7 +144,6 @@ public class Node{
     }
 
     public static void updateCell() {}
-    private Descriptor             data;
     private final Database         database;
     private final boolean          is_member;
     private boolean                is_on;
@@ -341,9 +340,8 @@ public class Node{
     }
 
     public final Descriptor getData() throws MdsException {
-        if(this.isSegmented()) this.data = this.database.getSegment(this.nid, 0);
-        else this.data = this.database.getData(this.nid);
-        return this.data;
+        if(this.nid.isSegmented()) return this.nid.getSegment(0);
+        return this.nid.getRecord();
     }
 
     public final String getDate() {
@@ -481,6 +479,12 @@ public class Node{
         }
     }
 
+    public final Descriptor getSignal() throws MdsException {
+        final TREENODE res = this.nid.followReference();
+        if(res.isSegmented()) return res.getSegment(0);
+        return res.getRecord();
+    }
+
     public final Node[] getSons() {
         return this.sons;
     }
@@ -594,7 +598,6 @@ public class Node{
     }
 
     public final void setData(final Descriptor data) throws MdsException {
-        this.data = data;
         this.database.putData(this.nid, data);
     }
 
@@ -705,9 +708,5 @@ public class Node{
             jTraverserFacade.stderr("Error turning on", exc);
         }
         this.setOnUnchecked();
-    }
-
-    public final void updateData() throws MdsException {
-        this.data = this.database.getData(this.nid);
     }
 }
