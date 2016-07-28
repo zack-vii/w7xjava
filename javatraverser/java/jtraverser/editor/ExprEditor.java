@@ -170,7 +170,7 @@ public class ExprEditor extends JPanel implements Editor{
         else this.expr = this.text_field.getText().trim();
         if(this.expr.isEmpty()) return null;
         if(this.quotes_added) return new CString(this.expr);
-        return Connection.getActiveConnection().getDescriptor(this.expr);
+        return Connection.getActiveConnection().getDescriptor("COMPILE($)", new CString(this.expr));
     }
 
     @Override
