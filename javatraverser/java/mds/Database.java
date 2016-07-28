@@ -112,28 +112,18 @@ public final class Database{
         if(!this.con.isConnected()) throw new MdsException("Not connected");
     }
 
-    private final void _handleStatus(final int status) throws MdsException {
-        final String msg = this.getMdsMessage(status);
-        final boolean success = (status & 1) == 1;
-        if(!success){
-            Database.stderr(msg, null);
-            throw new MdsException(msg, status);
-        }
-        Database.stdout(msg);
-    }
-
     private final void _open() throws MdsException {
         final int status;
         if(this.isEditable()) status = this.treeshr.treeOpenEdit(this.expt, this.shot);
         else status = this.treeshr.treeOpen(this.expt, this.shot, this.isReadonly());
-        this._handleStatus(status);
+        MdsException.handleStatus(status);
         this.open = true;
         this._saveContext();
     }
 
     private final void _open_new() throws MdsException {
         final int status = this.treeshr.treeOpenNew(this.expt, this.shot);
-        this._handleStatus(status);
+        MdsException.handleStatus(status);
         this.open = true;
         this._saveContext();
     }
@@ -159,14 +149,14 @@ public final class Database{
     public final Nid addDevice(final String path, final String model) throws MdsException {
         this._checkContext();
         final IntegerStatus res = this.treeshr.treeAddConglom(path, model);
-        this._handleStatus(res.status);
+        MdsException.handleStatus(res.status);
         return new Nid(res.data);
     }
 
     public final Nid addNode(final String path, final byte usage) throws MdsException {
         this._checkContext();
         final IntegerStatus res = this.treeshr.treeAddNode(path, usage);
-        this._handleStatus(res.status);
+        MdsException.handleStatus(res.status);
         final Nid nid = new Nid(res.data);
         if(usage == TREENODE.USAGE_SUBTREE) this.setSubtree(nid);
         return nid;
@@ -181,26 +171,26 @@ public final class Database{
 
     public final void clearFlags(final Nid nid, final int flags) throws MdsException {
         this._checkContext();
-        this._handleStatus(nid.clearFlags(flags));
+        nid.clearFlags(flags);
     }
 
     public final void close() throws MdsException {
         if(this.saveslot != null && !this.saveslot.isNull()) this._restoreContext();
         final int status = this.treeshr.treeClose(this.expt, this.shot);
-        this._handleStatus(status);
+        MdsException.handleStatus(status);
         this.open = false;
     }
 
     public final void create(final int shot) throws MdsException {
         this._checkContext();
         final int status = this.treeshr.treeCreateTreeFiles(this.expt, shot, this.shot);
-        this._handleStatus(status);
+        MdsException.handleStatus(status);
     }
 
     public final void deleteExecute() throws MdsException {
         this._checkContext();
         final int status = this.treeshr.treeDeleteNodeExecute();
-        this._handleStatus(status);
+        MdsException.handleStatus(status);
     }
 
     public final Nid[] deleteGetNids() throws MdsException {
@@ -209,7 +199,7 @@ public final class Database{
         for(;;){
             final IntegerStatus res = this.treeshr.treeDeleteNodeGetNid(last);
             if(res.status == 265388128) break;
-            this._handleStatus(res.status);
+            MdsException.handleStatus(res.status);
             nids.add(new Nid(last = res.data));
         }
         return nids.toArray(new Nid[0]);
@@ -219,7 +209,7 @@ public final class Database{
         this._checkContext();
         final int nidnum = nid.getValue();
         final IntegerStatus res = this.treeshr.treeDeleteNodeInitialize(nidnum);
-        this._handleStatus(res.status);
+        MdsException.handleStatus(res.status);
         return res.data;
     }
 
@@ -259,7 +249,7 @@ public final class Database{
     public final Nid getDefault() throws MdsException {
         this._checkContext();
         final IntegerStatus res = this.treeshr.treeGetDefaultNid();
-        this._handleStatus(res.status);
+        MdsException.handleStatus(res.status);
         return new Nid(res.data);
     }
 
@@ -297,13 +287,13 @@ public final class Database{
     public final Descriptor getRecord(final Nid nid) throws MdsException {
         this._checkContext();
         final DescriptorStatus res = this.treeshr.treeGetRecord(nid.getValue());
-        this._handleStatus(res.status);
+        MdsException.handleStatus(res.status);
         return res.data;
     }
 
     public Signal getSegment(final Nid nid, final int segment) throws MdsException {
         final SignalStatus res = this.treeshr.treeGetSegment(nid.getValue(), segment);
-        this._handleStatus(res.status);
+        MdsException.handleStatus(res.status);
         return res.data;
     }
 
@@ -325,7 +315,7 @@ public final class Database{
         final List<String> tags = new ArrayList<String>(max);
         TagRefStatus tag = TagRefStatus.init;
         while(tags.size() < max && ((tag = this.treeshr.treeFindTagWild(search, tag))).status != 0){
-            this._handleStatus(tag.status);
+            MdsException.handleStatus(tag.status);
             if(nid.getValue() == tag.nid){
                 final String[] parts = tag.data.split("\\.|:");
                 tags.add(parts[parts.length - 1]);
@@ -339,7 +329,7 @@ public final class Database{
         final TagList taglist = new TagList(max);
         TagRefStatus tag = TagRefStatus.init;
         while(taglist.size() < max && (tag = this.treeshr.treeFindTagWild(search, tag)).status != 0){
-            this._handleStatus(tag.status);
+            MdsException.handleStatus(tag.status);
             taglist.put(tag.data, new Nid(tag.nid));
         }
         return taglist;
@@ -355,7 +345,7 @@ public final class Database{
 
     public final Nid[] getWild(final int usage_mask) throws MdsException {
         final Nid[] nids = Nid.getArrayOfNids(this.con.getIntegerArray(String.format("_i=-1;_a='[';_q=0Q;WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref('***'),ref(_i),ref(_q),val(%d)),1)==1) _a=_a//TEXT(_i)//',';_a=COMPILE(_a//'*]')", 1 << usage_mask)));
-        if(nids == null) this._handleStatus(this.con.getInteger("_s"));
+        if(nids == null) MdsException.handleStatus(this.con.getInteger("_s"));
         return nids;
     }
 
@@ -386,23 +376,23 @@ public final class Database{
 
     public final void putData(final Nid nid, final Descriptor data) throws MdsException {
         this._checkContext();
-        this._handleStatus(nid.putRecord(data));
+        nid.putRecord(data);
     }
 
     public final void putRow(final Nid nid, final long time, final Descriptor_A data) throws MdsException {
         this._checkContext();
-        this._handleStatus(nid.putRow(time, data));
+        nid.putRow(time, data);
     }
 
     public final void quit() throws MdsException {
         this._checkContext();
         final int status = this.treeshr.treeQuitTree(this.expt, this.shot);
-        this._handleStatus(status);
+        MdsException.handleStatus(status);
     }
 
     public final void renameNode(final Nid nid, final String path) throws MdsException {
         this._checkContext();
-        this._handleStatus(nid.setPath(path));
+        nid.setPath(path);
     }
 
     public final Nid resolveRefSimple(final Nid nid) throws MdsException {
@@ -422,36 +412,34 @@ public final class Database{
 
     public final void setDefault(final Nid nid) throws MdsException {
         this._checkContext();
-        this._handleStatus(nid.setDefault());
+        nid.setDefault();
     }
 
     public final void setEvent(final String event) throws MdsException {
-        this._handleStatus(this.mdsshr.mdsEvent(event));
+        MdsException.handleStatus(this.mdsshr.mdsEvent(event));
     }
 
     public final void setFlags(final Nid nid, final int flags) throws MdsException {
         this._checkContext();
-        this._handleStatus(nid.setFlags(flags));
+        nid.setFlags(flags);
     }
 
     public final void setOn(final Nid nid, final boolean on) throws MdsException {
         this._checkContext();
-        final int status = on ? nid.turnOn() : nid.turnOff();
-        if(status == 265392050) return;// TreeLock-Failure but does the change of state
-        this._handleStatus(status);
+        nid.setOn(on);
     }
 
     public final void setSubtree(final Nid nid) throws MdsException {
         this._checkContext();
-        this._handleStatus(nid.setSubtree());
+        nid.setSubtree();
     }
 
     public final void setTags(final Nid nid, final String tags[]) throws MdsException {
         this._checkContext();
-        this._handleStatus(nid.clearTags());
+        nid.clearTags();
         if(tags == null) return;
         for(final String tag : tags)
-            this._handleStatus(nid.addTag(tag));
+            nid.addTag(tag);
     }
 
     public final Descriptor tdiCompile(final String expr) throws MdsException {
@@ -500,6 +488,6 @@ public final class Database{
     public final void write() throws MdsException {
         this._checkContext();
         final int status = this.treeshr.treeWriteTree(this.expt, this.shot);
-        this._handleStatus(status);
+        MdsException.handleStatus(status);
     }
 }
