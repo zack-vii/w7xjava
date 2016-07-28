@@ -403,7 +403,7 @@ public interface ITreeShr{
     /**
      * restores a saved context
      *
-     * @return int: status
+     * @return int: status; 1 on success, context if input is null
      **/
     public int treeRestoreContext(final Pointer treectx) throws MdsException;
 
@@ -499,18 +499,18 @@ public interface ITreeShr{
     public int treeTurnOn(final int nid) throws MdsException;
 
     /**
-     * checks for the current private context state 1 is private
+     * sets the current private context state
      *
-     * @return int: previous private context state
+     * @return boolean: previous state
      **/
-    public int treeUsePrivateCtx(final boolean state) throws MdsException;
+    public boolean treeUsePrivateCtx(final boolean state) throws MdsException;
 
     /**
      * checks for the current private context state
      *
-     * @return int: 1 if private
+     * @return boolean: true if private
      **/
-    public int treeUsingPrivateCtx(final boolean state) throws MdsException;
+    public boolean treeUsingPrivateCtx() throws MdsException;
 
     /**
      * writes changes to a tree (EDIT)
