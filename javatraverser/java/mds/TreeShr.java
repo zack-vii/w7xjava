@@ -88,9 +88,18 @@ public final class TreeShr implements ITreeShr{
     }
 
     @Override
+    public final TagRef treeFindNodeTags(final int nid, final TagRef ref) throws MdsException {
+        synchronized(this.connection){
+            final long r = this.connection.getLong(String.format("_a=%dQ;TreeShr->TreeFindNodeTags(val(%d),ref(_a));_a", ref.ref, nid));
+            if(r == 0) return TagRef.init;
+            return new TagRef(this.connection.getString(String.format("TreeShr->TreeFindNodeTags:T(val(%d),ref(%dQ))", nid, ref.ref)), r);
+        }
+    }
+
+    @Override
     public final NodeRefStatus treeFindNodeWild(final String searchstr, final int usage_mask, final NodeRefStatus ref) throws MdsException {
         synchronized(this.connection){
-            final int status = this.connection.getInteger(String.format("_a=-1;_q=%dQ;TreeShr->TreeFindTagWildDsc(ref($),ref(_a),ref(_q),val(%d))", ref.ref, usage_mask), new CString(searchstr));
+            final int status = this.connection.getInteger(String.format("_a=-1;_q=%dQ;TreeShr->treeFindNodeWild(ref($),ref(_a),ref(_q),val(%d))", ref.ref, usage_mask), new CString(searchstr));
             if(status == 0) return NodeRefStatus.init;
             return new NodeRefStatus(this.connection.getInteger("_a"), this.connection.getLong("_q"), status);
         }
@@ -122,7 +131,7 @@ public final class TreeShr implements ITreeShr{
 
     @Override
     public final String treeGetMinimumPath(final int nid) throws MdsException {
-        return this.connection.getString(String.format("TreeShr->TreeGetMinimumPath:T(val(0),val(%d))", nid));
+        return this.connection.getString(String.format("IF(TreeShr->TreeGetMinimumPath(val(0),val(%d))==0){*;}ELSE{TreeShr->TreeGetMinimumPath:T(val(0),val(%d));}", nid, nid));
     }
 
     @Override
@@ -132,7 +141,7 @@ public final class TreeShr implements ITreeShr{
 
     @Override
     public final String treeGetPath(final int nid) throws MdsException {
-        return this.connection.getString(String.format("TreeShr->TreeGetPath:T(val(%d))", nid));
+        return this.connection.getString(String.format("IF(TreeShr->TreeGetPath(val(%d))==0){*;}ELSE{TreeShr->TreeGetPath:T(val(%d));}", nid, nid));
     }
 
     @Override

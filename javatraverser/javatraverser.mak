@@ -8,6 +8,7 @@ JAR = "$(JDK_DIR)/bin/jar.exe"
 	$(JAVAC) $*.java
 
 DEVICE_SRC= \
+  devicebeans/Database.java \
   devicebeans/DeviceApply.java \
   devicebeans/DeviceApplyBeanInfo.java \
   devicebeans/DeviceButtons.java \
@@ -106,7 +107,6 @@ TOOLS_SRC= \
   jtraverser/tools/DecompileTree.java
 
 MDSIP_SRC= \
-  mds/Database.java \
   mds/ITreeShr.java \
   mds/MdsException.java \
   mds/MdsShr.java \

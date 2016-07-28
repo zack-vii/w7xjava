@@ -1,14 +1,19 @@
-package mds;
+package devicebeans;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import debug.DEBUG;
 import mds.ITreeShr.DescriptorStatus;
 import mds.ITreeShr.IntegerStatus;
 import mds.ITreeShr.SignalStatus;
 import mds.ITreeShr.TagRefStatus;
+import mds.MdsException;
+import mds.MdsShr;
+import mds.TREE;
+import mds.TREE.TagList;
+import mds.TdiShr;
+import mds.TreeShr;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_r.Signal;
@@ -20,22 +25,6 @@ import mds.mdsip.Connection;
 import mds.mdsip.Connection.Provider;
 
 public final class Database{
-    @SuppressWarnings("serial")
-    public final class TagList extends HashMap<String, Nid>{
-        public TagList(final int cap){
-            super(cap);
-        }
-
-        @Override
-        public final String toString() {
-            final StringBuilder str = new StringBuilder(this.size() * 64);
-            final String root = new StringBuilder(Database.this.expt.length() + 3).append("\\").append(Database.this.expt).append("::").toString();
-            for(final Entry<String, Nid> entry : this.entrySet())
-                str.append(entry.getKey().replace(root, "\\")).append("  =>  ").append(entry.getValue()).append("\n");
-            return str.toString();
-        }
-    }
-
     private static final String extractProvider(final String expt) {
         final String[] parts = System.getenv(String.format("%s_path", expt.toLowerCase())).split("::", 2);
         return (parts.length > 1) ? parts[0] : Connection.Provider.DEFAULT_HOST;
@@ -326,7 +315,7 @@ public final class Database{
 
     public final TagList getTagsWild(final String search, final int max) throws MdsException {
         this._checkContext();
-        final TagList taglist = new TagList(max);
+        final TagList taglist = new TagList(max, this.expt);
         TagRefStatus tag = TagRefStatus.init;
         while(taglist.size() < max && (tag = this.treeshr.treeFindTagWild(search, tag)).status != 0){
             MdsException.handleStatus(tag.status);

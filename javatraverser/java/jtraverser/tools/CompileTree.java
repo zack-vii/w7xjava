@@ -12,7 +12,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import mds.Database;
+import devicebeans.Database;
 import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;

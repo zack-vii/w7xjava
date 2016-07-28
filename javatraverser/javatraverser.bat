@@ -26,6 +26,7 @@ GOTO:end
 
 :start
 SET DEVICE_SRC=^
+  devicebeans\Database.java ^
   devicebeans\DeviceApply.java ^
   devicebeans\DeviceApplyBeanInfo.java ^
   devicebeans\DeviceButtons.java ^
@@ -134,7 +135,6 @@ SET LOCAL_SRC=^
   local\localDatabase.java
 
 SET MDSIP_SRC=^
-  mds\Database.java ^
   mds\ITreeShr.java ^
   mds\MdsException.java ^
   mds\MdsShr.java ^

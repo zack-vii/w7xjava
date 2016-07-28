@@ -8,7 +8,7 @@ package devicebeans.tools;
 // 4) Node name
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import mds.Database;
+import devicebeans.Database;
 import mds.TREE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;

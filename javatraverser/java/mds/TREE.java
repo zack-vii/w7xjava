@@ -1,10 +1,12 @@
 package mds;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import mds.ITreeShr.DescriptorStatus;
 import mds.ITreeShr.IntegerStatus;
 import mds.ITreeShr.SignalStatus;
+import mds.ITreeShr.TagRef;
 import mds.ITreeShr.TagRefStatus;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
@@ -20,6 +22,23 @@ import mds.mdsip.Connection;
 import mds.mdsip.Connection.Provider;
 
 public final class TREE{
+    @SuppressWarnings("serial")
+    public static final class TagList extends HashMap<String, Nid>{
+        private final String root;
+
+        public TagList(final int capacity, final String expt){
+            super(capacity);
+            this.root = new StringBuilder(expt.length() + 3).append("\\").append(expt).append("::").toString();
+        }
+
+        @Override
+        public final String toString() {
+            final StringBuilder str = new StringBuilder(this.size() * 64);
+            for(final Entry<String, Nid> entry : this.entrySet())
+                str.append(entry.getKey().replace(this.root, "\\")).append("  =>  ").append(entry.getValue()).append("\n");
+            return str.toString();
+        }
+    }
     public static final int EDITABLE = 2;
     public static final int NEW      = 3;
     public static final int NORMAL   = 1;
@@ -157,6 +176,35 @@ public final class TREE{
 
     public final void doDeviceMethod(final int nid, final String name) {
         // TODO Auto-generated method stub
+    }
+
+    public final Nid[] findNodeWild(final int usage) throws MdsException {
+        return this.findNodeWild("***", 1 << usage);
+    }
+
+    public final Nid[] findNodeWild(final String searchstr, final int usage_mask) throws MdsException {
+        synchronized(this.connection){
+            final int[] nidnums = this.setActive().connection.getIntegerArray(String.format("_i=-1;_a='[';_q=0Q;WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref($),ref(_i),ref(_q),val(%d)),1)==1) _a=_a//TEXT(_i)//',';_a=COMPILE(_a//'*]')", usage_mask), new CString(searchstr));
+            if(nidnums == null) MdsException.handleStatus(this.connection.getInteger("_s"));
+            final Nid[] nids = Nid.getArrayOfNids(nidnums, this);
+            return nids;
+        }
+    }
+
+    public final TagList findTagsWild() throws MdsException {
+        return this.findTagsWild("***", 255);
+    }
+
+    public final TagList findTagsWild(final String search, final int max) throws MdsException {
+        final TagList taglist = new TagList(max, this.expt);
+        TagRefStatus tag = TagRefStatus.init;
+        synchronized(this.connection){
+            while(taglist.size() < max && (tag = this.treeshr.treeFindTagWild(search, tag)).status != 0){
+                MdsException.handleStatus(tag.status);
+                taglist.put(tag.data, new Nid(tag.nid));
+            }
+        }
+        return taglist;
     }
 
     public final Pointer getContext() throws MdsException {
@@ -363,19 +411,6 @@ public final class TREE{
         return new Path(path, this).toNid();
     }
 
-    public final Nid[] getNodeWild(final int usage) throws MdsException {
-        return this.getNodeWild("***", 1 << usage);
-    }
-
-    public final Nid[] getNodeWild(final String mask, final int usage_mask) throws MdsException {
-        synchronized(this.connection){
-            final int[] nidnums = this.setActive().connection.getIntegerArray(String.format("_i=-1;_a='[';_q=0Q;WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref($),ref(_i),ref(_q),val(%d)),1)==1) _a=_a//TEXT(_i)//',';_a=COMPILE(_a//'*]')", usage_mask), new CString(mask));
-            if(nidnums == null) MdsException.handleStatus(this.connection.getInteger("_s"));
-            final Nid[] nids = Nid.getArrayOfNids(nidnums, this);
-            return nids;
-        }
-    }
-
     public final int getNumSegments(final int nid) throws MdsException {
         synchronized(this.connection){
             final IntegerStatus res = this.setActive().treeshr.treeGetNumSegments(nid);
@@ -408,13 +443,9 @@ public final class TREE{
     public final String[] getTags(final int nid) throws MdsException {
         final List<String> tags = new ArrayList<String>(255);
         synchronized(this.connection){
-            TagRefStatus tag = TagRefStatus.init;
-            while(tags.size() < 255 && ((tag = this.treeshr.treeFindTagWild("***", tag))).status != 0){
-                MdsException.handleStatus(tag.status);
-                if(nid == tag.nid){
-                    final String[] parts = tag.data.split("\\.|:");
-                    tags.add(parts[parts.length - 1]);
-                }
+            TagRef tag = TagRef.init;
+            while(tags.size() < 255 && ((tag = this.treeshr.treeFindNodeTags(nid, tag))).ok()){
+                tags.add(tag.data);
             }
         }
         return tags.toArray(new String[0]);

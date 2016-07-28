@@ -29,6 +29,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import devicebeans.Database;
 import devicebeans.DeviceSetup;
 import jtraverser.dialogs.Dialogs;
 import jtraverser.dialogs.DisplayData;
@@ -42,9 +43,9 @@ import jtraverser.dialogs.TreeDialog;
 import jtraverser.dialogs.TreeOpenDialog;
 import jtraverser.editor.NodeEditor;
 import jtraverser.tools.DecompileTree;
-import mds.Database;
 import mds.ITreeShr.TagRefStatus;
 import mds.MdsException;
+import mds.TREE;
 import mds.TreeShr;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
@@ -57,7 +58,7 @@ public class TreeManager extends JTabbedPane{
         private final class addDevice implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
-                AddNodeMenu.this.treeman.getCurrentTree().addDevice();
+                AddNodeMenu.this.treeman.getCurrentTreeView().addDevice();
             }
         }
         public class AddNodeAL implements ActionListener{
@@ -112,7 +113,7 @@ public class TreeManager extends JTabbedPane{
             public void actionPerformed(final ActionEvent ae) {
                 try{
                     final Descriptor sig = DisplayMenu.this.treeman.getCurrentNode().getData();
-                    GraphPanel.newPlot(sig, DisplayMenu.this.treeman, DisplayMenu.this.treeman.getCurrentDatabase().getName(), DisplayMenu.this.treeman.getCurrentDatabase().getShot(), DisplayMenu.this.treeman.getCurrentNode().getFullPath());
+                    GraphPanel.newPlot(sig, DisplayMenu.this.treeman, DisplayMenu.this.treeman.getCurrentTree().expt, DisplayMenu.this.treeman.getCurrentTree().shot, DisplayMenu.this.treeman.getCurrentNode().getFullPath());
                 }catch(final MdsException e){}
             }
         }
@@ -171,7 +172,7 @@ public class TreeManager extends JTabbedPane{
         private final class deleteNode implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
-                EditMenu.this.treeman.getCurrentTree().deleteNode();
+                EditMenu.this.treeman.getCurrentTreeView().deleteNode();
             }
         }
         public final class editTags implements ActionListener{
@@ -288,13 +289,13 @@ public class TreeManager extends JTabbedPane{
 
                     @Override
                     public final void run() {
-                        final Tree tree = ExtrasMenu.this.treeman.getCurrentTree();
+                        final TreeView tree = ExtrasMenu.this.treeman.getCurrentTreeView();
                         final TreeShr treeshr = new TreeShr(tree.getConnection());
                         TagRefStatus tag = TagRefStatus.init;
                         try{
                             final String expt = tree.getExpt();
                             final String root = new StringBuilder(expt.length() + 3).append("\\").append(expt).append("::").toString();
-                            while((tag = treeshr.treeFindTagWild("***", tag)).status != 0){
+                            while((tag = treeshr.treeFindTagWild("***", tag)).ok()){
                                 model.addRow(new String[]{tag.data.replace(root, "\\"), new Nid(tag.nid).toString()});
                                 synchronized(this){
                                     if(this.isInterrupted()) return;
@@ -306,7 +307,7 @@ public class TreeManager extends JTabbedPane{
                 thread.start();
                 JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), //
                         scollpane, //
-                        ExtrasMenu.this.treeman.getCurrentDatabase().toString(), //
+                        ExtrasMenu.this.treeman.getCurrentTree().toString(), //
                         JOptionPane.PLAIN_MESSAGE);
                 if(thread.isAlive()) thread.interrupt();
             }
@@ -343,7 +344,7 @@ public class TreeManager extends JTabbedPane{
         private final class decompile implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
-                new DecompileTree().decompile(FileMenu.this.treeman.getCurrentDatabase(), FileMenu.this.treeman.frame, true);
+                new DecompileTree().decompile(FileMenu.this.treeman.getCurrentTree(), FileMenu.this.treeman.frame, true);
             }
         };
         private final class open implements ActionListener{
@@ -430,7 +431,7 @@ public class TreeManager extends JTabbedPane{
 
         @Override
         public final void mouseClicked(final MouseEvent ev) {
-            final Tree tree = (Tree)ev.getSource();
+            final TreeView tree = (TreeView)ev.getSource();
             final DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode)tree.getClosestPathForLocation(ev.getX(), ev.getY()).getLastPathComponent();
             final Node currnode = Node.getNode(tree_node);
             tree.setCurrentNode(currnode);
@@ -529,7 +530,7 @@ public class TreeManager extends JTabbedPane{
     public final Dialogs           dialogs;
     private final jTraverserFacade frame;
     private final TreeOpenDialog   open_dialog;
-    private final Stack<Tree>      trees = new Stack<Tree>();
+    private final Stack<TreeView>  trees = new Stack<TreeView>();
 
     public TreeManager(final jTraverserFacade frame){
         this(frame, null);
@@ -544,9 +545,11 @@ public class TreeManager extends JTabbedPane{
         this.addChangeListener(new ChangeListener(){
             @Override
             public void stateChanged(final ChangeEvent ce) {
-                final Database database = TreeManager.this.getCurrentDatabase();
-                if(database == null) return;
-                database.updateContext();
+                final TREE tree = TreeManager.this.getCurrentTree();
+                if(tree == null) return;
+                try{
+                    tree.setActive();
+                }catch(final MdsException e){}
                 TreeManager.this.reportChange();
             }
         });
@@ -573,29 +576,29 @@ public class TreeManager extends JTabbedPane{
         return new TreeManager.mlContextMenu();
     }
 
-    public final Database getCurrentDatabase() {
-        final Tree tree = this.getCurrentTree();
-        if(tree == null) return null;
-        return tree.getDatabase();
-    }
-
     public final Node getCurrentNode() {
-        final Tree tree = this.getCurrentTree();
+        final TreeView tree = this.getCurrentTreeView();
         if(tree == null) return null;
         return tree.getCurrentNode();
     }
 
-    public final Tree getCurrentTree() {
+    public final TREE getCurrentTree() {
+        final TreeView tree = this.getCurrentTreeView();
+        if(tree == null) return null;
+        return tree.getTree();
+    }
+
+    public final TreeView getCurrentTreeView() {
         if(this.getTabCount() == 0) return null;
-        return (Tree)((JScrollPane)this.getSelectedComponent()).getViewport().getView();
+        return (TreeView)((JScrollPane)this.getSelectedComponent()).getViewport().getView();
     }
 
     public final Frame getFrame() {
         return this.frame;
     }
 
-    private final Tree getTreeAt(final int index) {
-        return (Tree)((JScrollPane)this.getComponentAt(index)).getViewport().getView();
+    private final TreeView getTreeAt(final int index) {
+        return (TreeView)((JScrollPane)this.getComponentAt(index)).getViewport().getView();
     }
 
     public final void openTree(final String provider, final String expt, int shot, final int mode) {
@@ -607,16 +610,16 @@ public class TreeManager extends JTabbedPane{
             shot = new TreeShr(con).treeGetCurrentShotId(expt);
         }catch(final MdsException e){}
         for(int i = this.getTabCount(); i-- > 0;){
-            final Tree tree = this.getTreeAt(i);
+            final TreeView tree = this.getTreeAt(i);
             if(!tree.getConnection().equals(con)) continue;
             if(!tree.getExpt().equalsIgnoreCase(expt)) continue;
             if(tree.getShot() != shot) continue;
             tree.close();
             this.remove(i);
         }
-        Tree tree;
+        TreeView tree;
         try{
-            tree = new Tree(this, provider, expt, shot, mode);
+            tree = new TreeView(this, provider, expt, shot, mode);
         }catch(final MdsException e){
             JOptionPane.showMessageDialog(this.frame, e.getMessage(), "Error opening tree " + expt, JOptionPane.ERROR_MESSAGE);
             return;
@@ -633,16 +636,16 @@ public class TreeManager extends JTabbedPane{
     }
 
     synchronized public final void reportChange() {
-        if(this.getCurrentTree() != null){
-            this.getCurrentTree().treeDidChange();
-            this.getCurrentTree().updateUI();
+        if(this.getCurrentTreeView() != null){
+            this.getCurrentTreeView().treeDidChange();
+            this.getCurrentTreeView().updateUI();
         }
         this.dialogs.update();
-        this.frame.reportChange(this.getCurrentTree());
+        this.frame.reportChange(this.getCurrentTreeView());
         this.frame.repaint();
     }
 
     public final void write() {
-        this.getCurrentTree().write();
+        this.getCurrentTreeView().write();
     }
 }

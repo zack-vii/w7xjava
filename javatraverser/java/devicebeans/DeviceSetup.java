@@ -2,6 +2,7 @@ package devicebeans;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -21,7 +22,6 @@ import javax.swing.JPopupMenu;
 import jtraverser.DataChangeEvent;
 import jtraverser.DataChangeListener;
 import jtraverser.Node;
-import mds.Database;
 import mds.MdsException;
 import mds.TREE;
 import mds.data.descriptor.Descriptor;
@@ -76,6 +76,23 @@ public class DeviceSetup extends JDialog{
 
     public static void main(final String args[]) {
         DeviceSetup.activateDeviceSetup("T2Control", "T2", -1, "\\T2", 100, 100);
+    }
+
+    public static void setup(final Node node, final String model) throws Exception {
+        DeviceSetup ds = DeviceSetup.getDevice(node.nid.getValue());
+        if(ds == null){
+            final String deviceClassName = model + "Setup";
+            final Class deviceClass = Class.forName(deviceClassName);
+            ds = (DeviceSetup)deviceClass.newInstance();
+            ds.setFrame(node.treeview.treeman.getFrame());
+            final Dimension prevDim = ds.getSize();
+            ds.addDataChangeListener(node.treeview);
+            ds.configure(new Database(node.nid.tree.connection, node.nid.tree.expt, node.nid.tree.shot, TREE.NORMAL), node.nid.getNidNumber());
+            if(ds.getContentPane().getLayout() != null) ds.pack();
+            ds.setLocation(node.treeview.treeman.dialogLocation());
+            ds.setSize(prevDim);
+            ds.setVisible(true);
+        }else ds.setVisible(true);
     }
     public int                                 baseNid, num_components = 0;
     protected DeviceButtons                    buttons               = null;

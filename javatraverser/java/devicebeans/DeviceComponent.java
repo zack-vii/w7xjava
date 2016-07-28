@@ -6,7 +6,6 @@ import java.awt.Container;
 import java.awt.Window;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import mds.Database;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 

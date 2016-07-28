@@ -16,6 +16,11 @@ public interface ITreeShr{
             this.data = data;
             this.status = status;
         }
+
+        @Override
+        public final String toString() {
+            return new StringBuilder().append(this.data).append(";").append(this.status).toString();
+        }
     }
     public static class IntegerStatus{
         public final int data;
@@ -29,6 +34,12 @@ public interface ITreeShr{
         public IntegerStatus(final int[] datastatus){
             this(datastatus[1], datastatus[0]);
         }
+
+        @Override
+        public final String toString() {
+            final StringBuilder str = new StringBuilder(32).append(this.data).append(';');
+            return str.append(this.status).toString();
+        }
     }
     public static class NodeRefStatus{
         public static final NodeRefStatus init = new NodeRefStatus(-1, 0, 0);
@@ -40,6 +51,21 @@ public interface ITreeShr{
             this.data = data;
             this.ref = ref;
             this.status = status;
+        }
+
+        public final boolean hasMore() {
+            return this.ref != -1;
+        }
+
+        public final boolean ok() {
+            return this.status == 1;
+        }
+
+        @Override
+        public final String toString() {
+            final StringBuilder str = new StringBuilder(64).append(this.data).append(';');
+            str.append(this.ref).append("l;");
+            return str.append(this.status).toString();
         }
     }
     public static class SegmentInfo{
@@ -69,6 +95,16 @@ public interface ITreeShr{
             this.next_row = array[10];
             this.status = array.length > 11 ? array[11] : -1;
         }
+
+        @Override
+        public final String toString() {
+            final StringBuilder str = new StringBuilder(128).append(this.dtype).append(';');
+            str.append(this.dimct).append(';');
+            for(final int dim : this.dims)
+                str.append(dim).append(',');
+            str.append(this.next_row).append(';');
+            return str.append(this.status).toString();
+        }
     }
     public static class SignalStatus{
         public final Signal data;
@@ -78,6 +114,11 @@ public interface ITreeShr{
             this.data = data;
             this.status = status;
         }
+
+        @Override
+        public final String toString() {
+            return new StringBuilder().append(this.data).append(";").append(this.status).toString();
+        }
     }
     public static class StringStatus{
         public final String data;
@@ -86,6 +127,34 @@ public interface ITreeShr{
         public StringStatus(final String data, final int status){
             this.data = data;
             this.status = status;
+        }
+
+        @Override
+        public final String toString() {
+            return new StringBuilder(32).append(this.data).append(";").append(this.status).toString();
+        }
+    }
+    public static class TagRef{
+        public static final TagRef init = new TagRef(null, 0);
+        public final String        data;
+        public final long          ref;
+
+        public TagRef(final String data, final long ref){
+            this.data = data;
+            this.ref = ref;
+        }
+
+        public final boolean hasMore() {
+            return this.ref != -1;
+        }
+
+        public final boolean ok() {
+            return this.ref != 0;
+        }
+
+        @Override
+        public final String toString() {
+            return new StringBuilder(32).append(this.data).append(";").append(this.ref).append('l').toString();
         }
     }
     public static class TagRefStatus{
@@ -100,6 +169,22 @@ public interface ITreeShr{
             this.nid = nid;
             this.ref = ref;
             this.status = status;
+        }
+
+        public final boolean hasMore() {
+            return this.ref != -1;
+        }
+
+        public final boolean ok() {
+            return this.status == 1;
+        }
+
+        @Override
+        public final String toString() {
+            final StringBuilder str = new StringBuilder(128).append(this.data).append(';');
+            str.append(this.nid).append(';');
+            str.append(this.ref).append("l;");
+            return str.append(this.status).toString();
         }
     }
     public static final int NO_STATUS = -1;
@@ -197,6 +282,13 @@ public interface ITreeShr{
      * @return IntegerStatus
      **/
     public int treeEndConglomerate() throws MdsException;
+
+    /**
+     * searches for the next tag assigned to a node
+     *
+     * @return TagRef: next tag found
+     **/
+    public TagRef treeFindNodeTags(int nid, TagRef ref) throws MdsException;
 
     /**
      * searches for the next node meeting the criteria of a matching search string and usage mask

@@ -20,7 +20,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import jtraverser.Node;
-import jtraverser.Tree;
+import jtraverser.TreeView;
 import jtraverser.TreeManager;
 import mds.MdsException;
 import mds.data.descriptor_s.Nid;
@@ -136,10 +136,10 @@ public class SubTrees extends JDialog{
     private void apply() {
         for(final JCheckBox checkbox : this.checkBoxes){
             final Nid nid = (Nid)checkbox.getClientProperty("nid");
-            final Tree tree = SubTrees.this.treeman.getCurrentTree();
+            final TreeView tree = SubTrees.this.treeman.getCurrentTreeView();
             try{
-                if(checkbox.isSelected()) SubTrees.this.treeman.getCurrentDatabase().setFlags(nid, TREENODE.Flags.INCLUDE_IN_PULSE);
-                else SubTrees.this.treeman.getCurrentDatabase().clearFlags(nid, TREENODE.Flags.INCLUDE_IN_PULSE);
+                if(checkbox.isSelected()) nid.setFlags(TREENODE.Flags.INCLUDE_IN_PULSE);
+                else nid.clearFlags(TREENODE.Flags.INCLUDE_IN_PULSE);
                 ((Node)tree.findPath((String)checkbox.getClientProperty("fullpath")).getUserObject()).getFlags();
             }catch(final MdsException me){}
         }
@@ -148,11 +148,10 @@ public class SubTrees extends JDialog{
     }
 
     public final void update() {
-        final Tree tree = this.treeman.getCurrentTree();
         for(final JCheckBox cb : this.checkBoxes){
             final Nid nid = (Nid)cb.getClientProperty("nid");
             try{
-                cb.setSelected((tree.getDatabase().getFlags(nid) & TREENODE.Flags.INCLUDE_IN_PULSE) != 0);
+                cb.setSelected((nid.getNciFlags() & TREENODE.Flags.INCLUDE_IN_PULSE) != 0);
                 cb.setEnabled(true);
             }catch(final MdsException e){
                 cb.setEnabled(false);
@@ -162,7 +161,7 @@ public class SubTrees extends JDialog{
     }
 
     public final void updateTree() {
-        final Tree tree = this.treeman.getCurrentTree();
+        final TreeView tree = this.treeman.getCurrentTreeView();
         final Nid[] nids = tree.getSubTrees();
         this.checkBoxes = new JCheckBox[nids.length];
         JCheckBox cb;

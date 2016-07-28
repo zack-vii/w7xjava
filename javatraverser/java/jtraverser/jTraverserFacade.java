@@ -119,7 +119,7 @@ public final class jTraverserFacade extends JFrame{
         return this.getContentPane().add(component);
     }
 
-    void reportChange(final Tree tree) {
+    void reportChange(final TreeView tree) {
         if(tree != null){
             this.setTitle(new StringBuilder(256).append("jTraverser - ").append(tree).toString());
             this.jmenus.get(1).setEnabled(true);

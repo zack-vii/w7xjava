@@ -137,7 +137,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     public static final int      CHILD               = 1;
     public static final int      MEMBER              = 2;
     private static final boolean atomic              = false;
-    protected final TREE         tree;
+    public final TREE            tree;
 
     public TREENODE(final byte dtype, final ByteBuffer data){
         this(dtype, data, TREE.getActiveTree());

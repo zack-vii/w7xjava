@@ -3,14 +3,14 @@ package jtraverser.editor;
 // package jtraverser;
 import javax.swing.JPanel;
 import jtraverser.Node;
-import jtraverser.Tree;
+import jtraverser.TreeView;
 import jtraverser.dialogs.TreeDialog;
 
 @SuppressWarnings("serial")
 public class NodeEditor extends JPanel{
     protected TreeDialog frame;
     protected Node       node;
-    Tree                 tree;
+    TreeView                 tree;
 
     public final void setFrame(final TreeDialog frame) {
         this.frame = frame;
@@ -20,7 +20,7 @@ public class NodeEditor extends JPanel{
         this.node = node;
     }
 
-    public final void setTree(final Tree tree) {
+    public final void setTree(final TreeView tree) {
         this.tree = tree;
     }
 }

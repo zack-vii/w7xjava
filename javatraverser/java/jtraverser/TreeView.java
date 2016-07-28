@@ -29,7 +29,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import mds.Database;
 import mds.MdsException;
 import mds.TREE;
 import mds.data.descriptor.Descriptor;
@@ -40,13 +39,13 @@ import mds.mdsip.Connection;
 import mds.mdsip.Connection.Provider;
 
 @SuppressWarnings("serial")
-public final class Tree extends JTree implements TreeSelectionListener, DataChangeListener{
+public final class TreeView extends JTree implements TreeSelectionListener, DataChangeListener{
     // Inner class FromTranferHandler managed drag operation
     private static final class FromTransferHandler extends TransferHandler{
         @Override
         public final Transferable createTransferable(final JComponent comp) {
-            if(!(comp instanceof Tree)) return null;
-            final Tree tree = ((Tree)comp);
+            if(!(comp instanceof TreeView)) return null;
+            final TreeView tree = ((TreeView)comp);
             final Node node = tree.getCurrentNode();
             switch(tree.treeman.copy_format){
                 case TreeManager.ExtrasMenu.CopyFormat.FULLPATH:
@@ -70,17 +69,17 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
             final Object usrObj = ((DefaultMutableTreeNode)value).getUserObject();
             Node node;
             if(usrObj instanceof String){
-                node = Tree.this.getCurrentNode();
+                node = TreeView.this.getCurrentNode();
                 if(node.getTreeNode() == value){
                     final String newName = (((String)usrObj).trim()).toUpperCase();
-                    if(Tree.this.lastName == null || !Tree.this.lastName.equals(newName)){
-                        Tree.this.lastName = newName;
+                    if(TreeView.this.lastName == null || !TreeView.this.lastName.equals(newName)){
+                        TreeView.this.lastName = newName;
                         node.rename(newName);
                     }
                     node.getTreeNode().setUserObject(node);
                 }
             }else node = (Node)usrObj;
-            if(isSelected) Tree.this.treeman.dialogs.update();
+            if(isSelected) TreeView.this.treeman.dialogs.update();
             return node.getIcon(isSelected);
         }
     };
@@ -91,29 +90,29 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
     private JDialog                add_device_dialog;
     private JTextField             add_device_type, add_device_name;
     private Node                   curr_node;
-    private final Database         database;
+    private final TREE             tree;
     private final Connection       connection;
-    private int                    default_nid = 0;
+    private Nid                    default_nid;
     private String                 lastName;
     private DefaultMutableTreeNode top;
     public final TreeManager       treeman;
 
-    public Tree(final TreeManager treeman, final String provider, final String expt, final int shot, final int mode) throws MdsException{
+    public TreeView(final TreeManager treeman, final String provider, final String expt, final int shot, final int mode) throws MdsException{
         super();
         this.treeman = treeman;
         this.connection = Connection.sharedConnection(provider);
-        Database database;
+        this.tree = new TREE(this.connection, expt, shot, mode);;
         try{
-            database = new Database(this.connection, expt, shot, mode);
+            this.tree.open();
         }catch(final MdsException me){
             if(mode != TREE.EDITABLE || me.getStatus() != MdsException.TreeFOPENW) throw me;
             final int n = JOptionPane.showConfirmDialog(this, "Tree " + expt + " cannot be opened in edit mode. Create new instead?", "Editing Tree ", JOptionPane.YES_NO_OPTION);
             if(n != JOptionPane.YES_OPTION) throw me;
-            database = new Database(this.connection, expt, shot, TREE.NEW);
+            this.tree.open(TREE.NEW);
         }
-        this.database = database;
+        this.updateDefault();
         final DefaultTreeModel model = (DefaultTreeModel)this.getModel();
-        final Node top_node = new Node(this);
+        final Node top_node = new Node(this, this.tree.getTop());
         top_node.setTreeNode(this.top = new DefaultMutableTreeNode(top_node));
         model.setRoot(this.top);
         top_node.expand();
@@ -140,18 +139,18 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
             public void keyTyped(final KeyEvent e) {
                 if(e.getKeyChar() == KeyEvent.VK_CANCEL) // i.e. Ctrl+C
                 {
-                    Tree.this.getCurrentNode().copyToClipboard();
-                    Tree.this.getCurrentNode().copy();
+                    TreeView.this.getCurrentNode().copyToClipboard();
+                    TreeView.this.getCurrentNode().copy();
                 }else if(e.getKeyChar() == 24) // i.e. Ctrl+X
-                    if(Tree.this.isEditable()) Tree.this.getCurrentNode().cut();
-                else Tree.this.getCurrentNode().copy();
+                    if(TreeView.this.isEditable()) TreeView.this.getCurrentNode().cut();
+                else TreeView.this.getCurrentNode().copy();
                 else if(e.getKeyChar() == 22) // i.e. Ctrl+V
-                    Tree.this.getCurrentNode().paste();
-                else if(e.getKeyChar() == KeyEvent.VK_DELETE || e.getKeyChar() == KeyEvent.VK_BACK_SPACE) Tree.this.getCurrentNode().delete();
-                Tree.this.treeman.reportChange();
+                    TreeView.this.getCurrentNode().paste();
+                else if(e.getKeyChar() == KeyEvent.VK_DELETE || e.getKeyChar() == KeyEvent.VK_BACK_SPACE) TreeView.this.getCurrentNode().delete();
+                TreeView.this.treeman.reportChange();
             }
         });
-        this.setEditable(this.database.isEditable());
+        this.setEditable(this.tree.isEditable());
         this.setCellRenderer(new MDSCellRenderer());
         this.addTreeSelectionListener(this);
         this.addMouseListener(treeman.getContextMenu());
@@ -183,15 +182,15 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
             ok_button.addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(final ActionEvent e) {
-                    if(Tree.this.addDevice(Tree.this.add_device_name.getText().toUpperCase(), Tree.this.add_device_type.getText()) == null) ;
-                    Tree.this.add_device_dialog.setVisible(false);
+                    if(TreeView.this.addDevice(TreeView.this.add_device_name.getText().toUpperCase(), TreeView.this.add_device_type.getText()) == null) ;
+                    TreeView.this.add_device_dialog.setVisible(false);
                 }
             });
             final JButton cancel_b = new JButton("Cancel");
             cancel_b.addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(final ActionEvent e) {
-                    Tree.this.add_device_dialog.setVisible(false);
+                    TreeView.this.add_device_dialog.setVisible(false);
                 }
             });
             jp1.add(cancel_b);
@@ -204,8 +203,8 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
             this.add_device_dialog.addKeyListener(new KeyAdapter(){
                 @Override
                 public void keyTyped(final KeyEvent e) {
-                    if(e.getKeyCode() == KeyEvent.VK_ENTER) if(Tree.this.addDevice(Tree.this.add_device_name.getText().toUpperCase(), Tree.this.add_device_type.getText()) == null) ;
-                    Tree.this.add_device_dialog.setVisible(false);
+                    if(e.getKeyCode() == KeyEvent.VK_ENTER) if(TreeView.this.addDevice(TreeView.this.add_device_name.getText().toUpperCase(), TreeView.this.add_device_type.getText()) == null) ;
+                    TreeView.this.add_device_dialog.setVisible(false);
                 }
             });
             this.add_device_dialog.pack();
@@ -290,34 +289,34 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
                 if(name.compareTo(curr_name) < 0) break;
             }
         }
-        final DefaultTreeModel tree_model = (DefaultTreeModel)Tree.this.getModel();
+        final DefaultTreeModel tree_model = (DefaultTreeModel)TreeView.this.getModel();
         tree_model.insertNodeInto(treenode, toTreeNode, i);
-        Tree.this.expandPath(new TreePath(treenode.getPath()));
-        Tree.this.treeDidChange();
+        TreeView.this.expandPath(new TreePath(treenode.getPath()));
+        TreeView.this.treeDidChange();
     }
 
-    public final Tree close() {
+    public final TreeView close() {
         try{
-            this.database.close();
+            this.tree.close();
         }catch(final Exception e){
             boolean editable = false;
             String name = null;
             try{
-                editable = this.database.isEditable();
-                name = this.database.getName().trim();
+                editable = this.tree.isEditable();
+                name = this.tree.expt;
             }catch(final Exception exc){}
             if(editable){
                 final int n = JOptionPane.showConfirmDialog(this.treeman.getFrame(), "Tree " + name + " open in edit mode has been changed: Write it before closing?", "Closing Tree ", JOptionPane.YES_NO_OPTION);
                 if(n == JOptionPane.YES_OPTION){
                     try{
-                        this.database.write();
-                        this.database.close();
+                        this.tree.write();
+                        this.tree.close();
                     }catch(final Exception exc){
                         JOptionPane.showMessageDialog(this.treeman.getFrame(), "Error closing tree", exc.getMessage(), JOptionPane.WARNING_MESSAGE);
                     }
                 }else{
                     try{
-                        this.database.quit();
+                        this.tree.quit();
                     }catch(final Exception exce){
                         JOptionPane.showMessageDialog(this.treeman.getFrame(), "Error quitting tree", exce.getMessage(), JOptionPane.WARNING_MESSAGE);
                     }
@@ -397,16 +396,12 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
         return node.getTreeNode();
     }
 
-    public final Database getDatabase() {
-        return this.database;
-    }
-
-    public final int getDefault() {
+    public final Nid getDefault() {
         return this.default_nid;
     }
 
     public final String getExpt() {
-        return this.database.getName();
+        return this.tree.expt;
     }
 
     public final Provider getProvider() {
@@ -414,24 +409,28 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
     }
 
     public final int getShot() {
-        return this.database.getShot();
+        return this.tree.shot;
     }
 
     public final Nid[] getSubTrees() {
         try{
-            return this.database.getWild(TREENODE.USAGE_SUBTREE);
+            return this.tree.findNodeWild(TREENODE.USAGE_SUBTREE);
         }catch(final MdsException e){
             e.printStackTrace();
             return null;
         }
     }
 
+    public final TREE getTree() {
+        return this.tree;
+    }
+
     public final boolean isModel() {
-        return this.database.getShot() < 0;
+        return this.tree.shot < 0;
     }
 
     public final boolean isReadOnly() {
-        return this.database.isReadonly();
+        return this.tree.isReadonly();
     }
 
     public void pasteSubtree(final Node fromNode, final Node toNode, final boolean isMember) {
@@ -491,12 +490,11 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
 
     @Override
     public final String toString() {
-        return this.getDatabase().toString();
+        return this.tree.toString();
     }
 
     public final void updateDefault() throws MdsException {
-        if(this.database == null) return;
-        this.default_nid = this.database.getDefault().getValue();
+        this.default_nid = this.tree.getDefault();
     }
 
     @Override
@@ -528,7 +526,7 @@ public final class Tree extends JTree implements TreeSelectionListener, DataChan
 
     public final void write() {
         try{
-            this.database.write();
+            this.tree.write();
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(this.treeman.getFrame(), "Error writing tree", exc.getMessage(), JOptionPane.WARNING_MESSAGE);
         }

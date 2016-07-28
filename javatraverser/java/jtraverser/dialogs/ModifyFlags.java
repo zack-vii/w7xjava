@@ -119,7 +119,7 @@ public final class ModifyFlags extends JDialog{
     }
 
     private final void editFlag(final byte idx) {
-        final Node currnode = ModifyFlags.this.treeman.getCurrentTree().getCurrentNode();
+        final Node currnode = ModifyFlags.this.treeman.getCurrentTreeView().getCurrentNode();
         if(currnode == null) return;
         if(this.flag[idx].isSelected()) try{
             currnode.setFlag(idx);
@@ -141,7 +141,7 @@ public final class ModifyFlags extends JDialog{
     }
 
     private Flags readFlags() throws Exception {
-        final Node currnode = ModifyFlags.this.treeman.getCurrentTree().getCurrentNode();
+        final Node currnode = ModifyFlags.this.treeman.getCurrentTreeView().getCurrentNode();
         if(currnode == null) return new Flags();
         final Flags flags = currnode.getFlags();
         if(flags.isError()) MdsException.stderr("Error getting Flags", null);
@@ -159,8 +159,8 @@ public final class ModifyFlags extends JDialog{
             return;
         }
         final boolean[] bflags = ModifyFlags.intToBool(iflags);
-        final Node currnode = ModifyFlags.this.treeman.getCurrentTree().getCurrentNode();
-        final boolean is_ok = !(ModifyFlags.this.treeman.getCurrentTree().isReadOnly() || (currnode == null));
+        final Node currnode = ModifyFlags.this.treeman.getCurrentTreeView().getCurrentNode();
+        final boolean is_ok = !(ModifyFlags.this.treeman.getCurrentTreeView().isReadOnly() || (currnode == null));
         for(int i = 0; i < 32; i++){
             this.flag[i].setSelected(bflags[i]);
             this.flag[i].setEnabled(is_ok && this.settable_flag[i]);
