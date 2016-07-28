@@ -380,6 +380,10 @@ public class Connection{
         Connection.this.dispatchConnectionEvent(new ConnectionEvent(this, "connected"));
     }
 
+    public final int deallocateAll() throws MdsException {
+        return this.getInteger("DEALLOCATE('*')");
+    }
+
     /** disconnect from server and close **/
     public final boolean disconnect() {
         if(this.connectThread != null) this.connectThread.close();
