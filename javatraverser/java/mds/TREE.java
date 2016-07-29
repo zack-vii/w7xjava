@@ -82,9 +82,8 @@ public final class TREE{
 
     synchronized private final TREE _restoreContext() throws MdsException {
         if(this.isOpen()){
-            final int status = this.treeshr.treeRestoreContext(this.saveslot);
+            this.treeshr.treeRestoreContext(this.saveslot);
             this.saveslot = null;
-            MdsException.handleStatus(status);
         }
         return TREE.active = this;
     }
