@@ -247,6 +247,12 @@ public class TreeOpenDialog extends JDialog{
     public final void open() {
         if(this.treeman != null) this.setLocation(this.treeman.dialogLocation());
         this.readonly.setSelected(true);
+        final TREE tree = TREE.getActiveTree();
+        if(tree != null){
+            this.provider.setText(tree.getProvider().host);
+            this.expt.setText(tree.expt);
+            this.shot.setSelectedItem(tree.shot == -1 ? "model" : Integer.toString(tree.shot));
+        }
         this.setVisible(true);
     }
 
