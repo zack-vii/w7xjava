@@ -71,7 +71,7 @@ public final class TREE{
     public TREE(final Connection connection, final String expt, final int shot, final int mode){
         this.connection = connection;
         this.treeshr = new TreeShr(connection);
-        this.expt = expt;
+        this.expt = expt.toUpperCase();
         this.shot = shot;
         this.mode = mode;
     }
