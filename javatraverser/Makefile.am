@@ -96,7 +96,7 @@ JTRAVERSER_SRC= \
   jtraverser/DataChangeEvent.java \
   jtraverser/DataChangeListener.java \
   jtraverser/Node.java \
-  jtraverser/Tree.java \
+  jtraverser/TreeView.java \
   jtraverser/TreeManager.java \
   jtraverser/dialogs/AddNode.java \
   jtraverser/dialogs/DialogSet.java \
