@@ -187,7 +187,7 @@ public class Node{
         final Nid prev_default = this.nid.getTree().getDefault();
         this.nid.setDefault();
         try{
-            new_nid = this.nid.getTree().addDevice(this.path, type);
+            new_nid = this.nid.getTree().addConglom(this.path, type);
         }finally{
             prev_default.setDefault();
         }
