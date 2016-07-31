@@ -5,7 +5,11 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor_s.Uint64.ULong;
 
 public final class Pointer extends NUMBER<Number>{
-    public static final Pointer NULL = new Pointer(0);
+    public static final Pointer NULL = Pointer.NULL();
+
+    public static final Pointer NULL() {
+        return new Pointer(0l);
+    }
 
     public Pointer(final ByteBuffer b){
         super(b);
@@ -38,5 +42,13 @@ public final class Pointer extends NUMBER<Number>{
     @Override
     public Number parse(final String in) {
         return ULong.decode(in).longValue();
+    }
+
+    public final void setValue(final ByteBuffer val) {
+        if(this.length == 8){
+            if(val.capacity() == 8) this.b.putLong(Pointer.BYTES, val.getLong());
+            else this.b.putLong(Pointer.BYTES, val.getInt());
+        }else if(this.length == 4 && val.capacity() == 4) this.b.putInt(Pointer.BYTES, val.getInt());
+        else((ByteBuffer)this.b.duplicate().position(Pointer.BYTES)).put(new byte[this.length]);
     }
 }

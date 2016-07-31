@@ -24,6 +24,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Missing;
+import mds.data.descriptor_s.Pointer;
 
 public class Connection{
     static class EventItem{
@@ -381,7 +382,7 @@ public class Connection{
     }
 
     public final int deallocateAll() throws MdsException {
-        return this.getInteger("DEALLOCATE('*')");
+        return this.getInteger(null, "DEALLOCATE('*')");
     }
 
     /** disconnect from server and close **/
@@ -452,33 +453,61 @@ public class Connection{
         return message;
     }
 
+    public byte getByte(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toByte();
+    }
+
     public byte getByte(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toByte();
+        return this.getByte(null, expr, args);
+    }
+
+    public byte[] getByteArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toByteArray();
     }
 
     public byte[] getByteArray(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toByteArray();
+        return this.getByteArray(null, expr, args);
+    }
+
+    public ByteBuffer getByteBuffer(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getMessage(ctx, expr, false, args).body;
     }
 
     public ByteBuffer getByteBuffer(final String expr, final Descriptor... args) throws MdsException {
-        return this.getMessage(expr, false, args).body;
+        return this.getByteBuffer(null, expr, args);
     }
 
-    public final <D extends Descriptor> Descriptor getDescriptor(final String expr, final Class<D> cls, final Descriptor... args) throws MdsException {
-        final ByteBuffer b = this.getMessage(expr, true, args).body;
+    public final <D extends Descriptor> Descriptor getDescriptor(final Pointer ctx, final String expr, final Class<D> cls, final Descriptor... args) throws MdsException {
+        final ByteBuffer b = this.getMessage(ctx, expr, true, args).body;
         return Connection.bufferToClass(b, cls);
     }
 
+    public final <D extends Descriptor> Descriptor getDescriptor(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getDescriptor(ctx, expr, Descriptor.class, args);
+    }
+
+    public final <D extends Descriptor> Descriptor getDescriptor(final String expr, final Class<D> cls, final Descriptor... args) throws MdsException {
+        return this.getDescriptor(null, expr, cls, args);
+    }
+
     public final <D extends Descriptor> Descriptor getDescriptor(final String expr, final Descriptor... args) throws MdsException {
-        return this.getDescriptor(expr, Descriptor.class, args);
+        return this.getDescriptor(null, expr, args);
+    }
+
+    public final double getDouble(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toDouble();
     }
 
     public final double getDouble(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toDouble();
+        return this.getDouble(null, expr, args);
+    }
+
+    public final double[] getDoubleArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toDoubleArray();
     }
 
     public final double[] getDoubleArray(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toDoubleArray();
+        return this.getDoubleArray(null, expr, args);
     }
 
     private final int getEventId() {
@@ -489,41 +518,67 @@ public class Connection{
         return i;
     }
 
+    public final float getFloat(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toFloat();
+    }
+
     public final float getFloat(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toFloat();
+        return this.getFloat(null, expr, args);
+    }
+
+    public final float[] getFloatArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toFloatArray();
     }
 
     public final float[] getFloatArray(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toFloatArray();
+        return this.getFloatArray(null, expr, args);
     }
 
     public final String getHost() {
         return this.provider.host;
     }
 
+    public final int getInteger(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toInt();
+    }
+
     public final int getInteger(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toInt();
+        return this.getInteger(null, expr, args);
+    }
+
+    public final int[] getIntegerArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toIntArray();
     }
 
     public final int[] getIntegerArray(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toIntArray();
+        return this.getIntegerArray(null, expr, args);
+    }
+
+    public final long getLong(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toLong();
     }
 
     public final long getLong(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toLong();
+        return this.getLong(null, expr, args);
+    }
+
+    public final long[] getLongArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toLongArray();
     }
 
     public final long[] getLongArray(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toLongArray();
+        return this.getLongArray(null, expr, args);
     }
 
-    synchronized public final Message getMessage(final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
+    synchronized public final Message getMessage(Pointer ctx, final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
         this.setActive();
         byte idx = 0;
         final Message msg;
         final StringBuffer cmd = new StringBuffer(expr.length() + 128);
+        if(ctx == Pointer.NULL) ctx = null;;
+        if(ctx != null) cmd.append("TreeShr->TreeRestoreContext(val($));");
         if(serialize) cmd.append("_ans=*;MdsShr->MdsSerializeDscOut(xd((");
         if(args != null && args.length > 0){
             final boolean[] atomic = new boolean[args.length];
@@ -546,13 +601,19 @@ public class Connection{
         }else cmd.append(expr);
         if(serialize) cmd.append(";)),xd(_ans));_ans");
         try{
-            if(args != null && args.length > 0){
-                final byte totalarg = (byte)(args.length + 1);
+            if(ctx != null || (args != null && args.length > 0)){
+                final byte totalarg = (byte)((args == null ? 0 : args.length) + (ctx != null ? 2 : 1));
                 this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
-                for(final Descriptor d : args)
+                if(ctx != null) ctx.toMessage(idx++, totalarg).send(this.dos);
+                if(args != null) for(final Descriptor d : args)
                     d.toMessage(idx++, totalarg).send(this.dos);
             }else new Message(cmd.toString()).send(this.dos);
             msg = this.getAnswer();
+            if(ctx != null){
+                new Message("TreeShr->TreeSaveContext:P()").send(this.dos);
+                final Message ctx_msg = this.getAnswer();
+                ctx.setValue(ctx_msg.body);
+            }
         }catch(final IOException e){
             throw new MdsException("Connection.getMessage", e);
         }
@@ -560,13 +621,17 @@ public class Connection{
         return msg;
     }
 
+    public final Message getMessage(final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
+        return this.getMessage(null, expr, serialize, args);
+    }
+
     private final String getName(final String classname) {
         if(this.sock == null) return new StringBuilder(128).append(classname).append('(').append(this.provider.user).append('@').append(this.provider.host).append(':').append(this.provider.port).append(')').toString();
         return new StringBuilder(128).append(classname).append('(').append(this.sock.getInetAddress()).append(", ").append(this.sock.getPort()).append(", ").append(this.sock.getLocalPort()).append(')').toString();
     }
 
-    private final Descriptor getNumberArray(final String in, final Descriptor... args) throws MdsException {
-        final Descriptor desc = this.getDescriptor(in, args);
+    private final Descriptor getNumberArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        final Descriptor desc = this.getDescriptor(ctx, expr, args);
         if(desc instanceof CString){
             if(desc.length > 0) throw new MdsException(desc.toString(), 0);
             return Missing.NEW;
@@ -582,18 +647,30 @@ public class Connection{
         return this.provider;
     }
 
+    public short getShort(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toShort();
+    }
+
     public short getShort(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toShort();
+        return this.getShort(null, expr, args);
+    }
+
+    public short[] getShortArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        return this.getNumberArray(ctx, expr, args).toShortArray();
     }
 
     public short[] getShortArray(final String expr, final Descriptor... args) throws MdsException {
-        return this.getNumberArray(expr, args).toShortArray();
+        return this.getShortArray(null, expr, args);
+    }
+
+    public final String getString(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+        final Descriptor desc = this.getDescriptor(ctx, expr, args);
+        if(desc instanceof CString) return ((CString)desc).getValue();
+        return desc.toString();
     }
 
     public final String getString(final String expr, final Descriptor... args) throws MdsException {
-        final Descriptor desc = this.getDescriptor(expr, args);
-        if(desc instanceof CString) return ((CString)desc).getValue();
-        return desc.toString();
+        return this.getString(null, expr, args);
     }
 
     public final String getUser() {

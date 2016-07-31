@@ -166,7 +166,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     }
 
     public final void clearTags() throws MdsException {
-        MdsException.handleStatus(this.tree.treeshr.treeRemoveNodesTags(this.getNidNumber()));
+        MdsException.handleStatus(this.tree.treeshr.treeRemoveNodesTags(this.tree.getContext(), this.getNidNumber()));
     }
 
     public final void doAction() throws MdsException {

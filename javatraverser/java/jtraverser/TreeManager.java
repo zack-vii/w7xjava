@@ -289,13 +289,12 @@ public class TreeManager extends JTabbedPane{
 
                     @Override
                     public final void run() {
-                        final TreeView tree = ExtrasMenu.this.treeman.getCurrentTreeView();
-                        final TreeShr treeshr = new TreeShr(tree.getConnection());
+                        final TreeView treeview = ExtrasMenu.this.treeman.getCurrentTreeView();
+                        final TREE tree = treeview.getTree();
                         TagRefStatus tag = TagRefStatus.init;
                         try{
-                            final String expt = tree.getExpt();
-                            final String root = new StringBuilder(expt.length() + 3).append("\\").append(expt).append("::").toString();
-                            while((tag = treeshr.treeFindTagWild("***", tag)).ok()){
+                            final String root = new StringBuilder(tree.expt.length() + 3).append("\\").append(tree.expt).append("::").toString();
+                            while((tag = tree.treeFindTagWild("***", tag)).ok()){
                                 model.addRow(new String[]{tag.data.replace(root, "\\"), new Nid(tag.nid).toString()});
                                 synchronized(this){
                                     if(this.isInterrupted()) return;

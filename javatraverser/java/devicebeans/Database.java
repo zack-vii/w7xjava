@@ -3,7 +3,6 @@ package devicebeans;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import debug.DEBUG;
 import mds.ITreeShr.DescriptorStatus;
 import mds.ITreeShr.IntegerStatus;
 import mds.ITreeShr.SignalStatus;
@@ -52,7 +51,7 @@ public final class Database{
     private static final void stdout(final String line) {
         MdsException.stdout(line);
     }
-    private Pointer          ctx  = null;
+    private final Pointer    ctx  = Pointer.NULL();
     private final Connection con;
     private final String     expt;
     private boolean          open = false;
@@ -61,7 +60,6 @@ public final class Database{
     private final TreeShr    treeshr;
     private final MdsShr     mdsshr;
     private final TdiShr     tdishr;
-    private Pointer          saveslot;
 
     public Database(final Connection con, final String expt, final int shot, final int mode) throws MdsException{
         this.con = con.setActive();
@@ -103,48 +101,28 @@ public final class Database{
 
     private final void _open() throws MdsException {
         final int status;
-        if(this.isEditable()) status = this.treeshr.treeOpenEdit(this.expt, this.shot);
-        else status = this.treeshr.treeOpen(this.expt, this.shot, this.isReadonly());
+        if(this.isEditable()) status = this.treeshr.treeOpenEdit(this.ctx, this.expt, this.shot);
+        else status = this.treeshr.treeOpen(this.ctx, this.expt, this.shot, this.isReadonly());
         MdsException.handleStatus(status);
         this.open = true;
-        this._saveContext();
     }
 
     private final void _open_new() throws MdsException {
-        final int status = this.treeshr.treeOpenNew(this.expt, this.shot);
+        final int status = this.treeshr.treeOpenNew(this.ctx, this.expt, this.shot);
         MdsException.handleStatus(status);
         this.open = true;
-        this._saveContext();
-    }
-
-    synchronized private final boolean _restoreContext() throws MdsException {
-        if(DEBUG.D) System.err.println(String.format("restore: %s(%03d) from %s", this.expt, this.shot, this.saveslot.toString()));
-        final boolean success = (this.saveslot == null || this.saveslot.isNull()) ? false : (this.treeshr.treeRestoreContext(this.saveslot) & 1) != 0;
-        this.saveslot = null;
-        return success;
-    }
-
-    synchronized private final boolean _saveContext() throws MdsException {
-        if(DEBUG.D) System.err.print(String.format("saving:  %s(%03d) to   ", this.expt, this.shot));
-        this.saveslot = this.treeshr.treeSaveContext();
-        if(DEBUG.D) System.err.println(this.saveslot);
-        if(this.saveslot.toLong() != 0l){
-            this.ctx = this.treeshr.treeCtx();
-            return true;
-        }
-        return false;
     }
 
     public final Nid addDevice(final String path, final String model) throws MdsException {
         this._checkContext();
-        final IntegerStatus res = this.treeshr.treeAddConglom(path, model);
+        final IntegerStatus res = this.treeshr.treeAddConglom(this.ctx, path, model);
         MdsException.handleStatus(res.status);
         return new Nid(res.data);
     }
 
     public final Nid addNode(final String path, final byte usage) throws MdsException {
         this._checkContext();
-        final IntegerStatus res = this.treeshr.treeAddNode(path, usage);
+        final IntegerStatus res = this.treeshr.treeAddNode(this.ctx, path, usage);
         MdsException.handleStatus(res.status);
         final Nid nid = new Nid(res.data);
         if(usage == TREENODE.USAGE_SUBTREE) this.setSubtree(nid);
@@ -164,8 +142,7 @@ public final class Database{
     }
 
     public final void close() throws MdsException {
-        if(this.saveslot != null && !this.saveslot.isNull()) this._restoreContext();
-        final int status = this.treeshr.treeClose(this.expt, this.shot);
+        final int status = this.treeshr.treeClose(this.ctx, this.expt, this.shot);
         MdsException.handleStatus(status);
         this.open = false;
     }
@@ -178,18 +155,21 @@ public final class Database{
 
     public final void deleteExecute() throws MdsException {
         this._checkContext();
-        final int status = this.treeshr.treeDeleteNodeExecute();
+        final int status = this.treeshr.treeDeleteNodeExecute(this.ctx);
         MdsException.handleStatus(status);
     }
 
     public final Nid[] deleteGetNids() throws MdsException {
         final List<Nid> nids = new ArrayList<Nid>(256);
         int last = 0;
-        for(;;){
-            final IntegerStatus res = this.treeshr.treeDeleteNodeGetNid(last);
-            if(res.status == 265388128) break;
-            MdsException.handleStatus(res.status);
-            nids.add(new Nid(last = res.data));
+        synchronized(this.con){
+            IntegerStatus res = this.treeshr.treeDeleteNodeGetNid(this.ctx, last);
+            for(;;){
+                if(res.status == 265388128) break;
+                MdsException.handleStatus(res.status);
+                nids.add(new Nid(last = res.data));
+                res = this.treeshr.treeDeleteNodeGetNid(null, last);
+            }
         }
         return nids.toArray(new Nid[0]);
     }
@@ -197,7 +177,7 @@ public final class Database{
     public final int deleteStart(final Nid nid) throws MdsException {
         this._checkContext();
         final int nidnum = nid.getValue();
-        final IntegerStatus res = this.treeshr.treeDeleteNodeInitialize(nidnum);
+        final IntegerStatus res = this.treeshr.treeDeleteNodeInitialize(this.ctx, nidnum);
         MdsException.handleStatus(res.status);
         return res.data;
     }
@@ -237,7 +217,7 @@ public final class Database{
 
     public final Nid getDefault() throws MdsException {
         this._checkContext();
-        final IntegerStatus res = this.treeshr.treeGetDefaultNid();
+        final IntegerStatus res = this.treeshr.treeGetDefaultNid(null);
         MdsException.handleStatus(res.status);
         return new Nid(res.data);
     }
@@ -275,13 +255,13 @@ public final class Database{
 
     public final Descriptor getRecord(final Nid nid) throws MdsException {
         this._checkContext();
-        final DescriptorStatus res = this.treeshr.treeGetRecord(nid.getValue());
+        final DescriptorStatus res = this.treeshr.treeGetRecord(this.ctx, nid.getValue());
         MdsException.handleStatus(res.status);
         return res.data;
     }
 
     public Signal getSegment(final Nid nid, final int segment) throws MdsException {
-        final SignalStatus res = this.treeshr.treeGetSegment(nid.getValue(), segment);
+        final SignalStatus res = this.treeshr.treeGetSegment(this.ctx, nid.getValue(), segment);
         MdsException.handleStatus(res.status);
         return res.data;
     }
@@ -302,12 +282,15 @@ public final class Database{
     public final String[] getTags(final Nid nid, final String search, final int max) throws MdsException {
         this._checkContext();
         final List<String> tags = new ArrayList<String>(max);
-        TagRefStatus tag = TagRefStatus.init;
-        while(tags.size() < max && ((tag = this.treeshr.treeFindTagWild(search, tag))).status != 0){
-            MdsException.handleStatus(tag.status);
-            if(nid.getValue() == tag.nid){
-                final String[] parts = tag.data.split("\\.|:");
-                tags.add(parts[parts.length - 1]);
+        synchronized(this.con){
+            TagRefStatus tag = this.treeshr.treeFindTagWild(this.ctx, search, TagRefStatus.init);
+            while(tags.size() < max && (tag.status != 0)){
+                MdsException.handleStatus(tag.status);
+                if(nid.getValue() == tag.nid){
+                    final String[] parts = tag.data.split("\\.|:");
+                    tags.add(parts[parts.length - 1]);
+                }
+                tag = this.treeshr.treeFindTagWild(null, search, tag);
             }
         }
         return tags.toArray(new String[0]);
@@ -317,7 +300,7 @@ public final class Database{
         this._checkContext();
         final TagList taglist = new TagList(max, this.expt);
         TagRefStatus tag = TagRefStatus.init;
-        while(taglist.size() < max && (tag = this.treeshr.treeFindTagWild(search, tag)).status != 0){
+        while(taglist.size() < max && (tag = this.treeshr.treeFindTagWild(this.ctx, search, tag)).status != 0){
             MdsException.handleStatus(tag.status);
             taglist.put(tag.data, new Nid(tag.nid));
         }
@@ -325,7 +308,7 @@ public final class Database{
     }
 
     public final Pointer getTreeCtx() throws MdsException {
-        return this.treeshr.treeCtx();
+        return this.treeshr.treeCtx(null);
     }
 
     public final byte[] getType(final String expr) throws MdsException {
@@ -462,21 +445,9 @@ public final class Database{
         return sb.toString();
     }
 
-    synchronized public final boolean updateContext() {
-        boolean success;
-        try{
-            success = this._restoreContext();
-            this._saveContext();
-        }catch(final MdsException e){
-            e.printStackTrace();
-            return false;
-        }
-        return success;
-    }
-
     public final void write() throws MdsException {
         this._checkContext();
-        final int status = this.treeshr.treeWriteTree(this.expt, this.shot);
+        final int status = this.treeshr.treeWriteTree(this.ctx, this.expt, this.shot);
         MdsException.handleStatus(status);
     }
 }

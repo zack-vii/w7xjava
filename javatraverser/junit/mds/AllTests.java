@@ -14,7 +14,7 @@ import mds.mdsip.Connection;
 import mds.mdsip.Connection_Test;
 
 @RunWith(Suite.class)
-@SuiteClasses({Connection_Test.class, TreeShr_Test.class, MdsShr_Test.class, Function_Test.class, Descriptor_Test.class, Descriptor_S_Test.class, Descriptor_A_Test.class})
+@SuiteClasses({TREE_Test.class, Connection_Test.class, TreeShr_Test.class, MdsShr_Test.class, Function_Test.class, Descriptor_Test.class, Descriptor_S_Test.class, Descriptor_A_Test.class})
 public class AllTests{
     public static final int    port = 8000;
     public static final String tree = "test";
