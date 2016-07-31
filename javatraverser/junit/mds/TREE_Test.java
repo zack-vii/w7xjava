@@ -14,6 +14,7 @@ import mds.data.descriptor_a.Uint64Array;
 import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.Nid;
+import mds.data.descriptor_s.Path;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -44,6 +45,7 @@ public class TREE_Test{
         Assert.assertEquals("\\TEST::TOP:DATA", (node1 = tree.addNode("DATA", Nid.USAGE_SIGNAL)).putRecord(node).decompile());
         Assert.assertEquals(node.getNciMinPath(), node1.followReference().getNciMinPath());
         Assert.assertEquals("\\TEST::TOP:SIGNAL", node.setPath(":SIGNAL").toPath().toString());
+        Assert.assertEquals("Build_Conglom(*, \"E1429\", *, *)", new Path(".STRUCT").addConglom("E1429", "E1429").getRecord().decompile());
         Assert.assertEquals("[DAT, SIG]", Arrays.toString(node.addTag("SIG").addTag("DAT").getTags()));
         Assert.assertEquals("[SIG, DAT]", Arrays.toString(node.setTags("SIG", "DAT").getTags()));
         Assert.assertEquals("[1.0, 2.0, 3.0]", Arrays.toString(node.putRecord(new Signal(new Float64Array(1., 2., 3.), null, new Uint64Array(1, 2, 3))).getData().toDoubleArray()));

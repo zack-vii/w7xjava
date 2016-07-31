@@ -157,6 +157,10 @@ public abstract class NODE<T>extends Descriptor_S<T>{
         this.tree = tree;
     }
 
+    public final Nid addConglom(final String name, final String model) throws MdsException {
+        return this.tree.addConglom(this, name, model);
+    }
+
     public final Nid addNode(final String name, final byte usage) throws MdsException {
         return this.tree.addNode(this, name, usage);
     }

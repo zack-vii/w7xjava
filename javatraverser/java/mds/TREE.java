@@ -80,7 +80,17 @@ public final class TREE{
         this(Connection.sharedConnection(provider), expt, shot, mode);
     }
 
-    public final Nid addDevice(final String path, final String model) throws MdsException {
+    public final Nid addConglom(final NODE node, final String name, final String model) throws MdsException {
+        synchronized(this.connection){
+            final Nid def = this.getDefault();
+            node.setDefault();
+            final Nid nid = this.addConglom(name, model);
+            def.setDefault();
+            return nid;
+        }
+    }
+
+    public final Nid addConglom(final String path, final String model) throws MdsException {
         synchronized(this.connection){
             final IntegerStatus res = this.setActive().treeshr.treeAddConglom(this.ctx, path, model);
             MdsException.handleStatus(res.status);
@@ -228,6 +238,12 @@ public final class TREE{
     public final Descriptor getNci(final int nid, final String name) throws MdsException {
         synchronized(this.connection){
             return this.setActive().connection.getDescriptor(this.ctx, String.format("GETNCI(%d,$)", nid), new CString(name));
+        }
+    }
+
+    public final Descriptor getNci(final NODE node, final String name) throws MdsException {
+        synchronized(this.connection){
+            return this.setActive().connection.getDescriptor(this.ctx, "GETNCI($,$)", node, new CString(name));
         }
     }
 

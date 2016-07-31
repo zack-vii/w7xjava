@@ -26,11 +26,11 @@ public final class Path extends NODE<String>{
 
     @Override
     public final int getNidNumber() throws MdsException {
-        return this.getNciNidNumber();
+        return this.tree.getNci(this, "NID_NUMBER").toInt();
     }
 
     @Override
-    protected String getValue(final ByteBuffer b) {
+    protected final String getValue(final ByteBuffer b) {
         final byte[] buf = new byte[this.length];
         b.get(buf);
         return new String(buf);
