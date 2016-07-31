@@ -34,7 +34,7 @@ import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
-import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.NODE;
 import mds.mdsip.Connection;
 import mds.mdsip.Connection.Provider;
 
@@ -414,7 +414,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
 
     public final Nid[] getSubTrees() {
         try{
-            return this.tree.findNodeWild(TREENODE.USAGE_SUBTREE);
+            return this.tree.findNodeWild(NODE.USAGE_SUBTREE);
         }catch(final MdsException e){
             e.printStackTrace();
             return null;
@@ -444,7 +444,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
                 usedNames[idx++] = son.getName();
             for(final Node member : toNode.getMembers())
                 usedNames[idx++] = member.getName();
-            if(fromNode.getUsage() == TREENODE.USAGE_DEVICE){
+            if(fromNode.getUsage() == NODE.USAGE_DEVICE){
                 final Conglom conglom = (Conglom)fromNode.getData();
                 final Node newNode = this.addDevice((isMember ? ":" : ".") + Node.getUniqueName(fromNode.getName(), usedNames), conglom.getModel().toString(), toNode);
                 newNode.expand();
@@ -455,7 +455,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
                 newNode.expand();
                 try{
                     final Descriptor data = fromNode.getData();
-                    if(data != null && fromNode.getUsage() != TREENODE.USAGE_ACTION) newNode.setData(data);
+                    if(data != null && fromNode.getUsage() != NODE.USAGE_ACTION) newNode.setData(data);
                 }catch(final Exception exc){}
                 for(final Node son : fromNode.getSons()){
                     this.pasteSubtree(son, newNode, false);

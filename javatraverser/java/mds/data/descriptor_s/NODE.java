@@ -10,7 +10,7 @@ import mds.data.descriptor.Descriptor_S;
 import mds.data.descriptor_a.NidArray;
 import mds.data.descriptor_r.Signal;
 
-public abstract class TREENODE<T>extends Descriptor_S<T>{
+public abstract class NODE<T>extends Descriptor_S<T>{
     public static final class Flags{
         public static final int STATE             = 1 << 0;
         public static final int PARENT_STATE      = 1 << 1;
@@ -139,47 +139,56 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
     private static final boolean atomic              = false;
     public final TREE            tree;
 
-    public TREENODE(final byte dtype, final ByteBuffer data){
+    public NODE(final byte dtype, final ByteBuffer data){
         this(dtype, data, TREE.getActiveTree());
     }
 
-    public TREENODE(final byte dtype, final ByteBuffer data, final TREE tree){
+    public NODE(final byte dtype, final ByteBuffer data, final TREE tree){
         super(dtype, data);
         this.tree = tree;
     }
 
-    public TREENODE(final ByteBuffer b){
+    public NODE(final ByteBuffer b){
         this(b, TREE.getActiveTree());
     }
 
-    public TREENODE(final ByteBuffer b, final TREE tree){
+    public NODE(final ByteBuffer b, final TREE tree){
         super(b);
         this.tree = tree;
     }
 
-    public final void addTag(final String tag) throws MdsException {
+    public final Nid addNode(final String name, final byte usage) throws MdsException {
+        return this.tree.addNode(this, name, usage);
+    }
+
+    public final NODE addTag(final String tag) throws MdsException {
         this.tree.addTag(this.getNidNumber(), tag);
+        return this;
     }
 
-    public final void clearFlags(final int flags) throws MdsException {
+    public final NODE clearFlags(final int flags) throws MdsException {
         this.tree.clearFlags(this.getNidNumber(), flags);
+        return this;
     }
 
-    public final void clearTags() throws MdsException {
-        MdsException.handleStatus(this.tree.treeshr.treeRemoveNodesTags(this.tree.getContext(), this.getNidNumber()));
+    public final NODE clearTags() throws MdsException {
+        this.tree.clearTags(this.getNidNumber());
+        return this;
     }
 
-    public final void doAction() throws MdsException {
+    public final NODE doAction() throws MdsException {
         this.tree.doAction(this.getNidNumber());
+        return this;
     }
 
-    public final void doDeviceMethod(final String name) throws MdsException {
+    public final NODE doDeviceMethod(final String name) throws MdsException {
         this.tree.doDeviceMethod(this.getNidNumber(), name);
+        return this;
     }
 
-    public final TREENODE followReference() throws MdsException {
+    public final NODE followReference() throws MdsException {
         final byte dtype = this.getNciDType();
-        if(dtype == DTYPE.NID || dtype == DTYPE.PATH) return ((TREENODE)this.getNciRecord()).followReference();
+        if(dtype == DTYPE.NID || dtype == DTYPE.PATH) return ((NODE)this.getNciRecord()).followReference();
         return this;
     }
 
@@ -383,7 +392,7 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
 
     @Override
     public final boolean isAtomic() {
-        return TREENODE.atomic;
+        return NODE.atomic;
     }
 
     public final boolean isNidReference() throws MdsException {
@@ -403,37 +412,45 @@ public abstract class TREENODE<T>extends Descriptor_S<T>{
         return this.getNumSegments() > 0;
     }
 
-    public final void putRecord(final Descriptor data) throws MdsException {
+    public final NODE putRecord(final Descriptor data) throws MdsException {
         this.tree.putRecord(this.getNidNumber(), data);
+        return this;
     }
 
-    public final void putRow(final long time, final Descriptor_A data) throws MdsException {
+    public final NODE putRow(final long time, final Descriptor_A data) throws MdsException {
         this.tree.putRow(this.getNidNumber(), time, data);
+        return this;
     }
 
-    public final void setDefault() throws MdsException {
+    public final NODE setDefault() throws MdsException {
         this.tree.setDefault(this.getNidNumber());
+        return this;
     }
 
-    public final void setFlags(final int flags) throws MdsException {
+    public final NODE setFlags(final int flags) throws MdsException {
         this.tree.setFlags(this.getNidNumber(), flags);
+        return this;
     }
 
-    public final void setOn(final boolean state) throws MdsException {
+    public final NODE setOn(final boolean state) throws MdsException {
         if(state) this.tree.turnOn(this.getNidNumber());
         else this.tree.turnOff(this.getNidNumber());
+        return this;
     }
 
-    public final void setPath(final String path) throws MdsException {
+    public final NODE setPath(final String path) throws MdsException {
         this.tree.setPath(this.getNidNumber(), path);
+        return this;
     }
 
-    public final void setSubtree() throws MdsException {
+    public final NODE setSubtree() throws MdsException {
         this.tree.setSubtree(this.getNidNumber());
+        return this;
     }
 
-    public final void setTags(final String[] tags) throws MdsException {
+    public final NODE setTags(final String... tags) throws MdsException {
         this.tree.setTags(this.getNidNumber(), tags);
+        return this;
     }
 
     @Override

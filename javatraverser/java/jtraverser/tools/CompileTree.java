@@ -17,7 +17,7 @@ import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
-import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.NODE;
 
 public class CompileTree extends Thread{
     public static void main(final String args[]) {
@@ -117,7 +117,7 @@ public class CompileTree extends Thread{
             if(type.equals("node")){
                 try{
                     if(name.length() > 12) name = name.substring(0, 12);
-                    nid = this.tree.addNode(name, TREENODE.USAGE_STRUCTURE);
+                    nid = this.tree.addNode(name, NODE.USAGE_STRUCTURE);
                     if(usageStr != null && usageStr.equals("SUBTREE")) this.subtreeNids.addElement(nid);
                     this.tree.setDefault(nid);
                     success = true;
@@ -126,15 +126,15 @@ public class CompileTree extends Thread{
                 }
             }else if(type.equals("member")){
                 final byte usage;
-                if(usageStr.equals("ACTION")) usage = TREENODE.USAGE_ACTION;
-                else if(usageStr.equals("NUMERIC")) usage = TREENODE.USAGE_NUMERIC;
-                else if(usageStr.equals("SIGNAL")) usage = TREENODE.USAGE_SIGNAL;
-                else if(usageStr.equals("TASK")) usage = TREENODE.USAGE_TASK;
-                else if(usageStr.equals("TEXT")) usage = TREENODE.USAGE_TEXT;
-                else if(usageStr.equals("WINDOW")) usage = TREENODE.USAGE_WINDOW;
-                else if(usageStr.equals("AXIS")) usage = TREENODE.USAGE_AXIS;
-                else if(usageStr.equals("DISPATCH")) usage = TREENODE.USAGE_DISPATCH;
-                else usage = TREENODE.USAGE_ANY;
+                if(usageStr.equals("ACTION")) usage = NODE.USAGE_ACTION;
+                else if(usageStr.equals("NUMERIC")) usage = NODE.USAGE_NUMERIC;
+                else if(usageStr.equals("SIGNAL")) usage = NODE.USAGE_SIGNAL;
+                else if(usageStr.equals("TASK")) usage = NODE.USAGE_TASK;
+                else if(usageStr.equals("TEXT")) usage = NODE.USAGE_TEXT;
+                else if(usageStr.equals("WINDOW")) usage = NODE.USAGE_WINDOW;
+                else if(usageStr.equals("AXIS")) usage = NODE.USAGE_AXIS;
+                else if(usageStr.equals("DISPATCH")) usage = NODE.USAGE_DISPATCH;
+                else usage = NODE.USAGE_ANY;
                 try{
                     if(name.length() > 12) name = name.substring(0, 12);
                     nid = this.tree.addNode(":" + name, usage);
@@ -186,11 +186,11 @@ public class CompileTree extends Thread{
                     final StringTokenizer st = new StringTokenizer(flagsStr, ", ");
                     while(st.hasMoreTokens()){
                         final String flag = st.nextToken();
-                        if(flag.equals("WRITE_ONCE")) flags |= TREENODE.Flags.WRITE_ONCE;
-                        if(flag.equals("COMPRESSIBLE")) flags |= TREENODE.Flags.COMPRESSIBLE;
-                        if(flag.equals("COMPRESS_ON_PUT")) flags |= TREENODE.Flags.COMPRESS_ON_PUT;
-                        if(flag.equals("NO_WRITE_MODEL")) flags |= TREENODE.Flags.NO_WRITE_MODEL;
-                        if(flag.equals("NO_WRITE_SHOT")) flags |= TREENODE.Flags.NO_WRITE_SHOT;
+                        if(flag.equals("WRITE_ONCE")) flags |= NODE.Flags.WRITE_ONCE;
+                        if(flag.equals("COMPRESSIBLE")) flags |= NODE.Flags.COMPRESSIBLE;
+                        if(flag.equals("COMPRESS_ON_PUT")) flags |= NODE.Flags.COMPRESS_ON_PUT;
+                        if(flag.equals("NO_WRITE_MODEL")) flags |= NODE.Flags.NO_WRITE_MODEL;
+                        if(flag.equals("NO_WRITE_SHOT")) flags |= NODE.Flags.NO_WRITE_SHOT;
                     }
                     try{
                         this.tree.setFlags(nid, flags);

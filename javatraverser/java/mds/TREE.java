@@ -13,11 +13,11 @@ import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_a.NidArray;
 import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.CString;
+import mds.data.descriptor_s.NODE;
+import mds.data.descriptor_s.NODE.Flags;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 import mds.data.descriptor_s.Pointer;
-import mds.data.descriptor_s.TREENODE;
-import mds.data.descriptor_s.TREENODE.Flags;
 import mds.mdsip.Connection;
 import mds.mdsip.Connection.Provider;
 
@@ -88,45 +88,60 @@ public final class TREE{
         }
     }
 
+    public final Nid addNode(final NODE node, final String name, final byte usage) throws MdsException {
+        synchronized(this.connection){
+            final Nid def = this.getDefault();
+            node.setDefault();
+            final Nid nid = this.addNode(name, usage);
+            def.setDefault();
+            return nid;
+        }
+    }
+
     public final Nid addNode(final String path, final byte usage) throws MdsException {
         synchronized(this.connection){
             final IntegerStatus res = this.setActive().treeshr.treeAddNode(this.ctx, path, usage);
             MdsException.handleStatus(res.status);
             final Nid nid = new Nid(res.data, this);
-            if(usage == TREENODE.USAGE_SUBTREE) nid.setSubtree();
+            if(usage == NODE.USAGE_SUBTREE) nid.setSubtree();
             return nid;
         }
     }
 
-    public final void addTag(final int nid, final String tag) throws MdsException {
+    public final TREE addTag(final int nid, final String tag) throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treeAddTag(this.ctx, nid, tag));
         }
+        return this;
     }
 
-    public final void clearFlags(final int nid, final int flags) throws MdsException {
+    public final TREE clearFlags(final int nid, final int flags) throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treeSetNciItm(this.ctx, nid, false, flags & 0x7FFFFFFC));
         }
+        return this;
     }
 
-    public final void clearTags(final int nid) throws MdsException {
+    public final TREE clearTags(final int nid) throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treeRemoveNodesTags(this.ctx, nid));
         }
+        return this;
     }
 
-    public final void close() throws MdsException {
+    public final TREE close() throws MdsException {
         synchronized(this.connection){
             final int status = this.treeshr.treeClose(this.ctx, this.expt, this.shot);
             MdsException.handleStatus(status);
         }
+        return this;
     }
 
-    public final void deleteExecute() throws MdsException {
+    public final TREE deleteExecute() throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treeDeleteNodeExecute(this.ctx));
         }
+        return this;
     }
 
     public final Nid[] deleteGetNids() throws MdsException {
@@ -151,14 +166,16 @@ public final class TREE{
         }
     }
 
-    public final void doAction(final int nid) {
+    public final TREE doAction(final int nid) {
         synchronized(this.connection){
             // TODO: MdsException.handleStatus(this.setActive());
         }
+        return this;
     }
 
-    public final void doDeviceMethod(final int nid, final String name) {
+    public final TREE doDeviceMethod(final int nid, final String name) {
         // TODO Auto-generated method stub
+        return this;
     }
 
     public final Nid[] findNodeWild(final int usage) throws MdsException {
@@ -475,11 +492,9 @@ public final class TREE{
         return this.getNumSegments(nid) > 0;
     }
 
-    public final int open() throws MdsException {
+    public final TREE open() throws MdsException {
         synchronized(this.connection){
             final int status;
-            // this.treeshr.treeUsePrivateCtx(this.ctx, true);
-            // try{
             switch(this.mode){
                 case TREE.NEW:
                     this.mode = TREE.EDITABLE;
@@ -497,72 +512,77 @@ public final class TREE{
                     status = this.treeshr.treeOpen(this.ctx, this.expt, this.shot, this.isReadonly());
             }
             MdsException.handleStatus(status);
-            // }finally{
-            // this.treeshr.treeUsePrivateCtx(null, false);
-            // }
-            return status;
+            return this;
         }
     }
 
-    public final int open(final int mode) throws MdsException {
+    public final TREE open(final int mode) throws MdsException {
         this.mode = mode;
         return this.open();
     }
 
-    public final void putRecord(final int nid, final Descriptor data) throws MdsException {
+    public final TREE putRecord(final int nid, final Descriptor data) throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treePutRecord(this.ctx, nid, data));
         }
+        return this;
     }
 
-    public final void putRow(final int nid, final long time, final Descriptor_A data) throws MdsException {
+    public final TREE putRow(final int nid, final long time, final Descriptor_A data) throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treePutRow(this.ctx, nid, 1 << 20, time, data));
         }
+        return this;
     }
 
-    public final void quit() throws MdsException {
+    public final TREE quit() throws MdsException {
         synchronized(this.connection){
             final int status = this.treeshr.treeQuitTree(this.ctx);
             MdsException.handleStatus(status);
         }
+        return this;
     }
 
     public final TREE setActive() throws MdsException {
         return TREE.active = this;
     }
 
-    public final void setDefault(final int nid) throws MdsException {
+    public final TREE setDefault(final int nid) throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treeSetDefault(this.ctx, nid));
         }
+        return this;
     }
 
-    public final void setFlags(final int nid, final int flags) throws MdsException {
+    public final TREE setFlags(final int nid, final int flags) throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treeSetNciItm(this.ctx, nid, true, flags & 0x7FFFFFFC));
         }
+        return this;
     }
 
-    public final void setPath(final int nid, final String path) throws MdsException {
+    public final TREE setPath(final int nid, final String path) throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treeRenameNode(this.ctx, nid, path));
         }
+        return this;
     }
 
-    public final void setSubtree(final int nid) throws MdsException {
+    public final TREE setSubtree(final int nid) throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treeSetSubtree(this.ctx, nid));
         }
+        return this;
     }
 
-    public final void setTags(final int nid, final String[] tags) throws MdsException {
+    public final TREE setTags(final int nid, final String... tags) throws MdsException {
         synchronized(this.connection){
             this.clearTags(nid);
-            if(tags == null) return;
-            for(final String tag : tags)
-                this.addTag(nid, tag);
+            if(tags == null) return this;
+            for(int i = tags.length; i-- > 0;)
+                this.addTag(nid, tags[i]);
         }
+        return this;
     }
 
     @Override
@@ -575,33 +595,36 @@ public final class TREE{
         return sb.toString();
     }
 
-    public TagRefStatus treeFindTagWild(final String searchstr, final TagRefStatus tag) throws MdsException {
+    public final TagRefStatus treeFindTagWild(final String searchstr, final TagRefStatus tag) throws MdsException {
         return this.treeshr.treeFindTagWild(this.ctx, searchstr, tag);
     }
 
-    public final void turnOff(final int nid) throws MdsException {
+    public final TREE turnOff(final int nid) throws MdsException {
         synchronized(this.connection){
             final int status = this.setActive().treeshr.treeTurnOff(this.ctx, nid);
-            if(status == MdsException.TreeLOCK_FAILURE) return;// ignore: it changes the state
+            if(status == MdsException.TreeLOCK_FAILURE) return this;// ignore: it changes the state
             MdsException.handleStatus(status);
         }
+        return this;
     }
 
-    public final void turnOn(final int nid) throws MdsException {
+    public final TREE turnOn(final int nid) throws MdsException {
         synchronized(this.connection){
             final int status = this.setActive().treeshr.treeTurnOn(this.ctx, nid);
-            if(status == MdsException.TreeLOCK_FAILURE) return;// ignore: it changes the state
+            if(status == MdsException.TreeLOCK_FAILURE) return this;// ignore: it changes the state
             MdsException.handleStatus(status);
         }
+        return this;
     }
 
-    public TREE withPrivateConnection() {
+    public final TREE withPrivateConnection() {
         return new TREE(new Connection(this.getProvider()), this.expt, this.shot);
     }
 
-    public final void write() throws MdsException {
+    public final TREE write() throws MdsException {
         synchronized(this.connection){
             MdsException.handleStatus(this.setActive().treeshr.treeWriteTree(this.ctx));
         }
+        return this;
     }
 }

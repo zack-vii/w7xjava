@@ -22,8 +22,8 @@ import mds.data.descriptor_r.Action;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
-import mds.data.descriptor_s.TREENODE;
-import mds.data.descriptor_s.TREENODE.Flags;
+import mds.data.descriptor_s.NODE;
+import mds.data.descriptor_s.NODE.Flags;
 
 public class Node{
     @SuppressWarnings("serial")
@@ -51,7 +51,7 @@ public class Node{
             super((node.isDefault() ? new StringBuilder(node.getName().length() + 2).append('(').append(node).append(')').toString() : node.toString()), icon, SwingConstants.LEFT);
             this.node = node;
             final Flags flags = node.getFlags();
-            if(node.getUsage() == TREENODE.USAGE_SUBTREE) this.setForeground(flags.isIncludeInPulse() ? this.CInclude : this.CExclude);
+            if(node.getUsage() == NODE.USAGE_SUBTREE) this.setForeground(flags.isIncludeInPulse() ? this.CInclude : this.CExclude);
             else{
                 if(flags.isNoWriteModel() & flags.isNoWriteModel()) this.setForeground(this.CNoWrite);
                 else if(flags.isNoWriteModel()) this.setForeground(node.treeview.isModel() ? (flags.isWriteOnce() ? this.CNoWriteO : this.CNoWrite) : (flags.isWriteOnce() ? this.CWriteO : this.CWrite));
@@ -179,7 +179,7 @@ public class Node{
     }
 
     public final Node addChild(final String name) throws MdsException {
-        return this.addNode(name, TREENODE.USAGE_STRUCTURE);
+        return this.addNode(name, NODE.USAGE_STRUCTURE);
     }
 
     public final Node addDevice(final String name, final String type) throws MdsException {
@@ -191,11 +191,11 @@ public class Node{
         }finally{
             prev_default.setDefault();
         }
-        return this.addNode(new_nid, TREENODE.USAGE_DEVICE);
+        return this.addNode(new_nid, NODE.USAGE_DEVICE);
     }
 
     private final Node addNode(final Nid new_nid, final int usage) {
-        final boolean ismember = usage != TREENODE.USAGE_STRUCTURE || usage != TREENODE.USAGE_SUBTREE;
+        final boolean ismember = usage != NODE.USAGE_STRUCTURE || usage != NODE.USAGE_SUBTREE;
         final Node newNode = new Node(this.treeview, new_nid, this, ismember);
         this.expand();
         if(ismember){
@@ -479,7 +479,7 @@ public class Node{
     }
 
     public final Descriptor getSignal() throws MdsException {
-        final TREENODE res = this.nid.followReference();
+        final NODE res = this.nid.followReference();
         if(res.isSegmented()) return res.getSegment(0);
         return res.getRecord();
     }
@@ -504,7 +504,7 @@ public class Node{
         if(this.ToolTipText == null || now > this.ToolTipLife || this.ToolTipDefault != defaultnid){
             String text = null;
             final String info = this.getInfoTextBox();
-            if(this.getUsage() == TREENODE.USAGE_STRUCTURE || this.getUsage() == TREENODE.USAGE_SUBTREE) return info;
+            if(this.getUsage() == NODE.USAGE_STRUCTURE || this.getUsage() == NODE.USAGE_SUBTREE) return info;
             try{
                 final Descriptor data = this.getData();
                 if(data == null) return info;
@@ -560,7 +560,7 @@ public class Node{
     }
 
     public final boolean isSubTree() {
-        return this.getUsage() == TREENODE.USAGE_SUBTREE;
+        return this.getUsage() == NODE.USAGE_SUBTREE;
     }
 
     final boolean move(final Node newParent) {

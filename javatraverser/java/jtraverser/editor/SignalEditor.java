@@ -19,7 +19,7 @@ import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.Missing;
-import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.NODE;
 
 @SuppressWarnings("serial")
 public class SignalEditor extends JPanel implements ActionListener, Editor{
@@ -31,7 +31,7 @@ public class SignalEditor extends JPanel implements ActionListener, Editor{
     private LabeledExprEditor expr_edit;
     private JPanel            signal_panel;
     private ArrayEditor       dat_edit, raw_edit, dim_edit;
-    private TREENODE          node;
+    private NODE          node;
     private int               segment, numsegments;
 
     public SignalEditor(final TreeDialog dialog){
@@ -48,7 +48,7 @@ public class SignalEditor extends JPanel implements ActionListener, Editor{
         this.addEditor();
     }
 
-    public SignalEditor(final TREENODE node, final TreeDialog dialog){
+    public SignalEditor(final NODE node, final TreeDialog dialog){
         this(dialog);
         this.setNode(node);
     }
@@ -180,7 +180,7 @@ public class SignalEditor extends JPanel implements ActionListener, Editor{
         this.repaint();
     }
 
-    public final void setNode(final TREENODE node) {
+    public final void setNode(final NODE node) {
         this.node = node;
         try{
             this.numsegments = this.node.getNumSegments();

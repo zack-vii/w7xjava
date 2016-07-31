@@ -16,8 +16,8 @@ import devicebeans.Database;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
-import mds.data.descriptor_s.TREENODE;
-import mds.data.descriptor_s.TREENODE.Flags;
+import mds.data.descriptor_s.NODE;
+import mds.data.descriptor_s.NODE.Flags;
 
 public class LoadPulse{
     static class NodeDescriptor{
@@ -164,13 +164,13 @@ public class LoadPulse{
                     outPath = next.toUpperCase();
                 }
                 this.tree.setDefault(currNid);
-                Nid[] nidsNumeric = this.tree.getWild(TREENODE.USAGE_NUMERIC);
+                Nid[] nidsNumeric = this.tree.getWild(NODE.USAGE_NUMERIC);
                 if(nidsNumeric == null) nidsNumeric = new Nid[0];
-                Nid[] nidsText = this.tree.getWild(TREENODE.USAGE_TEXT);
+                Nid[] nidsText = this.tree.getWild(NODE.USAGE_TEXT);
                 if(nidsText == null) nidsText = new Nid[0];
-                Nid[] nidsSignal = this.tree.getWild(TREENODE.USAGE_SIGNAL);
+                Nid[] nidsSignal = this.tree.getWild(NODE.USAGE_SIGNAL);
                 if(nidsSignal == null) nidsSignal = new Nid[0];
-                Nid[] nidsStruct = this.tree.getWild(TREENODE.USAGE_STRUCTURE);
+                Nid[] nidsStruct = this.tree.getWild(NODE.USAGE_STRUCTURE);
                 if(nidsStruct == null) nidsStruct = new Nid[0];
                 //// Get also data from subtree root
                 int addedLen;

@@ -22,8 +22,8 @@ import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
-import mds.data.descriptor_s.TREENODE;
-import mds.data.descriptor_s.TREENODE.Flags;
+import mds.data.descriptor_s.NODE;
+import mds.data.descriptor_s.NODE.Flags;
 import mds.mdsip.Connection;
 
 public class DecompileTree{
@@ -108,8 +108,8 @@ public class DecompileTree{
                 Element docMember = null;
                 try{
                     final byte usage = member.getNciUsage();
-                    if(usage == TREENODE.USAGE_DEVICE) docMember = this.document.createElement("device");
-                    else if(usage == TREENODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
+                    if(usage == NODE.USAGE_DEVICE) docMember = this.document.createElement("device");
+                    else if(usage == NODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
                     else docMember = this.document.createElement("member");
                 }catch(final Exception e){
                     System.err.println(this.error = e.toString());
@@ -234,7 +234,7 @@ public class DecompileTree{
             else{
                 node.setAttribute("NAME", nid.getNciNodeName());
                 final byte usage = nid.getNciUsage();
-                if(usage == TREENODE.USAGE_DEVICE || usage == TREENODE.USAGE_COMPOUND_DATA){
+                if(usage == NODE.USAGE_DEVICE || usage == NODE.USAGE_COMPOUND_DATA){
                     Conglom deviceData = null;
                     try{
                         deviceData = (Conglom)nid.getRecord();
@@ -280,36 +280,36 @@ public class DecompileTree{
                 if(flags.isNoWriteShot()) flagsStr += (flagsStr.length() > 0) ? ",NO_WRITE_SHOT" : "NO_WRITE_SHOT";
                 if(flagsStr.length() > 0) node.setAttribute("FLAGS", flagsStr);
                 // usage
-                if(usage != TREENODE.USAGE_STRUCTURE && usage != TREENODE.USAGE_DEVICE && usage != TREENODE.USAGE_COMPOUND_DATA){
+                if(usage != NODE.USAGE_STRUCTURE && usage != NODE.USAGE_DEVICE && usage != NODE.USAGE_COMPOUND_DATA){
                     String usageStr;
                     switch(usage){
                         default:
                             usageStr = "ANY";
-                        case TREENODE.USAGE_ACTION:
+                        case NODE.USAGE_ACTION:
                             usageStr = "ACTION";
                             break;
-                        case TREENODE.USAGE_DISPATCH:
+                        case NODE.USAGE_DISPATCH:
                             usageStr = "DISPATCH";
                             break;
-                        case TREENODE.USAGE_NUMERIC:
+                        case NODE.USAGE_NUMERIC:
                             usageStr = "NUMERIC";
                             break;
-                        case TREENODE.USAGE_SIGNAL:
+                        case NODE.USAGE_SIGNAL:
                             usageStr = "SIGNAL";
                             break;
-                        case TREENODE.USAGE_TASK:
+                        case NODE.USAGE_TASK:
                             usageStr = "TASK";
                             break;
-                        case TREENODE.USAGE_TEXT:
+                        case NODE.USAGE_TEXT:
                             usageStr = "TEXT";
                             break;
-                        case TREENODE.USAGE_WINDOW:
+                        case NODE.USAGE_WINDOW:
                             usageStr = "WINDOW";
                             break;
-                        case TREENODE.USAGE_AXIS:
+                        case NODE.USAGE_AXIS:
                             usageStr = "AXIS";
                             break;
-                        case TREENODE.USAGE_SUBTREE:
+                        case NODE.USAGE_SUBTREE:
                             usageStr = "SUBTREE";
                             break;
                     }
@@ -331,8 +331,8 @@ public class DecompileTree{
                     }
                 }
                 // handle descendants, if not subtree
-                if(usage != TREENODE.USAGE_SUBTREE){
-                    if(usage == TREENODE.USAGE_DEVICE || usage == TREENODE.USAGE_COMPOUND_DATA){
+                if(usage != NODE.USAGE_SUBTREE){
+                    if(usage == NODE.USAGE_DEVICE || usage == NODE.USAGE_COMPOUND_DATA){
                         // int numFields = info.getConglomerateNids() - 1;
                         final Nid[] nids = nid.getNciConglomerateNids().toArray();
                         for(final Nid n : nids)
@@ -351,8 +351,8 @@ public class DecompileTree{
                             for(final Nid member : members){
                                 Element docMember;
                                 final byte cusage = member.getNciUsage();
-                                if(cusage == TREENODE.USAGE_DEVICE) docMember = this.document.createElement((cusage == TREENODE.USAGE_DEVICE) ? "device" : "compound_data");
-                                else if(cusage == TREENODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
+                                if(cusage == NODE.USAGE_DEVICE) docMember = this.document.createElement((cusage == NODE.USAGE_DEVICE) ? "device" : "compound_data");
+                                else if(cusage == NODE.USAGE_COMPOUND_DATA) docMember = this.document.createElement("compound_data");
                                 else docMember = this.document.createElement("member");
                                 node.appendChild(docMember);
                                 this.recDecompile(member, docMember, false, isFull);

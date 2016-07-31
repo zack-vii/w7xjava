@@ -15,7 +15,7 @@ import javax.swing.border.LineBorder;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
-import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.NODE;
 
 @SuppressWarnings("serial")
 public class DeviceDispatch extends DeviceComponent{
@@ -125,14 +125,14 @@ public class DeviceDispatch extends DeviceComponent{
             Nid currNid = new Nid(this.baseNid.getValue());
             final Nid[] components = this.nidData.getNciConglomerateNids().toArray();
             for(this.i = this.num_actions = 0; this.i < components.length; this.i++){
-                if(components[this.i].getNciUsage() == TREENODE.USAGE_ACTION) this.num_actions++;
+                if(components[this.i].getNciUsage() == NODE.USAGE_ACTION) this.num_actions++;
                 currNid = new Nid(currNid.getValue() + 1);
             }
             this.actions = new Descriptor[this.num_actions];
             this.dispatch_fields = new DeviceDispatchField[this.num_actions];
             currNid = new Nid(this.nidData.getValue());
             for(this.i = this.j = this.num_actions = 0; this.i < components.length; this.i++){
-                if(components[this.i].getNciUsage() == TREENODE.USAGE_ACTION){
+                if(components[this.i].getNciUsage() == NODE.USAGE_ACTION){
                     try{
                         this.actions[this.j] = this.subtree.tdiEvaluate(currNid);
                     }catch(final Exception e){
@@ -148,7 +148,7 @@ public class DeviceDispatch extends DeviceComponent{
                 currNid = new Nid(currNid.getValue() + 1);
             }
             for(this.i = 0; this.i < components.length; this.i++){
-                if(components[this.i].getNciUsage() == TREENODE.USAGE_ACTION){
+                if(components[this.i].getNciUsage() == NODE.USAGE_ACTION){
                     final String name = components[this.i].getNciNodeName();
                     this.menu.addItem(name);
                 }

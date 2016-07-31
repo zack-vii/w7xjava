@@ -6,7 +6,7 @@ import mds.TREE;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 
-public final class Path extends TREENODE<String>{
+public final class Path extends NODE<String>{
     public Path(final ByteBuffer b){
         super(b);
     }

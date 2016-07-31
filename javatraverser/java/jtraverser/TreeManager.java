@@ -49,7 +49,7 @@ import mds.TREE;
 import mds.TreeShr;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Nid;
-import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.NODE;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
@@ -87,17 +87,17 @@ public class TreeManager extends JTabbedPane{
                 "Window"                               //
         };
         private final byte[]   usage = new byte[]{     //
-                TREENODE.USAGE_STRUCTURE,              //
-                TREENODE.USAGE_SUBTREE,                //
-                TREENODE.USAGE_ACTION,                 //
-                TREENODE.USAGE_ANY,                    //
-                TREENODE.USAGE_AXIS,                   //
-                TREENODE.USAGE_DISPATCH,               //
-                TREENODE.USAGE_NUMERIC,                //
-                TREENODE.USAGE_SIGNAL,                 //
-                TREENODE.USAGE_TASK,                   //
-                TREENODE.USAGE_TEXT,                   //
-                TREENODE.USAGE_WINDOW                  //
+                NODE.USAGE_STRUCTURE,              //
+                NODE.USAGE_SUBTREE,                //
+                NODE.USAGE_ACTION,                 //
+                NODE.USAGE_ANY,                    //
+                NODE.USAGE_AXIS,                   //
+                NODE.USAGE_DISPATCH,               //
+                NODE.USAGE_NUMERIC,                //
+                NODE.USAGE_SIGNAL,                 //
+                NODE.USAGE_TASK,                   //
+                NODE.USAGE_TEXT,                   //
+                NODE.USAGE_WINDOW                  //
         };
 
         public AddNodeMenu(final TreeManager treeman, final JComponent menu){
@@ -154,8 +154,8 @@ public class TreeManager extends JTabbedPane{
             boolean[] mask = new boolean[this.items.size()];
             if(node != null){
                 final int usage = node.getUsage();
-                final boolean enable = !(usage == TREENODE.USAGE_STRUCTURE || usage == TREENODE.USAGE_SUBTREE);
-                final boolean enable2 = (usage == TREENODE.USAGE_SIGNAL);
+                final boolean enable = !(usage == NODE.USAGE_STRUCTURE || usage == NODE.USAGE_SUBTREE);
+                final boolean enable2 = (usage == NODE.USAGE_SIGNAL);
                 mask = new boolean[]{enable, enable2, true, true, true, true};
             }
             for(int i = 0; i < mask.length; i++)
@@ -216,7 +216,7 @@ public class TreeManager extends JTabbedPane{
             boolean[] mask = new boolean[this.items.size()];
             if(node != null){
                 final int usage = node.getUsage();
-                final boolean isst = usage == TREENODE.USAGE_SUBTREE;
+                final boolean isst = usage == NODE.USAGE_SUBTREE;
                 mask = new boolean[]{!isst || node.nid.getValue() == 0, node.nid.getValue() != 0, !isst, !isst, node.nid.getValue() > 0, Node.isCopied()};
             }
             for(int i = 0; i < mask.length; i++)
@@ -448,7 +448,7 @@ public class TreeManager extends JTabbedPane{
                 pop.show((Component)ev.getSource(), ev.getX(), ev.getY());
             }else if((ev.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && (ev.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK)) != 0){
                 if(currnode.isSubTree()) try{
-                    currnode.toggleFlags(TREENODE.Flags.INCLUDE_IN_PULSE);
+                    currnode.toggleFlags(NODE.Flags.INCLUDE_IN_PULSE);
                 }catch(final MdsException e){
                     MdsException.stderr("INCLUDE_IN_PULSE", e);
                 }
@@ -513,9 +513,9 @@ public class TreeManager extends JTabbedPane{
             boolean[] mask = new boolean[this.items.size()];
             if(node != null){
                 final int usage = node.getUsage();
-                final boolean isst = usage == TREENODE.USAGE_STRUCTURE || usage == TREENODE.USAGE_SUBTREE;
-                final boolean isact = usage == TREENODE.USAGE_ACTION || usage == TREENODE.USAGE_TASK;
-                final boolean isdev = usage == TREENODE.USAGE_DEVICE;
+                final boolean isst = usage == NODE.USAGE_STRUCTURE || usage == NODE.USAGE_SUBTREE;
+                final boolean isact = usage == NODE.USAGE_ACTION || usage == NODE.USAGE_TASK;
+                final boolean isdev = usage == NODE.USAGE_DEVICE;
                 mask = new boolean[]{!isst, true, true, true, isdev, isact};
             }
             for(int i = 0; i < mask.length; i++)

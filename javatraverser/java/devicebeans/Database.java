@@ -19,7 +19,7 @@ import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Pointer;
-import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.NODE;
 import mds.mdsip.Connection;
 import mds.mdsip.Connection.Provider;
 
@@ -125,7 +125,7 @@ public final class Database{
         final IntegerStatus res = this.treeshr.treeAddNode(this.ctx, path, usage);
         MdsException.handleStatus(res.status);
         final Nid nid = new Nid(res.data);
-        if(usage == TREENODE.USAGE_SUBTREE) this.setSubtree(nid);
+        if(usage == NODE.USAGE_SUBTREE) this.setSubtree(nid);
         return nid;
     }
 

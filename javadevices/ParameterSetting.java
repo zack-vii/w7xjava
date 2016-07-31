@@ -65,11 +65,10 @@ import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import devicebeans.Database;
 import devicebeans.DeviceCloseListener;
 import devicebeans.DeviceSetup;
 import devicebeans.tools.LoadPulse;
-import jTraverser.Database;
-import jTraverser.NodeInfo;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Int32;
@@ -281,7 +280,7 @@ public class ParameterSetting extends JFrame implements Printable{
                                     ParameterSetting.this.modifiedNids[i] = dis.readInt();
                                 ParameterSetting.this.getCurrFFState();
                             }else // currIdx == -2. Notified and of applyToModel
-                            ParameterSetting.this.getCurrFFState();
+                                ParameterSetting.this.getCurrFFState();
                         }
                     }catch(final Exception exc){
                         System.out.println("Client exited");
@@ -298,7 +297,7 @@ public class ParameterSetting extends JFrame implements Printable{
 
         private String executePulseCheck() {
             try{
-                final Descriptor msgData = ParameterSetting.this.rfx.evaluate("ParameterSettingCheck()");
+                final Descriptor msgData = ParameterSetting.this.rfx.tdiExecute("ParameterSettingCheck()");
                 String s = msgData.toString();
                 s = s.substring(1, s.length() - 1);
                 final StringTokenizer st = new StringTokenizer(s, "#");
@@ -608,7 +607,7 @@ public class ParameterSetting extends JFrame implements Printable{
             while(pathNames.hasMoreElements()){
                 final String currPath = (String)pathNames.nextElement();
                 try{
-                    final Nid currNid = ParameterSetting.this.rfx.resolve(new Path(currPath));
+                    final Nid currNid = new Path(currPath).toNid();
                     nids[idx] = currNid.getValue();
                     idx++;
                 }catch(final Exception exc){
@@ -754,11 +753,11 @@ public class ParameterSetting extends JFrame implements Printable{
      */
     Hashtable        mapSetupHash     = new Hashtable();
     int              maxPMAT, maxPCATParallel, maxPCATSeries, maxTFAT, maxTCCH, maxTCAC, maxPMVoltage,
-                             // maxFillVoltage, maxPuffVoltage,
-                             maxTempRoom, maxTempSaddle, maxTempMagnetizing, maxPOhm, maxPrTime, maxTempTor, maxI2T, maxCurrSellaV, maxCurrSellaVI0, maxCurrSellaP, maxFillPuffVoltage;
+            // maxFillVoltage, maxPuffVoltage,
+            maxTempRoom, maxTempSaddle, maxTempMagnetizing, maxPOhm, maxPrTime, maxTempTor, maxI2T, maxCurrSellaV, maxCurrSellaVI0, maxCurrSellaP, maxFillPuffVoltage;
     JTextField       maxPMATF, maxPCATParallelF, maxPCATSeriesF, maxTFATF, maxTCCHF, maxTCACF, maxPMVoltageF,
-                             // maxFillVoltageF, maxPuffVoltageF,
-                             maxTempRoomF, maxTempSaddleF, maxTempMagnetizingF, maxPOhmF, maxPrTimeF, maxTempTorF, maxI2TF, maxCurrSellaVF, maxCurrSellaVI0F, maxCurrSellaPF, maxFillPuffVoltageF;
+            // maxFillVoltageF, maxPuffVoltageF,
+            maxTempRoomF, maxTempSaddleF, maxTempMagnetizingF, maxPOhmF, maxPrTimeF, maxTempTorF, maxI2TF, maxCurrSellaVF, maxCurrSellaVI0F, maxCurrSellaPF, maxFillPuffVoltageF;
     JTextArea        messageArea;
     JComboBox        modeC;
     Hashtable        modelSetupHash   = new Hashtable();
@@ -784,13 +783,13 @@ public class ParameterSetting extends JFrame implements Printable{
     JButton          timesB, poloidalControlB, axiSetupB, pcSetupB, pmSetupB, ipSetupB, toroidalControlB, chopperSetupB, ffSetupB, inverterSetupB, tfSetupB, bfControlB, mhdControlB, viSetupB, mopB, ansaldoConfigB, unitsConfigB, poloidalConfigB,
             toroidalConfigB, mhdConfigB, viConfigB;
     Nid              timesRoot, poloidalControlRoot, axiSetupRoot, pcSetupRoot, pmSetupRoot, ipSetupRoot, toroidalControlRoot, chopperSetupRoot, ffSetupRoot, inverterSetupRoot, tfSetupRoot, bfControlRoot, mhdControlRoot, viSetupRoot, mopRoot,
-            ansaldoConfigRoot, unitsConfigRoot, poloidalConfigRoot, toroidalConfigRoot, mhdConfigRoot, viConfigRoot, pvSetupRoot,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    // Usato
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // solo
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // per
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // la
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // configurazione
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // PV
-                             pelletSetupRoot, diagTimesSetupRoot;
+            ansaldoConfigRoot, unitsConfigRoot, poloidalConfigRoot, toroidalConfigRoot, mhdConfigRoot, viConfigRoot, pvSetupRoot,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              // Usato
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // solo
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // per
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // la
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // configurazione
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // PV
+            pelletSetupRoot, diagTimesSetupRoot;
     String[]         titles           = {"TIMES SETUP", "POLOIDAL CONTROL", "AXISYMMETRIC SETUP", "PC SETUP", "PM SETUP", "TOROIDAL CONTROL", "CHOPPER SETUP", "FEEDFORWARD SETUP", "INVERTER SETUP", "TF SETUP", "B&F CONTROL", "MHD CONTROL", "VI SETUP", "MOP", "UNITS SETUP", "IP SETUP", "UNITS CONFIG", "POLOIDAL CONFIG", "TOROIDAL CONFIG", "MHD CONFIG", "VI CONFIG"};
 
     ParameterSetting(){
@@ -1929,7 +1928,7 @@ public class ParameterSetting extends JFrame implements Printable{
             @Override
             public void stateChanged(final ChangeEvent e) {
                 if(ParameterSetting.this.tabbedP.getSelectedIndex() == 2) // If showing linits
-                ParameterSetting.this.getLimits();
+                    ParameterSetting.this.getLimits();
             }
         });
         this.tabbedP.add(setupJp, "Setup");
@@ -1994,7 +1993,7 @@ public class ParameterSetting extends JFrame implements Printable{
             try{
                 currPath = (String)pathNames.nextElement();
                 System.out.println("APPLY SETUP: " + currPath);
-                final Nid currNid = this.rfx.resolve(new Path(currPath));
+                final Nid currNid = new Path(currPath).toNid();
                 currDecompiled = (String)setupHash.get(currPath);
                 try{
                     savedDecompiled = (this.rfx.getData(currNid)).toString();
@@ -2002,7 +2001,7 @@ public class ParameterSetting extends JFrame implements Printable{
                     savedDecompiled = "";
                 }
                 if(!currDecompiled.equals(savedDecompiled)){
-                    final Descriptor currData = Database.tdiCompile(currDecompiled);
+                    final Descriptor currData = this.rfx.tdiCompile(currDecompiled);
                     this.rfx.putData(currNid, currData);
                 }
             }catch(final Exception exc){
@@ -2211,20 +2210,20 @@ public class ParameterSetting extends JFrame implements Printable{
 
     String checkLimits() {
         try{
-            final float[] pmWave = (this.rfx.evaluate(new Path("\\PM_SETUP:WAVE"))).toFloat();
+            final float[] pmWave = (this.rfx.tdiEvaluate(new Path("\\PM_SETUP:WAVE"))).toFloat();
             float maxCurr = 0;
             for(final float element : pmWave){
                 if(maxCurr < element) maxCurr = element;
             }
             if(maxCurr > this.maxPMAT){ return "Corrente Magnetizzante sopra i limiti"; }
             final int numPMUnits = this.countPMUnits();
-            final float rTransfer = (this.rfx.evaluate(new Path("\\P_CONFIG:LOAD_RESIST"))).toFloat()[0];
+            final float rTransfer = (this.rfx.tdiEvaluate(new Path("\\P_CONFIG:LOAD_RESIST"))).toFloat()[0];
             if(maxCurr * numPMUnits * rTransfer > this.maxPMVoltage) return "Tensione di picco avvolgimento magnetizzante sopra i limiti";
         }catch(final Exception exc){
             System.err.println("Cannot read max PMAT: " + exc);
         }
         try{
-            final float[] pmWave = (this.rfx.evaluate(new Path("\\TF_SETUP:WAVE"))).toFloat();
+            final float[] pmWave = (this.rfx.tdiEvaluate(new Path("\\TF_SETUP:WAVE"))).toFloat();
             float maxCurr = 0;
             for(final float element : pmWave){
                 if(maxCurr < element) maxCurr = element;
@@ -2234,7 +2233,7 @@ public class ParameterSetting extends JFrame implements Printable{
             System.err.println("Cannot read max TFAT: " + exc);
         }
         try{
-            final float[] pmWave = (this.rfx.evaluate(new Path("\\CHOPPER_SETUP:WAVE"))).toFloat();
+            final float[] pmWave = (this.rfx.tdiEvaluate(new Path("\\CHOPPER_SETUP:WAVE"))).toFloat();
             float maxCurr = 0;
             for(final float element : pmWave){
                 if(maxCurr < element) maxCurr = element;
@@ -2245,7 +2244,7 @@ public class ParameterSetting extends JFrame implements Printable{
         }
         try{
             for(int waveIdx = 1; waveIdx <= 12; waveIdx++){
-                final float[] pmWave = (this.rfx.evaluate(new Path("\\INVERTER_SETUP.CHANNEL_" + waveIdx + ":WAVE"))).toFloat();
+                final float[] pmWave = (this.rfx.tdiEvaluate(new Path("\\INVERTER_SETUP.CHANNEL_" + waveIdx + ":WAVE"))).toFloat();
                 float maxCurr = 0;
                 for(final float element : pmWave){
                     if(maxCurr > element) maxCurr = element;
@@ -2256,10 +2255,10 @@ public class ParameterSetting extends JFrame implements Printable{
             System.err.println("Cannot read max Inverter current: " + exc);
         }
         try{
-            final String pcConfig = ((CString)this.rfx.evaluate(new Path("\\PC_SETUP:CONFIG"))).getValue();
+            final String pcConfig = ((CString)this.rfx.tdiEvaluate(new Path("\\PC_SETUP:CONFIG"))).getValue();
             float maxVolt = 0;
             // float[] pcWave = (rfx.evaluateData(new Path("\\PC_SETUP:WAVE"))).toFloat();
-            final float[] pcWave = (this.rfx.evaluate(new Path("\\RFX::PC_SETUP.WAVE_1:WAVE"))).toFloat();
+            final float[] pcWave = (this.rfx.tdiEvaluate(new Path("\\RFX::PC_SETUP.WAVE_1:WAVE"))).toFloat();
             for(final float element : pcWave){
                 if(maxVolt < element) maxVolt = element;
             }
@@ -2272,7 +2271,7 @@ public class ParameterSetting extends JFrame implements Printable{
             System.err.println("Cannot read max PCAT voltage: " + exc);
         }
         try{
-            final float[] currWave = (this.rfx.evaluate(new Path("\\VI_SETUP:FILL_WAVE"))).toFloat();
+            final float[] currWave = (this.rfx.tdiEvaluate(new Path("\\VI_SETUP:FILL_WAVE"))).toFloat();
             float maxVolt = 0;
             for(final float element : currWave){
                 if(maxVolt < element) maxVolt = element;
@@ -2283,7 +2282,7 @@ public class ParameterSetting extends JFrame implements Printable{
             System.err.println("Cannot read max Filling (He/impurities injection) voltage: " + exc);
         }
         try{
-            final float[] currWave = (this.rfx.evaluate(new Path("\\VI_SETUP:PUFF_WAVE"))).toFloat();
+            final float[] currWave = (this.rfx.tdiEvaluate(new Path("\\VI_SETUP:PUFF_WAVE"))).toFloat();
             float maxVolt = 0;
             for(final float element : currWave){
                 if(maxVolt < element) maxVolt = element;
@@ -2294,23 +2293,23 @@ public class ParameterSetting extends JFrame implements Printable{
             System.err.println("Cannot read max Puffing (H2 injection) voltage: " + exc);
         }
         try{
-            final float startPR = (this.rfx.evaluate(new Path("\\RFX::T_START_PR"))).toFloat()[0];
-            final float stopPR = (this.rfx.evaluate(new Path("\\RFX::T_STOP_PR"))).toFloat()[0];
+            final float startPR = (this.rfx.tdiEvaluate(new Path("\\RFX::T_START_PR"))).toFloat()[0];
+            final float stopPR = (this.rfx.tdiEvaluate(new Path("\\RFX::T_STOP_PR"))).toFloat()[0];
             if((stopPR - startPR) > this.maxPrTime / 1000.){ return "Durata di accensione di PR oltre i limiti"; }
         }catch(final Exception exc){
             System.err.println("Cannot read PR timing : " + exc);
         }
         try{
-            final int controlType = (this.rfx.evaluate(new Path("\\RFX::IP_CONTROL:TYPE"))).toInt()[0];
+            final int controlType = (this.rfx.tdiEvaluate(new Path("\\RFX::IP_CONTROL:TYPE"))).toInt()[0];
             if(controlType > 1){
-                final float phomMax = (this.rfx.evaluate(new Path("\\RFX::IP_CONTROL.RFP:POHMMAX"))).toFloat()[0];
+                final float phomMax = (this.rfx.tdiEvaluate(new Path("\\RFX::IP_CONTROL.RFP:POHMMAX"))).toFloat()[0];
                 if(phomMax > this.maxPOhm * 1e6){ return "Valore di Pohm Max definita in IP_CONTROL oltre i limiti"; }
             }
         }catch(final Exception exc){
             System.err.println("Cannot read Pohm Max : " + exc);
         }
         try{
-            final float i2tTF = (this.rfx.evaluate("computeTF_i2t()")).toFloat()[0];
+            final float i2tTF = (this.rfx.tdiEvaluate("computeTF_i2t()")).toFloat()[0];
             if(i2tTF > this.maxI2T * 1e6){ return "Valore di I2T su avvolgimento toroidale oltre i limiti"; }
         }catch(final Exception exc){
             System.err.println("Cannot compute I2T for toroidal coils : " + exc);
@@ -2358,9 +2357,9 @@ public class ParameterSetting extends JFrame implements Printable{
         try{
             CString data;
             String currVersion, version;
-            data = (CString)this.rfx.evaluate(new Path(currPath));
+            data = (CString)this.rfx.tdiEvaluate(new Path(currPath));
             currVersion = data.getValue();
-            data = (CString)this.rfx.evaluate(new Path(configPath));
+            data = (CString)this.rfx.tdiEvaluate(new Path(configPath));
             version = data.getValue();
             final StringTokenizer st1 = new StringTokenizer(currVersion, ".");
             final StringTokenizer st2 = new StringTokenizer(version, ".");
@@ -2642,8 +2641,8 @@ public class ParameterSetting extends JFrame implements Printable{
         }
         try{
             final Nid decNid1 = this.rfx.resolve(new Path(
-            // "\\MHD_AC::CONTROL.PARAMETERS:PAR236_VAL"));
-            "\\MHD_AC::MARTE.PARAMS:PAR_312:DATA"));
+                    // "\\MHD_AC::CONTROL.PARAMETERS:PAR236_VAL"));
+                    "\\MHD_AC::MARTE.PARAMS:PAR_312:DATA"));
             // Nid decNid2 = rfx.resolve(new Path(
             // "\\MHD_BC::CONTROL.PARAMETERS:PAR236_VAL"));
             this.rfx.putData(decNid1, decouplingData);
@@ -2667,7 +2666,7 @@ public class ParameterSetting extends JFrame implements Printable{
     int countPMUnits() {
         final Nid unitsNid = new Nid(this.nids[4].getValue() + 5);
         try{
-            final Descriptor unitsData = this.rfx.evaluate(unitsNid);
+            final Descriptor unitsData = this.rfx.tdiEvaluate(unitsNid);
             final String units = unitsData.toString();
             final StringTokenizer st = new StringTokenizer(units, " ,\"");
             return st.countTokens();
@@ -2764,7 +2763,7 @@ public class ParameterSetting extends JFrame implements Printable{
             }
             if(decNid == null) decNid = this.rfx.resolve(new Path("\\MHD_AC::MARTE.PARAMS:PAR_312:DATA"));
             final Descriptor decouplingData = this.rfx.getData(decNid);
-            final Descriptor evaluatedDecouplingData = this.rfx.evaluate(decouplingData);
+            final Descriptor evaluatedDecouplingData = this.rfx.tdiEvaluate(decouplingData);
             final float[] decouplingValues = (evaluatedDecouplingData).toFloat();
             final int key = Convert.getKey(decouplingValues);
             for(int i = 0; i < this.decouplingKeys.length; i++){
@@ -2857,7 +2856,7 @@ public class ParameterSetting extends JFrame implements Printable{
     float getMagnetizingCurrent() {
         final Nid waveNid = new Nid(this.nids[4].getValue() + 8);
         try{
-            final Descriptor waveData = this.rfx.evaluate(waveNid);
+            final Descriptor waveData = this.rfx.tdiEvaluate(waveNid);
             final float[] wave = waveData.toFloat();
             float maxCurr = wave[0];
             for(final float element : wave)
@@ -2912,7 +2911,7 @@ public class ParameterSetting extends JFrame implements Printable{
     String getPCConnection() {
         final Nid configNid = new Nid(this.nids[3].getValue() + 2);
         try{
-            final CString configData = (CString)this.rfx.evaluate(configNid);
+            final CString configData = (CString)this.rfx.tdiEvaluate(configNid);
             return configData.getValue();
         }catch(final Exception exc){
             System.err.println("Error getting PC connection: " + exc);
@@ -2923,7 +2922,7 @@ public class ParameterSetting extends JFrame implements Printable{
     String getPVConnection() {
         final Nid configNid = new Nid(this.pvSetupRoot.getValue() + 2);
         try{
-            final CString configData = (CString)this.rfx.evaluate(configNid);
+            final CString configData = (CString)this.rfx.tdiEvaluate(configNid);
             return configData.getValue();
         }catch(final Exception exc){
             System.err.println("Error getting PV connection: " + exc);
@@ -2950,7 +2949,7 @@ public class ParameterSetting extends JFrame implements Printable{
     float getRTransfer() {
         final Nid unitsNid = new Nid(this.nids[19].getValue() + 20);
         try{
-            final Descriptor configData = this.rfx.evaluate(unitsNid);
+            final Descriptor configData = this.rfx.tdiEvaluate(unitsNid);
             System.out.println(configData.toFloat()[0]);
             return configData.toFloat()[0];
         }catch(final Exception exc){
@@ -2980,7 +2979,7 @@ public class ParameterSetting extends JFrame implements Printable{
 
     int getShot() {
         try{
-            final int currShot = (int)this.rfx.getCurrentShot("rfx");
+            final int currShot = this.rfx.getCurrentShot("rfx");
             if(this.doingShot) return currShot;
             return currShot + 1;
         }catch(final Exception exc){
@@ -3109,7 +3108,7 @@ public class ParameterSetting extends JFrame implements Printable{
             }
             this.rfx.close();
             final Descriptor cleanExpr = Database.tdiCompile("tcl(\"clean mhd_ff/shot=100/override\")");
-            this.rfx.evaluate(cleanExpr);
+            this.rfx.tdiEvaluate(cleanExpr);
             this.rfx = new Database("rfx", this.shot);
             this.rfx.open();
             ffNid1 = this.rfx.resolve(new Path("\\MHD_AC::CURR_FF"));
@@ -3559,7 +3558,7 @@ public class ParameterSetting extends JFrame implements Printable{
                         System.out.println("SAVE SETUP: " + fullPath);
                         if(fullPath.endsWith(".TRIANGLE:REGULATION")) System.out.println("CUEA");
                         if(!fullPath.endsWith("PARAMS:PAR_312:DATA") && // Escludo le matrici di disaccopiamento!!!!!!!!!!!11
-                        (fullPath.indexOf("SIGNALS:") == -1)) // E i segnali in RfxControl
+                                (fullPath.indexOf("SIGNALS:") == -1)) // E i segnali in RfxControl
                         {
                             this.mapSetupHash.put(fullPath, new Integer(idx));
                             currDec = (this.rfx.getData(deviceNid)).toString();
@@ -3579,7 +3578,7 @@ public class ParameterSetting extends JFrame implements Printable{
                         final String fullPath = this.rfx.getInfo(deviceNid).getFullPath();
                         if(fullPath.endsWith(".TRIANGLE:REGULATION")) System.out.println("CUEA");
                         if(!fullPath.endsWith(":PAR236_VAL") && // Escludo le matrici di disaccopiamento!!!!!!!!!!!11
-                        (fullPath.indexOf("SIGNALS:") == -1)) // E i segnali in RfxControl
+                                (fullPath.indexOf("SIGNALS:") == -1)) // E i segnali in RfxControl
                         {
                             this.mapSetupHash.put(fullPath, new Integer(idx));
                             currDec = (this.rfx.getData(deviceNid)).toString();
@@ -3610,7 +3609,7 @@ public class ParameterSetting extends JFrame implements Printable{
                     try{
                         final String fullPath = this.rfx.getInfo(deviceNid).getFullPath();
                         if(!fullPath.endsWith(":PAR236_VAL") && // Escludo le matrici di disaccopiamento!!!!!!!!!!!11
-                        (fullPath.indexOf("SIGNALS:") == -1)) // E i segnali in RfxControl
+                                (fullPath.indexOf("SIGNALS:") == -1)) // E i segnali in RfxControl
                         {
                             this.mapSetupHash.put(fullPath, new Integer(idx));
                             currDec = (this.rfx.getData(deviceNid)).toString();
@@ -3669,8 +3668,8 @@ public class ParameterSetting extends JFrame implements Printable{
         Convert conv;
         if(decouplingName.equals("diagonal")){
             conv = new Convert(
-            // "\\mhd_ac::control.parameters:par236_val", "diagonal", shot);
-            "\\\\MHD_AC::MARTE.PARAMS:PAR_312:DATA", "diagonal", this.shot);
+                    // "\\mhd_ac::control.parameters:par236_val", "diagonal", shot);
+                    "\\\\MHD_AC::MARTE.PARAMS:PAR_312:DATA", "diagonal", this.shot);
             conv.convertMatrix();
             /*            conv = new Convert(
             //                "\\mhd_bc::control.parameters:par236_val", "diagonal", -1);
@@ -3686,8 +3685,8 @@ public class ParameterSetting extends JFrame implements Printable{
             }
         }else{
             conv = new Convert(
-            // "\\mhd_ac::control.parameters:par236_val", DECOUPLING_BASE_DIR + decouplingName + ".dat", shot);
-            "\\MHD_AC::MARTE.PARAMS:PAR_312:DATA", ParameterSetting.DECOUPLING_BASE_DIR + decouplingName + ".dat", this.shot);
+                    // "\\mhd_ac::control.parameters:par236_val", DECOUPLING_BASE_DIR + decouplingName + ".dat", shot);
+                    "\\MHD_AC::MARTE.PARAMS:PAR_312:DATA", ParameterSetting.DECOUPLING_BASE_DIR + decouplingName + ".dat", this.shot);
             try{
                 this.rfx.close();
                 conv.convertMatrix();

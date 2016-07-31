@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import jtraverser.Node;
 import jtraverser.TreeManager;
 import mds.MdsException;
-import mds.data.descriptor_s.TREENODE.Flags;
+import mds.data.descriptor_s.NODE.Flags;
 
 @SuppressWarnings("serial")
 public final class ModifyFlags extends JDialog{

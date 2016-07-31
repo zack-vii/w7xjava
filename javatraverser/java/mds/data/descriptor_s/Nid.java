@@ -5,7 +5,7 @@ import mds.MdsException;
 import mds.TREE;
 import mds.data.descriptor.DTYPE;
 
-public final class Nid extends TREENODE<Integer>{
+public final class Nid extends NODE<Integer>{
     public static final Nid[] getArrayOfNids(final int[] nid_nums) {
         return Nid.getArrayOfNids(nid_nums, TREE.getActiveTree());
     }

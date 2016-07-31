@@ -19,7 +19,7 @@ import mds.data.descriptor_r.Function;
 import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Pointer;
-import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.NODE;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -84,10 +84,10 @@ public class TreeShr_Test{
 
     @Test
     public final void test101TreeAddNode() throws MdsException {
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "A", TREENODE.USAGE_SIGNAL).status);
-        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "B", TREENODE.USAGE_SUBTREE).status);
-        Assert.assertEquals(TREENODE.USAGE_SIGNAL, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP:A,'USAGE')"));
-        Assert.assertEquals(TREENODE.USAGE_SUBTREE, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP:B,'USAGE')"));
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "A", NODE.USAGE_SIGNAL).status);
+        Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "B", NODE.USAGE_SUBTREE).status);
+        Assert.assertEquals(NODE.USAGE_SIGNAL, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP:A,'USAGE')"));
+        Assert.assertEquals(NODE.USAGE_SUBTREE, TreeShr_Test.mds.getInteger("GetNci(\\TEST::TOP:B,'USAGE')"));
     }
 
     @Test
@@ -99,19 +99,19 @@ public class TreeShr_Test{
     public final void test103TreeManualConglomerate() throws MdsException {
         final int nid = 40;
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeStartConglomerate(TreeShr_Test.ctx, 11));
-        Assert.assertEquals(nid, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "D", TREENODE.USAGE_DEVICE).data);
+        Assert.assertEquals(nid, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "D", NODE.USAGE_DEVICE).data);
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetDefault(TreeShr_Test.ctx, nid));
         Assert.assertEquals(nid, TreeShr_Test.treeshr.treeGetDefaultNid(TreeShr_Test.ctx).data);
-        Assert.assertEquals(nid + 1, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "ACTION", TREENODE.USAGE_ACTION).data);
-        Assert.assertEquals(nid + 2, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "ANY", TREENODE.USAGE_ANY).data);
-        Assert.assertEquals(nid + 3, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "AXIS", TREENODE.USAGE_AXIS).data);
-        Assert.assertEquals(nid + 4, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "COMPOUND", TREENODE.USAGE_COMPOUND_DATA).data);
-        Assert.assertEquals(nid + 5, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "DISPATCH", TREENODE.USAGE_DISPATCH).data);
-        Assert.assertEquals(nid + 6, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "NUMERIC", TREENODE.USAGE_NUMERIC).data);
-        Assert.assertEquals(nid + 7, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "SIGNAL", TREENODE.USAGE_SIGNAL).data);
-        Assert.assertEquals(nid + 8, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "STRUCTURE", TREENODE.USAGE_STRUCTURE).data);
-        Assert.assertEquals(nid + 9, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "TASK", TREENODE.USAGE_TASK).data);
-        Assert.assertEquals(nid + 10, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "TEXT", TREENODE.USAGE_TEXT).data);
+        Assert.assertEquals(nid + 1, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "ACTION", NODE.USAGE_ACTION).data);
+        Assert.assertEquals(nid + 2, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "ANY", NODE.USAGE_ANY).data);
+        Assert.assertEquals(nid + 3, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "AXIS", NODE.USAGE_AXIS).data);
+        Assert.assertEquals(nid + 4, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "COMPOUND", NODE.USAGE_COMPOUND_DATA).data);
+        Assert.assertEquals(nid + 5, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "DISPATCH", NODE.USAGE_DISPATCH).data);
+        Assert.assertEquals(nid + 6, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "NUMERIC", NODE.USAGE_NUMERIC).data);
+        Assert.assertEquals(nid + 7, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "SIGNAL", NODE.USAGE_SIGNAL).data);
+        Assert.assertEquals(nid + 8, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "STRUCTURE", NODE.USAGE_STRUCTURE).data);
+        Assert.assertEquals(nid + 9, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "TASK", NODE.USAGE_TASK).data);
+        Assert.assertEquals(nid + 10, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "TEXT", NODE.USAGE_TEXT).data);
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeEndConglomerate(TreeShr_Test.ctx));
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treeSetDefault(TreeShr_Test.ctx, 0));
     }

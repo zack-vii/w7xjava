@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 import jtraverser.Node;
 import jtraverser.TreeManager;
 import mds.MdsException;
-import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.NODE;
 
 @SuppressWarnings("serial")
 public final class AddNode extends JDialog{
@@ -89,7 +89,7 @@ public final class AddNode extends JDialog{
         this.usage = usage;
         this.e_name.setText("");
         this.e_tag.setText("");
-        this.e_tag.setVisible(usage != TREENODE.USAGE_SUBTREE);
+        this.e_tag.setVisible(usage != NODE.USAGE_SUBTREE);
         this.setTitle("Add to: " + this.currnode.getFullPath());
         this.setLocation(this.treeman.dialogLocation());
         this.setVisible(true);

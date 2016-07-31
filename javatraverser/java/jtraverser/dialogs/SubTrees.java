@@ -24,7 +24,7 @@ import jtraverser.TreeView;
 import jtraverser.TreeManager;
 import mds.MdsException;
 import mds.data.descriptor_s.Nid;
-import mds.data.descriptor_s.TREENODE;
+import mds.data.descriptor_s.NODE;
 
 @SuppressWarnings("serial")
 public class SubTrees extends JDialog{
@@ -138,8 +138,8 @@ public class SubTrees extends JDialog{
             final Nid nid = (Nid)checkbox.getClientProperty("nid");
             final TreeView tree = SubTrees.this.treeman.getCurrentTreeView();
             try{
-                if(checkbox.isSelected()) nid.setFlags(TREENODE.Flags.INCLUDE_IN_PULSE);
-                else nid.clearFlags(TREENODE.Flags.INCLUDE_IN_PULSE);
+                if(checkbox.isSelected()) nid.setFlags(NODE.Flags.INCLUDE_IN_PULSE);
+                else nid.clearFlags(NODE.Flags.INCLUDE_IN_PULSE);
                 ((Node)tree.findPath((String)checkbox.getClientProperty("fullpath")).getUserObject()).getFlags();
             }catch(final MdsException me){}
         }
@@ -151,7 +151,7 @@ public class SubTrees extends JDialog{
         for(final JCheckBox cb : this.checkBoxes){
             final Nid nid = (Nid)cb.getClientProperty("nid");
             try{
-                cb.setSelected((nid.getNciFlags() & TREENODE.Flags.INCLUDE_IN_PULSE) != 0);
+                cb.setSelected((nid.getNciFlags() & NODE.Flags.INCLUDE_IN_PULSE) != 0);
                 cb.setEnabled(true);
             }catch(final MdsException e){
                 cb.setEnabled(false);
