@@ -17,9 +17,9 @@ import mds.data.descriptor_a.Uint64Array;
 import mds.data.descriptor_r.Action;
 import mds.data.descriptor_r.Function;
 import mds.data.descriptor_r.Signal;
+import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Pointer;
-import mds.data.descriptor_s.NODE;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("static-method")
@@ -295,10 +295,9 @@ public class TreeShr_Test{
         final Signal signal = new Signal(new Uint32Array(dims, data), null, new Uint64Array(dim));
         Assert.assertEquals(TreeShr_Test.normal, TreeShr_Test.treeshr.treePutRecord(TreeShr_Test.ctx, 47, signal));
         Assert.assertEquals(signal.decompile(), signal.serializeDsc().deserialize().decompile());
-        final String hex = "Build_Signal(Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)), *, [0Xe8d4a51000QU])";
         final String dec = "Build_Signal(Long_Unsigned(Set_Range(8,7,6,5,4,3,2,1,0LU /*** etc. ***/)), *, [1000000000000QU])";
-        Assert.assertEquals(hex, TreeShr_Test.mds.getString(TreeShr_Test.ctx, "_a=*;_s=TdiShr->TdiDecompile(xd($),xd(_a),val(-1));_a", signal));
-        Assert.assertEquals(hex, TreeShr_Test.mds.getString(TreeShr_Test.ctx, "_a=GETNCI(47,'RECORD');_s=TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a"));
+        Assert.assertEquals(dec, TreeShr_Test.mds.getString(TreeShr_Test.ctx, "_a=*;_s=TdiShr->TdiDecompile(xd($),xd(_a),val(-1));_a", signal));
+        Assert.assertEquals(dec, TreeShr_Test.mds.getString(TreeShr_Test.ctx, "_a=GETNCI(47,'RECORD');_s=TdiShr->TdiDecompile(xd(_a),xd(_a),val(-1));_a"));
         Assert.assertEquals(dec, TreeShr_Test.treeshr.treeGetRecord(TreeShr_Test.ctx, 47).data.decompile());
     }
 
