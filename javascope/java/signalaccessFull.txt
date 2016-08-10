@@ -1,1 +1,1 @@
-signalaccessFull-1.0.35-ueberjar.jar
+signalaccessFull-1.0.36-ueberjar.jar

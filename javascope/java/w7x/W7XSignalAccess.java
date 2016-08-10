@@ -248,7 +248,7 @@ public final class W7XSignalAccess{
         return null;
     }
 
-    /** Returns a list of Signal chunks multithreaded read based on path String and TimeInterval **/
+    /** Returns a list of Signal chunks multi-threaded read based on path String and TimeInterval **/
     public static final Signal[] readBoxes(final String path, final TimeInterval interval) throws IOException {
         final ReadOptions options = ReadOptions.firstNSamples(W7XSignalAccess.MAX_SAMPLES);
         final SignalReader reader = W7XSignalAccess.getReader(path);
