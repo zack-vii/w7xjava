@@ -138,6 +138,7 @@ SET MDSIP_SRC=^
   mds\Mds.java ^
   mds\MdsException.java ^
   mds\MdsShr.java ^
+  mds\TCL.java ^
   mds\TdiShr.java ^
   mds\TreeShr.java ^
   mds\TREE.java ^
