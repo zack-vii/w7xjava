@@ -2,6 +2,7 @@ package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
 import mds.MdsException;
+import mds.TCL;
 import mds.TREE;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
@@ -185,8 +186,12 @@ public abstract class NODE<T>extends Descriptor_S<T>{
         return this;
     }
 
-    public final NODE doDeviceMethod(final String name) throws MdsException {
-        this.tree.doDeviceMethod(this.getNidNumber(), name);
+    public final NODE doDeviceMethod(final String method) throws MdsException {
+        return this.doDeviceMethod(method, null);
+    }
+
+    public final NODE doDeviceMethod(final String method, final String arg) throws MdsException {
+        new TCL(this.tree.mds).doMethod(this.getNciPath(), method, arg, true);
         return this;
     }
 
@@ -205,7 +210,7 @@ public abstract class NODE<T>extends Descriptor_S<T>{
     }
 
     public final Descriptor getNciChild(final String name) throws MdsException {
-        return this.tree.connection.getDescriptor("GETNCI($,$)", this, new CString(name));
+        return this.tree.mds.getDescriptor("GETNCI($,$)", this, new CString(name));
     }
 
     public final NidArray getNciChildrenNids() throws MdsException {

@@ -135,7 +135,7 @@ SET LOCAL_SRC=^
   local\localDatabase.java
 
 SET MDSIP_SRC=^
-  mds\ITreeShr.java ^
+  mds\Mds.java ^
   mds\MdsException.java ^
   mds\MdsShr.java ^
   mds\TdiShr.java ^

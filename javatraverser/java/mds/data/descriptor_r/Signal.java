@@ -1,12 +1,12 @@
 package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
+import mds.Mds;
 import mds.MdsException;
 import mds.data.descriptor.ARRAY;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Missing;
-import mds.mdsip.Connection;
 
 public final class Signal extends BUILD{
     public Signal(final ByteBuffer b) throws MdsException{
@@ -22,7 +22,7 @@ public final class Signal extends BUILD{
         Descriptor data;
         if((data = this.getDescriptor(0)) instanceof ARRAY) return data;
         if((data = this.getDescriptor(0).getData()) == Missing.NEW) try{
-            return Connection.getActiveConnection().getDescriptor("DATA($)", this);
+            return Mds.getActiveMds().getDescriptor("DATA($)", this);
         }catch(final MdsException e){}
         return data;
     }

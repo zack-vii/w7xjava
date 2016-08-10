@@ -2,12 +2,12 @@ package mds.data.descriptor;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import mds.Mds;
 import mds.MdsException;
 import mds.TdiShr;
 import mds.data.descriptor_a.Int8Array;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Missing;
-import mds.mdsip.Connection;
 import mds.mdsip.Message;
 
 /** DSC (24) **/
@@ -202,7 +202,7 @@ public abstract class Descriptor<T>{
     /** Evaluates Descriptor remotely and returns result Descriptor **/
     public Descriptor evaluate() {
         try{
-            return new TdiShr(Connection.getActiveConnection()).tdiEvaluate(this);
+            return new TdiShr(Mds.getActiveMds()).tdiEvaluate(this);
         }catch(final MdsException e){
             return Missing.NEW;
         }

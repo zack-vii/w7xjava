@@ -12,12 +12,12 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import devicebeans.Database;
 import mds.TREE;
 import mds.data.descriptor.Descriptor;
+import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
-import mds.data.descriptor_s.NODE;
+import mds.mdsip.Connection;
 
 public class CompileTree extends Thread{
     public static void main(final String args[]) {
@@ -47,7 +47,7 @@ public class CompileTree extends Thread{
     Vector<String> renamedFieldNids = new Vector<String>();
     int            shot;
     Vector<Nid>    subtreeNids      = new Vector<Nid>();
-    Database       tree;
+    TREE           tree;
     Vector<String> unresolvedExprV  = new Vector<String>();
     Vector<Nid>    unresolvedNidV   = new Vector<Nid>();
 
@@ -64,10 +64,8 @@ public class CompileTree extends Thread{
         // final String state = node.getAttribute("STATE");
         final String usageStr = node.getAttribute("USAGE");
         Nid nid = null;
-        boolean success;
         try{
             final Nid parentNid = this.tree.getDefault();
-            success = false;
             if(type.equals("data")){
                 // final Element parentNode = (Element)node.getParentNode();
                 final boolean isDeviceField = node.getNodeName().equals("field");
@@ -84,12 +82,12 @@ public class CompileTree extends Thread{
                         if(isDeviceField){
                             Descriptor oldData;
                             try{
-                                oldData = this.tree.getData(nid);
+                                oldData = nid.getRecord();
                             }catch(final Exception exc){
                                 oldData = null;
                             }
-                            if(oldData == null || !dataStr.equals(oldData.toString())) this.tree.putData(nid, data);
-                        }else this.tree.putData(nid, data);
+                            if(oldData == null || !dataStr.equals(oldData.toString())) nid.putRecord(data);
+                        }else nid.putRecord(data);
                     }catch(final Exception exc){
                         System.err.println("Error writing data to nid " + nid + ": " + exc);
                     }
@@ -119,10 +117,9 @@ public class CompileTree extends Thread{
                     if(name.length() > 12) name = name.substring(0, 12);
                     nid = this.tree.addNode(name, NODE.USAGE_STRUCTURE);
                     if(usageStr != null && usageStr.equals("SUBTREE")) this.subtreeNids.addElement(nid);
-                    this.tree.setDefault(nid);
-                    success = true;
                 }catch(final Exception e){
                     System.err.println("Error adding member " + name + " : " + e);
+                    nid = null;
                 }
             }else if(type.equals("member")){
                 final byte usage;
@@ -138,10 +135,9 @@ public class CompileTree extends Thread{
                 try{
                     if(name.length() > 12) name = name.substring(0, 12);
                     nid = this.tree.addNode(":" + name, usage);
-                    this.tree.setDefault(nid);
-                    success = true;
                 }catch(final Exception e){
                     System.err.println("Error adding member " + name + " : " + e);
+                    nid = null;
                 }
             }else if(type.equals("device")){
                 final String model = node.getAttribute("MODEL");
@@ -149,22 +145,18 @@ public class CompileTree extends Thread{
                 try{
                     Thread.currentThread();
                     Thread.sleep(100);
-                    nid = this.tree.addDevice(name.trim(), model);
-                    if(nid != null){
-                        this.tree.setDefault(nid);
-                        success = true;
-                    }
+                    nid = this.tree.addConglom(name.trim(), model);
                 }catch(final Exception exc){}
             }else if(type.equals("field")){
                 try{
                     nid = new Path(name).toNid();
-                    this.tree.setDefault(nid);
-                    success = true;
                 }catch(final Exception e){
                     System.err.println("WARNING: device field  " + name + " not found in model : " + e);
+                    nid = null;
                 }
             }
-            if(success){
+            if(nid != null){
+                nid.setDefault();
                 // tags
                 final String tagsStr = node.getAttribute("TAGS");
                 if(tagsStr != null && tagsStr.length() > 0){
@@ -174,7 +166,7 @@ public class CompileTree extends Thread{
                     while(st.hasMoreTokens())
                         tags[i++] = st.nextToken();
                     try{
-                        this.tree.setTags(nid, tags);
+                        nid.setTags(tags);
                     }catch(final Exception exc){
                         System.err.println("Error adding tags " + tagsStr + " : " + exc);
                     }
@@ -193,7 +185,7 @@ public class CompileTree extends Thread{
                         if(flag.equals("NO_WRITE_SHOT")) flags |= NODE.Flags.NO_WRITE_SHOT;
                     }
                     try{
-                        this.tree.setFlags(nid, flags);
+                        nid.setFlags(flags);
                     }catch(final Exception e){
                         System.err.println("Error setting flags to node " + name + " : " + e);
                     }
@@ -202,8 +194,8 @@ public class CompileTree extends Thread{
                 final String stateStr = node.getAttribute("STATE");
                 if(stateStr != null && stateStr.length() > 0){
                     try{
-                        if(stateStr.equals("ON")) this.tree.setOn(nid, true);
-                        if(stateStr.equals("OFF")) this.tree.setOn(nid, false);
+                        if(stateStr.equals("ON")) nid.setOn(true);
+                        if(stateStr.equals("OFF")) nid.setOn(false);
                     }catch(final Exception e){
                         System.err.println("Error setting state of node " + name + " : " + e);
                     }
@@ -216,7 +208,7 @@ public class CompileTree extends Thread{
                         this.recCompile((Element)currNode);
                 }
             }
-            this.tree.setDefault(parentNid);
+            parentNid.setDefault();
         }catch(final Exception e){
             System.err.println("Internal error in recCompile: " + e);
             e.printStackTrace();
@@ -226,7 +218,7 @@ public class CompileTree extends Thread{
     @Override
     public void run() {
         try{
-            this.tree = new Database(this.provider, this.experiment, this.shot, TREE.NEW);
+            this.tree = new TREE(new Connection(this.provider), this.experiment, this.shot, TREE.NEW);
         }catch(final Exception e){
             System.err.println("Error opening tree " + this.experiment + " : " + e);
             System.exit(0);
@@ -266,7 +258,7 @@ public class CompileTree extends Thread{
                 final int deviceOffset = Integer.parseInt(offsetStr);
                 final Nid deviceNid = new Path(deviceName).toNid();
                 final Nid renamedNid = new Nid(deviceNid, +deviceOffset);
-                this.tree.renameNode(renamedNid, newName);
+                renamedNid.setPath(newName);
             }catch(final Exception e){
                 System.err.println("Error renaming node of " + deviceName + " to " + newName + " : " + e);
             }
@@ -274,13 +266,13 @@ public class CompileTree extends Thread{
         for(int i = 0; i < this.unresolvedNidV.size(); i++){
             Descriptor data = null;
             try{
-                this.tree.setDefault(this.unresolvedNidV.elementAt(i));
-                data = this.tree.tdiCompile(this.unresolvedExprV.elementAt(i));
+                this.unresolvedNidV.elementAt(i).setDefault();
+                data = this.tree.mds.getDescriptor(this.unresolvedExprV.elementAt(i));
             }catch(final Exception e){
                 System.err.println("Error parsing expression " + this.unresolvedExprV.elementAt(i) + " : " + e);
             }
             try{
-                this.tree.putData(this.unresolvedNidV.elementAt(i), data);
+                this.unresolvedNidV.elementAt(i).putRecord(data);
             }catch(final Exception e){
                 System.err.println("Error writing data to nid " + this.unresolvedNidV.elementAt(i) + ": " + e);
             }
@@ -288,7 +280,7 @@ public class CompileTree extends Thread{
         // Set subtrees (apparently this must be done at the end....
         for(int i = 0; i < this.subtreeNids.size(); i++){
             try{
-                this.tree.setSubtree(this.subtreeNids.elementAt(i));
+                this.subtreeNids.elementAt(i).setSubtree();
             }catch(final Exception e){
                 System.err.println("Error setting subtree: " + e);
             }

@@ -29,8 +29,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
-import devicebeans.Database;
-import devicebeans.DeviceSetup;
 import jtraverser.dialogs.Dialogs;
 import jtraverser.dialogs.DisplayData;
 import jtraverser.dialogs.DisplayNci;
@@ -43,13 +41,15 @@ import jtraverser.dialogs.TreeDialog;
 import jtraverser.dialogs.TreeOpenDialog;
 import jtraverser.editor.NodeEditor;
 import jtraverser.tools.DecompileTree;
-import mds.ITreeShr.TagRefStatus;
+import mds.Mds;
 import mds.MdsException;
+import mds.TCL;
 import mds.TREE;
 import mds.TreeShr;
+import mds.TreeShr.TagRefStatus;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.NODE;
+import mds.data.descriptor_s.Nid;
 import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
@@ -87,17 +87,17 @@ public class TreeManager extends JTabbedPane{
                 "Window"                               //
         };
         private final byte[]   usage = new byte[]{     //
-                NODE.USAGE_STRUCTURE,              //
-                NODE.USAGE_SUBTREE,                //
-                NODE.USAGE_ACTION,                 //
-                NODE.USAGE_ANY,                    //
-                NODE.USAGE_AXIS,                   //
-                NODE.USAGE_DISPATCH,               //
-                NODE.USAGE_NUMERIC,                //
-                NODE.USAGE_SIGNAL,                 //
-                NODE.USAGE_TASK,                   //
-                NODE.USAGE_TEXT,                   //
-                NODE.USAGE_WINDOW                  //
+                NODE.USAGE_STRUCTURE,                  //
+                NODE.USAGE_SUBTREE,                    //
+                NODE.USAGE_ACTION,                     //
+                NODE.USAGE_ANY,                        //
+                NODE.USAGE_AXIS,                       //
+                NODE.USAGE_DISPATCH,                   //
+                NODE.USAGE_NUMERIC,                    //
+                NODE.USAGE_SIGNAL,                     //
+                NODE.USAGE_TASK,                       //
+                NODE.USAGE_TEXT,                       //
+                NODE.USAGE_WINDOW                      //
         };
 
         public AddNodeMenu(final TreeManager treeman, final JComponent menu){
@@ -254,8 +254,8 @@ public class TreeManager extends JTabbedPane{
             public void actionPerformed(final ActionEvent e) {
                 try{
                     JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), //
-                            Database.getDatabase(), //
-                            Database.getCurrentProvider().toString(), //
+                            new TCL(Mds.getActiveMds()).showDatabase(), //
+                            Mds.getActiveMds().toString(), //
                             JOptionPane.PLAIN_MESSAGE);
                 }catch(final Exception ex){
                     ex.printStackTrace();
@@ -562,7 +562,7 @@ public class TreeManager extends JTabbedPane{
     public final void close(final int idx) {
         if(idx >= this.getTabCount() || idx < 0) return;
         this.trees.remove(this.getTreeAt(idx).close());
-        DeviceSetup.closeOpenDevices();
+        // DeviceSetup.closeOpenDevices();
         this.removeTabAt(idx);
         if(this.getTabCount() == 0) this.frame.reportChange(null);
     }

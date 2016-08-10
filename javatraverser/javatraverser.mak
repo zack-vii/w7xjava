@@ -107,7 +107,7 @@ TOOLS_SRC= \
   jtraverser/tools/DecompileTree.java
 
 MDSIP_SRC= \
-  mds/ITreeShr.java \
+  mds/Mds.java \
   mds/MdsException.java \
   mds/MdsShr.java \
   mds/TdiShr.java \

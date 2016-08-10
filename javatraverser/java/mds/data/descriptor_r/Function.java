@@ -2,6 +2,7 @@ package mds.data.descriptor_r;
 
 import java.nio.ByteBuffer;
 import debug.DEBUG;
+import mds.Mds;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
@@ -12,7 +13,6 @@ import mds.data.descriptor_s.Complex32;
 import mds.data.descriptor_s.Float32;
 import mds.data.descriptor_s.Missing;
 import mds.data.descriptor_s.Uint8;
-import mds.mdsip.Connection;
 
 public final class Function extends Descriptor_R<Short>{
     public static final class op_rec{
@@ -588,7 +588,7 @@ public final class Function extends Descriptor_R<Short>{
                 Descriptor eval;
                 final String deco = this.decompile();
                 try{
-                    eval = Connection.getActiveConnection().getDescriptor(deco);
+                    eval = Mds.getActiveMds().getDescriptor(deco);
                 }catch(final MdsException e){
                     eval = super.evaluate();
                 }

@@ -6,13 +6,12 @@ import mds.data.descriptor.Descriptor_S;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Int32;
 import mds.data.descriptor_s.Missing;
-import mds.mdsip.Connection;
 
 public final class TdiShr{
-    private final Connection connection;
+    private final Mds mds;
 
-    public TdiShr(final Connection connection){
-        this.connection = connection;
+    public TdiShr(final Mds mds){
+        this.mds = mds;
     }
 
     public final int[] getShotDB(final CString expt, final Descriptor_S path, final Int32 lower, final Int32 upper) throws MdsException {
@@ -31,25 +30,25 @@ public final class TdiShr{
             args.add(upper);
             expr.append(",$");
         }else expr.append(",*");
-        return this.connection.getIntegerArray(expr.append(')').toString(), args.toArray(new Descriptor[args.size()]));
+        return this.mds.getIntegerArray(expr.append(')').toString(), args.toArray(new Descriptor[args.size()]));
     }
 
     public final Descriptor tdiCompile(final String expr) throws MdsException {
         if(expr == null || expr.isEmpty()) return Missing.NEW;
-        return this.connection.getDescriptor("Compile($)", new CString(expr));
+        return this.mds.getDescriptor("Compile($)", new CString(expr));
     }
 
     public final String tdiDecompile(final Descriptor dsc) throws MdsException {
-        return this.connection.getString("TdiShr->TdiDecompile(xd($),xd(_a),val(-1)", dsc);
+        return this.mds.getString("TdiShr->TdiDecompile(xd($),xd(_a),val(-1)", dsc);
     }
 
     public final Descriptor tdiEvaluate(final Descriptor data) throws MdsException {
         if(data == null || data == Missing.NEW) return Missing.NEW;
-        return this.connection.getDescriptor("Evaluate($)", data);
+        return this.mds.getDescriptor("Evaluate($)", data);
     }
 
     public final Descriptor tdiExecute(final String expr, final Descriptor... args) throws MdsException {
         if(expr == null || expr.isEmpty()) return Missing.NEW;
-        return this.connection.getDescriptor(new StringBuilder(expr.length() + 13).append("Evaluate((").append(expr).append(";))").toString(), args);
+        return this.mds.getDescriptor(new StringBuilder(expr.length() + 13).append("Evaluate((").append(expr).append(";))").toString(), args);
     }
 }
