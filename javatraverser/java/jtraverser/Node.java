@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.lang.reflect.Method;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -14,16 +15,15 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import devicebeans.DeviceSetup;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Action;
 import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.CString;
-import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.NODE.Flags;
+import mds.data.descriptor_s.Nid;
 
 public class Node{
     @SuppressWarnings("serial")
@@ -633,6 +633,7 @@ public class Node{
         return this.treenode = treenode;
     }
 
+    @SuppressWarnings("unchecked")
     public final void setupDevice() {
         Conglom conglom = null;
         try{
@@ -644,7 +645,9 @@ public class Node{
             final CString model = (CString)conglom.getModel();
             if(model != null){
                 try{
-                    DeviceSetup.setup(this, model.toString());
+                    final Class Devices = Class.forName("devicebeans.DeviceSetup");
+                    final Method DeviceSetup = Devices.getMethod("setup", Node.class, String.class);
+                    DeviceSetup.invoke(null, this, model.toString());
                     return;
                 }catch(final Exception e){
                     try{

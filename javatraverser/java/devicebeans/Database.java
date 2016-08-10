@@ -3,25 +3,25 @@ package devicebeans;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import mds.ITreeShr.DescriptorStatus;
-import mds.ITreeShr.IntegerStatus;
-import mds.ITreeShr.SignalStatus;
-import mds.ITreeShr.TagRefStatus;
+import mds.Mds;
 import mds.MdsException;
 import mds.MdsShr;
 import mds.TREE;
 import mds.TREE.TagList;
 import mds.TdiShr;
 import mds.TreeShr;
+import mds.TreeShr.DescriptorStatus;
+import mds.TreeShr.IntegerStatus;
+import mds.TreeShr.SignalStatus;
+import mds.TreeShr.TagRefStatus;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.CString;
+import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Pointer;
-import mds.data.descriptor_s.NODE;
 import mds.mdsip.Connection;
-import mds.mdsip.Connection.Provider;
 
 public final class Database{
     private static final String extractProvider(final String expt) {
@@ -31,16 +31,13 @@ public final class Database{
 
     public static final ByteBuffer getByteBuffer(final String expr) throws MdsException {
         if(expr == null || expr.isEmpty()) return null;
-        return Connection.getActiveConnection().getByteBuffer(expr);
-    }
-
-    public static final Provider getCurrentProvider() {
-        return Connection.getActiveConnection().getProvider();
+        return Mds.getActiveMds().getByteBuffer(expr);
     }
 
     public static final String getDatabase() throws MdsException {
-        if(!Connection.getActiveConnection().isConnected()) return "Not connected.";
-        final String result = Connection.getActiveConnection().getString("_t=*;TCL('show db',_t);_t");
+        final Mds mds = Mds.getActiveMds();
+        if(mds instanceof Connection && !((Connection)mds).isConnected()) return "Not connected.";
+        final String result = Mds.getActiveMds().getString("_t=*;TCL('show db',_t);_t");
         return result.trim();
     }
 
@@ -51,21 +48,21 @@ public final class Database{
     private static final void stdout(final String line) {
         MdsException.stdout(line);
     }
-    private final Pointer    ctx  = Pointer.NULL();
-    private final Connection con;
-    private final String     expt;
-    private boolean          open = false;
-    private final int        mode;
-    private final int        shot;
-    private final TreeShr    treeshr;
-    private final MdsShr     mdsshr;
-    private final TdiShr     tdishr;
+    private final Pointer ctx  = Pointer.NULL();
+    private final Mds     mds;
+    private final String  expt;
+    private boolean       open = false;
+    private final int     mode;
+    private final int     shot;
+    private final TreeShr treeshr;
+    private final MdsShr  mdsshr;
+    private final TdiShr  tdishr;
 
-    public Database(final Connection con, final String expt, final int shot, final int mode) throws MdsException{
-        this.con = con.setActive();
-        this.treeshr = new TreeShr(this.con);
-        this.mdsshr = new MdsShr(this.con);
-        this.tdishr = new TdiShr(this.con);
+    public Database(final Mds mds, final String expt, final int shot, final int mode) throws MdsException{
+        this.mds = mds.setActive();
+        this.treeshr = new TreeShr(this.mds);
+        this.mdsshr = new MdsShr(this.mds);
+        this.tdishr = new TdiShr(this.mds);
         this.expt = expt.toUpperCase();
         this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
         if(mode == TREE.NEW){
@@ -96,7 +93,7 @@ public final class Database{
     }
 
     private final void _connect() throws MdsException {
-        if(!this.con.isConnected()) throw new MdsException("Not connected");
+        if(this.mds instanceof Connection && !((Connection)this.mds).isConnected()) throw new MdsException("Not connected");
     }
 
     private final void _open() throws MdsException {
@@ -131,7 +128,7 @@ public final class Database{
 
     public final String[] allTags(final Nid nid) throws MdsException {
         this._checkContext();
-        final String str = this.con.getString(String.format("_i=-1;_q=0Q,_a='',_t='',_j=0,WHILE(AND(TreeShr->TreeFindTagWildDsc(ref('***'),ref(_i),ref(_q),xd(_t)),_i<%d)) IF(OR(%d==0,_i==%d)) _a=(_j++;_a//','//_t;);_a", nid.getValue(), nid.getValue()));
+        final String str = this.mds.getString(String.format("_i=-1;_q=0Q,_a='',_t='',_j=0,WHILE(AND(TreeShr->TreeFindTagWildDsc(ref('***'),ref(_i),ref(_q),xd(_t)),_i<%d)) IF(OR(%d==0,_i==%d)) _a=(_j++;_a//','//_t;);_a", nid.getValue(), nid.getValue()));
         if(str == null) return new String[0];
         return str.substring(1).split(",");
     }
@@ -162,7 +159,7 @@ public final class Database{
     public final Nid[] deleteGetNids() throws MdsException {
         final List<Nid> nids = new ArrayList<Nid>(256);
         int last = 0;
-        synchronized(this.con){
+        synchronized(this.mds){
             IntegerStatus res = this.treeshr.treeDeleteNodeGetNid(this.ctx, last);
             for(;;){
                 if(res.status == 265388128) break;
@@ -184,7 +181,7 @@ public final class Database{
 
     public final int doAction(final Nid nid) throws MdsException {
         this._checkContext();
-        return this.con.getInteger(String.format("TCL('dispatch/nowait '//GETNCI(%d,'FULL_PATH'))", nid.getValue()));
+        return this.mds.getInteger(String.format("TCL('dispatch/nowait '//GETNCI(%d,'FULL_PATH'))", nid.getValue()));
     }
 
     public final void doDeviceMethod(final Nid nid, final String method) throws MdsException {
@@ -249,10 +246,6 @@ public final class Database{
         return nid.getNciOriginalPartName();
     }
 
-    public final Provider getProvider() {
-        return this.con.getProvider();
-    }
-
     public final Descriptor getRecord(final Nid nid) throws MdsException {
         this._checkContext();
         final DescriptorStatus res = this.treeshr.treeGetRecord(this.ctx, nid.getValue());
@@ -282,7 +275,7 @@ public final class Database{
     public final String[] getTags(final Nid nid, final String search, final int max) throws MdsException {
         this._checkContext();
         final List<String> tags = new ArrayList<String>(max);
-        synchronized(this.con){
+        synchronized(this.mds){
             TagRefStatus tag = this.treeshr.treeFindTagWild(this.ctx, search, TagRefStatus.init);
             while(tags.size() < max && (tag.status != 0)){
                 MdsException.handleStatus(tag.status);
@@ -312,12 +305,12 @@ public final class Database{
     }
 
     public final byte[] getType(final String expr) throws MdsException {
-        return this.con.getByteArray("_a=As_Is(EXECUTE($));_a=[Class(_a),Kind(_a)]", new CString(expr));
+        return this.mds.getByteArray("_a=As_Is(EXECUTE($));_a=[Class(_a),Kind(_a)]", new CString(expr));
     }
 
     public final Nid[] getWild(final int usage_mask) throws MdsException {
-        final Nid[] nids = Nid.getArrayOfNids(this.con.getIntegerArray(String.format("_i=-1;_a='[';_q=0Q;WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref('***'),ref(_i),ref(_q),val(%d)),1)==1) _a=_a//TEXT(_i)//',';_a=COMPILE(_a//'*]')", 1 << usage_mask)));
-        if(nids == null) MdsException.handleStatus(this.con.getInteger("_s"));
+        final Nid[] nids = Nid.getArrayOfNids(this.mds.getIntegerArray(String.format("_i=-1;_a='[';_q=0Q;WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref('***'),ref(_i),ref(_q),val(%d)),1)==1) _a=_a//TEXT(_i)//',';_a=COMPILE(_a//'*]')", 1 << usage_mask)));
+        if(nids == null) MdsException.handleStatus(this.mds.getInteger("_s"));
         return nids;
     }
 
@@ -369,7 +362,7 @@ public final class Database{
 
     public final Nid resolveRefSimple(final Nid nid) throws MdsException {
         this._checkContext();
-        return new Nid(this.con.getInteger(String.format("_a=%d;WHILE(IAND(GETNCI(_a,'DTYPE'),-2)==192) _a=GETNCI(_a,'RECORD');GETNCI(_a,'NID_NUMBER')", nid.getValue())));
+        return new Nid(this.mds.getInteger(String.format("_a=%d;WHILE(IAND(GETNCI(_a,'DTYPE'),-2)==192) _a=GETNCI(_a,'RECORD');GETNCI(_a,'NID_NUMBER')", nid.getValue())));
     }
 
     public final void setCurrentShot(final int shot) throws MdsException {
@@ -441,7 +434,7 @@ public final class Database{
         if(this.mode == TREE.EDITABLE) sb.append(", edit");
         else if(this.mode == TREE.READONLY) sb.append(", readonly");
         sb.append(')');
-        if(this.con != null) sb.append(" on ").append(this.con.getProvider());
+        if(this.mds instanceof Connection) sb.append(" on ").append(((Connection)this.mds).getProvider());
         return sb.toString();
     }
 

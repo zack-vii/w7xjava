@@ -6,8 +6,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
+import mds.Mds;
 import mds.data.descriptor.Descriptor;
-import mds.mdsip.Connection;
 
 public abstract class NodeDataPropertyEditor implements PropertyEditor{
     protected Descriptor data;
@@ -57,7 +57,7 @@ public abstract class NodeDataPropertyEditor implements PropertyEditor{
     @Override
     public final void setAsText(final String s) {
         try{
-            this.data = Connection.getActiveConnection().getDescriptor(s);
+            this.data = Mds.getActiveMds().getDescriptor(s);
         }catch(final Exception e){
             this.data = null;
         }

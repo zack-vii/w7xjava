@@ -17,10 +17,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import mds.Mds;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
-import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
 public class DeviceField extends DeviceComponent{
@@ -102,7 +102,7 @@ public class DeviceField extends DeviceComponent{
         if(data != null){
             String textString = data.decompile();
             if(this.displayEvaluated) try{
-                this.initialField = textString = Connection.getActiveConnection().getDescriptor(textString).decompile();
+                this.initialField = textString = Mds.getActiveMds().getDescriptor(textString).decompile();
             }catch(final Exception exc){}
             if(textString != null){
                 if(this.textOnly && textString.charAt(0) == '"') this.textF.setText(textString.substring(1, textString.length() - 1));
@@ -120,7 +120,7 @@ public class DeviceField extends DeviceComponent{
         if(dataString == null) return null;
         try{
             if(this.textOnly && !dataString.trim().startsWith("[")) return new CString(dataString);
-            return Connection.getActiveConnection().getDescriptor(dataString);
+            return Mds.getActiveMds().getDescriptor(dataString);
         }catch(final MdsException e){}
         return null;
     }

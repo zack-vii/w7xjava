@@ -22,6 +22,7 @@ import javax.swing.JPopupMenu;
 import jtraverser.DataChangeEvent;
 import jtraverser.DataChangeListener;
 import jtraverser.Node;
+import mds.Mds;
 import mds.MdsException;
 import mds.TREE;
 import mds.data.descriptor.Descriptor;
@@ -87,7 +88,7 @@ public class DeviceSetup extends JDialog{
             ds.setFrame(node.treeview.treeman.getFrame());
             final Dimension prevDim = ds.getSize();
             ds.addDataChangeListener(node.treeview);
-            ds.configure(new Database(node.nid.tree.connection, node.nid.tree.expt, node.nid.tree.shot, TREE.NORMAL), node.nid.getNidNumber());
+            ds.configure(new Database(node.nid.tree.mds, node.nid.tree.expt, node.nid.tree.shot, TREE.NORMAL), node.nid.getNidNumber());
             if(ds.getContentPane().getLayout() != null) ds.pack();
             ds.setLocation(node.treeview.treeman.dialogLocation());
             ds.setSize(prevDim);
@@ -236,7 +237,7 @@ public class DeviceSetup extends JDialog{
         }
         for(idx = 0; idx < num_expr; idx++){
             try{
-                if(Connection.getActiveConnection().getInteger(varExpr + expressions[idx]) == 0){
+                if(Mds.getActiveMds().getInteger(varExpr + expressions[idx]) == 0){
                     JOptionPane.showMessageDialog(this, messages[idx], "Error in device configuration", JOptionPane.WARNING_MESSAGE);
                     return false;
                 }
@@ -505,7 +506,7 @@ public class DeviceSetup extends JDialog{
             }
         }
         if(this.device_components.size() > 0) try{
-            Connection.getActiveConnection().getDescriptor("Execute($)", new CString(varExpr.toString()));
+            Connection.getActiveMds().getDescriptor("Execute($)", new CString(varExpr.toString()));
         }catch(final MdsException e){
             e.printStackTrace();
         }

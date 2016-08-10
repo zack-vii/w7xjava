@@ -26,10 +26,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
+import mds.Mds;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
-import mds.mdsip.Connection;
 
 @SuppressWarnings("serial")
 public class DeviceTable extends DeviceComponent{
@@ -275,8 +275,8 @@ public class DeviceTable extends DeviceComponent{
             }else dataString += ",";
         }
         try{
-            if(this.useExpressions) return Connection.getActiveConnection().getDescriptor("Compile($)", new CString(dataString));
-            return Connection.getActiveConnection().getDescriptor(dataString);
+            if(this.useExpressions) return Mds.getActiveMds().getDescriptor("Compile($)", new CString(dataString));
+            return Mds.getActiveMds().getDescriptor(dataString);
         }catch(final MdsException e){
             e.printStackTrace();
         }
@@ -514,7 +514,7 @@ public class DeviceTable extends DeviceComponent{
                           table.repaint();
                       }
                   }
-
+                
                               }
                               else //refMode == NORMAL
                 */ {
