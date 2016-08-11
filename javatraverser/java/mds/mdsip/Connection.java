@@ -6,6 +6,7 @@ import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
@@ -13,9 +14,14 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import debug.DEBUG;
 import mds.Mds;
 import mds.MdsException;
@@ -245,6 +251,59 @@ public class Connection extends Mds{
             return new StringBuilder(this.user.length() + this.host.length() + 7).append(this.user).append('@').append(this.host).append(':').append(this.port).toString();
         }
     }
+    @SuppressWarnings("unchecked")
+    private final static class SSH{
+        private static final String     localhost = "localhost";
+        private static Class            JSch, Session;
+        private static Method           getSession, setConfig, setPassword, connect, setPortForwardingL;
+        private static Object           jsch;
+        private static final Properties config    = new Properties();
+        private static boolean          available = false;
+        static{
+            try{
+                SSH.JSch = Class.forName("com.jcraft.jsch.JSch");
+                SSH.Session = Class.forName("com.jcraft.jsch.Session");
+                SSH.getSession = SSH.JSch.getMethod("getSession", String.class, String.class);
+                SSH.setConfig = SSH.Session.getMethod("setConfig", Properties.class);
+                SSH.setPassword = SSH.Session.getMethod("setPassword", String.class);
+                SSH.connect = SSH.Session.getMethod("connect");
+                SSH.setPortForwardingL = SSH.Session.getMethod("setPortForwardingL", int.class, String.class, int.class);
+                SSH.jsch = SSH.JSch.newInstance();
+                SSH.config.put("StrictHostKeyChecking", "no");
+                SSH.available = true;
+            }catch(final Exception e){
+                System.err.println(e.getMessage());
+            }
+        }
+
+        public static final int connect(final Provider provider) throws IOException {
+            if(!SSH.available) throw new IOException("JSch not found! SSH connection not available.");
+            try{
+                final String password = SSH.queryPassword(provider);
+                if(password == null) throw new IOException("Aborted by user.");
+                final Object session = SSH.getSession.invoke(SSH.jsch, provider.user, provider.host);
+                SSH.setConfig.invoke(session, SSH.config);
+                SSH.setPassword.invoke(session, password);
+                SSH.connect.invoke(session);
+                return((Integer)SSH.setPortForwardingL.invoke(session, 0, SSH.localhost, provider.port));
+            }catch(final Exception e){
+                if(e instanceof IOException) throw(IOException)e;
+                throw new IOException(e.toString());
+            }
+        }
+
+        private static final String queryPassword(final Provider provider) {
+            final JPanel panel = new JPanel();
+            final JLabel label = new JLabel("Enter ssh password:");
+            final JPasswordField pass = new JPasswordField(10);
+            panel.add(label);
+            panel.add(pass);
+            final String[] options = new String[]{"OK", "Cancel"};
+            final int option = JOptionPane.showOptionDialog(null, panel, provider.toString(), JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            if(option == 0) return new String(pass.getPassword());
+            return null;
+        }
+    }
     private static final List<Connection> open_connections = Collections.synchronizedList(new ArrayList<Connection>());
     public static final int               LOGIN_OK         = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
 
@@ -277,6 +336,7 @@ public class Connection extends Mds{
     private MRT                                  receiveThread       = null;
     private Socket                               sock                = null;
     private boolean                              use_compression     = false;
+    private boolean                              use_ssh;
 
     public Connection(final Provider provider){
         this(provider, null);
@@ -332,7 +392,10 @@ public class Connection extends Mds{
 
     private final void connectToServer() throws IOException {
         /* connect to server */
-        this.sock = new Socket(this.provider.host, this.provider.port);
+        if(this.use_ssh){
+            final int localport = SSH.connect(this.provider);
+            this.sock = new Socket("localhost", localport);
+        }else this.sock = new Socket(this.provider.host, this.provider.port);
         System.out.println(this.sock.toString());
         this.sock.setTcpNoDelay(true);
         this.dis = new BufferedInputStream(this.sock.getInputStream());
@@ -540,6 +603,11 @@ public class Connection extends Mds{
         }catch(final IOException e){
             throw new MdsException("Connection.sendArg", e);
         }
+    }
+
+    public final Connection setSSH(final boolean use_ssh) {
+        this.use_ssh = use_ssh;
+        return this;
     }
 
     @Override
