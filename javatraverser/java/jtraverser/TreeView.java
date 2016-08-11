@@ -474,6 +474,12 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         this.setCurrentNode(savedTreeNode);
     }
 
+    synchronized public final void reportChange() {
+        this.treeDidChange();
+        this.updateUI();
+        this.mdsview.reportChange();
+    }
+
     public final void setCurrentNode(final DefaultMutableTreeNode treenode) {
         final Node curr_node = Node.getNode(treenode);
         if(curr_node == null) return;

@@ -126,14 +126,16 @@ public class TreeManager extends JTabbedPane{
         public final class setDefault implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final Node currnode = DisplayMenu.this.treeman.getCurrentNode();
+                final TreeView treeview = DisplayMenu.this.treeman.getCurrentTreeView();
+                if(treeview == null) return;
+                final Node currnode = treeview.getCurrentNode();
                 if(currnode == null) return;
                 try{
                     currnode.setDefault();
                 }catch(final Exception exc){
                     MdsException.stderr("Error setting default", exc);
                 }
-                DisplayMenu.this.treeman.reportChange();
+                treeview.reportChange();
             }
         }
 

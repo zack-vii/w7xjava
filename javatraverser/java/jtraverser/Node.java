@@ -534,7 +534,7 @@ public class Node{
     }
 
     public final boolean isDefault() {
-        return this.treeview.getDefault() == this.nid;
+        return this.treeview.getDefault().equals(this.nid);
     }
 
     public final boolean isOn() {

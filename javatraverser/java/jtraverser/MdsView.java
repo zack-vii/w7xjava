@@ -115,10 +115,6 @@ public class MdsView extends JTabbedPane{
     }
 
     synchronized public final void reportChange() {
-        if(this.getCurrentTreeView() != null){
-            this.getCurrentTreeView().treeDidChange();
-            this.getCurrentTreeView().updateUI();
-        }
         this.treeman.reportChange();
     }
 
