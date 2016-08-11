@@ -212,6 +212,12 @@ public class Connection extends Mds{
             }
         }
 
+        public Provider(final String host, final int port){
+            // this.user = Provider.DEFAULT_USER;
+            this.host = host == null ? Provider.DEFAULT_HOST : host;
+            this.port = port == 0 ? Provider.DEFAULT_PORT : port;
+        }
+
         @Override
         public final boolean equals(final Object obj) {
             if(obj == null || !(obj instanceof Provider)) return false;
