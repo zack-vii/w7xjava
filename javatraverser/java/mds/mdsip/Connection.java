@@ -1,5 +1,6 @@
 package mds.mdsip;
 
+import java.awt.Component;
 /* $Id$ */
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -73,6 +74,7 @@ public class Connection extends Mds{
             }catch(final IOException e){
                 System.err.print("MdsConnect - No IO for " + Connection.this.provider.host + ":\n" + e.getMessage());
             }
+            this.setTried(true);
         }
 
         synchronized private void setTried(final boolean tried) {
@@ -138,19 +140,19 @@ public class Connection extends Mds{
                 synchronized(this){
                     this.killed = true;
                     this.notifyAll();
-                    if(Connection.this.connected){
-                        this.message = null;
-                        Connection.this.connected = false;
-                        if(Connection.this.connectThread != null) Connection.this.connectThread.update();
-                        (new Thread(){
-                            @Override
-                            public void run() {
-                                final ConnectionEvent ce = new ConnectionEvent(Connection.this, ConnectionEvent.LOST_CONNECTION, "Lost connection from : " + Connection.this.provider.host);
-                                Connection.this.dispatchConnectionEvent(ce);
-                            }
-                        }).start();
-                        if(!(e instanceof SocketException)) e.printStackTrace();
-                    }
+                }
+                if(Connection.this.connected){
+                    this.message = null;
+                    Connection.this.connected = false;
+                    if(Connection.this.connectThread != null && Connection.this.connectThread.tried) Connection.this.connectThread.update();
+                    (new Thread(){
+                        @Override
+                        public void run() {
+                            final ConnectionEvent ce = new ConnectionEvent(Connection.this, ConnectionEvent.LOST_CONNECTION, "Lost connection from : " + Connection.this.provider.host);
+                            Connection.this.dispatchConnectionEvent(ce);
+                        }
+                    }).start();
+                    if(!(e instanceof SocketException)) e.printStackTrace();
                 }
             }
         }
@@ -203,8 +205,22 @@ public class Connection extends Mds{
         public final String        host;
         public final int           port;
         public final String        user;                      // System.getProperty("user.name")
+        private String             password;
 
-        public Provider(final String provider){
+        public Provider(final String host, final int port){
+            this.user = Provider.DEFAULT_USER;
+            this.host = host == null ? Provider.DEFAULT_HOST : host;
+            this.port = port == 0 ? Provider.DEFAULT_PORT : port;
+        }
+
+        public Provider(final String host, final int port, final String user, final String password){
+            this.user = user;
+            this.host = host == null ? Provider.DEFAULT_HOST : host;
+            this.port = port == 0 ? Provider.DEFAULT_PORT : port;
+            this.password = password;
+        }
+
+        public Provider(final String provider, final String password){
             if(provider == null || provider.length() == 0){
                 this.user = Provider.DEFAULT_USER;
                 this.host = Provider.DEFAULT_HOST;
@@ -216,25 +232,14 @@ public class Connection extends Mds{
                 this.host = cn < 0 ? provider.substring(at + 1) : provider.substring(at + 1, cn);
                 this.port = cn < 0 ? Provider.DEFAULT_PORT : Short.parseShort(provider.substring(cn + 1));
             }
-        }
-
-        public Provider(final String host, final int port){
-            this.user = Provider.DEFAULT_USER;
-            this.host = host == null ? Provider.DEFAULT_HOST : host;
-            this.port = port == 0 ? Provider.DEFAULT_PORT : port;
-        }
-
-        public Provider(final String user, final String host, final int port){
-            this.user = user;
-            this.host = host == null ? Provider.DEFAULT_HOST : host;
-            this.port = port == 0 ? Provider.DEFAULT_PORT : port;
+            this.password = password;
         }
 
         @Override
         public final boolean equals(final Object obj) {
             if(obj == null || !(obj instanceof Provider)) return false;
             final Provider provider = (Provider)obj;
-            return this.host.equalsIgnoreCase(provider.host) && this.port == provider.port;
+            return this.host.equalsIgnoreCase(provider.host) && this.port == provider.port && this.user.equals(provider.user);
         }
 
         public final Connection getConnection() {
@@ -246,66 +251,87 @@ public class Connection extends Mds{
             return this.host.toLowerCase().hashCode() + this.port;
         }
 
+        public final boolean setPassword(final String password) {
+            if(this.password == null) return (this.password = password) != null;
+            if(this.password.equals(password)) return false;
+            this.password = password;
+            return true;
+        }
+
         @Override
         public final String toString() {
             return new StringBuilder(this.user.length() + this.host.length() + 7).append(this.user).append('@').append(this.host).append(':').append(this.port).toString();
         }
     }
     @SuppressWarnings("unchecked")
-    private final static class SSH{
+    private static final class SSHSocket extends Socket{
         private static final String     localhost = "localhost";
         private static Class            JSch, Session;
-        private static Method           getSession, setConfig, setPassword, connect, setPortForwardingL;
+        private static Method           getSession, setConfig, setPassword, connect, setPortForwardingL, disconnect;
         private static Object           jsch;
         private static final Properties config    = new Properties();
         private static boolean          available = false;
         static{
             try{
-                SSH.JSch = Class.forName("com.jcraft.jsch.JSch");
-                SSH.Session = Class.forName("com.jcraft.jsch.Session");
-                SSH.getSession = SSH.JSch.getMethod("getSession", String.class, String.class);
-                SSH.setConfig = SSH.Session.getMethod("setConfig", Properties.class);
-                SSH.setPassword = SSH.Session.getMethod("setPassword", String.class);
-                SSH.connect = SSH.Session.getMethod("connect");
-                SSH.setPortForwardingL = SSH.Session.getMethod("setPortForwardingL", int.class, String.class, int.class);
-                SSH.jsch = SSH.JSch.newInstance();
-                SSH.config.put("StrictHostKeyChecking", "no");
-                SSH.available = true;
+                SSHSocket.JSch = Class.forName("com.jcraft.jsch.JSch");
+                SSHSocket.Session = Class.forName("com.jcraft.jsch.Session");
+                SSHSocket.getSession = SSHSocket.JSch.getMethod("getSession", String.class, String.class);
+                SSHSocket.setConfig = SSHSocket.Session.getMethod("setConfig", Properties.class);
+                SSHSocket.setPassword = SSHSocket.Session.getMethod("setPassword", String.class);
+                SSHSocket.connect = SSHSocket.Session.getMethod("connect");
+                SSHSocket.disconnect = SSHSocket.Session.getMethod("disconnect");
+                SSHSocket.setPortForwardingL = SSHSocket.Session.getMethod("setPortForwardingL", int.class, String.class, int.class);
+                SSHSocket.jsch = SSHSocket.JSch.newInstance();
+                SSHSocket.config.put("StrictHostKeyChecking", "no");
+                SSHSocket.available = true;
             }catch(final Exception e){
                 System.err.println(e.getMessage());
             }
         }
 
-        public static final int connect(final Provider provider) throws IOException {
-            if(!SSH.available) throw new IOException("JSch not found! SSH connection not available.");
+        private static final Object[] openSession(final Provider provider) throws IOException {
+            if(!SSHSocket.available) throw new IOException("JSch not found! SSH connection not available.");
             try{
-                final String password = SSH.queryPassword(provider);
-                if(password == null) throw new IOException("Aborted by user.");
-                final Object session = SSH.getSession.invoke(SSH.jsch, provider.user, provider.host);
-                SSH.setConfig.invoke(session, SSH.config);
-                SSH.setPassword.invoke(session, password);
-                SSH.connect.invoke(session);
-                return((Integer)SSH.setPortForwardingL.invoke(session, 0, SSH.localhost, provider.port));
+                final Object session = SSHSocket.getSession.invoke(SSHSocket.jsch, provider.user, provider.host);
+                SSHSocket.setConfig.invoke(session, SSHSocket.config);
+                SSHSocket.setPassword.invoke(session, provider.password);
+                SSHSocket.connect.invoke(session);
+                return new Object[]{SSHSocket.setPortForwardingL.invoke(session, 0, SSHSocket.localhost, provider.port), session};
+            }catch(final Exception e){
+                if(e instanceof IOException) throw(IOException)e;
+                throw new ConnectException(e.toString());
+            }
+        }
+        private final Object session;
+
+        private SSHSocket(final Object[] lport_session) throws IOException{
+            super(SSHSocket.localhost, (Integer)lport_session[0]);
+            this.session = lport_session[1];
+        }
+
+        public SSHSocket(final Provider provider) throws IOException{
+            this(SSHSocket.openSession(provider));
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            try{
+                SSHSocket.disconnect.invoke(this.session);
             }catch(final Exception e){
                 if(e instanceof IOException) throw(IOException)e;
                 throw new IOException(e.toString());
             }
         }
-
-        private static final String queryPassword(final Provider provider) {
-            final JPanel panel = new JPanel();
-            final JLabel label = new JLabel("Enter ssh password:");
-            final JPasswordField pass = new JPasswordField(10);
-            panel.add(label);
-            panel.add(pass);
-            final String[] options = new String[]{"OK", "Cancel"};
-            final int option = JOptionPane.showOptionDialog(null, panel, provider.toString(), JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-            if(option == 0) return new String(pass.getPassword());
-            return null;
-        }
     }
     private static final List<Connection> open_connections = Collections.synchronizedList(new ArrayList<Connection>());
     public static final int               LOGIN_OK         = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
+
+    public static final boolean addSharedConnection(final Connection con) {
+        synchronized(Connection.open_connections){
+            return Connection.open_connections.add(con);
+        }
+    }
 
     public static final int closeSharedConnections() {
         for(final Connection con : Connection.open_connections)
@@ -315,16 +341,43 @@ public class Connection extends Mds{
         return size;
     }
 
-    synchronized public static Connection sharedConnection(final Provider provider) {
-        for(final Connection con : Connection.open_connections)
-            if(con.provider.equals(provider)) return con;
-        final Connection con = new Connection(provider);
-        Connection.open_connections.add(con);
-        return con;
+    public static final String queryPassword(final Component parent, final Provider provider) {
+        final JPanel panel = new JPanel();
+        final JLabel label = new JLabel("Enter ssh password:");
+        final JPasswordField pass = new JPasswordField(16);
+        panel.add(label);
+        panel.add(pass);
+        final String[] options = new String[]{"OK", "Cancel"};
+        final int option = JOptionPane.showOptionDialog(parent, panel, provider.toString(), JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        if(option == 0) return new String(pass.getPassword());
+        return null;
     }
 
-    public static Connection sharedConnection(final String provider) {
-        return Connection.sharedConnection(new Provider(provider));
+    public static final boolean removeSharedConnection(final Connection con) {
+        synchronized(Connection.open_connections){
+            return Connection.open_connections.remove(con);
+        }
+    }
+
+    public static Connection sharedConnection(final Provider provider) {
+        synchronized(Connection.open_connections){
+            for(final Connection con : Connection.open_connections)
+                if(con.provider.equals(provider)){
+                    con.setPassword(provider.password);
+                    return con;
+                }
+            final Connection con = new Connection(provider);
+            if(con.connect()){
+                Connection.open_connections.add(con);
+                return con;
+            }
+            con.close();
+            return null;
+        }
+    }
+
+    public static Connection sharedConnection(final String provider, final String password) {
+        return Connection.sharedConnection(new Provider(provider, password));
     }
     private boolean                              connected           = false;
     private transient Vector<ConnectionListener> connection_listener = new Vector<ConnectionListener>();
@@ -336,7 +389,6 @@ public class Connection extends Mds{
     private MRT                                  receiveThread       = null;
     private Socket                               sock                = null;
     private boolean                              use_compression     = false;
-    private boolean                              use_ssh;
 
     public Connection(final Provider provider){
         this(provider, null);
@@ -349,11 +401,11 @@ public class Connection extends Mds{
     }
 
     public Connection(final String provider){
-        this(new Provider(provider));
+        this(new Provider(provider, null));
     }
 
     public Connection(final String provider, final ConnectionListener cl){
-        this(new Provider(provider), cl);
+        this(new Provider(provider, null), cl);
     }
 
     synchronized public final void addConnectionListener(final ConnectionListener l) {
@@ -392,10 +444,8 @@ public class Connection extends Mds{
 
     private final void connectToServer() throws IOException {
         /* connect to server */
-        if(this.use_ssh){
-            final int localport = SSH.connect(this.provider);
-            this.sock = new Socket("localhost", localport);
-        }else this.sock = new Socket(this.provider.host, this.provider.port);
+        if(this.provider.password != null) this.sock = new SSHSocket(this.provider);
+        else this.sock = new Socket(this.provider.host, this.provider.port);
         System.out.println(this.sock.toString());
         this.sock.setTcpNoDelay(true);
         this.dis = new BufferedInputStream(this.sock.getInputStream());
@@ -405,8 +455,12 @@ public class Connection extends Mds{
         message.useCompression(this.use_compression);
         message.send(this.dos);
         this.sock.setSoTimeout(3000);
-        Message.receive(this.dis, null);
+        final Message msg = Message.receive(this.dis, null);
         this.sock.setSoTimeout(0);
+        if(msg.header.get(4) == 0){
+            this.close();
+            return;
+        }
         this.receiveThread = new MRT();
         this.receiveThread.start();
         this.connected = true;
@@ -487,7 +541,9 @@ public class Connection extends Mds{
 
     synchronized public final Message getMessage(Pointer ctx, final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
-        if(!this.connected) throw new MdsException("Not connected");
+        if(!this.connected){
+            if(!this.connect()) throw new MdsException("Not connected");
+        }
         this.setActive();
         byte idx = 0;
         final Message msg;
@@ -541,8 +597,7 @@ public class Connection extends Mds{
     }
 
     private final String getName(final String classname) {
-        if(this.sock == null) return new StringBuilder(128).append(classname).append('(').append(this.provider.user).append('@').append(this.provider.host).append(':').append(this.provider.port).append(')').toString();
-        return new StringBuilder(128).append(classname).append('(').append(this.sock.getInetAddress()).append(", ").append(this.sock.getPort()).append(", ").append(this.sock.getLocalPort()).append(')').toString();
+        return new StringBuilder(128).append(classname).append('(').append(this.provider.user).append('@').append(this.provider.host).append(':').append(this.provider.port).append(')').toString();
     }
 
     public final int getPort() {
@@ -605,9 +660,8 @@ public class Connection extends Mds{
         }
     }
 
-    public final Connection setSSH(final boolean use_ssh) {
-        this.use_ssh = use_ssh;
-        return this;
+    public final void setPassword(final String password) {
+        this.provider.setPassword(password);
     }
 
     @Override
