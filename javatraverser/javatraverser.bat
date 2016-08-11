@@ -87,6 +87,7 @@ SET DEVWAVE_SCR=^
 SET TRAV_SRC=^
   jtraverser\DataChangeEvent.java ^
   jtraverser\DataChangeListener.java ^
+  jtraverser\MdsView.java ^
   jtraverser\Node.java ^
   jtraverser\TreeView.java ^
   jtraverser\TreeManager.java ^
@@ -285,6 +286,7 @@ ECHO gathering data
 MKDIR %JARDIR%\devicebeans 2>NUL
 MKDIR %JARDIR%\jTraverser 2>NUL
 COPY /Y %SRCDIR%\devicebeans\*.gif %JARDIR%\devicebeans>NUL
+COPY %SRCDIR%\..\..\jsch-0.1.53.jar %JARDIR%\jTraverser.jar>NUL
 rem COPY /Y %SRCDIR%\devicebeans\devicewave\*.gif %JARDIR%\devicebeans\devicewave>NUL
 COPY /Y %SRCDIR%\jtraverser\*.gif  %JARDIR%\jtraverser>NUL
 COPY /Y %CD%\JTMANIFEST.mf %JTMANIFEST% >NUL
@@ -293,7 +295,7 @@ ECHO Built-Date: %Year%-%Month:~-2%-%Day:~-2% %TIME:~0,8%>>%JTMANIFEST%
 ECHO creating jar packages
 PUSHD %JARDIR%
 %JAR% -cmf %DBMANIFEST% devicebeans.jar %DEVICE_CLS% %DEVICE_GIF%
-%JAR% -cmf %JTMANIFEST% jTraverser.jar %TRAV_CLS% %TRAV_GIF% %MDSIP_CLS% %TOOLS_CLS% %DEVICE_CLS% %DEVICE_GIF% ||rem %DEVWAV_CLS% %DEVWAV_GIF%
+%JAR% -umf %JTMANIFEST% jTraverser.jar %TRAV_CLS% %TRAV_GIF% %MDSIP_CLS% %TOOLS_CLS% %DEVICE_CLS% %DEVICE_GIF% ||rem %DEVWAV_CLS% %DEVWAV_GIF%
 rem %JAR% -cf localDatabase.jar %LOCAL_CLS%
 %JAR% -cf MDSIP.jar %MDSIP_CLS%
 rem %JAR% -cf jTraverserTools.jar %TOOLS_CLS%

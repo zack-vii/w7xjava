@@ -11,6 +11,7 @@ import mds.data.descriptor.Descriptor_S_Test;
 import mds.data.descriptor.Descriptor_Test;
 import mds.data.descriptor_r.Function_Test;
 import mds.mdsip.Connection;
+import mds.mdsip.Connection.Provider;
 import mds.mdsip.Connection_Test;
 
 @RunWith(Suite.class)
@@ -43,7 +44,7 @@ public class AllTests{
     }
 
     public static Connection setUpBeforeClass() throws Exception {
-        final Connection mds = Connection.sharedConnection("localhost:" + AllTests.port);
+        final Connection mds = Connection.sharedConnection(new Provider("localhost", AllTests.port));
         mds.connect();
         if(!mds.isConnected()){
             System.out.println("Started new local mdsip server");

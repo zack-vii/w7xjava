@@ -159,7 +159,7 @@ public final class ModifyFlags extends JDialog{
             return;
         }
         final boolean[] bflags = ModifyFlags.intToBool(iflags);
-        final Node currnode = ModifyFlags.this.treeman.getCurrentTreeView().getCurrentNode();
+        final Node currnode = ModifyFlags.this.treeman.getCurrentMdsView().getCurrentNode();
         final boolean is_ok = !(ModifyFlags.this.treeman.getCurrentTreeView().isReadOnly() || (currnode == null));
         for(int i = 0; i < 32; i++){
             this.flag[i].setSelected(bflags[i]);

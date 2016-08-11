@@ -2,6 +2,7 @@ package jtraverser;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -29,14 +30,13 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import mds.Mds;
 import mds.MdsException;
 import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
-import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.NODE;
-import mds.mdsip.Connection;
-import mds.mdsip.Connection.Provider;
+import mds.data.descriptor_s.Nid;
 
 @SuppressWarnings("serial")
 public final class TreeView extends JTree implements TreeSelectionListener, DataChangeListener{
@@ -47,7 +47,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
             if(!(comp instanceof TreeView)) return null;
             final TreeView tree = ((TreeView)comp);
             final Node node = tree.getCurrentNode();
-            switch(tree.treeman.copy_format){
+            switch(tree.getTreeManager().copy_format){
                 case TreeManager.ExtrasMenu.CopyFormat.FULLPATH:
                     return new StringSelection(node.getFullPath());
                 case TreeManager.ExtrasMenu.CopyFormat.PATH:
@@ -79,7 +79,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
                     node.getTreeNode().setUserObject(node);
                 }
             }else node = (Node)usrObj;
-            if(isSelected) TreeView.this.treeman.dialogs.update();
+            if(isSelected) TreeView.this.getTreeManager().dialogs.update();
             return node.getIcon(isSelected);
         }
     };
@@ -91,17 +91,17 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
     private JTextField             add_device_type, add_device_name;
     private Node                   curr_node;
     private final TREE             tree;
-    private final Connection       connection;
+    private final Mds              mds;
     private Nid                    default_nid;
     private String                 lastName;
     private DefaultMutableTreeNode top;
-    public final TreeManager       treeman;
+    public final MdsView           mdsview;
 
-    public TreeView(final TreeManager treeman, final String provider, final String expt, final int shot, final int mode) throws MdsException{
+    public TreeView(final MdsView mdsview, final String expt, final int shot, final int mode) throws MdsException{
         super();
-        this.treeman = treeman;
-        this.connection = Connection.sharedConnection(provider);
-        this.tree = new TREE(this.connection, expt, shot, mode);;
+        this.mdsview = mdsview;
+        this.mds = mdsview.getMds();
+        this.tree = new TREE(this.mds, expt, shot, mode);;
         try{
             this.tree.open();
         }catch(final MdsException me){
@@ -147,13 +147,13 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
                 else if(e.getKeyChar() == 22) // i.e. Ctrl+V
                     TreeView.this.getCurrentNode().paste();
                 else if(e.getKeyChar() == KeyEvent.VK_DELETE || e.getKeyChar() == KeyEvent.VK_BACK_SPACE) TreeView.this.getCurrentNode().delete();
-                TreeView.this.treeman.reportChange();
+                TreeView.this.getTreeManager().reportChange();
             }
         });
         this.setEditable(this.tree.isEditable());
         this.setCellRenderer(new MDSCellRenderer());
         this.addTreeSelectionListener(this);
-        this.addMouseListener(treeman.getContextMenu());
+        this.addMouseListener(mdsview.treeman.getContextMenu());
         this.addComponentListener(new ComponentAdapter(){
             @Override
             public void componentResized(final ComponentEvent e) {}
@@ -165,7 +165,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         final Node currnode = this.getCurrentNode();
         if(currnode == null) return;
         if(this.add_device_dialog == null){
-            this.add_device_dialog = new JDialog(this.treeman.getFrame());
+            this.add_device_dialog = new JDialog(this.mdsview.treeman.getFrame());
             final JPanel jp = new JPanel();
             jp.setLayout(new BorderLayout());
             JPanel jp1 = new JPanel();
@@ -212,7 +212,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         this.add_device_name.setText("");
         this.add_device_type.setText("");
         this.add_device_dialog.setTitle("Add device to: " + currnode.getFullPath());
-        this.add_device_dialog.setLocation(this.treeman.dialogLocation());
+        this.add_device_dialog.setLocation(this.getTreeManager().dialogLocation());
         this.add_device_dialog.setVisible(true);
     }
 
@@ -223,11 +223,11 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
     public Node addDevice(final String name, final String type, final Node toNode) {
         DefaultMutableTreeNode new_tree_node = null;
         if(name == null || name.length() == 0 || name.length() > 12){
-            JOptionPane.showMessageDialog(this.treeman.getFrame(), "Name length must range between 1 and 12 characters", "Error adding Node", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this.getFrame(), "Name length must range between 1 and 12 characters", "Error adding Node", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         if(type == null || type.length() == 0){
-            JOptionPane.showMessageDialog(this.treeman.getFrame(), "Missing device type", "Error adding Node", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this.getFrame(), "Missing device type", "Error adding Node", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         Node new_node = null;
@@ -248,7 +248,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
                 return new_node;
             }
         }catch(final Throwable e){
-            JOptionPane.showMessageDialog(this.treeman.getFrame(), "Add routine for the selected device cannot be activated:\n" + e.getMessage(), "Error adding Device", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this.getFrame(), "Add routine for the selected device cannot be activated:\n" + e.getMessage(), "Error adding Device", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         return new_node;
@@ -263,7 +263,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         DefaultMutableTreeNode new_tree_node;
         // final DefaultMutableTreeNode toTreeNode = toNode.getTreeNode();
         if(name == null || name.length() == 0 || name.length() > 12){
-            JOptionPane.showMessageDialog(this.treeman.getFrame(), "Name length must range between 1 and 12 characters", "Error adding Node", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this.getFrame(), "Name length must range between 1 and 12 characters", "Error adding Node", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         try{
@@ -272,7 +272,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
             new_node.setTreeNode(new_tree_node);
             // this.addNodeToParent(new_tree_node, toTreeNode);
         }catch(final Exception e){
-            JOptionPane.showMessageDialog(this.treeman.getFrame(), e.getMessage(), "Error adding Node", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this.getFrame(), e.getMessage(), "Error adding Node", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         return new_node;
@@ -306,29 +306,29 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
                 name = this.tree.expt;
             }catch(final Exception exc){}
             if(editable){
-                final int n = JOptionPane.showConfirmDialog(this.treeman.getFrame(), "Tree " + name + " open in edit mode has been changed: Write it before closing?", "Closing Tree ", JOptionPane.YES_NO_OPTION);
+                final int n = JOptionPane.showConfirmDialog(this.getFrame(), "Tree " + name + " open in edit mode has been changed: Write it before closing?", "Closing Tree ", JOptionPane.YES_NO_OPTION);
                 if(n == JOptionPane.YES_OPTION){
                     try{
                         this.tree.write();
                         this.tree.close();
                     }catch(final Exception exc){
-                        JOptionPane.showMessageDialog(this.treeman.getFrame(), "Error closing tree", exc.getMessage(), JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(this.getFrame(), "Error closing tree", exc.getMessage(), JOptionPane.WARNING_MESSAGE);
                     }
                 }else{
                     try{
                         this.tree.quit();
                     }catch(final Exception exce){
-                        JOptionPane.showMessageDialog(this.treeman.getFrame(), "Error quitting tree", exce.getMessage(), JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(this.getFrame(), "Error quitting tree", exce.getMessage(), JOptionPane.WARNING_MESSAGE);
                     }
                 }
-            }else JOptionPane.showMessageDialog(this.treeman.getFrame(), "Error closing tree", e.getMessage(), JOptionPane.WARNING_MESSAGE);
+            }else JOptionPane.showMessageDialog(this.getFrame(), "Error closing tree", e.getMessage(), JOptionPane.WARNING_MESSAGE);
         }
         return this;
     }
 
     @Override
     public void dataChanged(final DataChangeEvent e) {
-        this.treeman.reportChange();
+        this.mdsview.reportChange();
     }
 
     public final void deleteNode() {
@@ -344,7 +344,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         String msg = "You are about to delete node " + del_node.getName().trim();
         if(n_children > 0) msg += " which has " + n_children + " descendents.\n Please confirm";
         else msg += "\n Please confirm";
-        final int n = JOptionPane.showConfirmDialog(this.treeman.getFrame(), msg, "Delete node(s)", JOptionPane.YES_NO_OPTION);
+        final int n = JOptionPane.showConfirmDialog(this.getFrame(), msg, "Delete node(s)", JOptionPane.YES_NO_OPTION);
         if(n == JOptionPane.YES_OPTION){
             if(!del_node.deleteExecute()) return;
             final DefaultTreeModel tree_model = (DefaultTreeModel)this.getModel();
@@ -382,10 +382,6 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         return null;
     }
 
-    public final Connection getConnection() {
-        return this.connection;
-    }
-
     public final Node getCurrentNode() {
         return this.curr_node;
     }
@@ -404,8 +400,12 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         return this.tree.expt;
     }
 
-    public final Provider getProvider() {
-        return this.connection.getProvider();
+    public final Frame getFrame() {
+        return this.getTreeManager().getFrame();
+    }
+
+    public final Mds getMds() {
+        return this.mds;
     }
 
     public final int getShot() {
@@ -423,6 +423,10 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
 
     public final TREE getTree() {
         return this.tree;
+    }
+
+    private final TreeManager getTreeManager() {
+        return this.mdsview.getTreeManager();
     }
 
     public final boolean isModel() {
@@ -528,7 +532,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         try{
             this.tree.write();
         }catch(final Exception exc){
-            JOptionPane.showMessageDialog(this.treeman.getFrame(), "Error writing tree", exc.getMessage(), JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this.getFrame(), "Error writing tree", exc.getMessage(), JOptionPane.WARNING_MESSAGE);
         }
     }
 }

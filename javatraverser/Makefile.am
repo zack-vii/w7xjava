@@ -95,6 +95,7 @@ DEVWAV_SRC= \
 JTRAVERSER_SRC= \
   jtraverser/DataChangeEvent.java \
   jtraverser/DataChangeListener.java \
+  jtraverser/MdsView.java \
   jtraverser/Node.java \
   jtraverser/TreeView.java \
   jtraverser/TreeManager.java \

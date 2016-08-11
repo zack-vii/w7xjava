@@ -639,7 +639,7 @@ public class Node{
         try{
             conglom = (Conglom)this.nid.getRecord();
         }catch(final MdsException e){
-            JOptionPane.showMessageDialog(this.treeview.treeman, e.getMessage(), "Error in device setup 1", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this.treeview, e.getMessage(), "Error in device setup 1", JOptionPane.WARNING_MESSAGE);
         }
         if(conglom != null){
             final CString model = (CString)conglom.getModel();
@@ -654,7 +654,7 @@ public class Node{
                         this.nid.doDeviceMethod("dw_setup");
                         return;
                     }catch(final MdsException exc){
-                        JOptionPane.showMessageDialog(this.treeview.treeman, e.getMessage(), "Error in device setup 2: " + e, JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(this.treeview, e.getMessage(), "Error in device setup 2: " + e, JOptionPane.WARNING_MESSAGE);
                         e.printStackTrace();
                         return;
                     }

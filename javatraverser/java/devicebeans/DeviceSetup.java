@@ -85,12 +85,12 @@ public class DeviceSetup extends JDialog{
             final String deviceClassName = model + "Setup";
             final Class deviceClass = Class.forName(deviceClassName);
             ds = (DeviceSetup)deviceClass.newInstance();
-            ds.setFrame(node.treeview.treeman.getFrame());
+            ds.setFrame(node.treeview.getFrame());
             final Dimension prevDim = ds.getSize();
             ds.addDataChangeListener(node.treeview);
             ds.configure(new Database(node.nid.tree.mds, node.nid.tree.expt, node.nid.tree.shot, TREE.NORMAL), node.nid.getNidNumber());
             if(ds.getContentPane().getLayout() != null) ds.pack();
-            ds.setLocation(node.treeview.treeman.dialogLocation());
+            ds.setLocation(node.treeview.getLocationOnScreen());
             ds.setSize(prevDim);
             ds.setVisible(true);
         }else ds.setVisible(true);

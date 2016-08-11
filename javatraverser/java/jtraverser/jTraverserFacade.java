@@ -19,6 +19,7 @@ import javax.swing.event.MenuListener;
 import jtraverser.TreeManager.Menu;
 import mds.MdsException;
 import mds.TREE;
+import mds.mdsip.Connection.Provider;
 
 @SuppressWarnings("serial")
 public final class jTraverserFacade extends JFrame{
@@ -74,7 +75,7 @@ public final class jTraverserFacade extends JFrame{
             if("-edit".startsWith(access)) mode = TREE.EDITABLE;
             else if("-readonly".startsWith(access)) mode = TREE.READONLY;
         }
-        this.treeman = new TreeManager(this);
+        this.getContentPane().add(this.treeman = new TreeManager(this));
         final JMenuBar menu_bar = new JMenuBar();
         this.setJMenuBar(menu_bar);
         JMenu jmenu;
@@ -97,7 +98,6 @@ public final class jTraverserFacade extends JFrame{
         jmenu.addMenuListener(new MenuChecker(jmenu, new TreeManager.ExtrasMenu(this.treeman, jmenu)));
         this.jmenus.add(jmenu);
         jmenu.setEnabled(false);
-        this.getContentPane().add(this.treeman);
         this.getContentPane().add(jTraverserFacade.status, BorderLayout.PAGE_END);
         this.addWindowListener(new WindowAdapter(){
             @Override
@@ -108,7 +108,7 @@ public final class jTraverserFacade extends JFrame{
         this.pack();
         this.setVisible(true);
         if(exp_name != null) try{
-            this.treeman.openTree(server, exp_name.toUpperCase(), (shot_name == null) ? -1 : Integer.parseInt(shot_name), mode);
+            this.treeman.openTree(new Provider(server, null), exp_name.toUpperCase(), (shot_name == null) ? -1 : Integer.parseInt(shot_name), mode);
         }catch(final Exception e1){
             e1.printStackTrace();
         }
@@ -119,17 +119,20 @@ public final class jTraverserFacade extends JFrame{
         return this.getContentPane().add(component);
     }
 
-    void reportChange(final TreeView tree) {
-        if(tree != null){
-            this.setTitle(new StringBuilder(256).append("jTraverser - ").append(tree).toString());
-            this.jmenus.get(1).setEnabled(true);
-            this.jmenus.get(2).setEnabled(!tree.isReadOnly());
-            this.jmenus.get(3).setEnabled(tree.isEditable());
-            this.jmenus.get(4).setEnabled(true);
-        }else{
-            this.setTitle(jTraverserFacade.TitleNoTree);
-            for(final JMenu jm : this.jmenus.subList(1, 5))
-                jm.setEnabled(false);
+    void reportChange(final MdsView mdsview) {
+        if(mdsview != null){
+            final TreeView treeview = mdsview.getCurrentTreeView();
+            if(treeview != null){
+                this.setTitle(new StringBuilder(256).append("jTraverser - ").append(treeview).append(" on ").append(mdsview).toString());
+                this.jmenus.get(1).setEnabled(true);
+                this.jmenus.get(2).setEnabled(!treeview.isReadOnly());
+                this.jmenus.get(3).setEnabled(treeview.isEditable());
+                this.jmenus.get(4).setEnabled(true);
+                return;
+            }
         }
+        this.setTitle(jTraverserFacade.TitleNoTree);
+        for(final JMenu jm : this.jmenus.subList(1, 5))
+            jm.setEnabled(false);
     }
 }

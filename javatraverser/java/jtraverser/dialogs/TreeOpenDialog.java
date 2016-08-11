@@ -18,23 +18,29 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import jtraverser.MdsView;
 import jtraverser.TreeManager;
+import jtraverser.TreeView;
+import mds.Mds;
 import mds.MdsException;
 import mds.TREE;
 import mds.data.descriptor_s.CString;
 import mds.mdsip.Connection;
+import mds.mdsip.Connection.Provider;
 
 @SuppressWarnings("serial")
 public class TreeOpenDialog extends JDialog{
-    private final JRadioButton readonly, edit, normal;
-    private final JTextField   provider, expt;
-    JComboBox<String>          shot;
-    private final TreeManager  treeman;
+    private final JRadioButton   readonly, edit, normal;
+    private final JPasswordField pass;
+    private final JTextField     provider, expt;
+    JComboBox<String>            shot;
+    private final TreeManager    treeman;
 
     /**
      * Create the dialog.
@@ -51,7 +57,7 @@ public class TreeOpenDialog extends JDialog{
         mjp.setLayout(new BorderLayout());
         final JPanel grid = new JPanel();
         grid.setBorder(new EmptyBorder(5, 5, 5, 5));
-        grid.setLayout(new GridLayout(3, 2){
+        grid.setLayout(new GridLayout(4, 2){
             @Override
             public void layoutContainer(final Container parent) {
                 synchronized(parent.getTreeLock()){
@@ -138,6 +144,8 @@ public class TreeOpenDialog extends JDialog{
         });
         grid.add(new JLabel("server: "));
         grid.add(this.provider = new JTextField(16));
+        grid.add(new JLabel("passwd: "));
+        grid.add(this.pass = new JPasswordField(16));
         grid.add(new JLabel("expt: "));
         grid.add(this.expt = new JTextField(16));
         grid.add(new JLabel("shot: "));
@@ -154,7 +162,7 @@ public class TreeOpenDialog extends JDialog{
             public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
                 TreeOpenDialog.this.shot.removeAllItems();
                 TreeOpenDialog.this.shot.addItem("model");
-                final Connection mds = Connection.sharedConnection(TreeOpenDialog.this.provider.getText());
+                final Connection mds = Connection.sharedConnection(TreeOpenDialog.this.getProvider());
                 final boolean wasconnected = mds.isConnected();
                 if(!wasconnected) mds.connect();
                 try{
@@ -218,8 +226,12 @@ public class TreeOpenDialog extends JDialog{
         this.setResizable(false);
     }
 
+    private Provider getProvider() {
+        return new Provider(this.provider.getText().trim(), this.pass.getPassword().length == 0 ? null : new String(this.pass.getPassword()));
+    }
+
     void ok() {
-        final String provider = this.provider.getText().trim(), exp = this.expt.getText().trim(), shot_str = ((String)this.shot.getSelectedItem()).trim();
+        final String exp = this.expt.getText().trim(), shot_str = ((String)this.shot.getSelectedItem()).trim();
         if(exp == null || exp.length() == 0){
             JOptionPane.showMessageDialog(this, "Missing experiment name", "Error opening tree", JOptionPane.WARNING_MESSAGE);
             return;
@@ -241,23 +253,37 @@ public class TreeOpenDialog extends JDialog{
         if(this.edit.isSelected()) mode = TREE.EDITABLE;
         else if(this.readonly.isSelected()) mode = TREE.READONLY;
         else mode = TREE.NORMAL;
-        if(this.treeman != null) this.treeman.openTree(provider, exp, shot, mode);
+        if(this.treeman != null) this.treeman.openTree(this.getProvider(), exp, shot, mode);
     }
 
     public final void open() {
-        if(this.treeman != null) this.setLocation(this.treeman.dialogLocation());
         this.readonly.setSelected(true);
-        final TREE tree = TREE.getActiveTree();
-        if(tree != null){
-            this.provider.setText(tree.getProvider().host);
-            this.expt.setText(tree.expt);
-            this.shot.setSelectedItem(tree.shot == -1 ? "model" : Integer.toString(tree.shot));
+        if(this.treeman != null){
+            this.setLocation(this.treeman.dialogLocation());
+            final MdsView mdsview = this.treeman.getCurrentMdsView();
+            if(mdsview != null){
+                final Mds mds = mdsview.getMds();
+                if(mds instanceof Connection) this.provider.setText(((Connection)mds).getProvider().toString());
+                else this.provider.setText("");
+                final TreeView treeview = this.treeman.getCurrentTreeView();
+                if(treeview != null){
+                    this.expt.setText(treeview.getExpt());
+                    this.shot.setSelectedItem(treeview.getShot() == -1 ? "model" : Integer.toString(treeview.getShot()));
+                }
+            }
+        }else{
+            final TREE tree = TREE.getActiveTree();
+            if(tree != null){
+                this.expt.setText(tree.expt);
+                this.shot.setSelectedItem(tree.shot == -1 ? "model" : Integer.toString(tree.shot));
+            }
         }
         this.setVisible(true);
     }
 
     public final void setFields(final String provider, final String expt, final long shot) {
         this.provider.setText(provider);
+        this.pass.setText("");
         this.expt.setText(expt);
         this.shot.setSelectedItem(Long.toString(shot));
     }

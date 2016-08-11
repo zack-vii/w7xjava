@@ -556,8 +556,7 @@ public final class TREE{
         sb.append("\", ").append(this.shot == -1 ? "model" : this.shot);
         if(this.mode == TREE.EDITABLE) sb.append(", edit");
         else if(this.mode == TREE.READONLY) sb.append(", readonly");
-        sb.append(") on ").append(this.getProvider());
-        return sb.toString();
+        return sb.append(')').toString();
     }
 
     public final TagRefStatus treeFindTagWild(final String searchstr, final TagRefStatus tag) throws MdsException {

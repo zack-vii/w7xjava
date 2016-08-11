@@ -84,7 +84,7 @@ public final class Database{
     }
 
     public Database(final String provider, final String expt, final int shot, final int mode) throws MdsException{
-        this(Connection.sharedConnection(provider), expt, shot, mode);
+        this(Connection.sharedConnection(provider, null), expt, shot, mode);
     }
 
     private final void _checkContext() throws MdsException {
