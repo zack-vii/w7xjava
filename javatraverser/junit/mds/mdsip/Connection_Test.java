@@ -23,7 +23,7 @@ public class Connection_Test{
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
-        Connection_Test.mds.disconnect();
+        Connection_Test.mds.close();
     }
 
     @Test

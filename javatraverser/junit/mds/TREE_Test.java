@@ -22,7 +22,7 @@ import mds.mdsip.Connection;
 public class TREE_Test{
     private static Connection   mds;
     private static final String expt = AllTests.tree;
-    private static final int    shot = 7633, model = -1;
+    private static final int    shot = 7633;
 
     @BeforeClass
     public static final void setUpBeforeClass() throws Exception {
@@ -31,7 +31,7 @@ public class TREE_Test{
 
     @AfterClass
     public static final void tearDownAfterClass() throws Exception {
-        TREE_Test.mds.disconnect();
+        TREE_Test.mds.close();
     }
 
     @Test

@@ -41,7 +41,7 @@ public class TreeShr_Test{
 
     @AfterClass
     public static final void tearDownAfterClass() throws Exception {
-        TreeShr_Test.mds.disconnect();
+        TreeShr_Test.mds.close();
     }
 
     @Before

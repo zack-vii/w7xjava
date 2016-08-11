@@ -238,7 +238,7 @@ public class Connection extends Mds{
 
     public static final int closeSharedConnections() {
         for(final Connection con : Connection.open_connections)
-            con.disconnect();
+            con.close();
         final int size = Connection.open_connections.size();
         Connection.open_connections.clear();
         return size;
@@ -289,6 +289,18 @@ public class Connection extends Mds{
         this.connection_listener.addElement(l);
     }
 
+    /** disconnect from server and close **/
+    public final boolean close() {
+        if(this.connectThread != null) this.connectThread.close();
+        this.connectThread = null;
+        this.disconnectFromServer();
+        if(this.receiveThread != null) this.receiveThread.waitExited();
+        this.receiveThread = null;
+        this.dos = null;
+        this.dis = null;
+        return true;
+    }
+
     /** re-/connects to the servers mdsip service **/
     public final boolean connect() {
         if(this.connectThread == null || !this.connectThread.isAlive()){
@@ -324,18 +336,6 @@ public class Connection extends Mds{
         this.receiveThread.start();
         this.connected = true;
         Connection.this.dispatchConnectionEvent(new ConnectionEvent(this, "connected"));
-    }
-
-    /** disconnect from server and close **/
-    public final boolean disconnect() {
-        if(this.connectThread != null) this.connectThread.close();
-        this.connectThread = null;
-        this.disconnectFromServer();
-        if(this.receiveThread != null) this.receiveThread.waitExited();
-        this.receiveThread = null;
-        this.dos = null;
-        this.dis = null;
-        return true;
     }
 
     private final void disconnectFromServer() {
@@ -375,7 +375,7 @@ public class Connection extends Mds{
     @Override
     public void finalize() throws Throwable {
         try{
-            this.disconnect();
+            this.close();
         }finally{
             super.finalize();
         }

@@ -24,7 +24,7 @@ public class MdsShr_Test{
 
     @AfterClass
     public static final void tearDownAfterClass() throws Exception {
-        MdsShr_Test.mds.disconnect();
+        MdsShr_Test.mds.close();
     }
 
     @Before

@@ -168,7 +168,7 @@ public class TreeOpenDialog extends JDialog{
                     for(final int shot : shots)
                         TreeOpenDialog.this.shot.addItem(Integer.toString(shot));
                 }finally{
-                    if(!wasconnected) mds.disconnect();
+                    if(!wasconnected) mds.close();
                 }
             }
         });

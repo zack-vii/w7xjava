@@ -23,7 +23,7 @@ public final class Descriptor_Test{
 
     @AfterClass
     public static final void tearDownAfterClass() throws Exception {
-        Descriptor_Test.mds.disconnect();
+        Descriptor_Test.mds.close();
     }
 
     @Before

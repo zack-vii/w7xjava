@@ -68,6 +68,7 @@ public abstract class Descriptor<T>{
             case Descriptor_XS.CLASS:
                 return Descriptor_XS.deserialize(b);
         }
+        System.out.println(new String(b.array()));
         throw new MdsException(String.format("Unsupported class %s", Descriptor.getDClassName(b.get(Descriptor._clsB))), 0);
     }
 

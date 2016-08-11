@@ -26,7 +26,7 @@ public final class Function_Test{
 
     @AfterClass
     public static final void tearDownAfterClass() throws Exception {
-        Function_Test.mds.disconnect();
+        Function_Test.mds.close();
     }
 
     @Test
