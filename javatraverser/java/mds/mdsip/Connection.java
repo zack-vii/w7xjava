@@ -196,24 +196,30 @@ public class Connection extends Mds{
         public static final String DEFAULT_USER = "JAVA_USER";
         public final String        host;
         public final int           port;
-        public final String        user         = System.getProperty("user.name");
+        public final String        user;                      // System.getProperty("user.name")
 
         public Provider(final String provider){
             if(provider == null || provider.length() == 0){
-                // this.user = Provider.DEFAULT_USER;
+                this.user = Provider.DEFAULT_USER;
                 this.host = Provider.DEFAULT_HOST;
                 this.port = Provider.DEFAULT_PORT;
             }else{
                 final int at = provider.indexOf("@");
                 final int cn = provider.indexOf(":");
-                // this.user = at < 0 ? Provider.DEFAULT_USER : provider.substring(0, at);
+                this.user = at < 0 ? Provider.DEFAULT_USER : provider.substring(0, at);
                 this.host = cn < 0 ? provider.substring(at + 1) : provider.substring(at + 1, cn);
                 this.port = cn < 0 ? Provider.DEFAULT_PORT : Short.parseShort(provider.substring(cn + 1));
             }
         }
 
         public Provider(final String host, final int port){
-            // this.user = Provider.DEFAULT_USER;
+            this.user = Provider.DEFAULT_USER;
+            this.host = host == null ? Provider.DEFAULT_HOST : host;
+            this.port = port == 0 ? Provider.DEFAULT_PORT : port;
+        }
+
+        public Provider(final String user, final String host, final int port){
+            this.user = user;
             this.host = host == null ? Provider.DEFAULT_HOST : host;
             this.port = port == 0 ? Provider.DEFAULT_PORT : port;
         }
