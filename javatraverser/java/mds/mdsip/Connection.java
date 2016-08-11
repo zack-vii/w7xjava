@@ -17,8 +17,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import debug.DEBUG;
-import mds.MdsException;
 import mds.Mds;
+import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Pointer;
@@ -407,8 +407,9 @@ public class Connection extends Mds{
 
     @Override
     public final <D extends Descriptor> Descriptor getDescriptor(final Pointer ctx, final String expr, final Class<D> cls, final Descriptor... args) throws MdsException {
-        final ByteBuffer b = this.getMessage(ctx, expr, true, args).body;
-        return Mds.bufferToClass(b, cls);
+        final Message msg = this.getMessage(ctx, expr, true, args);
+        if(msg.dtype == DTYPE.T) throw new MdsException(msg.toString());
+        return Mds.bufferToClass(msg.body, cls);
     }
 
     public final String getHost() {
