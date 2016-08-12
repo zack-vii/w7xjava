@@ -786,7 +786,7 @@ public final class TreeShr{
      * @return boolean: previous state
      **/
     public final boolean treeUsePrivateCtx(final Pointer ctx, final boolean state) throws MdsException {
-        return this.mds.getInteger(ctx, String.format("TreeShr->TreeUsePrivateCtx(%d)", state ? 1 : 0)) == 1;
+        return this.mds.getInteger(ctx, String.format("TreeShr->TreeUsePrivateCtx(val(%d))", state ? 1 : 0)) == 1;
     }
 
     /**
