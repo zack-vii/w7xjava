@@ -105,7 +105,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
             this.tree.open();
         }catch(final MdsException me){
             if(mode != TREE.EDITABLE || me.getStatus() != MdsException.TreeFOPENW) throw me;
-            final int n = JOptionPane.showConfirmDialog(this, "Tree " + expt + " cannot be opened in edit mode. Create new instead?", "Editing Tree ", JOptionPane.YES_NO_OPTION);
+            final int n = JOptionPane.showConfirmDialog(this.getFrame(), "Tree " + expt + " cannot be opened in edit mode. Create new instead?", "Editing Tree ", JOptionPane.YES_NO_OPTION);
             if(n != JOptionPane.YES_OPTION) throw me;
             this.tree.open(TREE.NEW);
         }
