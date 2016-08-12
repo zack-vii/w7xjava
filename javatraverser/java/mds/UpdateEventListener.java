@@ -1,4 +1,4 @@
-package mds.mdsip;
+package mds;
 
 /* $Id$ */
 import java.util.EventListener;

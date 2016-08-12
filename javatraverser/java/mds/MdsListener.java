@@ -1,4 +1,4 @@
-package mds.mdsip;
+package mds;
 
 /**
  * $Id$
@@ -11,6 +11,6 @@ package mds.mdsip;
  */
 import java.util.EventListener;
 
-public interface ConnectionListener extends EventListener{
-    public void processConnectionEvent(ConnectionEvent e);
+public interface MdsListener extends EventListener{
+    public void processMdsEvent(MdsEvent e);
 }

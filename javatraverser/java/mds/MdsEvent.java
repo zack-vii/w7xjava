@@ -1,4 +1,4 @@
-package mds.mdsip;
+package mds;
 
 /* $Id$ */
 import java.awt.AWTEvent;
@@ -14,8 +14,9 @@ import java.sql.Connection;
  * @see DataProvider
  */
 @SuppressWarnings("serial")
-public class ConnectionEvent extends AWTEvent{
-    public static final int LOST_CONNECTION = AWTEvent.RESERVED_ID_MAX + 1;
+public class MdsEvent extends AWTEvent{
+    public static final int LOST_CONTEXT = AWTEvent.RESERVED_ID_MAX + 2;
+    public static final int HAVE_CONTEXT = AWTEvent.RESERVED_ID_MAX + 1;
     /**
      * Number of bytes transferred so far.
      */
@@ -29,24 +30,24 @@ public class ConnectionEvent extends AWTEvent{
      */
     int                     total_size;
 
-    public ConnectionEvent(final Object source, final int total_size, final int current_size){
+    public MdsEvent(final Object source, final int total_size, final int current_size){
         super(source, 0);
         this.total_size = total_size;
         this.current_size = current_size;
         this.info = null;
     }
 
-    public ConnectionEvent(final Object source, final int event_id, final String info){
+    public MdsEvent(final Object source, final int event_id, final String info){
         super(source, event_id);
         this.info = new String(info);
     }
 
-    public ConnectionEvent(final Object source, final String info){
+    public MdsEvent(final Object source, final String info){
         super(source, 0);
         this.info = new String(info);
     }
 
-    public ConnectionEvent(final Object source, final String info, final int total_size, final int current_size){
+    public MdsEvent(final Object source, final String info, final int total_size, final int current_size){
         super(source, 0);
         this.total_size = total_size;
         this.current_size = current_size;

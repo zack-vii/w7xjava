@@ -19,9 +19,8 @@ import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 import mds.data.descriptor_s.Pointer;
 import mds.mdsip.Connection;
-import mds.mdsip.Connection.Provider;
 
-public final class TREE{
+public final class TREE implements MdsListener{
     @SuppressWarnings("serial")
     public static final class TagList extends HashMap<String, Nid>{
         private final String root;
@@ -53,16 +52,13 @@ public final class TREE{
     public static final int getCurrentShot(final Mds mds, final String expt) throws MdsException {
         return new TreeShr(mds).treeGetCurrentShotId(expt);
     }
-
-    public static final int getCurrentShot(final Provider provider, final String expt) throws MdsException {
-        return TREE.getCurrentShot(Connection.sharedConnection(provider), expt);
-    }
-    private final Pointer ctx = Pointer.NULL();
+    private final Pointer ctx    = Pointer.NULL();
     public final int      shot;
     public final Mds      mds;
     public final String   expt;
     private int           mode;
     public final TreeShr  treeshr;
+    public boolean        opened = false;
 
     public TREE(final Mds mds, final String expt, final int shot){
         this(mds, expt, shot, TREE.READONLY);
@@ -74,10 +70,6 @@ public final class TREE{
         this.expt = expt.toUpperCase();
         this.shot = shot;
         this.mode = mode;
-    }
-
-    public TREE(final Provider provider, final String expt, final int shot, final int mode){
-        this(Connection.sharedConnection(provider), expt, shot, mode);
     }
 
     public final Nid addConglom(final NODE node, final String name, final String model) throws MdsException {
@@ -133,6 +125,7 @@ public final class TREE{
 
     public final TREE close() throws MdsException {
         MdsException.handleStatus(this.treeshr.treeClose(this.ctx, this.expt, this.shot));
+        this.updateListener(false);
         return this;
     }
 
@@ -169,6 +162,11 @@ public final class TREE{
     public final TREE doDeviceMethod(final int nid, final String method) throws MdsException {
         this.treeshr.doMethod(this.ctx);
         return this;
+    }
+
+    @Override
+    public final void finalize() {
+        this.mds.removeMdsListener(this);
     }
 
     public final Nid[] findNodeWild(final int usage) throws MdsException {
@@ -405,11 +403,6 @@ public final class TREE{
         return res.data;
     }
 
-    public final Provider getProvider() {
-        if(this.mds instanceof Connection) return ((Connection)this.mds).getProvider();
-        return null;
-    }
-
     public final Descriptor getRecord(final int nid) throws MdsException {
         final DescriptorStatus res = this.setActive().treeshr.treeGetRecord(this.ctx, nid);
         if(res.status == MdsException.TreeNODATA) return null;
@@ -493,12 +486,29 @@ public final class TREE{
                 status = this.setActive().treeshr.treeOpen(this.ctx, this.expt, this.shot, this.isReadonly());
         }
         MdsException.handleStatus(status);
+        this.updateListener(true);
         return this;
     }
 
     public final TREE open(final int mode) throws MdsException {
         this.mode = mode;
         return this.open();
+    }
+
+    @Override
+    public void processMdsEvent(final MdsEvent e) {
+        switch(e.getID()){
+            case MdsEvent.HAVE_CONTEXT:
+                if(this.opened && !this.isOpen()) try{
+                    this.open();
+                }catch(final MdsException exc){}
+                break;
+            case MdsEvent.LOST_CONTEXT:
+                this.ctx.setValue(0);
+                break;
+            default:
+                System.out.println(e.getID() + e.getInfo());
+        }
     }
 
     public final TREE putRecord(final int nid, final Descriptor data) throws MdsException {
@@ -513,6 +523,7 @@ public final class TREE{
 
     public final TREE quit() throws MdsException {
         MdsException.handleStatus(this.treeshr.treeQuitTree(this.ctx));
+        this.updateListener(false);
         return this;
     }
 
@@ -577,8 +588,14 @@ public final class TREE{
         return this;
     }
 
+    private final void updateListener(final boolean opened) {
+        if(this.opened = opened) this.mds.addMdsListener(this);
+        else this.mds.removeMdsListener(this);
+    }
+
     public final TREE withPrivateConnection() {
-        return new TREE(new Connection(this.getProvider()), this.expt, this.shot);
+        if(!(this.mds instanceof Connection)) return null;
+        return new TREE(new Connection(((Connection)this.mds).getProvider()), this.expt, this.shot);
     }
 
     public final TREE write() throws MdsException {

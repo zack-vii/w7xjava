@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Vector;
+import java.util.Set;
 import java.util.zip.InflaterInputStream;
+import mds.MdsEvent;
+import mds.MdsException;
+import mds.MdsListener;
 import mds.data.descriptor.ARRAY;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
@@ -34,30 +37,30 @@ public final class Message extends Object{
     private static final int      SUPPORTS_COMPRESSION = 0x8000;
     // private static final byte SWAP_ENDIAN_ON_SERVER_MASK = (byte)0x40;
 
-    private static final synchronized void dispatchConnectionEvent(final Vector<ConnectionListener> listeners, final ConnectionEvent e) {
-        if(listeners != null) for(final ConnectionListener listener : listeners)
-            listener.processConnectionEvent(e);
+    private static final synchronized void dispatchMdsEvent(final Set<MdsListener> mdslisteners, final MdsEvent e) {
+        if(mdslisteners != null) for(final MdsListener listener : mdslisteners)
+            listener.processMdsEvent(e);
     }
 
     protected static boolean isRoprand(final byte arr[], final int idx) {
         return(arr[idx] == 0 && arr[idx + 1] == 0 && arr[idx + 2] == -128 && arr[idx + 3] == 0);
     }
 
-    private static final byte[] readBuf(int bytes_to_read, final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
+    private static final byte[] readBuf(int bytes_to_read, final InputStream dis, final Set<MdsListener> mdslisteners) throws IOException {
         final byte[] buf = new byte[bytes_to_read];
         int read_bytes = 0, curr_offset = 0;
         final boolean send = (bytes_to_read > 2000);
-        if(send) Message.dispatchConnectionEvent(listeners, new ConnectionEvent(dis, buf.length, curr_offset));
+        if(send) Message.dispatchMdsEvent(mdslisteners, new MdsEvent(dis, buf.length, curr_offset));
         while(bytes_to_read > 0){
             read_bytes = dis.read(buf, curr_offset, bytes_to_read);
             curr_offset += read_bytes;
             bytes_to_read -= read_bytes;
-            if(send) Message.dispatchConnectionEvent(listeners, new ConnectionEvent(dis, buf.length, curr_offset));
+            if(send) Message.dispatchMdsEvent(mdslisteners, new MdsEvent(dis, buf.length, curr_offset));
         }
         return buf;
     }
 
-    protected static final byte[] readCompressedBuf(final InputStream dis, final int msglen, final Vector<ConnectionListener> listeners) throws IOException {
+    protected static final byte[] readCompressedBuf(final InputStream dis, final int msglen, final Set<MdsListener> listeners) throws IOException {
         final int bytes_to_read = msglen - Message.HEADER_SIZE;
         final InflaterInputStream zis = new InflaterInputStream(dis);
         final byte[] buf = Message.readBuf(bytes_to_read, zis, listeners);
@@ -66,16 +69,16 @@ public final class Message extends Object{
         return buf;
     }
 
-    public final static Message receive(final InputStream dis, final Vector<ConnectionListener> listeners) throws IOException {
+    public final static Message receive(final InputStream dis, final Set<MdsListener> mdslisteners) throws IOException {
         final ByteBuffer header = ByteBuffer.wrap(Message.readBuf(Message.HEADER_SIZE, dis, null));
         final byte c_type = header.get(Message._clntB);
         if((c_type & Message.BIG_ENDIAN_MASK) == 0) header.order(ByteOrder.LITTLE_ENDIAN);
         final int msglen = header.getInt(Message._mlenI);
         final ByteBuffer body;
         if(msglen > Message.HEADER_SIZE){
-            if((c_type & Message.COMPRESSED) != 0) body = ByteBuffer.wrap(Message.readCompressedBuf(dis, msglen, listeners));
+            if((c_type & Message.COMPRESSED) != 0) body = ByteBuffer.wrap(Message.readCompressedBuf(dis, msglen, mdslisteners));
             else{
-                body = ByteBuffer.wrap(Message.readBuf(msglen - Message.HEADER_SIZE, dis, listeners));
+                body = ByteBuffer.wrap(Message.readBuf(msglen - Message.HEADER_SIZE, dis, mdslisteners));
             }
         }else body = ByteBuffer.allocate(0);
         body.order(Descriptor.BYTEORDER);
@@ -267,14 +270,18 @@ public final class Message extends Object{
         return((this.client_type & Message.BIG_ENDIAN_MASK) == 0);
     }
 
-    public final void send(final DataOutputStream dos) throws IOException {
-        dos.write(this.header.array());
-        final ByteBuffer buf = this.body.duplicate();
-        while(buf.hasRemaining())
-            dos.write(buf.get());
-        dos.flush();
-        if(this.descr_idx == (this.getNargs() - 1)) Message.msgid++;
-        if(Message.msgid == 0) Message.msgid = 1;
+    public final void send(final DataOutputStream dos) throws MdsException {
+        try{
+            dos.write(this.header.array());
+            final ByteBuffer buf = this.body.duplicate();
+            while(buf.hasRemaining())
+                dos.write(buf.get());
+            dos.flush();
+            if(this.descr_idx == (this.getNargs() - 1)) Message.msgid++;
+            if(Message.msgid == 0) Message.msgid = 1;
+        }catch(final IOException e){
+            throw new MdsException(e.getMessage());
+        }
     }
 
     @Override

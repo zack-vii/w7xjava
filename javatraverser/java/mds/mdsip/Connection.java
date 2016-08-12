@@ -1,6 +1,7 @@
 package mds.mdsip;
 
 import java.awt.Component;
+import java.awt.GridLayout;
 /* $Id$ */
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JLabel;
@@ -25,7 +25,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import debug.DEBUG;
 import mds.Mds;
+import mds.MdsEvent;
 import mds.MdsException;
+import mds.MdsListener;
+import mds.UpdateEventListener;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Pointer;
@@ -122,7 +125,7 @@ public class Connection extends Mds{
         public void run() {
             try{
                 while(true){
-                    final Message message = Message.receive(Connection.this.dis, Connection.this.connection_listener);
+                    final Message message = Message.receive(Connection.this.dis, Connection.this.mdslisteners);
                     if(DEBUG.A) System.out.println(String.format("%s received %s", this.getName(), message.toString()));
                     if(message.dtype == DTYPE.EVENT){
                         final PMET PmdsEvent = new PMET();
@@ -148,8 +151,8 @@ public class Connection extends Mds{
                     (new Thread(){
                         @Override
                         public void run() {
-                            final ConnectionEvent ce = new ConnectionEvent(Connection.this, ConnectionEvent.LOST_CONNECTION, "Lost connection from : " + Connection.this.provider.host);
-                            Connection.this.dispatchConnectionEvent(ce);
+                            final MdsEvent ce = new MdsEvent(Connection.this, MdsEvent.LOST_CONTEXT, "Lost connection from " + Connection.this.provider.host);
+                            Connection.this.dispatchMdsEvent(ce);
                         }
                     }).start();
                     if(!(e instanceof SocketException)) e.printStackTrace();
@@ -252,8 +255,8 @@ public class Connection extends Mds{
         }
 
         public final boolean queryPassword(final Component parent) {
-            final JPanel panel = new JPanel();
-            final JLabel label = new JLabel("SSH password:");
+            final JPanel panel = new JPanel(new GridLayout(2, 1));
+            final JLabel label = new JLabel("Enter SSH password:");
             final JPasswordField pass = new JPasswordField(16);
             panel.add(label);
             panel.add(pass);
@@ -379,24 +382,24 @@ public class Connection extends Mds{
     public static Connection sharedConnection(final String provider, final String password) {
         return Connection.sharedConnection(new Provider(provider, password));
     }
-    private boolean                              connected           = false;
-    private transient Vector<ConnectionListener> connection_listener = new Vector<ConnectionListener>();
-    private MdsConnect                           connectThread       = null;
-    private InputStream                          dis                 = null;
-    private DataOutputStream                     dos                 = null;
-    private int                                  pending_count       = 0;
-    private final Provider                       provider;
-    private MRT                                  receiveThread       = null;
-    private Socket                               sock                = null;
-    private boolean                              use_compression     = false;
+    private boolean          connected       = false;
+    private MdsConnect       connectThread   = null;
+    private InputStream      dis             = null;
+    private DataOutputStream dos             = null;
+    private int              pending_count   = 0;
+    private final Provider   provider;
+    private MRT              receiveThread   = null;
+    private Socket           sock            = null;
+    private boolean          use_compression = false;
+    private final Object     mutex           = new Object();
 
     public Connection(final Provider provider){
         this(provider, null);
     }
 
     /** main constructor of the Connection class **/
-    public Connection(final Provider provider, final ConnectionListener cl){
-        this.addConnectionListener(cl);
+    public Connection(final Provider provider, final MdsListener cl){
+        this.addMdsListener(cl);
         this.provider = provider;
     }
 
@@ -404,13 +407,8 @@ public class Connection extends Mds{
         this(new Provider(provider, null));
     }
 
-    public Connection(final String provider, final ConnectionListener cl){
+    public Connection(final String provider, final MdsListener cl){
         this(new Provider(provider, null), cl);
-    }
-
-    synchronized public final void addConnectionListener(final ConnectionListener l) {
-        if(l == null) return;
-        this.connection_listener.addElement(l);
     }
 
     /** disconnect from server and close **/
@@ -464,7 +462,7 @@ public class Connection extends Mds{
         this.receiveThread = new MRT();
         this.receiveThread.start();
         this.connected = true;
-        Connection.this.dispatchConnectionEvent(new ConnectionEvent(this, "connected"));
+        Connection.this.dispatchMdsEvent(new MdsEvent(this, MdsEvent.HAVE_CONTEXT, "Connected to " + this.provider.toString()));
     }
 
     private final void disconnectFromServer() {
@@ -477,28 +475,7 @@ public class Connection extends Mds{
         }catch(final IOException e){
             System.err.println("The closing of sockets failed:\n" + e.getMessage());
         }
-        if(!this.connection_listener.isEmpty()) this.connection_listener.removeAllElements();
         this.connected = false;
-    }
-
-    protected final void dispatchConnectionEvent(final ConnectionEvent e) {
-        if(this.connection_listener != null) for(int i = 0; i < this.connection_listener.size(); i++)
-            this.connection_listener.elementAt(i).processConnectionEvent(e);
-    }
-
-    private final void dispatchUpdateEvent(final EventItem eventItem) {
-        final Vector<UpdateEventListener> eventListener = eventItem.listener;
-        final UpdateEvent e = new UpdateEvent(this, eventItem.name);
-        for(int i = 0; i < eventListener.size(); i++)
-            eventListener.elementAt(i).processUpdateEvent(e);
-    }
-
-    synchronized private final void dispatchUpdateEvent(final int eventid) {
-        if(this.hashEventId.containsKey(eventid)) this.dispatchUpdateEvent(this.hashEventId.get(eventid));
-    }
-
-    synchronized private final void dispatchUpdateEvent(final String eventName) {
-        if(this.hashEventName.containsKey(eventName)) this.dispatchUpdateEvent(this.hashEventName.get(eventName));
     }
 
     @Override
@@ -539,15 +516,12 @@ public class Connection extends Mds{
         return this.provider.host;
     }
 
-    synchronized public final Message getMessage(Pointer ctx, final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
+    public final Message getMessage(Pointer ctx, final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
         if(!this.connected) throw new MdsException("Not connected");
-        this.setActive();
-        byte idx = 0;
         final Message msg;
+        byte idx = 0;
         final StringBuffer cmd = new StringBuffer(expr.length() + 128);
-        if(ctx == Pointer.NULL) ctx = null;;
-        if(ctx != null) cmd.append("TreeShr->TreeRestoreContext(val($));");
         if(serialize) cmd.append("_ans=*;MdsShr->MdsSerializeDscOut(xd((");
         if(args != null && args.length > 0){
             final boolean[] atomic = new boolean[args.length];
@@ -569,22 +543,33 @@ public class Connection extends Mds{
             }
         }else cmd.append(expr);
         if(serialize) cmd.append(";)),xd(_ans));_ans");
-        try{
-            if(ctx != null || (args != null && args.length > 0)){
-                final byte totalarg = (byte)((args == null ? 0 : args.length) + (ctx != null ? 2 : 1));
-                this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
-                if(ctx != null) ctx.toMessage(idx++, totalarg).send(this.dos);
-                if(args != null) for(final Descriptor d : args)
-                    d.toMessage(idx++, totalarg).send(this.dos);
-            }else new Message(cmd.toString()).send(this.dos);
-            msg = this.getAnswer();
+        if(ctx == Pointer.NULL) ctx = null;
+        synchronized(this.mutex){
             if(ctx != null){
-                new Message("TreeShr->TreeSaveContext:P()").send(this.dos);
-                final Message ctx_msg = this.getAnswer();
-                ctx.setValue(ctx_msg.body);
+                this.sendArg((byte)0, DTYPE.T, (byte)2, null, "TreeShr->TreeRestoreContext(val($))".getBytes());
+                ctx.toMessage((byte)1, (byte)2).send(this.dos);
+                if(this.getAnswer().status != 1) throw new MdsException("Could not restore context.");
             }
-        }catch(final IOException e){
-            throw new MdsException("Connection.getMessage", e);
+            try{
+                if(args != null && args.length > 0){
+                    final byte totalarg = (byte)(args.length + 1);
+                    this.sendArg(idx++, DTYPE.T, totalarg, null, cmd.toString().getBytes());
+                    for(final Descriptor d : args)
+                        d.toMessage(idx++, totalarg).send(this.dos);
+                }else new Message(cmd.toString()).send(this.dos);
+                msg = this.getAnswer();
+            }catch(final IOException e){
+                throw new MdsException("Connection.getMessage", e);
+            }
+            if(ctx != null){
+                try{
+                    new Message("TreeShr->TreeSaveContext:P()").send(this.dos);
+                    final Message ctx_msg = this.getAnswer();
+                    ctx.setValue(ctx_msg.body);
+                }catch(final IOException e){
+                    ctx.setValue(0);
+                }
+            }
         }
         if(msg == null) throw new MdsException("Could not get IO for " + this.provider.host, 0);
         return msg;
@@ -644,11 +629,6 @@ public class Connection extends Mds{
 
     synchronized private void notifyTried() {
         this.notifyAll();
-    }
-
-    synchronized public final void removeConnectionListener(final ConnectionListener l) {
-        if(l == null) return;
-        this.connection_listener.removeElement(l);
     }
 
     public final void removeFromShare() {

@@ -1,6 +1,7 @@
 package mds;
 
 import java.nio.ByteBuffer;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Vector;
 import mds.data.descriptor.Descriptor;
@@ -8,7 +9,6 @@ import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Missing;
 import mds.data.descriptor_s.Pointer;
-import mds.mdsip.UpdateEventListener;
 
 public abstract class Mds{
     public static class EventItem{
@@ -45,6 +45,7 @@ public abstract class Mds{
     public static final Mds getActiveMds() {
         return Mds.active;// TODO: always up to date?
     }
+    protected transient HashSet<MdsListener>          mdslisteners  = new HashSet<MdsListener>();
     protected transient boolean[]                     event_flags   = new boolean[Mds.MAX_NUM_EVENTS];
     protected transient Hashtable<Integer, EventItem> hashEventId   = new Hashtable<Integer, EventItem>();
     protected transient Hashtable<String, EventItem>  hashEventName = new Hashtable<String, EventItem>();
@@ -64,29 +65,53 @@ public abstract class Mds{
         return eventid;
     }
 
+    synchronized public final void addMdsListener(final MdsListener l) {
+        if(l != null) this.mdslisteners.add(l);
+    }
+
     public final int deallocateAll() throws MdsException {
         return this.getInteger(null, "DEALLOCATE('*')");
     }
 
-    public byte getByte(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+    protected final void dispatchMdsEvent(final MdsEvent e) {
+        if(this.mdslisteners != null) for(final MdsListener listener : this.mdslisteners)
+            listener.processMdsEvent(e);
+    }
+
+    synchronized private final void dispatchUpdateEvent(final EventItem eventItem) {
+        final Vector<UpdateEventListener> eventListener = eventItem.listener;
+        final UpdateEvent e = new UpdateEvent(this, eventItem.name);
+        for(int i = 0; i < eventListener.size(); i++)
+            eventListener.elementAt(i).processUpdateEvent(e);
+    }
+
+    protected final void dispatchUpdateEvent(final int eventid) {
+        if(this.hashEventId.containsKey(eventid)) this.dispatchUpdateEvent(this.hashEventId.get(eventid));
+    }
+
+    protected final void dispatchUpdateEvent(final String eventName) {
+        if(this.hashEventName.containsKey(eventName)) this.dispatchUpdateEvent(this.hashEventName.get(eventName));
+    }
+
+    public final byte getByte(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
         return this.getNumberArray(ctx, expr, args).toByte();
     }
 
-    public byte getByte(final String expr, final Descriptor... args) throws MdsException {
+    public final byte getByte(final String expr, final Descriptor... args) throws MdsException {
         return this.getByte(null, expr, args);
     }
 
-    public byte[] getByteArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+    public final byte[] getByteArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
         return this.getNumberArray(ctx, expr, args).toByteArray();
     }
 
-    public byte[] getByteArray(final String expr, final Descriptor... args) throws MdsException {
+    public final byte[] getByteArray(final String expr, final Descriptor... args) throws MdsException {
         return this.getByteArray(null, expr, args);
     }
 
     public abstract ByteBuffer getByteBuffer(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException;
 
-    public ByteBuffer getByteBuffer(final String expr, final Descriptor... args) throws MdsException {
+    public final ByteBuffer getByteBuffer(final String expr, final Descriptor... args) throws MdsException {
         return this.getByteBuffer(null, expr, args);
     }
 
@@ -185,19 +210,19 @@ public abstract class Mds{
         return desc;
     }
 
-    public short getShort(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+    public final short getShort(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
         return this.getNumberArray(ctx, expr, args).toShort();
     }
 
-    public short getShort(final String expr, final Descriptor... args) throws MdsException {
+    public final short getShort(final String expr, final Descriptor... args) throws MdsException {
         return this.getShort(null, expr, args);
     }
 
-    public short[] getShortArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
+    public final short[] getShortArray(final Pointer ctx, final String expr, final Descriptor... args) throws MdsException {
         return this.getNumberArray(ctx, expr, args).toShortArray();
     }
 
-    public short[] getShortArray(final String expr, final Descriptor... args) throws MdsException {
+    public final short[] getShortArray(final String expr, final Descriptor... args) throws MdsException {
         return this.getShortArray(null, expr, args);
     }
 
@@ -228,6 +253,11 @@ public abstract class Mds{
             }
         }
         return eventid;
+    }
+
+    synchronized public final void removeMdsListener(final MdsListener l) {
+        if(l == null) return;
+        this.mdslisteners.remove(l);
     }
 
     public final Mds setActive() {
