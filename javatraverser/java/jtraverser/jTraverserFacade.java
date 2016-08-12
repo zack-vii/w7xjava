@@ -101,8 +101,13 @@ public final class jTraverserFacade extends JFrame{
         this.getContentPane().add(jTraverserFacade.status, BorderLayout.PAGE_END);
         this.addWindowListener(new WindowAdapter(){
             @Override
-            public void windowClosing(final WindowEvent e) {
-                System.exit(0);
+            public void windowClosing(final WindowEvent we) {
+                try{
+                    jTraverserFacade.this.treeman.quit();
+                }catch(final Exception e){
+                    e.printStackTrace();
+                    System.exit(1);
+                }
             }
         });
         this.pack();
