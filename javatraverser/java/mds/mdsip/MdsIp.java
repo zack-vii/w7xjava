@@ -127,17 +127,15 @@ public class MdsIp extends Mds{
                         PmdsEvent.setEventid(message.body.get(12));
                         PmdsEvent.start();
                     }else{
-                        MdsIp.this.pending_count--;
                         synchronized(this){
                             this.message = message;
-                            if(MdsIp.this.pending_count == 0) this.notify();
+                            this.notify();
                         }
                     }
                 }
             }catch(final Exception e){
                 synchronized(this){
                     this.killed = true;
-                    MdsIp.this.pending_count = 0;
                     this.notifyAll();
                 }
                 if(MdsIp.this.connected){
@@ -147,8 +145,7 @@ public class MdsIp extends Mds{
                     (new Thread(){
                         @Override
                         public void run() {
-                            final MdsEvent ce = new MdsEvent(MdsIp.this, MdsEvent.LOST_CONTEXT, "Lost connection from " + MdsIp.this.provider.host);
-                            MdsIp.this.dispatchMdsEvent(ce);
+                            MdsIp.this.dispatchMdsEvent(new MdsEvent(MdsIp.this, MdsEvent.LOST_CONTEXT, "Lost connection from " + MdsIp.this.provider.host));
                         }
                     }).start();
                     if(!(e instanceof SocketException)) e.printStackTrace();
@@ -380,7 +377,6 @@ public class MdsIp extends Mds{
     private MdsConnect     connectThread   = null;
     private InputStream    dis             = null;
     private OutputStream   dos             = null;
-    private int            pending_count   = 0;
     private final Provider provider;
     private MRT            receiveThread   = null;
     private Socket         sock            = null;
@@ -482,9 +478,6 @@ public class MdsIp extends Mds{
     }
 
     private final Message getAnswer() throws MdsException {
-        synchronized(this){
-            this.pending_count++;
-        }
         final Message message = this.receiveThread.getMessage();
         if(message == null) throw new MdsException("Null response from server", 0);
         if((message.status & 1) == 0 && message.status != 0 && message.dtype == DTYPE.T){
