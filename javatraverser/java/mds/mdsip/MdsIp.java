@@ -646,6 +646,7 @@ public class MdsIp extends Mds{
     }
 
     synchronized private void waitTried() {
+        if(this.connectThread == null) return;
         if(!this.connectThread.tried) try{
             this.wait();
         }catch(final InterruptedException e){
