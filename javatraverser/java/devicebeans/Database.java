@@ -36,9 +36,9 @@ public final class Database{
 
     public static final String getDatabase() throws MdsException {
         final Mds mds = Mds.getActiveMds();
-        if(mds instanceof Connection && !((Connection)mds).isConnected()) return "Not connected.";
-        final String result = Mds.getActiveMds().getString("_t=*;TCL('show db',_t);_t");
-        return result.trim();
+        final String ready = mds.isReady();
+        if(ready != null) return ready;
+        return mds.tcl("show db").trim();
     }
 
     private static final void stderr(final String line, final Exception exc) {
@@ -66,7 +66,7 @@ public final class Database{
         this.expt = expt.toUpperCase();
         this.shot = (shot == 0) ? this.getCurrentShot(expt) : shot;
         if(mode == TREE.NEW){
-            this._connect();
+            this._ready();
             this.mode = TREE.EDITABLE;
             this._open_new();
         }else{
@@ -88,12 +88,8 @@ public final class Database{
     }
 
     private final void _checkContext() throws MdsException {
-        this._connect();
+        this._ready();
         if(!this.isOpen() || this.ctx == null) this._open(); // !this.ctx.equals(this.getTreeCtx())
-    }
-
-    private final void _connect() throws MdsException {
-        if(this.mds instanceof Connection && !((Connection)this.mds).isConnected()) throw new MdsException("Not connected");
     }
 
     private final void _open() throws MdsException {
@@ -108,6 +104,11 @@ public final class Database{
         final int status = this.treeshr.treeOpenNew(this.ctx, this.expt, this.shot);
         MdsException.handleStatus(status);
         this.open = true;
+    }
+
+    private final void _ready() throws MdsException {
+        final String ready = this.mds.isReady();
+        if(ready != null) throw new MdsException(ready);
     }
 
     public final Nid addDevice(final String path, final String model) throws MdsException {

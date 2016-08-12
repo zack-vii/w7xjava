@@ -614,6 +614,12 @@ public class Connection extends Mds{
         return this.connected;
     }
 
+    @Override
+    public final String isReady() {
+        if(this.isConnected()) return "Not connected.";
+        return null;
+    }
+
     synchronized public final void mdsRemoveEvent(final UpdateEventListener l, final String event) {
         int eventid;
         if((eventid = this.removeEvent(l, event)) == -1) return;

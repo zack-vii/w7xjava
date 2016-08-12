@@ -211,6 +211,8 @@ public abstract class Mds{
         return this.getString(null, expr, args);
     }
 
+    public abstract String isReady() throws MdsException;
+
     protected abstract void mdsSetEvent(final String event, final int eventid);
 
     synchronized public final int removeEvent(final UpdateEventListener l, final String event) {
