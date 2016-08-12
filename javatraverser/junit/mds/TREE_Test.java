@@ -14,6 +14,7 @@ import mds.data.descriptor_a.Float32Array;
 import mds.data.descriptor_a.Float64Array;
 import mds.data.descriptor_a.Uint64Array;
 import mds.data.descriptor_r.Signal;
+import mds.data.descriptor_s.Float32;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
@@ -48,7 +49,13 @@ public class TREE_Test{
         Assert.assertEquals("\\TEST::TOP.STRUCT:SIGNAL", (node = node.addNode("SIGNAL", Nid.USAGE_SIGNAL)).decompile());
         Assert.assertEquals("[\\TEST::TOP.STRUCT:SIGNAL]", Arrays.toString(tree.findNodeWild(NODE.USAGE_SIGNAL)));
         Assert.assertEquals("\\TEST::TOP:DATA", (node1 = tree.addNode("DATA", Nid.USAGE_SIGNAL)).getNciPath());
-        Assert.assertFalse(node.putSegment(-1, new Float32Array(1.f, 2.f, 3.f)).isSegmented());
+        Assert.assertTrue(node.makeSegment(new Float32(.1f), new Float32(.3f), new Float32Array(.1f, .2f, .3f), new Float64Array(1., 2., 3.), -1, 3).isSegmented());
+        Assert.assertEquals(2, node.makeSegment(new Float32Array(.4f, .5f, .6f), new Float64Array(4., 5., 6.)).getNumSegments());
+        Assert.assertArrayEquals(new double[]{6., 4., 3.}, node.putSegment(0, new Float64Array(6., 4., 3.)).getSegment(1).toDoubleArray(), 1e-9);
+        Assert.assertArrayEquals(new double[]{7., 8., 0.}, node.makeSegment(new Float32(.7f), new Float32(.9f), new Float32Array(.7f, .8f, .9f), new Float64Array(7., 8., 0.), -1, 2).getSegment(2).toDoubleArray(), 1e-9);
+        Assert.assertArrayEquals(new double[]{7., 8., 9.}, node.putRow(0, new Float64Array(9.)).getSegment(2).toDoubleArray(), 1e-9);
+        Assert.assertArrayEquals(new double[]{.7, .9}, node.getSegmentLimits(2).toDoubleArray(), 1e-6);
+        Assert.assertEquals("53;1;3,0,0,0,0,0,0,0,3;265389633", node.getSegmentInfo(2).toString());
         Assert.assertEquals("[]", node.getNciChildrenNids().toString());
         Assert.assertEquals("[\\TEST::TOP.STRUCT]", tree.getTop().getNciChildrenNids().toString());
         Assert.assertEquals("[\\TEST::TOP:DATA]", tree.getTop().getNciMemberNids().toString());
@@ -61,7 +68,7 @@ public class TREE_Test{
         Assert.assertEquals("[SIG, DAT]", Arrays.toString(node.setTags("SIG", "DAT").getTags()));
         Assert.assertEquals("[\\TEST::TOP, \\TEST::SIG, \\TEST::DAT]", tree.findTagsWild().keySet().toString());
         Assert.assertEquals("\\TEST::DAT", tree.treeFindTagWild("*A*", TagRefStatus.init).data);
-        Assert.assertEquals("[1.0, 2.0, 3.0]", Arrays.toString(node.putRecord(new Signal(new Float64Array(1., 2., 3.), null, new Uint64Array(1, 2, 3))).getData().toDoubleArray()));
+        Assert.assertEquals("[1.0, 2.0, 3.0]", Arrays.toString(tree.findNodeWild("***", 1 << NODE.USAGE_SIGNAL)[2].putRecord(new Signal(new Float64Array(1., 2., 3.), null, new Uint64Array(1, 2, 3))).getData().toDoubleArray()));
         Assert.assertEquals(NODE.Flags.COMPRESS_ON_PUT | NODE.Flags.NO_WRITE_MODEL, node.clearFlags(-1).setFlags(NODE.Flags.COMPRESS_ON_PUT | NODE.Flags.NO_WRITE_MODEL).getNciFlags());
         Assert.assertFalse(node.setOn(false).isOn());
         Assert.assertTrue(node.setOn(true).isOn());
@@ -69,8 +76,8 @@ public class TREE_Test{
         Assert.assertEquals(2, tree.getNciMemberNids(0).getLength());
         Assert.assertEquals(2, tree.getNciChildrenNids(0).getLength());
         Assert.assertEquals(1, node.deleteInitialize());
-        Assert.assertEquals("[\\TEST::TOP.SUBTREE]", Arrays.toString(tree.deleteGetNids()));
-        Assert.assertEquals(0, tree.deleteExecute().findNodeWild(NODE.USAGE_SUBTREE).length);
+        Assert.assertEquals("[\\TEST::TOP.SUBTREE]", Arrays.toString(tree.deleteNodeGetNids()));
+        Assert.assertEquals(0, tree.deleteNodeExecute().findNodeWild(NODE.USAGE_SUBTREE).length);
         Assert.assertFalse(tree.write().quit().isOpen());
     }
 

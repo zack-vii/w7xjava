@@ -6,6 +6,7 @@ import java.util.List;
 import mds.TreeShr.DescriptorStatus;
 import mds.TreeShr.IntegerStatus;
 import mds.TreeShr.NodeRefStatus;
+import mds.TreeShr.SegmentInfo;
 import mds.TreeShr.SignalStatus;
 import mds.TreeShr.TagRef;
 import mds.TreeShr.TagRefStatus;
@@ -195,12 +196,12 @@ public final class TREE implements MdsListener{
         return this;
     }
 
-    public final TREE deleteExecute() throws MdsException {
+    public final TREE deleteNodeExecute() throws MdsException {
         MdsException.handleStatus(this.setActive().treeshr.treeDeleteNodeExecute(this.ctx));
         return this;
     }
 
-    public final Nid[] deleteGetNids() throws MdsException {
+    public final Nid[] deleteNodeGetNids() throws MdsException {
         synchronized(this.mds){
             final List<Nid> nids = new ArrayList<Nid>(256);
             int last = 0;
@@ -214,7 +215,7 @@ public final class TREE implements MdsListener{
         }
     }
 
-    public final int deleteInitialize(final int nid) throws MdsException {
+    public final int deleteNodeInitialize(final int nid) throws MdsException {
         final IntegerStatus res = this.setActive().treeshr.treeDeleteNodeInitialize(this.ctx, nid);
         MdsException.handleStatus(res.status);
         return res.data;
@@ -507,6 +508,16 @@ public final class TREE implements MdsListener{
         return res.data;
     }
 
+    public final SegmentInfo getSegmentInfo(final int nid, final int idx) throws MdsException {
+        return this.treeshr.treeGetSegmentInfo(this.ctx, nid, idx);
+    }
+
+    public final Descriptor getSegmentLimits(final int nid, final int idx) throws MdsException {
+        final DescriptorStatus dscs = this.treeshr.treeGetSegmentLimits(this.ctx, nid, idx);
+        MdsException.handleStatus(dscs.status);
+        return dscs.data;
+    }
+
     public final String[] getTags(final int nid) throws MdsException {
         final List<String> tags = new ArrayList<String>(255);
         synchronized(this.mds){
@@ -554,6 +565,15 @@ public final class TREE implements MdsListener{
             if(new Flags(this.getNciFlags(nid)).isSegmented()) return true; // cannot be sure due to issue in winter 2015/2016
             return this.getNumSegments(nid) > 0;
         }
+    }
+
+    public final TREE makeSegment(final int nid, final Descriptor start, final Descriptor end, final Descriptor dimension, final Descriptor_A values, final int idx, final int rows_filled) throws MdsException {
+        this.treeshr.treeMakeSegment(this.ctx, nid, start, end, dimension, values, idx, rows_filled);
+        return this;
+    }
+
+    public final TREE makeSegment(final int nid, final Descriptor_A dimension, final Descriptor_A values) throws MdsException {
+        return this.makeSegment(nid, dimension.getScalar(0), dimension.getScalar(dimension.getLength() - 1), dimension, values, -1, dimension.getLength());
     }
 
     public final TREE open() throws MdsException {

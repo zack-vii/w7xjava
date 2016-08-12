@@ -258,11 +258,11 @@ public class TreeShr_Test{
         for(int i = 0; i < 10; i++)
             dim[i] = t0 + i * 1000000l;
         Assert.assertEquals(1, TreeShr_Test.treeshr.treeGetNumSegments(TreeShr_Test.ctx, 1).data);
-        Assert.assertEquals(MdsException.TreeSUCCESS, TreeShr_Test.treeshr.treeMakeTimestampedSegment(TreeShr_Test.ctx, 1, dim, new Float32Array(1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f)));
+        Assert.assertEquals(MdsException.TreeSUCCESS, TreeShr_Test.treeshr.treeMakeTimestampedSegment(TreeShr_Test.ctx, 1, dim, new Float32Array(1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f), -1, 10));
         Assert.assertEquals(2, TreeShr_Test.treeshr.treeGetNumSegments(TreeShr_Test.ctx, 1).data);
         for(int i = 0; i < 10; i++)
             dim[i] = t0 + i * 1000000l + 10000000l;
-        Assert.assertEquals(MdsException.TreeSUCCESS, TreeShr_Test.treeshr.treeMakeTimestampedSegment(TreeShr_Test.ctx, 1, dim, new Float32Array(2.0f, 2.1f, 2.2f, 2.3f, 2.4f, 2.5f, 2.6f, 2.7f, 2.8f, 2.9f)));
+        Assert.assertEquals(MdsException.TreeSUCCESS, TreeShr_Test.treeshr.treeMakeTimestampedSegment(TreeShr_Test.ctx, 1, dim, new Float32Array(2.0f, 2.1f, 2.2f, 2.3f, 2.4f, 2.5f, 2.6f, 2.7f, 2.8f, 2.9f), -1, 10));
         Assert.assertEquals(3, TreeShr_Test.treeshr.treeGetNumSegments(TreeShr_Test.ctx, 1).data);
         Assert.assertEquals("[1000010000000Q,1000019000000Q]", TreeShr_Test.treeshr.treeGetSegmentLimits(TreeShr_Test.ctx, 1, 1).data.decompile());
     }

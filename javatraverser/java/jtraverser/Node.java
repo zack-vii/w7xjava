@@ -293,7 +293,7 @@ public class Node{
 
     public final boolean deleteExecute() {
         try{
-            this.nid.getTree().deleteExecute();
+            this.nid.getTree().deleteNodeExecute();
             return true;
         }catch(final Exception exc){
             MdsException.stderr("Error executing delete", exc);
