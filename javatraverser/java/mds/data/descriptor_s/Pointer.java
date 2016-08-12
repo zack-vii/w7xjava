@@ -2,6 +2,7 @@ package mds.data.descriptor_s;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Uint64.ULong;
 
 public final class Pointer extends NUMBER<Number>{
@@ -45,10 +46,18 @@ public final class Pointer extends NUMBER<Number>{
     }
 
     public final void setValue(final ByteBuffer val) {
-        if(this.length == 8){
-            if(val.capacity() == 8) this.b.putLong(Pointer.BYTES, val.getLong());
-            else this.b.putLong(Pointer.BYTES, val.getInt());
-        }else if(this.length == 4 && val.capacity() == 4) this.b.putInt(Pointer.BYTES, val.getInt());
-        else((ByteBuffer)this.b.duplicate().position(Pointer.BYTES)).put(new byte[this.length]);
+        if(val.capacity() == 8) this.setValue(val.getLong());
+        else this.setValue(val.getInt());
+    }
+
+    public final void setValue(final int val) {
+        if(this.length == 8) this.b.putLong(Descriptor.BYTES, val);
+        else this.b.putInt(Descriptor.BYTES, val);
+    }
+
+    public final void setValue(final long val) {
+        if(this.length == 8) this.b.putLong(Descriptor.BYTES, val);
+        else if((val & 0xFFFFFFFFl) == val) this.b.putInt(Descriptor.BYTES, (int)val);
+        else((ByteBuffer)this.b.duplicate().position(Descriptor.BYTES)).put(new byte[this.length]);
     }
 }
