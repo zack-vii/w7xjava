@@ -347,6 +347,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         final int n = JOptionPane.showConfirmDialog(this.getFrame(), msg, "Delete node(s)", JOptionPane.YES_NO_OPTION);
         if(n == JOptionPane.YES_OPTION){
             if(!del_node.deleteExecute()) return;
+            this.setSelectionRow(0);
             final DefaultTreeModel tree_model = (DefaultTreeModel)this.getModel();
             tree_model.removeNodeFromParent(delNode.getTreeNode());
         }
