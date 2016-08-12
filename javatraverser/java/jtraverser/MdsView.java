@@ -38,9 +38,9 @@ public class MdsView extends JTabbedPane{
         });
     }
 
-    public final MdsView close() {
+    public final MdsView close(final boolean quit) {
         while(!this.trees.empty())
-            this.trees.pop().close();
+            this.trees.pop().close(quit);
         if(this.mds instanceof Connection){
             ((Connection)this.mds).close();
             Connection.removeSharedConnection((Connection)this.mds);
@@ -48,15 +48,15 @@ public class MdsView extends JTabbedPane{
         return this;
     }
 
-    public final void closeTree() {
+    public final void closeTree(final boolean quit) {
         final TreeView treeview = this.getCurrentTreeView();
         if(treeview == null) return;
-        this.closeTree(this.getSelectedIndex());
+        this.closeTree(this.getSelectedIndex(), quit);
     }
 
-    private void closeTree(final int idx) {
+    private void closeTree(final int idx, final boolean quit) {
         if(idx >= this.getTabCount() || idx < 0) return;
-        this.trees.remove(this.getTreeAt(idx).close());
+        this.trees.remove(this.getTreeAt(idx).close(quit));
         this.removeTabAt(idx);
         if(this.getTabCount() == 0) ((jTraverserFacade)this.treeman.getFrame()).reportChange(null);
     }
@@ -103,7 +103,7 @@ public class MdsView extends JTabbedPane{
             final TreeView tree = this.getTreeAt(i);
             if(!tree.getExpt().equalsIgnoreCase(expt)) continue;
             if(tree.getShot() != shot) continue;
-            tree.close();
+            tree.close(false);
             this.remove(i);
         }
         TreeView tree;

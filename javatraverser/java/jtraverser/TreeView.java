@@ -295,9 +295,10 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         TreeView.this.treeDidChange();
     }
 
-    public final TreeView close() {
+    public final TreeView close(final boolean quit) {
         try{
-            this.tree.close();
+            if(quit) this.tree.quit();
+            else this.tree.close();
         }catch(final Exception e){
             boolean editable = false;
             String name = null;
@@ -305,7 +306,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
                 editable = this.tree.isEditable();
                 name = this.tree.expt;
             }catch(final Exception exc){}
-            if(editable){
+            if(editable && !quit){
                 final int n = JOptionPane.showConfirmDialog(this.getFrame(), "Tree " + name + " open in edit mode has been changed: Write it before closing?", "Closing Tree ", JOptionPane.YES_NO_OPTION);
                 if(n == JOptionPane.YES_OPTION){
                     try{

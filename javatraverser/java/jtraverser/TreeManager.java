@@ -34,12 +34,12 @@ import jtraverser.dialogs.DisplayData;
 import jtraverser.dialogs.DisplayNci;
 import jtraverser.dialogs.DisplayTags;
 import jtraverser.dialogs.GraphPanel;
-import jtraverser.dialogs.OpenConnectionDialog;
 import jtraverser.dialogs.ModifyData;
 import jtraverser.dialogs.ModifyTags;
+import jtraverser.dialogs.OpenConnectionDialog;
+import jtraverser.dialogs.OpenTreeDialog;
 import jtraverser.dialogs.SubTrees;
 import jtraverser.dialogs.TreeDialog;
-import jtraverser.dialogs.OpenTreeDialog;
 import jtraverser.editor.NodeEditor;
 import jtraverser.tools.DecompileTree;
 import mds.Mds;
@@ -544,12 +544,12 @@ public class TreeManager extends JTabbedPane{
     static{
         ToolTipManager.sharedInstance().setDismissDelay(60000);
     }
-    public int                     copy_format;
-    public final Dialogs           dialogs;
-    private final jTraverserFacade frame;
-    private final OpenTreeDialog   opentree_dialog;
-    private final OpenConnectionDialog    openmds_dialog;
-    private final Stack<MdsView>   mdsviews = new Stack<MdsView>();
+    public int                         copy_format;
+    public final Dialogs               dialogs;
+    private final jTraverserFacade     frame;
+    private final OpenTreeDialog       opentree_dialog;
+    private final OpenConnectionDialog openmds_dialog;
+    private final Stack<MdsView>       mdsviews = new Stack<MdsView>();
 
     public TreeManager(final jTraverserFacade frame){
         this(frame, null);
@@ -585,7 +585,7 @@ public class TreeManager extends JTabbedPane{
 
     public final void closeMds(final int idx) {
         if(idx >= this.getTabCount() || idx < 0) return;
-        this.mdsviews.remove(this.getMdsViewAt(idx).close());
+        this.mdsviews.remove(this.getMdsViewAt(idx).close(false));
         this.removeTabAt(idx);
         if(this.getTabCount() == 0) this.frame.reportChange(null);
     }
@@ -593,7 +593,7 @@ public class TreeManager extends JTabbedPane{
     public final void closeTree() {
         final MdsView mdsview = this.getCurrentMdsView();
         if(mdsview == null) return;
-        mdsview.closeTree();
+        mdsview.closeTree(false);
     }
 
     public final Point dialogLocation() {
@@ -665,7 +665,7 @@ public class TreeManager extends JTabbedPane{
 
     public final void quit() {
         while(!this.mdsviews.empty())
-            this.mdsviews.pop().close();
+            this.mdsviews.pop().close(true);
         System.exit(0);
     }
 
