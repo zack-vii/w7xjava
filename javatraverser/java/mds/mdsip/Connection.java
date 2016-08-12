@@ -257,8 +257,8 @@ public class Connection extends Mds{
             final JPasswordField pass = new JPasswordField(16);
             panel.add(label);
             panel.add(pass);
-            final String[] options = new String[]{"OK", "No Password"};
-            final int option = JOptionPane.showOptionDialog(parent, panel, this.toString(), JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            final String[] options = new String[]{"OK", "Cancel"};
+            final int option = JOptionPane.showOptionDialog(parent, panel, "SSH to " + this.toString(), JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if(option != 0) return false;
             return this.setPassword(new String(pass.getPassword()));
         }
