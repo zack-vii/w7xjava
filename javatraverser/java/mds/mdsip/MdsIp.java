@@ -2,12 +2,9 @@ package mds.mdsip;
 
 import java.awt.Component;
 import java.awt.GridLayout;
-/* $Id$ */
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.Socket;
@@ -100,22 +97,22 @@ public class MdsIp extends Mds{
         }
 
         public Message getMessage() {
-            if(DEBUG.D) System.out.println("GetMessage()");
+            if(DEBUG.D) System.out.println("getMessage()");
             long time;
             if(DEBUG.D) time = System.nanoTime();
-            final Message msg;
-            boolean interrupted = false;
-            synchronized(this){
-                while(!this.killed && this.message == null)
-                    try{
-                        this.wait();
-                    }catch(final InterruptedException e){
-                        interrupted = true;
+            Message msg = null;
+            try{
+                for(;;)
+                    synchronized(this){
+                        this.wait(1000);
+                        if(this.killed) return null;
+                        if(this.message == null) continue;
+                        msg = this.message;
+                        this.message = null;
+                        break;
                     }
-                if(this.killed) return null;
-                msg = this.message;
-                this.message = null;
-                if(interrupted) Thread.currentThread().interrupt();
+            }catch(final InterruptedException e){
+                Thread.currentThread().interrupt();
             }
             if(DEBUG.D) System.out.println(msg.msglen + "B in " + (System.nanoTime() - time) / 1e9 + "sec" + (msg.body.capacity() == 0 ? "" : " (" + msg.asString().substring(0, (msg.body.capacity() < 64) ? msg.body.capacity() : 64) + ")"));
             return msg;
@@ -380,16 +377,16 @@ public class MdsIp extends Mds{
     public static MdsIp sharedConnection(final String provider, final String password) {
         return MdsIp.sharedConnection(new Provider(provider, password));
     }
-    private boolean          connected       = false;
-    private MdsConnect       connectThread   = null;
-    private InputStream      dis             = null;
-    private DataOutputStream dos             = null;
-    private int              pending_count   = 0;
-    private final Provider   provider;
-    private MRT              receiveThread   = null;
-    private Socket           sock            = null;
-    private boolean          use_compression = false;
-    private final Object     mutex           = new Object();
+    private boolean        connected       = false;
+    private MdsConnect     connectThread   = null;
+    private InputStream    dis             = null;
+    private OutputStream   dos             = null;
+    private int            pending_count   = 0;
+    private final Provider provider;
+    private MRT            receiveThread   = null;
+    private Socket         sock            = null;
+    private boolean        use_compression = false;
+    private final Object   mutex           = new Object();
 
     public MdsIp(final Provider provider){
         this(provider, null);
@@ -444,8 +441,8 @@ public class MdsIp extends Mds{
         else this.sock = new Socket(this.provider.host, this.provider.port);
         System.out.println(this.sock.toString());
         this.sock.setTcpNoDelay(true);
-        this.dis = new BufferedInputStream(this.sock.getInputStream());
-        this.dos = new DataOutputStream(new BufferedOutputStream(this.sock.getOutputStream()));
+        this.dis = this.sock.getInputStream();
+        this.dos = this.sock.getOutputStream();
         /* connect to mdsip */
         final Message message = new Message(this.provider.user);
         message.useCompression(this.use_compression);

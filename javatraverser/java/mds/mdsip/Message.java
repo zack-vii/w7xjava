@@ -1,8 +1,8 @@
 package mds.mdsip;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Set;
@@ -270,7 +270,7 @@ public final class Message extends Object{
         return((this.client_type & Message.BIG_ENDIAN_MASK) == 0);
     }
 
-    public final void send(final DataOutputStream dos) throws MdsException {
+    public final void send(final OutputStream dos) throws MdsException {
         try{
             dos.write(this.header.array());
             final ByteBuffer buf = this.body.duplicate();
