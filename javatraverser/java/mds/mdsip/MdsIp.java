@@ -60,7 +60,7 @@ public class MdsIp extends Mds{
                         synchronized(this){
                             this.wait();
                         }
-                    }catch(final ConnectException ce){
+                    }catch(final IOException ce){
                         this.setTried(true);
                         try{
                             Thread.sleep(3000);
@@ -71,8 +71,6 @@ public class MdsIp extends Mds{
             }catch(final InterruptedException ie){
                 System.err.println(this.getName() + ": isInterrupted2");
                 this.close = true;
-            }catch(final IOException e){
-                System.err.print("MdsConnect - No IO for " + MdsIp.this.provider.host + ":\n" + e.getMessage());
             }
             this.setTried(true);
         }
@@ -129,7 +127,7 @@ public class MdsIp extends Mds{
                         PmdsEvent.setEventid(message.body.get(12));
                         PmdsEvent.start();
                     }else{
-                            MdsIp.this.pending_count--;
+                        MdsIp.this.pending_count--;
                         synchronized(this){
                             this.message = message;
                             if(MdsIp.this.pending_count == 0) this.notify();
@@ -139,6 +137,7 @@ public class MdsIp extends Mds{
             }catch(final Exception e){
                 synchronized(this){
                     this.killed = true;
+                    MdsIp.this.pending_count = 0;
                     this.notifyAll();
                 }
                 if(MdsIp.this.connected){

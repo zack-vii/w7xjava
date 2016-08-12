@@ -332,10 +332,6 @@ public final class Database{
         return this.mode == TREE.READONLY;
     }
 
-    public final boolean isRealtime() {
-        return this.mode == TREE.REALTIME;
-    }
-
     public final void open() throws MdsException {
         this._checkContext();
     }
