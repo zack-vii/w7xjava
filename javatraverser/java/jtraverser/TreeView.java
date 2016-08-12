@@ -339,7 +339,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
     public void deleteNode(final Node delNode) {
         if(delNode == null) return;
         final Node del_node = delNode;
-        final int n_children = del_node.deleteStart();
+        final int n_children = del_node.deleteInitialize();
         if(n_children < 0) return;
         String msg = "You are about to delete node " + del_node.getName().trim();
         if(n_children > 0) msg += " which has " + n_children + " descendents.\n Please confirm";

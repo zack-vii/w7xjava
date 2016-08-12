@@ -181,6 +181,10 @@ public abstract class NODE<T>extends Descriptor_S<T>{
         return this;
     }
 
+    public int deleteInitialize() throws MdsException {
+        return this.tree.deleteInitialize(this.getNidNumber());
+    }
+
     public final NODE doAction() throws MdsException {
         this.tree.doAction(this.getNidNumber());
         return this;
@@ -201,176 +205,176 @@ public abstract class NODE<T>extends Descriptor_S<T>{
         return this;
     }
 
+    public final Descriptor getNci(final String name) throws MdsException {
+        return this.tree.getNci(this, name);
+    }
+
     public final Nid getNciBrother() throws MdsException {
-        return this.tree.getNciBrother(this.getNidNumber());
+        return (Nid)this.getNci(TREE.NCI_BROTHER);
     }
 
     public final Nid getNciChild() throws MdsException {
-        return this.tree.getNciChild(this.getNidNumber());
-    }
-
-    public final Descriptor getNciChild(final String name) throws MdsException {
-        return this.tree.mds.getDescriptor("GETNCI($,$)", this, new CString(name));
+        return (Nid)this.getNci(TREE.NCI_CHILD);
     }
 
     public final NidArray getNciChildrenNids() throws MdsException {
-        return this.tree.getNciChildrenNids(this.getNidNumber());
+        return this.tree.getNciChildrenNids(this);
     }
 
     public final byte getNciClass() throws MdsException {
-        return this.tree.getNciClass(this.getNidNumber());
+        return this.getNci(TREE.NCI_CLASS).toByte();
     }
 
     public final String getNciClassStr() throws MdsException {
-        return this.tree.getNciClassStr(this.getNidNumber());
+        return this.getNci(TREE.NCI_CLASS_STR).toString();
     }
 
     public final short getNciConglomerateElt() throws MdsException {
-        return this.tree.getNciConglomerateElt(this.getNidNumber());
+        return this.getNci(TREE.NCI_CONGLOMERATE_ELT).toShort();
     }
 
     public final NidArray getNciConglomerateNids() throws MdsException {
-        return this.tree.getNciConglomerateNids(this.getNidNumber());
+        return (NidArray)this.getNci(TREE.NCI_CONGLOMERATE_NIDS);
     }
 
     public final int getNciDataInNci() throws MdsException {
-        return this.tree.getNciDataInNci(this.getNidNumber());
+        return this.getNci(TREE.NCI_DATA_IN_NCI).toInt();
     }
 
     public final int getNciDepth() throws MdsException {
-        return this.tree.getNciDepth(this.getNidNumber());
+        return this.getNci(TREE.NCI_DEPTH).toInt();
     }
 
     public final byte getNciDType() throws MdsException {
-        return this.tree.getNciDType(this.getNidNumber());
+        return this.getNci(TREE.NCI_DTYPE).toByte();
     }
 
     public final String getNciDTypeStr() throws MdsException {
-        return this.tree.getNciDTypeStr(this.getNidNumber());
+        return this.getNci(TREE.NCI_DTYPE_STR).toString();
     }
 
     public final int getNciErrorOnPut() throws MdsException {
-        return this.tree.getNciErrorOnPut(this.getNidNumber());
+        return this.getNci(TREE.NCI_ERROR_ON_PUT).toInt();
     }
 
     public final int getNciFlags() throws MdsException {
-        return this.tree.getNciFlags(this.getNidNumber());
+        return this.getNci(TREE.NCI_GET_FLAGS).toInt();
     }
 
     public final String getNciFullPath() throws MdsException {
-        return this.tree.getNciFullPath(this.getNidNumber());
+        return this.getNci(TREE.NCI_FULLPATH).toString();
     }
 
     public final int getNciIOStatus() throws MdsException {
-        return this.tree.getNciIOStatus(this.getNidNumber());
+        return this.getNci(TREE.NCI_IO_STATUS).toInt();
     }
 
     public final int getNciIOStv() throws MdsException {
-        return this.tree.getNciIOStv(this.getNidNumber());
+        return this.getNci(TREE.NCI_IO_STV).toInt();
     }
 
     public final boolean getNciIsChild() throws MdsException {
-        return this.tree.getNciIsChild(this.getNidNumber());
+        return this.getNci(TREE.NCI_IS_CHILD).toByte() != 0;
     }
 
     public final boolean getNciIsMember() throws MdsException {
-        return this.tree.getNciIsMember(this.getNidNumber());
+        return this.getNci(TREE.NCI_IS_MEMBER).toByte() != 0;
     }
 
     public final int getNciLength() throws MdsException {
-        return this.tree.getNciLength(this.getNidNumber());
+        return this.getNci(TREE.NCI_LENGTH).toInt();
     }
 
     public final Nid getNciMember() throws MdsException {
-        return this.tree.getNciMember(this.getNidNumber());
+        return (Nid)this.getNci(TREE.NCI_MEMBER);
     }
 
     public final NidArray getNciMemberNids() throws MdsException {
-        return this.tree.getNciMemberNids(this.getNidNumber());
+        return this.tree.getNciMemberNids(this);
     }
 
     public final String getNciMinPath() throws MdsException {
-        return this.tree.getNciMinPath(this.getNidNumber());
+        return this.getNci(TREE.NCI_MINPATH).toString();
     }
 
     public final int getNciNidNumber() throws MdsException {
-        return this.tree.getNciNidNumber(this.getNidNumber());
+        return this.getNci(TREE.NCI_NID_NUMBER).toInt();
     }
 
     public final String getNciNodeName() throws MdsException {
-        return this.tree.getNciNodeName(this.getNidNumber());
+        return this.getNci(TREE.NCI_NODE_NAME).toString().trim();
     }
 
     public final int getNciNumberOfChildren() throws MdsException {
-        return this.tree.getNciNumberOfChildren(this.getNidNumber());
+        return this.getNci(TREE.NCI_NUMBER_OF_CHILDREN).toInt();
     }
 
     public final int getNciNumberOfElts() throws MdsException {
-        return this.tree.getNciNumberOfElts(this.getNidNumber());
+        return this.getNci(TREE.NCI_NUMBER_OF_ELTS).toInt();
     }
 
     public final int getNciNumberOfMembers() throws MdsException {
-        return this.tree.getNciNumberOfMembers(this.getNidNumber());
+        return this.getNci(TREE.NCI_NUMBER_OF_MEMBERS).toInt();
     }
 
     public final String getNciOriginalPartName() throws MdsException {
-        return this.tree.getNciOriginalPartName(this.getNidNumber());
+        return this.getNci(TREE.NCI_ORIGINAL_PART_NAME).toString().trim();
     }
 
     public final int getNciOwnerId() throws MdsException {
-        return this.tree.getNciOwnerId(this.getNidNumber());
+        return this.getNci(TREE.NCI_OWNER_ID).toInt();
     }
 
     public final Nid getNciParent() throws MdsException {
-        return this.tree.getNciParent(this.getNidNumber());
+        return (Nid)this.getNci(TREE.NCI_PARENT);
     }
 
     public final int getNciParentRelationship() throws MdsException {
-        return this.tree.getNciParentRelationship(this.getNidNumber());
+        return this.getNci(TREE.NCI_PARENT_RELATIONSHIP).toInt();
     }
 
     public final String getNciParentTree() throws MdsException {
-        return this.tree.getNciParentTree(this.getNidNumber());
+        return this.getNci(TREE.NCI_PARENT_TREE).toString();
     }
 
     public final String getNciPath() throws MdsException {
-        return this.tree.getNciPath(this.getNidNumber());
+        return this.getNci(TREE.NCI_PATH).toString();
     }
 
     public final Descriptor getNciRecord() throws MdsException {
-        return this.tree.getNciRecord(this.getNidNumber());
+        return this.getNci(TREE.NCI_RECORD);
     }
 
     public final long getNciRfa() throws MdsException {
-        return this.tree.getNciRfa(this.getNidNumber());
+        return this.getNci("RFA").toLong();
     }
 
     public final int getNciRLength() throws MdsException {
-        return this.tree.getNciRLength(this.getNidNumber());
+        return this.getNci(TREE.NCI_RLENGTH).toInt();
     }
 
     public final boolean getNciStatus() throws MdsException {
-        return this.tree.getNciStatus(this.getNidNumber());
+        return this.getNci(TREE.NCI_STATUS).toByte() != 0;
     }
 
     public final long getNciTimeInserted() throws MdsException {
-        return this.tree.getNciTimeInserted(this.getNidNumber());
+        return this.getNci(TREE.NCI_TIME_INSERTED).toLong();
     }
 
     public final String getNciTimeInsertedStr() throws MdsException {
-        return this.tree.getNciTimeInsertedStr(this.getNidNumber());
+        return this.tree.getNciTimeInsertedStr(this);
     }
 
     public final byte getNciUsage() throws MdsException {
-        return this.tree.getNciUsage(this.getNidNumber());
+        return this.getNci(TREE.NCI_USAGE).toByte();
     }
 
     public final String getNciUsageStr() throws MdsException {
-        return this.tree.getNciUsageStr(this.getNidNumber());
+        return this.getNci(TREE.NCI_USAGE_STR).toString();
     }
 
     public final int getNciVersion() throws MdsException {
-        return this.tree.getNciVersion(this.getNidNumber());
+        return this.getNci(TREE.NCI_VERSION).toInt();
     }
 
     public abstract int getNidNumber() throws MdsException;
@@ -417,8 +421,10 @@ public abstract class NODE<T>extends Descriptor_S<T>{
     }
 
     public final boolean isSegmented() throws MdsException {
-        if(new Flags(this.getNciFlags()).isSegmented()) return true; // cannot be sure due to issue in winter 2015/2016
-        return this.getNumSegments() > 0;
+        synchronized(this.tree.mds){
+            if(new Flags(this.getNciFlags()).isSegmented()) return true; // cannot be sure due to issue in winter 2015/2016
+            return this.getNumSegments() > 0;
+        }
     }
 
     public final NODE putRecord(final Descriptor data) throws MdsException {
@@ -428,6 +434,16 @@ public abstract class NODE<T>extends Descriptor_S<T>{
 
     public final NODE putRow(final long time, final Descriptor_A data) throws MdsException {
         this.tree.putRow(this.getNidNumber(), time, data);
+        return this;
+    }
+
+    public final NODE putSegment(final int idx, final Descriptor_A data) throws MdsException {
+        this.tree.putSegment(this.getNidNumber(), idx, data);
+        return this;
+    }
+
+    public final NODE putTimestampedSegment(final int nid, final long timestamp, final Descriptor_A data) throws MdsException {
+        this.tree.putTimestampedSegment(this.getNidNumber(), timestamp, data);
         return this;
     }
 

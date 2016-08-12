@@ -496,6 +496,15 @@ public final class TreeShr{
     }
 
     /**
+     * adds a new segment to segmented node
+     *
+     * @return int: status
+     **/
+    public final int treeMakeSegment(final Pointer ctx, final int nid, final Descriptor start, final Descriptor end, final Descriptor dimension, final Descriptor_A values, final int idx, final int rows_filled) throws MdsException {
+        return this.mds.getInteger(ctx, String.format("TreeShr->TreeMakeTimestampedSegment(val(%d),xd($),xd($),xd($),xd($),val(%d),val(%d))", nid, idx, rows_filled), start, end, dimension, values);
+    }
+
+    /**
      * adds a new time-stamped segment to segmented node
      *
      * @return int: status

@@ -33,7 +33,8 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
             this.pout = pout;
             this.shape = Descriptor_A.this.dims;
             this.t = Descriptor_A.this.getValue();
-            this.level(this.shape.length);
+            if(this.t.length == 0) pout.append("[]");
+            else this.level(this.shape.length);
         }
 
         private final void level(final int l) {

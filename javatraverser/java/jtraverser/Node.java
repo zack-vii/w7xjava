@@ -301,9 +301,9 @@ public class Node{
         }
     }
 
-    public final int deleteStart() {
+    public final int deleteInitialize() {
         try{
-            return this.nid.getTree().deleteStart(this.nid);
+            return this.nid.deleteInitialize();
         }catch(final Exception exc){
             MdsException.stderr("Error starting delete", exc);
         }

@@ -111,6 +111,7 @@ public class TreeShr_Test{
         Assert.assertEquals(nid + 9, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "TASK", NODE.USAGE_TASK).data);
         Assert.assertEquals(nid + 10, TreeShr_Test.treeshr.treeAddNode(TreeShr_Test.ctx, "TEXT", NODE.USAGE_TEXT).data);
         Assert.assertEquals(MdsException.TreeNORMAL, TreeShr_Test.treeshr.treeEndConglomerate(TreeShr_Test.ctx));
+        Assert.assertEquals("ANY", TreeShr_Test.treeshr.treeGetMinimumPath(TreeShr_Test.ctx, nid + 2));
         Assert.assertEquals(MdsException.TreeNORMAL, TreeShr_Test.treeshr.treeSetDefault(TreeShr_Test.ctx, 0));
     }
 
@@ -145,6 +146,14 @@ public class TreeShr_Test{
     }
 
     @Test
+    public final void test116TreeUsePrivateCtx() throws MdsException {
+        Assert.assertFalse(TreeShr_Test.treeshr.treeUsePrivateCtx(TreeShr_Test.ctx, true));
+        Assert.assertTrue(TreeShr_Test.treeshr.treeUsingPrivateCtx(TreeShr_Test.ctx));
+        Assert.assertTrue(TreeShr_Test.treeshr.treeUsePrivateCtx(TreeShr_Test.ctx, false));
+        Assert.assertFalse(TreeShr_Test.treeshr.treeUsingPrivateCtx(TreeShr_Test.ctx));
+    }
+
+    @Test
     public final void test121TreeDeleteNodeInitialize() throws MdsException {
         Assert.assertEquals(37, TreeShr_Test.treeshr.treeDeleteNodeInitialize(TreeShr_Test.ctx, 3).data);
     }
@@ -163,6 +172,7 @@ public class TreeShr_Test{
     public final void test130TreeAddTag() throws MdsException {
         Assert.assertEquals(MdsException.TreeNORMAL, TreeShr_Test.treeshr.treeAddTag(TreeShr_Test.ctx, 2, "DEVICE"));
         Assert.assertEquals("B", TreeShr_Test.mds.getString(TreeShr_Test.ctx, "Trim(GetNci(\\DEVICE,'NODE_NAME'))"));
+        Assert.assertEquals("\\TEST::DEVICE", TreeShr_Test.treeshr.treeGetPath(TreeShr_Test.ctx, 2));
     }
 
     @Test
@@ -304,6 +314,7 @@ public class TreeShr_Test{
     public final void test183TreeTurnOff() throws MdsException {
         final int status = TreeShr_Test.treeshr.treeTurnOff(TreeShr_Test.ctx, 1);
         Assert.assertTrue(status == MdsException.TreeSUCCESS || status == MdsException.TreeLOCK_FAILURE);
+        Assert.assertEquals(MdsException.TreeOFF, TreeShr_Test.treeshr.treeIsOn(TreeShr_Test.ctx, 1));
     }
 
     @Test
