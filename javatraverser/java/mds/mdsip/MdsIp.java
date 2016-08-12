@@ -361,6 +361,7 @@ public class MdsIp extends Mds{
             for(final MdsIp con : MdsIp.open_connections)
                 if(con.provider.equals(provider)){
                     con.setPassword(provider.password);
+                    con.connect();
                     return con;
                 }
             final MdsIp con = new MdsIp(provider);
@@ -415,6 +416,7 @@ public class MdsIp extends Mds{
 
     /** re-/connects to the servers mdsip service **/
     public final boolean connect() {
+        if(this.connected) return true;
         if(this.connectThread == null || !this.connectThread.isAlive()){
             this.connectThread = new MdsConnect();
             this.connectThread.start();

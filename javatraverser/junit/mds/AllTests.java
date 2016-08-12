@@ -44,14 +44,15 @@ public class AllTests{
     }
 
     public static MdsIp setUpBeforeClass() throws Exception {
-        final MdsIp mds = MdsIp.sharedConnection(new Provider("localhost", AllTests.port, "cloud", null));
+        MdsIp mds = MdsIp.sharedConnection(new Provider("localhost", AllTests.port, "cloud", null));
         if(!mds.isConnected()){
             System.out.println("Started new local mdsip server");
             final ProcessBuilder pb = new ProcessBuilder("mdsip", "-h", System.getenv("userprofile") + "/mdsip.hosts", "-m", "-p", String.valueOf(AllTests.port)).inheritIO();// , "-P", "ssh"
             final Map<String, String> env = pb.environment();
             env.put(AllTests.tree + "_path", System.getenv("TMP"));
             pb.start();
-            if(!mds.connect()) throw new Exception("Could not connect to mdsip.");
+            mds = MdsIp.sharedConnection(new Provider("localhost", AllTests.port, "cloud", null));
+            if(!mds.isConnected()) throw new Exception("Could not connect to mdsip.");
         }
         return mds;
     }
