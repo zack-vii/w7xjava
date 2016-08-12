@@ -29,7 +29,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 @SuppressWarnings("serial")
 public class DeviceSetup extends JDialog{
@@ -506,7 +506,7 @@ public class DeviceSetup extends JDialog{
             }
         }
         if(this.device_components.size() > 0) try{
-            Connection.getActiveMds().getDescriptor("Execute($)", new CString(varExpr.toString()));
+            MdsIp.getActiveMds().getDescriptor("Execute($)", new CString(varExpr.toString()));
         }catch(final MdsException e){
             e.printStackTrace();
         }

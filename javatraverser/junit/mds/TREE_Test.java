@@ -15,12 +15,12 @@ import mds.data.descriptor_r.Signal;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 @SuppressWarnings("static-method")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TREE_Test{
-    private static Connection   mds;
+    private static MdsIp   mds;
     private static final String expt = AllTests.tree;
     private static final int    shot = 7633;
 

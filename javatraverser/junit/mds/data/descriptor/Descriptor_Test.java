@@ -10,11 +10,11 @@ import mds.AllTests;
 import mds.MdsException;
 import mds.data.descriptor_a.Int32Array;
 import mds.data.descriptor_s.Nid;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 @SuppressWarnings("static-method")
 public final class Descriptor_Test{
-    private static Connection mds;
+    private static MdsIp mds;
 
     @BeforeClass
     public static final void setUpBeforeClass() throws Exception {

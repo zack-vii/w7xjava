@@ -9,11 +9,11 @@ import org.junit.Test;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_a.Int8Array;
 import mds.data.descriptor_r.Range;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 @SuppressWarnings("static-method")
 public class MdsShr_Test{
-    private static Connection mds;
+    private static MdsIp mds;
     private static MdsShr     mdsshr;
 
     @BeforeClass

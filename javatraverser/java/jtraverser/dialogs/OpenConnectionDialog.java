@@ -17,7 +17,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import jtraverser.TreeManager;
-import mds.mdsip.Connection.Provider;
+import mds.mdsip.MdsIp.Provider;
 
 @SuppressWarnings("serial")
 public class OpenConnectionDialog extends JDialog{

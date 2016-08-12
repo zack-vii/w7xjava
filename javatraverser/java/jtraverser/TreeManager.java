@@ -50,8 +50,8 @@ import mds.TreeShr.TagRefStatus;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.Nid;
-import mds.mdsip.Connection;
-import mds.mdsip.Connection.Provider;
+import mds.mdsip.MdsIp;
+import mds.mdsip.MdsIp.Provider;
 
 @SuppressWarnings("serial")
 public class TreeManager extends JTabbedPane{
@@ -256,11 +256,12 @@ public class TreeManager extends JTabbedPane{
             @Override
             public void actionPerformed(final ActionEvent e) {
                 try{
+                    final Mds mds = ExtrasMenu.this.treeman.getCurrentMdsView().getMds();
                     JOptionPane.showMessageDialog(ExtrasMenu.this.treeman.getFrame(), //
-                            new TCL(Mds.getActiveMds()).showDatabase(), //
-                            Mds.getActiveMds().toString(), //
+                            new TCL(mds).showDatabase(), //
+                            mds.toString(), //
                             JOptionPane.PLAIN_MESSAGE);
-                }catch(final Exception ex){
+                }catch(final MdsException ex){}catch(final Exception ex){
                     ex.printStackTrace();
                 }
             }
@@ -638,7 +639,7 @@ public class TreeManager extends JTabbedPane{
     public MdsView openMds(final Provider provider) {
         this.openmds_dialog.setFields(provider.toString());
         // first we need to check if the tree is already open
-        final Mds mds = Connection.sharedConnection(provider);
+        final Mds mds = MdsIp.sharedConnection(provider);
         if(mds == null){
             JOptionPane.showMessageDialog(this.frame, "Could not connect to server " + provider.toString(), "Connection Error", JOptionPane.ERROR_MESSAGE);
             return null;

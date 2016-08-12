@@ -10,12 +10,12 @@ import mds.data.descriptor.Descriptor_A_Test;
 import mds.data.descriptor.Descriptor_S_Test;
 import mds.data.descriptor.Descriptor_Test;
 import mds.data.descriptor_r.Function_Test;
-import mds.mdsip.Connection;
-import mds.mdsip.Connection.Provider;
-import mds.mdsip.Connection_Test;
+import mds.mdsip.MdsIp;
+import mds.mdsip.MdsIp.Provider;
+import mds.mdsip.MdsIp_Test;
 
 @RunWith(Suite.class)
-@SuiteClasses({TREE_Test.class, Connection_Test.class, TreeShr_Test.class, MdsShr_Test.class, Function_Test.class, Descriptor_Test.class, Descriptor_S_Test.class, Descriptor_A_Test.class})
+@SuiteClasses({TREE_Test.class, MdsIp_Test.class, TreeShr_Test.class, MdsShr_Test.class, Function_Test.class, Descriptor_Test.class, Descriptor_S_Test.class, Descriptor_A_Test.class})
 public class AllTests{
     public static final int    port = 8000;
     public static final String tree = "test";
@@ -43,9 +43,8 @@ public class AllTests{
         }
     }
 
-    public static Connection setUpBeforeClass() throws Exception {
-        final Connection mds = Connection.sharedConnection(new Provider("localhost", AllTests.port));
-        mds.connect();
+    public static MdsIp setUpBeforeClass() throws Exception {
+        final MdsIp mds = MdsIp.sharedConnection(new Provider("localhost", AllTests.port, "cloud", null));
         if(!mds.isConnected()){
             System.out.println("Started new local mdsip server");
             final ProcessBuilder pb = new ProcessBuilder("mdsip", "-h", System.getenv("userprofile") + "/mdsip.hosts", "-m", "-p", String.valueOf(AllTests.port)).inheritIO();// , "-P", "ssh"

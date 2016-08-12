@@ -24,7 +24,7 @@ import mds.data.descriptor_r.Conglom;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.NODE.Flags;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 public class DecompileTree{
     public static final void main(final String args[]) {
@@ -61,7 +61,7 @@ public class DecompileTree{
     public String    error    = null;
 
     public final int decompile(final String provider, final String expt, final int shot, final String filename, final boolean isFull) throws MdsException {
-        final TREE tree = new TREE(new Connection(provider), expt, shot);
+        final TREE tree = new TREE(new MdsIp(provider), expt, shot);
         tree.open();
         final int result = this.decompile(tree, filename, isFull);
         tree.close();

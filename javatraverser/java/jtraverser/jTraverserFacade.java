@@ -19,7 +19,7 @@ import javax.swing.event.MenuListener;
 import jtraverser.TreeManager.Menu;
 import mds.MdsException;
 import mds.TREE;
-import mds.mdsip.Connection.Provider;
+import mds.mdsip.MdsIp.Provider;
 
 @SuppressWarnings("serial")
 public final class jTraverserFacade extends JFrame{

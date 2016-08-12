@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 @SuppressWarnings("serial")
 public class DeviceCustomizer extends Panel{
-    static mds.mdsip.Connection deviceProvider;
+    static mds.mdsip.MdsIp deviceProvider;
     static String               lastDeviceProvider = null;
     static String               lastDeviceType     = null;
     static String[]             lastFields;
@@ -26,7 +26,7 @@ public class DeviceCustomizer extends Panel{
         DeviceCustomizer.lastDeviceType = DeviceSetupBeanInfo.beanDeviceType;
         String linFields = "";
         if(DeviceCustomizer.deviceProvider == null || !DeviceCustomizer.deviceProvider.equals(DeviceSetupBeanInfo.beanDeviceProvider)){
-            DeviceCustomizer.deviceProvider = new mds.mdsip.Connection(DeviceSetupBeanInfo.beanDeviceProvider);
+            DeviceCustomizer.deviceProvider = new mds.mdsip.MdsIp(DeviceSetupBeanInfo.beanDeviceProvider);
         }
         byte[] linBytes = null;
         try{

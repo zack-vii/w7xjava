@@ -15,11 +15,11 @@ import mds.data.descriptor_a.Int64Array;
 import mds.data.descriptor_a.Uint64Array;
 import mds.data.descriptor_r.Function;
 import mds.data.descriptor_r.Signal;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 @SuppressWarnings("static-method")
 public final class Descriptor_A_Test{
-    private static Connection mds;
+    private static MdsIp mds;
 
     @BeforeClass
     public static final void setUpBeforeClass() throws Exception {

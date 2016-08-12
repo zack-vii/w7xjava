@@ -18,7 +18,7 @@ import mds.data.descriptor_s.NODE.Flags;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 import mds.data.descriptor_s.Pointer;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 public final class TREE implements MdsListener{
     @SuppressWarnings("serial")
@@ -594,8 +594,8 @@ public final class TREE implements MdsListener{
     }
 
     public final TREE withPrivateConnection() {
-        if(!(this.mds instanceof Connection)) return null;
-        return new TREE(new Connection(((Connection)this.mds).getProvider()), this.expt, this.shot);
+        if(!(this.mds instanceof MdsIp)) return null;
+        return new TREE(new MdsIp(((MdsIp)this.mds).getProvider()), this.expt, this.shot);
     }
 
     public final TREE write() throws MdsException {

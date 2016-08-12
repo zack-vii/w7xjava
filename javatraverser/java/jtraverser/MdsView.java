@@ -12,7 +12,7 @@ import mds.Mds;
 import mds.MdsException;
 import mds.TREE;
 import mds.TreeShr;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 @SuppressWarnings("serial")
 public class MdsView extends JTabbedPane{
@@ -41,9 +41,9 @@ public class MdsView extends JTabbedPane{
     public final MdsView close(final boolean quit) {
         while(!this.trees.empty())
             this.trees.pop().close(quit);
-        if(this.mds instanceof Connection){
-            ((Connection)this.mds).close();
-            Connection.removeSharedConnection((Connection)this.mds);
+        if(this.mds instanceof MdsIp){
+            ((MdsIp)this.mds).close();
+            MdsIp.removeSharedConnection((MdsIp)this.mds);
         }
         return this;
     }

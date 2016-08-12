@@ -21,12 +21,12 @@ import mds.data.descriptor_s.CString;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Pointer;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 public final class Database{
     private static final String extractProvider(final String expt) {
         final String[] parts = System.getenv(String.format("%s_path", expt.toLowerCase())).split("::", 2);
-        return (parts.length > 1) ? parts[0] : Connection.Provider.DEFAULT_HOST;
+        return (parts.length > 1) ? parts[0] : MdsIp.Provider.DEFAULT_HOST;
     }
 
     public static final ByteBuffer getByteBuffer(final String expr) throws MdsException {
@@ -84,7 +84,7 @@ public final class Database{
     }
 
     public Database(final String provider, final String expt, final int shot, final int mode) throws MdsException{
-        this(Connection.sharedConnection(provider, null), expt, shot, mode);
+        this(MdsIp.sharedConnection(provider, null), expt, shot, mode);
     }
 
     private final void _checkContext() throws MdsException {
@@ -435,7 +435,7 @@ public final class Database{
         if(this.mode == TREE.EDITABLE) sb.append(", edit");
         else if(this.mode == TREE.READONLY) sb.append(", readonly");
         sb.append(')');
-        if(this.mds instanceof Connection) sb.append(" on ").append(((Connection)this.mds).getProvider());
+        if(this.mds instanceof MdsIp) sb.append(" on ").append(((MdsIp)this.mds).getProvider());
         return sb.toString();
     }
 

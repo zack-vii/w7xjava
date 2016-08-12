@@ -17,7 +17,7 @@ import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 public class CompileTree extends Thread{
     public static void main(final String args[]) {
@@ -218,7 +218,7 @@ public class CompileTree extends Thread{
     @Override
     public void run() {
         try{
-            this.tree = new TREE(new Connection(this.provider), this.experiment, this.shot, TREE.NEW);
+            this.tree = new TREE(new MdsIp(this.provider), this.experiment, this.shot, TREE.NEW);
         }catch(final Exception e){
             System.err.println("Error opening tree " + this.experiment + " : " + e);
             System.exit(0);

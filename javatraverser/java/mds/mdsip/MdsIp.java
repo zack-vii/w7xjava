@@ -33,13 +33,13 @@ import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_s.Pointer;
 
-public class Connection extends Mds{
+public class MdsIp extends Mds{
     private final class MdsConnect extends Thread{
         private boolean close = false;
         private boolean tried = false;
 
         public MdsConnect(){
-            super(Connection.this.getName("MdsConnect"));
+            super(MdsIp.this.getName("MdsConnect"));
             this.setDaemon(true);
         }
 
@@ -58,7 +58,7 @@ public class Connection extends Mds{
             try{
                 while(!this.close)
                     try{
-                        Connection.this.connectToServer();
+                        MdsIp.this.connectToServer();
                         this.setTried(true);
                         synchronized(this){
                             this.wait();
@@ -75,14 +75,14 @@ public class Connection extends Mds{
                 System.err.println(this.getName() + ": isInterrupted2");
                 this.close = true;
             }catch(final IOException e){
-                System.err.print("MdsConnect - No IO for " + Connection.this.provider.host + ":\n" + e.getMessage());
+                System.err.print("MdsConnect - No IO for " + MdsIp.this.provider.host + ":\n" + e.getMessage());
             }
             this.setTried(true);
         }
 
         synchronized private void setTried(final boolean tried) {
             this.tried = tried;
-            if(tried) Connection.this.notifyTried();
+            if(tried) MdsIp.this.notifyTried();
         }
 
         synchronized public void update() {
@@ -95,7 +95,7 @@ public class Connection extends Mds{
         Message message;
 
         public MRT(){
-            super(Connection.this.getName("MRT"));
+            super(MdsIp.this.getName("MRT"));
             this.setDaemon(true);
         }
 
@@ -125,17 +125,17 @@ public class Connection extends Mds{
         public void run() {
             try{
                 while(true){
-                    final Message message = Message.receive(Connection.this.dis, Connection.this.mdslisteners);
+                    final Message message = Message.receive(MdsIp.this.dis, MdsIp.this.mdslisteners);
                     if(DEBUG.A) System.out.println(String.format("%s received %s", this.getName(), message.toString()));
                     if(message.dtype == DTYPE.EVENT){
                         final PMET PmdsEvent = new PMET();
                         PmdsEvent.setEventid(message.body.get(12));
                         PmdsEvent.start();
                     }else{
-                        Connection.this.pending_count--;
+                        MdsIp.this.pending_count--;
                         synchronized(this){
                             this.message = message;
-                            if(Connection.this.pending_count == 0) this.notify();
+                            if(MdsIp.this.pending_count == 0) this.notify();
                         }
                     }
                 }
@@ -144,15 +144,15 @@ public class Connection extends Mds{
                     this.killed = true;
                     this.notifyAll();
                 }
-                if(Connection.this.connected){
+                if(MdsIp.this.connected){
                     this.message = null;
-                    Connection.this.connected = false;
-                    if(Connection.this.connectThread != null && Connection.this.connectThread.tried) Connection.this.connectThread.update();
+                    MdsIp.this.connected = false;
+                    if(MdsIp.this.connectThread != null && MdsIp.this.connectThread.tried) MdsIp.this.connectThread.update();
                     (new Thread(){
                         @Override
                         public void run() {
-                            final MdsEvent ce = new MdsEvent(Connection.this, MdsEvent.LOST_CONTEXT, "Lost connection from " + Connection.this.provider.host);
-                            Connection.this.dispatchMdsEvent(ce);
+                            final MdsEvent ce = new MdsEvent(MdsIp.this, MdsEvent.LOST_CONTEXT, "Lost connection from " + MdsIp.this.provider.host);
+                            MdsIp.this.dispatchMdsEvent(ce);
                         }
                     }).start();
                     if(!(e instanceof SocketException)) e.printStackTrace();
@@ -175,14 +175,14 @@ public class Connection extends Mds{
         String eventName;
 
         public PMET(){
-            super(Connection.this.getName("PMET"));
+            super(MdsIp.this.getName("PMET"));
             this.setDaemon(true);
         }
 
         @Override
         public void run() {
-            if(this.eventName != null) Connection.this.dispatchUpdateEvent(this.eventName);
-            else if(this.eventId != -1) Connection.this.dispatchUpdateEvent(this.eventId);
+            if(this.eventName != null) MdsIp.this.dispatchUpdateEvent(this.eventName);
+            else if(this.eventId != -1) MdsIp.this.dispatchUpdateEvent(this.eventId);
         }
 
         public void setEventid(final int id) {
@@ -245,8 +245,8 @@ public class Connection extends Mds{
             return this.host.equalsIgnoreCase(provider.host) && this.port == provider.port && this.user.equals(provider.user);
         }
 
-        public final Connection getConnection() {
-            return new Connection(this);
+        public final MdsIp getConnection() {
+            return new MdsIp(this);
         }
 
         @Override
@@ -339,48 +339,46 @@ public class Connection extends Mds{
             }
         }
     }
-    private static final List<Connection> open_connections = Collections.synchronizedList(new ArrayList<Connection>());
-    public static final int               LOGIN_OK         = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
+    private static final List<MdsIp> open_connections = Collections.synchronizedList(new ArrayList<MdsIp>());
+    public static final int          LOGIN_OK         = 1, LOGIN_ERROR = 2, LOGIN_CANCEL = 3;
+    private static final String      NOT_CONNECTED    = "Not Connected.";
 
-    public static final boolean addSharedConnection(final Connection con) {
-        synchronized(Connection.open_connections){
-            return Connection.open_connections.add(con);
+    public static final boolean addSharedConnection(final MdsIp con) {
+        synchronized(MdsIp.open_connections){
+            return MdsIp.open_connections.add(con);
         }
     }
 
     public static final int closeSharedConnections() {
-        for(final Connection con : Connection.open_connections)
+        for(final MdsIp con : MdsIp.open_connections)
             con.close();
-        final int size = Connection.open_connections.size();
-        Connection.open_connections.clear();
+        final int size = MdsIp.open_connections.size();
+        MdsIp.open_connections.clear();
         return size;
     }
 
-    public static final boolean removeSharedConnection(final Connection con) {
-        synchronized(Connection.open_connections){
-            return Connection.open_connections.remove(con);
+    public static final boolean removeSharedConnection(final MdsIp con) {
+        synchronized(MdsIp.open_connections){
+            return MdsIp.open_connections.remove(con);
         }
     }
 
-    public static Connection sharedConnection(final Provider provider) {
-        synchronized(Connection.open_connections){
-            for(final Connection con : Connection.open_connections)
+    public static MdsIp sharedConnection(final Provider provider) {
+        synchronized(MdsIp.open_connections){
+            for(final MdsIp con : MdsIp.open_connections)
                 if(con.provider.equals(provider)){
                     con.setPassword(provider.password);
                     return con;
                 }
-            final Connection con = new Connection(provider);
-            if(con.connect()){
-                Connection.open_connections.add(con);
-                return con;
-            }
-            con.close();
-            return null;
+            final MdsIp con = new MdsIp(provider);
+            if(con.connect()) MdsIp.open_connections.add(con);
+            else con.close();
+            return con;
         }
     }
 
-    public static Connection sharedConnection(final String provider, final String password) {
-        return Connection.sharedConnection(new Provider(provider, password));
+    public static MdsIp sharedConnection(final String provider, final String password) {
+        return MdsIp.sharedConnection(new Provider(provider, password));
     }
     private boolean          connected       = false;
     private MdsConnect       connectThread   = null;
@@ -393,21 +391,21 @@ public class Connection extends Mds{
     private boolean          use_compression = false;
     private final Object     mutex           = new Object();
 
-    public Connection(final Provider provider){
+    public MdsIp(final Provider provider){
         this(provider, null);
     }
 
     /** main constructor of the Connection class **/
-    public Connection(final Provider provider, final MdsListener cl){
+    public MdsIp(final Provider provider, final MdsListener cl){
         this.addMdsListener(cl);
         this.provider = provider;
     }
 
-    public Connection(final String provider){
+    public MdsIp(final String provider){
         this(new Provider(provider, null));
     }
 
-    public Connection(final String provider, final MdsListener cl){
+    public MdsIp(final String provider, final MdsListener cl){
         this(new Provider(provider, null), cl);
     }
 
@@ -462,7 +460,7 @@ public class Connection extends Mds{
         this.receiveThread = new MRT();
         this.receiveThread.start();
         this.connected = true;
-        Connection.this.dispatchMdsEvent(new MdsEvent(this, MdsEvent.HAVE_CONTEXT, "Connected to " + this.provider.toString()));
+        MdsIp.this.dispatchMdsEvent(new MdsEvent(this, MdsEvent.HAVE_CONTEXT, "Connected to " + this.provider.toString()));
     }
 
     private final void disconnectFromServer() {
@@ -518,7 +516,8 @@ public class Connection extends Mds{
 
     public final Message getMessage(Pointer ctx, final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
-        if(!this.connected) throw new MdsException("Not connected");
+        if(!this.connected) throw new MdsException(MdsIp.NOT_CONNECTED);
+        this.setActive();
         final Message msg;
         byte idx = 0;
         final StringBuffer cmd = new StringBuffer(expr.length() + 128);
@@ -530,13 +529,13 @@ public class Connection extends Mds{
             if(expr.indexOf("$") == -1){ // If no $ args specified, build argument list
                 cmd.append(expr);
                 for(int i = 0; i < args.length; i++)
-                    cmd.append(i == 0 ? '(' : ',').append(atomic[i] ? "$" : Connection.serialStr);
+                    cmd.append(i == 0 ? '(' : ',').append(atomic[i] ? "$" : MdsIp.serialStr);
                 cmd.append(')');
             }else{
                 final Matcher m = Pattern.compile("\\$").matcher(expr);
                 int pos = 0;
                 for(int i = 0; i < args.length && m.find(); i++){
-                    cmd.append(expr.substring(pos, m.start())).append(atomic[i] ? "$" : Connection.serialStr);
+                    cmd.append(expr.substring(pos, m.start())).append(atomic[i] ? "$" : MdsIp.serialStr);
                     pos = m.end();
                 }
                 cmd.append(expr.substring(pos));
@@ -601,7 +600,7 @@ public class Connection extends Mds{
 
     @Override
     public final String isReady() {
-        if(this.isConnected()) return "Not connected.";
+        if(this.isConnected()) return MdsIp.NOT_CONNECTED;
         return null;
     }
 
@@ -632,7 +631,7 @@ public class Connection extends Mds{
     }
 
     public final void removeFromShare() {
-        if(Connection.open_connections.contains(this)) Connection.open_connections.remove(this);
+        if(MdsIp.open_connections.contains(this)) MdsIp.open_connections.remove(this);
     }
 
     private final void sendArg(final byte descr_idx, final byte dtype, final byte nargs, final int dims[], final byte body[]) throws MdsException {
@@ -651,7 +650,7 @@ public class Connection extends Mds{
     @Override
     public final String toString() {
         final String provider = this.provider.toString();
-        return new StringBuilder(provider.length() + 12).append("Connection(").append(provider).append(")").toString();
+        return new StringBuilder(provider.length() + 12).append("MdsIp(").append(provider).append(")").toString();
     }
 
     synchronized private void waitTried() {

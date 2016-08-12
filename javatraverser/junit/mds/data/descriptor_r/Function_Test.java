@@ -11,11 +11,11 @@ import mds.MdsException;
 import mds.TdiShr;
 import mds.data.descriptor_a.Int32Array;
 import mds.data.descriptor_a.Uint64Array;
-import mds.mdsip.Connection;
+import mds.mdsip.MdsIp;
 
 @SuppressWarnings("static-method")
 public final class Function_Test{
-    private static Connection mds;
+    private static MdsIp mds;
     private static TdiShr     tdi;
 
     @BeforeClass
