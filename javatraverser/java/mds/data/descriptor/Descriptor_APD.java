@@ -39,6 +39,11 @@ public class Descriptor_APD extends Descriptor_A<Descriptor>{
     }
 
     @Override
+    public Descriptor getScalar(final int idx) {
+        return this.getValue(idx);
+    }
+
+    @Override
     protected final String getSuffix() {
         return "";
     }

@@ -2,6 +2,7 @@ package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor_s.Uint64;
 import mds.data.descriptor_s.Uint64.ULong;
 
 public final class Uint64Array extends NUMBERArray<ULong>{
@@ -20,6 +21,11 @@ public final class Uint64Array extends NUMBERArray<ULong>{
     @Override
     protected final ULong getElement(final ByteBuffer b) {
         return ULong.fromBuffer(b);
+    }
+
+    @Override
+    public Uint64 getScalar(final int idx) {
+        return new Uint64(this.getValue(idx));
     }
 
     @Override

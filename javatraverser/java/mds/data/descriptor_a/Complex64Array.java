@@ -2,6 +2,7 @@ package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor_s.COMPLEX.Complex;
+import mds.data.descriptor_s.Complex64;
 import mds.data.descriptor_s.Complex64.ComplexDouble;
 
 public final class Complex64Array extends COMPLEXArray<Double>{
@@ -12,6 +13,11 @@ public final class Complex64Array extends COMPLEXArray<Double>{
     @Override
     protected final ComplexDouble getElement(final ByteBuffer b) {
         return new ComplexDouble(b.getDouble(), b.getDouble());
+    }
+
+    @Override
+    public Complex64 getScalar(final int idx) {
+        return new Complex64(this.getValue(idx));
     }
 
     @Override

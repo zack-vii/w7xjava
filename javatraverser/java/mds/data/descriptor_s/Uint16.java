@@ -54,6 +54,10 @@ public final class Uint16 extends NUMBER<UShort>{
         super(DTYPE.WU, value);
     }
 
+    public Uint16(final UShort value){
+        this(value.value);
+    }
+
     @Override
     protected final UShort getValue(final ByteBuffer b) {
         return new UShort(b.getShort(0));

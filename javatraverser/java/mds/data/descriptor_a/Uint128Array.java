@@ -24,6 +24,11 @@ public final class Uint128Array extends NUMBERArray<BigInteger>{
     }
 
     @Override
+    public Uint128 getScalar(final int idx) {
+        return new Uint128(this.getValue(idx));
+    }
+
+    @Override
     protected final BigInteger[] initArray(final int size) {
         return new BigInteger[size];
     }

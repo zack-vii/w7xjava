@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
+import mds.data.descriptor_s.Int8;
 
 public final class Int8Array extends NUMBERArray<Byte>{
     public Int8Array(final byte... values){
@@ -30,6 +31,11 @@ public final class Int8Array extends NUMBERArray<Byte>{
     @Override
     public final Byte getElement(final ByteBuffer b) {
         return b.get();
+    }
+
+    @Override
+    public Int8 getScalar(final int idx) {
+        return new Int8(this.getValue(idx));
     }
 
     @Override

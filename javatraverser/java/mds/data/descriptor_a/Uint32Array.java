@@ -2,6 +2,7 @@ package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor_s.Uint32;
 import mds.data.descriptor_s.Uint32.UInteger;
 
 public final class Uint32Array extends NUMBERArray<UInteger>{
@@ -25,6 +26,11 @@ public final class Uint32Array extends NUMBERArray<UInteger>{
     @Override
     protected final UInteger getElement(final ByteBuffer b) {
         return UInteger.fromBuffer(b);
+    }
+
+    @Override
+    public Uint32 getScalar(final int idx) {
+        return new Uint32(this.getValue(idx));
     }
 
     @Override

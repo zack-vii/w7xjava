@@ -2,6 +2,7 @@ package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor_s.Float32;
 
 public final class Float32Array extends FLOATArray<Float>{
     public Float32Array(final ByteBuffer b){
@@ -19,6 +20,11 @@ public final class Float32Array extends FLOATArray<Float>{
     @Override
     protected final Float getElement(final ByteBuffer b) {
         return b.getFloat();
+    }
+
+    @Override
+    public Float32 getScalar(final int idx) {
+        return new Float32(this.getValue(idx));
     }
 
     @Override

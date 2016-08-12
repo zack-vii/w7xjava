@@ -59,6 +59,10 @@ public final class Uint64 extends NUMBER<ULong>{
         super(DTYPE.QU, value);
     }
 
+    public Uint64(final ULong value){
+        this(value.value);
+    }
+
     @Override
     protected final ULong getValue(final ByteBuffer b) {
         return new ULong(b.getLong(0));

@@ -187,6 +187,8 @@ public abstract class Descriptor_A<T>extends ARRAY<T[]>{
 
     protected abstract T getElement(ByteBuffer b);
 
+    public abstract Descriptor getScalar(int idx);
+
     protected abstract String getSuffix();
 
     @Override

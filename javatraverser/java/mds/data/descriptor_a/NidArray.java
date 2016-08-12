@@ -20,6 +20,11 @@ public final class NidArray extends Descriptor_A<Nid>{
     }
 
     @Override
+    public Nid getScalar(final int idx) {
+        return this.getValue(idx);
+    }
+
+    @Override
     protected String getSuffix() {
         return "";
     }

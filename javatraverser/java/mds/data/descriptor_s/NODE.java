@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import mds.MdsException;
 import mds.TCL;
 import mds.TREE;
+import mds.TreeShr.SegmentInfo;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
@@ -138,7 +139,7 @@ public abstract class NODE<T>extends Descriptor_S<T>{
     public static final int      CHILD               = 1;
     public static final int      MEMBER              = 2;
     private static final boolean atomic              = false;
-    public final TREE            tree;
+    protected final TREE         tree;
 
     public NODE(final byte dtype, final ByteBuffer data){
         this(dtype, data, TREE.getActiveTree());
@@ -182,7 +183,7 @@ public abstract class NODE<T>extends Descriptor_S<T>{
     }
 
     public int deleteInitialize() throws MdsException {
-        return this.tree.deleteInitialize(this.getNidNumber());
+        return this.tree.deleteNodeInitialize(this.getNidNumber());
     }
 
     public final NODE doAction() throws MdsException {
@@ -391,6 +392,14 @@ public abstract class NODE<T>extends Descriptor_S<T>{
         return this.tree.getSegment(this.getNidNumber(), idx);
     }
 
+    public final SegmentInfo getSegmentInfo(final int idx) throws MdsException {
+        return this.tree.getSegmentInfo(this.getNidNumber(), idx);
+    }
+
+    public final Descriptor getSegmentLimits(final int idx) throws MdsException {
+        return this.tree.getSegmentLimits(this.getNidNumber(), idx);
+    }
+
     public final String[] getTags() throws MdsException {
         return this.tree.getTags(this.getNidNumber());
     }
@@ -425,6 +434,16 @@ public abstract class NODE<T>extends Descriptor_S<T>{
             if(new Flags(this.getNciFlags()).isSegmented()) return true; // cannot be sure due to issue in winter 2015/2016
             return this.getNumSegments() > 0;
         }
+    }
+
+    public final NODE makeSegment(final Descriptor start, final Descriptor end, final Descriptor dimension, final Descriptor_A values, final int idx, final int rows_filled) throws MdsException {
+        this.tree.makeSegment(this.getNidNumber(), start, end, dimension, values, idx, rows_filled);
+        return this;
+    }
+
+    public final NODE makeSegment(final Descriptor_A dimension, final Descriptor_A values) throws MdsException {
+        this.tree.makeSegment(this.getNidNumber(), dimension.getScalar(0), dimension.getScalar(dimension.getLength() - 1), dimension, values, -1, dimension.getLength());
+        return this;
     }
 
     public final NODE putRecord(final Descriptor data) throws MdsException {

@@ -25,6 +25,10 @@ public final class Complex32 extends COMPLEX<Float>{
         super(b);
     }
 
+    public Complex32(final Complex<Float> value){
+        this(value.real, value.imag);
+    }
+
     public Complex32(final float real, final float imag){
         super(DTYPE.COMPLEX_FLOAT, real, imag);
     }

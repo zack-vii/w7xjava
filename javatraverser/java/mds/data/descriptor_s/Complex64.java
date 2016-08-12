@@ -25,6 +25,10 @@ public final class Complex64 extends COMPLEX<Double>{
         super(b);
     }
 
+    public Complex64(final Complex<Double> value){
+        this(value.real, value.imag);
+    }
+
     public Complex64(final double real, final double imag){
         super(DTYPE.COMPLEX_DOUBLE, real, imag);
     }

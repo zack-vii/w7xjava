@@ -54,6 +54,10 @@ public final class Uint32 extends NUMBER<UInteger>{
         super(DTYPE.LU, value);
     }
 
+    public Uint32(final UInteger value){
+        this(value.value);
+    }
+
     @Override
     protected final UInteger getValue(final ByteBuffer b) {
         return new UInteger(b.getInt(0));

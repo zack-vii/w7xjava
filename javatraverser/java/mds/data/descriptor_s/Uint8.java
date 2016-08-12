@@ -54,6 +54,10 @@ public final class Uint8 extends NUMBER<UByte>{
         super(b);
     }
 
+    public Uint8(final UByte value){
+        this(value.value);
+    }
+
     @Override
     protected final UByte getValue(final ByteBuffer b) {
         return new UByte(b.get(0));

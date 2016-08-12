@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor.Descriptor_A;
+import mds.data.descriptor_s.CString;
 
 public final class CStringArray extends Descriptor_A<String>{
     private static final ByteBuffer toBytes(final String[] lines) {
@@ -41,6 +42,11 @@ public final class CStringArray extends Descriptor_A<String>{
         final byte[] buf = new byte[this.length];
         b.get(buf);
         return new String(buf).replaceAll(" +$", "");
+    }
+
+    @Override
+    public CString getScalar(final int idx) {
+        return new CString(this.getValue(idx));
     }
 
     @Override

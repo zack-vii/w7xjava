@@ -27,6 +27,11 @@ public final class EmptyArray extends Descriptor_A{
     }
 
     @Override
+    public Descriptor getScalar(final int idx) {
+        return null;
+    }
+
+    @Override
     protected final String getSuffix() {
         return "";
     }

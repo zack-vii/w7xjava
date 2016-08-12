@@ -2,6 +2,7 @@ package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
 import mds.data.descriptor.DTYPE;
+import mds.data.descriptor_s.Int16;
 
 public final class Int16Array extends NUMBERArray<Short>{
     public Int16Array(final ByteBuffer b){
@@ -24,6 +25,11 @@ public final class Int16Array extends NUMBERArray<Short>{
     @Override
     protected final Short getElement(final ByteBuffer b) {
         return b.getShort();
+    }
+
+    @Override
+    public Int16 getScalar(final int idx) {
+        return new Int16(this.getValue(idx));
     }
 
     @Override
