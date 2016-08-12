@@ -92,7 +92,6 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
     private Node                   curr_node;
     private final TREE             tree;
     private final Mds              mds;
-    private Nid                    default_nid;
     private String                 lastName;
     private DefaultMutableTreeNode top;
     public final MdsView           mdsview;
@@ -395,7 +394,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
     }
 
     public final Nid getDefault() {
-        return this.default_nid;
+        return this.tree.getDefaultCached();
     }
 
     public final String getExpt() {
@@ -506,7 +505,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
     }
 
     public final void updateDefault() throws MdsException {
-        this.default_nid = this.tree.getDefault();
+        this.tree.getDefault();
     }
 
     @Override

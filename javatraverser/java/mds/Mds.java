@@ -43,7 +43,7 @@ public abstract class Mds{
     }
 
     public static final Mds getActiveMds() {
-        return Mds.active;// TODO: always up to date?
+        return Mds.active;
     }
     protected transient HashSet<MdsListener>          mdslisteners  = new HashSet<MdsListener>();
     protected transient boolean[]                     event_flags   = new boolean[Mds.MAX_NUM_EVENTS];
@@ -73,7 +73,7 @@ public abstract class Mds{
         return this.getInteger(null, "DEALLOCATE('*')");
     }
 
-    protected final void dispatchMdsEvent(final MdsEvent e) {
+    synchronized protected final void dispatchMdsEvent(final MdsEvent e) {
         if(this.mdslisteners != null) for(final MdsListener listener : this.mdslisteners)
             listener.processMdsEvent(e);
     }
@@ -236,7 +236,7 @@ public abstract class Mds{
         return this.getString(null, expr, args);
     }
 
-    public abstract String isReady() throws MdsException;
+    public abstract String isReady();
 
     protected abstract void mdsSetEvent(final String event, final int eventid);
 

@@ -42,7 +42,6 @@ public final class TREE implements MdsListener{
     public static final int NEW      = 3;
     public static final int NORMAL   = 1;
     public static final int READONLY = 0;
-    public static final int REALTIME = 4;
     private static TREE     active   = null;
 
     public static TREE getActiveTree() {
@@ -52,6 +51,7 @@ public final class TREE implements MdsListener{
     public static final int getCurrentShot(final Mds mds, final String expt) throws MdsException {
         return new TreeShr(mds).treeGetCurrentShotId(expt);
     }
+    private Nid           def_nid;
     private final Pointer ctx    = Pointer.NULL();
     public final int      shot;
     public final Mds      mds;
@@ -59,6 +59,7 @@ public final class TREE implements MdsListener{
     private int           mode;
     public final TreeShr  treeshr;
     public boolean        opened = false;
+    private boolean       ready;
 
     public TREE(final Mds mds, final String expt, final int shot){
         this(mds, expt, shot, TREE.READONLY);
@@ -66,10 +67,33 @@ public final class TREE implements MdsListener{
 
     public TREE(final Mds mds, final String expt, final int shot, final int mode){
         this.mds = mds;
+        this.ready = mds.isReady() == null;
         this.treeshr = new TreeShr(mds);
         this.expt = expt.toUpperCase();
         this.shot = shot;
         this.mode = mode;
+        this.def_nid = this.getTop();
+    }
+
+    private final TREE _open() throws MdsException {
+        final int status;
+        switch(this.mode){
+            case TREE.NEW:
+                this.mode = TREE.EDITABLE;
+                status = this.treeshr.treeOpenNew(this.ctx, this.expt, this.shot);
+                break;
+            case TREE.EDITABLE:
+                status = this.treeshr.treeOpenEdit(this.ctx, this.expt, this.shot);
+                break;
+            default:
+                this.mode = TREE.READONLY;
+            case TREE.READONLY:
+            case TREE.NORMAL:
+                status = this.treeshr.treeOpen(this.ctx, this.expt, this.shot, this.isReadonly());
+        }
+        MdsException.handleStatus(status);
+        this.updateListener(true);
+        return this;
     }
 
     public final Nid addConglom(final NODE node, final String name, final String model) throws MdsException {
@@ -85,7 +109,7 @@ public final class TREE implements MdsListener{
     public final Nid addConglom(final String path, final String model) throws MdsException {
         final IntegerStatus res = this.setActive().treeshr.treeAddConglom(this.ctx, path, model);
         MdsException.handleStatus(res.status);
-        return new Nid(res.data);
+        return new Nid(res.data, this);
     }
 
     public final Nid addNode(final NODE node, final String name, final byte usage) throws MdsException {
@@ -142,7 +166,7 @@ public final class TREE implements MdsListener{
                 final IntegerStatus res = this.setActive().treeshr.treeDeleteNodeGetNid(this.ctx, last);
                 if(res.status == MdsException.TreeNMN) break;
                 MdsException.handleStatus(res.status);
-                nids.add(new Nid(last = res.data));
+                nids.add(new Nid(last = res.data, this));
             }
             return nids.toArray(new Nid[0]);
         }
@@ -166,7 +190,11 @@ public final class TREE implements MdsListener{
 
     @Override
     public final void finalize() {
-        this.mds.removeMdsListener(this);
+        if(this.opened) try{
+            this.quit();
+        }catch(final MdsException e){
+            this.mds.removeMdsListener(this);
+        }
     }
 
     public final Nid[] findNodeWild(final int usage) throws MdsException {
@@ -190,7 +218,7 @@ public final class TREE implements MdsListener{
             TagRefStatus tag = this.setActive().treeshr.treeFindTagWild(this.ctx, search, TagRefStatus.init);
             while(taglist.size() < max && tag.status != 0){
                 MdsException.handleStatus(tag.status);
-                taglist.put(tag.data, new Nid(tag.nid));
+                taglist.put(tag.data, new Nid(tag.nid, this));
                 tag = this.treeshr.treeFindTagWild(null, search, tag);
             }
         }
@@ -208,7 +236,11 @@ public final class TREE implements MdsListener{
     public final Nid getDefault() throws MdsException {
         final IntegerStatus res = this.setActive().treeshr.treeGetDefaultNid(this.ctx);
         MdsException.handleStatus(res.status);
-        return new Nid(res.data);
+        return this.def_nid = new Nid(res.data, this);
+    }
+
+    public final Nid getDefaultCached() {
+        return this.def_nid;
     }
 
     public final Descriptor getNci(final int nid, final String name) throws MdsException {
@@ -458,36 +490,13 @@ public final class TREE implements MdsListener{
         return this.mode == TREE.READONLY;
     }
 
-    public final boolean isRealtime() {
-        return this.mode == TREE.REALTIME;
-    }
-
     public final boolean isSegmented(final int nid) throws MdsException {
         if(new Flags(this.getNciFlags(nid)).isSegmented()) return true; // cannot be sure due to issue in winter 2015/2016
         return this.getNumSegments(nid) > 0;
     }
 
     public final TREE open() throws MdsException {
-        final int status;
-        switch(this.mode){
-            case TREE.NEW:
-                this.mode = TREE.EDITABLE;
-                status = this.setActive().treeshr.treeOpenNew(this.ctx, this.expt, this.shot);
-                break;
-            case TREE.EDITABLE:
-                status = this.setActive().treeshr.treeOpenEdit(this.ctx, this.expt, this.shot);
-                break;
-            case TREE.REALTIME:
-                System.err.println("REALTIME not implemented");// TODO
-            default:
-                this.mode = TREE.READONLY;
-            case TREE.READONLY:
-            case TREE.NORMAL:
-                status = this.setActive().treeshr.treeOpen(this.ctx, this.expt, this.shot, this.isReadonly());
-        }
-        MdsException.handleStatus(status);
-        this.updateListener(true);
-        return this;
+        return this.setActive()._open();
     }
 
     public final TREE open(final int mode) throws MdsException {
@@ -499,12 +508,11 @@ public final class TREE implements MdsListener{
     public void processMdsEvent(final MdsEvent e) {
         switch(e.getID()){
             case MdsEvent.HAVE_CONTEXT:
-                if(this.opened && !this.isOpen()) try{
-                    this.open();
-                }catch(final MdsException exc){}
+                this.ready = true;
                 break;
             case MdsEvent.LOST_CONTEXT:
                 this.ctx.setValue(0);
+                this.ready = false;
                 break;
             default:
                 System.out.println(e.getID() + e.getInfo());
@@ -528,11 +536,16 @@ public final class TREE implements MdsListener{
     }
 
     public final TREE setActive() throws MdsException {
+        if(this.opened && !this.isOpen() && this.ready){
+            this._open();
+            this.def_nid.setDefault();
+        }
         return TREE.active = this;
     }
 
     public final TREE setDefault(final int nid) throws MdsException {
         MdsException.handleStatus(this.setActive().treeshr.treeSetDefault(this.ctx, nid));
+        this.def_nid = new Nid(nid, this);
         return this;
     }
 
