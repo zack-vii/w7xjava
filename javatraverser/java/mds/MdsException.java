@@ -422,8 +422,9 @@ public final class MdsException extends IOException{
         final String msg = MdsException.getMdsMessage(status);
         final boolean success = (status & 1) == 1;
         if(!success){
-            MdsException.stderr(msg, null);
-            throw new MdsException(msg, status);
+            final MdsException exc = new MdsException(msg, status);
+            MdsException.stderr(null, exc);
+            throw exc;
         }
         MdsException.stdout(msg);
     }
@@ -438,8 +439,7 @@ public final class MdsException extends IOException{
     }
 
     public static void stderr(final String line, final Exception exc) {
-        if(MdsException.statusLabel != null) ;
-        MdsException.statusLabel.setForeground(Color.RED);
+        if(MdsException.statusLabel != null) MdsException.statusLabel.setForeground(Color.RED);
         if(line == null){
             if(exc == null){
                 if(MdsException.statusLabel != null) MdsException.statusLabel.setText("");
