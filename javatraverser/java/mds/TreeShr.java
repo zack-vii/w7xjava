@@ -196,8 +196,15 @@ public final class TreeShr{
         this.mds = mds;
     }
 
-    public final void doMethod(final Pointer ctx) throws MdsException {
-        // TODO Auto-generated method stub
+    public final int doMethod(final Pointer ctx, final int nid, final String method, final String... args) throws MdsException {
+        final CString[] parms = new CString[args.length + 1];
+        parms[0] = new CString(method);
+        final StringBuilder expr = new StringBuilder(256).append("TreeShr->TreeDoMethod(val(").append(nid).append("),ref($)");
+        for(int i = 0; i < args.length; i++){
+            parms[i + 1] = new CString(args[i]);
+            expr.append(",ref($)");
+        }
+        return this.mds.getInteger(ctx, expr.append(')').toString(), parms);
     }
 
     /**

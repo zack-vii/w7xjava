@@ -184,7 +184,7 @@ public final class TREE implements MdsListener{
     }
 
     public final TREE doDeviceMethod(final int nid, final String method) throws MdsException {
-        this.treeshr.doMethod(this.ctx);
+        MdsException.handleStatus(this.treeshr.doMethod(this.ctx, nid, method));
         return this;
     }
 
