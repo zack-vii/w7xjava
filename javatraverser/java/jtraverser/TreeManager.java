@@ -34,11 +34,12 @@ import jtraverser.dialogs.DisplayData;
 import jtraverser.dialogs.DisplayNci;
 import jtraverser.dialogs.DisplayTags;
 import jtraverser.dialogs.GraphPanel;
+import jtraverser.dialogs.OpenConnectionDialog;
 import jtraverser.dialogs.ModifyData;
 import jtraverser.dialogs.ModifyTags;
 import jtraverser.dialogs.SubTrees;
 import jtraverser.dialogs.TreeDialog;
-import jtraverser.dialogs.TreeOpenDialog;
+import jtraverser.dialogs.OpenTreeDialog;
 import jtraverser.editor.NodeEditor;
 import jtraverser.tools.DecompileTree;
 import mds.Mds;
@@ -353,10 +354,16 @@ public class TreeManager extends JTabbedPane{
                 new DecompileTree().decompile(FileMenu.this.treeman.getCurrentTree(), FileMenu.this.treeman.frame, true);
             }
         };
-        private final class open implements ActionListener{
+        private final class openMds implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
-                FileMenu.this.treeman.open_dialog.open();
+                FileMenu.this.treeman.openmds_dialog.open();
+            }
+        }
+        private final class openTree implements ActionListener{
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                FileMenu.this.treeman.opentree_dialog.open();
             }
         }
         private final class quit implements ActionListener{
@@ -374,10 +381,11 @@ public class TreeManager extends JTabbedPane{
 
         public FileMenu(final TreeManager treeman, final JComponent menu){
             super(treeman);
-            menu.add(this.addMenuItem("Open", new open()));
+            menu.add(this.addMenuItem("Connect", new openMds()));
+            menu.add(this.addMenuItem("Open", new openTree()));
             menu.add(this.addMenuItem("Write", new write()));
-            menu.add(this.addMenuItem("Close Tree", new closeTree()));
-            menu.add(this.addMenuItem("Close Mds", new closeMds()));
+            menu.add(this.addMenuItem("Close", new closeTree()));
+            menu.add(this.addMenuItem("Disconnect", new closeMds()));
             menu.add(this.addMenuItem("Export", new decompile()));
             /* menu.add(this.addMenuItem("Import",new compile()));*/
             menu.add(this.addMenuItem("Quit", new quit()));
@@ -387,10 +395,11 @@ public class TreeManager extends JTabbedPane{
         public final void checkSupport() {
             final boolean noconnected = this.treeman.getCurrentMdsView() == null;
             final boolean noopen = noconnected || this.treeman.getCurrentTree() == null;
-            this.items.get(1).setEnabled(noopen ? false : this.treeman.getCurrentTree().isEditable());
-            this.items.get(2).setEnabled(!noopen);
-            this.items.get(3).setEnabled(!noconnected);
-            this.items.get(4).setEnabled(!noopen);
+            this.items.get(1).setEnabled(!noconnected);
+            this.items.get(2).setEnabled(noopen ? false : this.treeman.getCurrentTree().isEditable());
+            this.items.get(3).setEnabled(!noopen);
+            this.items.get(4).setEnabled(!noconnected);
+            this.items.get(5).setEnabled(!noopen);
         }
     }
     public static class Menu{
@@ -538,7 +547,8 @@ public class TreeManager extends JTabbedPane{
     public int                     copy_format;
     public final Dialogs           dialogs;
     private final jTraverserFacade frame;
-    private final TreeOpenDialog   open_dialog;
+    private final OpenTreeDialog   opentree_dialog;
+    private final OpenConnectionDialog    openmds_dialog;
     private final Stack<MdsView>   mdsviews = new Stack<MdsView>();
 
     public TreeManager(final jTraverserFacade frame){
@@ -549,8 +559,11 @@ public class TreeManager extends JTabbedPane{
         this.frame = frame;
         this.setPreferredSize(new Dimension(300, 400));
         this.setBackground(Color.white);
-        this.open_dialog = new TreeOpenDialog(this);
+        this.openmds_dialog = new OpenConnectionDialog(this);
+        this.opentree_dialog = new OpenTreeDialog(this);
         this.dialogs = new Dialogs(this);
+        this.setForeground(new Color(0, 0, 127));
+        this.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         this.addChangeListener(new ChangeListener(){
             @Override
             public void stateChanged(final ChangeEvent ce) {
@@ -622,25 +635,31 @@ public class TreeManager extends JTabbedPane{
         return (MdsView)this.getComponentAt(index);
     }
 
-    public final void openTree(final Provider provider, final String expt, final int shot, final int mode) {
-        this.open_dialog.setFields(provider.toString(), expt, shot);
+    public MdsView openMds(final Provider provider) {
+        this.openmds_dialog.setFields(provider.toString());
         // first we need to check if the tree is already open
         final Mds mds = Connection.sharedConnection(provider);
         if(mds == null){
             JOptionPane.showMessageDialog(this.frame, "Could not connect to server " + provider.toString(), "Connection Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            return null;
         }
         for(int i = 0; i < this.getTabCount(); i++){
-            final MdsView mv = (MdsView)this.getComponentAt(i);
-            if(mv.getMds().equals(mds)){
-                mv.openTree(expt, shot, mode);
-                this.setSelectedComponent(mv);
-                return;
+            final MdsView mdsview = (MdsView)this.getComponentAt(i);
+            if(mdsview.getMds().equals(mds)){
+                this.setSelectedComponent(mdsview);
+                return mdsview;
             }
         }
         final MdsView mdsview = new MdsView(this, mds);
         this.addTab(mdsview.toString(), mdsview);
         this.setSelectedIndex(this.getTabCount() - 1);
+        return mdsview;
+    }
+
+    public final void openTree(final String expt, final int shot, final int mode) {
+        this.opentree_dialog.setFields(expt, shot);
+        final MdsView mdsview = this.getCurrentMdsView();
+        if(mdsview == null) return;
         mdsview.openTree(expt, shot, mode);
     }
 

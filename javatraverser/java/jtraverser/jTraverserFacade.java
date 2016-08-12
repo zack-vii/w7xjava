@@ -112,8 +112,14 @@ public final class jTraverserFacade extends JFrame{
         });
         this.pack();
         this.setVisible(true);
-        if(exp_name != null) try{
-            this.treeman.openTree(new Provider(server, null), exp_name.toUpperCase(), (shot_name == null) ? -1 : Integer.parseInt(shot_name), mode);
+        if(server != null && !server.isEmpty()) try{
+            final Provider provider = new Provider(server, null);
+            MdsView mdsview = this.treeman.openMds(provider);
+            if(mdsview == null){
+                provider.queryPassword(this);
+                mdsview = this.treeman.openMds(provider);
+            }
+            if(exp_name != null) mdsview.openTree(exp_name.toUpperCase(), (shot_name == null) ? -1 : Integer.parseInt(shot_name), mode);
         }catch(final Exception e1){
             e1.printStackTrace();
         }

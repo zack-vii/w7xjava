@@ -101,10 +101,11 @@ SET TRAV_SRC=^
   jtraverser\dialogs\GraphPanel.java ^
   jtraverser\dialogs\ModifyData.java ^
   jtraverser\dialogs\ModifyTags.java ^
+  jtraverser\dialogs\OpenConnectionDialog.java ^
+  jtraverser\dialogs\OpenTreeDialog.java ^
   jtraverser\dialogs\Rename.java ^
   jtraverser\dialogs\SubTrees.java ^
   jtraverser\dialogs\TreeDialog.java ^
-  jtraverser\dialogs\TreeOpenDialog.java ^
   jtraverser\editor\ActionEditor.java ^
   jtraverser\editor\ArgEditor.java ^
   jtraverser\editor\ArrayEditor.java ^

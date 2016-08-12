@@ -251,6 +251,18 @@ public class Connection extends Mds{
             return this.host.toLowerCase().hashCode() + this.port;
         }
 
+        public final boolean queryPassword(final Component parent) {
+            final JPanel panel = new JPanel();
+            final JLabel label = new JLabel("SSH password:");
+            final JPasswordField pass = new JPasswordField(16);
+            panel.add(label);
+            panel.add(pass);
+            final String[] options = new String[]{"OK", "No Password"};
+            final int option = JOptionPane.showOptionDialog(parent, panel, this.toString(), JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            if(option != 0) return false;
+            return this.setPassword(new String(pass.getPassword()));
+        }
+
         public final boolean setPassword(final String password) {
             if(this.password == null) return (this.password = password) != null;
             if(this.password.equals(password)) return false;
@@ -339,18 +351,6 @@ public class Connection extends Mds{
         final int size = Connection.open_connections.size();
         Connection.open_connections.clear();
         return size;
-    }
-
-    public static final String queryPassword(final Component parent, final Provider provider) {
-        final JPanel panel = new JPanel();
-        final JLabel label = new JLabel("Enter ssh password:");
-        final JPasswordField pass = new JPasswordField(16);
-        panel.add(label);
-        panel.add(pass);
-        final String[] options = new String[]{"OK", "Cancel"};
-        final int option = JOptionPane.showOptionDialog(parent, panel, provider.toString(), JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        if(option == 0) return new String(pass.getPassword());
-        return null;
     }
 
     public static final boolean removeSharedConnection(final Connection con) {
@@ -541,9 +541,7 @@ public class Connection extends Mds{
 
     synchronized public final Message getMessage(Pointer ctx, final String expr, final boolean serialize, final Descriptor... args) throws MdsException {
         if(DEBUG.M) System.out.println("mdsConnection.mdsValue(\"" + expr + "\", " + args + ", " + serialize + ")");
-        if(!this.connected){
-            if(!this.connect()) throw new MdsException("Not connected");
-        }
+        if(!this.connected) throw new MdsException("Not connected");
         this.setActive();
         byte idx = 0;
         final Message msg;

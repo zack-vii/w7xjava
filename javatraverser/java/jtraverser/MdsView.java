@@ -1,7 +1,7 @@
 package jtraverser;
 
-import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.util.Stack;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -24,7 +24,7 @@ public class MdsView extends JTabbedPane{
         this.treeman = treeman;
         this.mds = mds;
         this.setPreferredSize(new Dimension(300, 400));
-        this.setBackground(Color.white);
+        this.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         this.addChangeListener(new ChangeListener(){
             @Override
             public void stateChanged(final ChangeEvent ce) {
@@ -76,6 +76,10 @@ public class MdsView extends JTabbedPane{
     public final TreeView getCurrentTreeView() {
         if(this.getTabCount() == 0) return null;
         return (TreeView)((JScrollPane)this.getSelectedComponent()).getViewport().getView();
+    }
+
+    public final Frame getFrame() {
+        return this.treeman.getFrame();
     }
 
     public final Mds getMds() {
