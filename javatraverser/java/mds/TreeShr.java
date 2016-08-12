@@ -619,21 +619,12 @@ public final class TreeShr{
     }
 
     /**
-     * exits the ctx tree (EDIT)
-     *
-     * @return int: status
-     **/
-    public final int treeQuitTree(final Pointer ctx) throws MdsException {
-        return this.mds.getInteger(ctx, "TreeShr->TreeQuitTree()");
-    }
-
-    /**
      * exits a tree (EDIT)
      *
      * @return int: status
      **/
-    public final int treeQuitTree(final String expt, final int shot) throws MdsException {
-        return this.mds.getInteger(String.format("TreeShr->TreeQuitTree(ref($),val(%d))", shot), new CString(expt));
+    public final int treeQuitTree(final Pointer ctx, final String expt, final int shot) throws MdsException {
+        return this.mds.getInteger(ctx, String.format("TreeShr->TreeQuitTree(ref($),val(%d))", shot), new CString(expt));
     }
 
     /**
@@ -805,15 +796,6 @@ public final class TreeShr{
      **/
     public final boolean treeUsingPrivateCtx(final Pointer ctx) throws MdsException {
         return this.mds.getInteger(ctx, "TreeShr->TreeUsingPrivateCtx()") == 1;
-    }
-
-    /**
-     * writes changes to the ctx tree (EDIT)
-     *
-     * @return int: status
-     **/
-    public final int treeWriteTree(final Pointer ctx) throws MdsException {
-        return this.mds.getInteger(ctx, "TreeShr->TreeWriteTree()");
     }
 
     /**

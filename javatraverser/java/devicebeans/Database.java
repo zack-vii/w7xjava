@@ -348,7 +348,7 @@ public final class Database{
 
     public final void quit() throws MdsException {
         this._checkContext();
-        final int status = this.treeshr.treeQuitTree(this.expt, this.shot);
+        final int status = this.treeshr.treeQuitTree(this.ctx, this.expt, this.shot);
         MdsException.handleStatus(status);
     }
 

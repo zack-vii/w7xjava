@@ -532,7 +532,7 @@ public final class TREE implements MdsListener{
     }
 
     public final TREE quit() throws MdsException {
-        MdsException.handleStatus(this.treeshr.treeQuitTree(this.ctx));
+        MdsException.handleStatus(this.treeshr.treeQuitTree(this.ctx, this.expt, this.shot));
         this.updateListener(false);
         return this;
     }
@@ -614,7 +614,7 @@ public final class TREE implements MdsListener{
     }
 
     public final TREE write() throws MdsException {
-        MdsException.handleStatus(this.setActive().treeshr.treeWriteTree(this.ctx));
+        MdsException.handleStatus(this.setActive().treeshr.treeWriteTree(this.ctx, this.expt, this.shot));
         return this;
     }
 }
