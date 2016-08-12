@@ -507,6 +507,8 @@ public final class TREE implements MdsListener{
     @Override
     public void processMdsEvent(final MdsEvent e) {
         switch(e.getID()){
+            case MdsEvent.TRANSFER:
+                break;
             case MdsEvent.HAVE_CONTEXT:
                 this.ready = true;
                 break;

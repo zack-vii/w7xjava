@@ -15,8 +15,9 @@ import java.sql.Connection;
  */
 @SuppressWarnings("serial")
 public class MdsEvent extends AWTEvent{
-    public static final int LOST_CONTEXT = AWTEvent.RESERVED_ID_MAX + 2;
-    public static final int HAVE_CONTEXT = AWTEvent.RESERVED_ID_MAX + 1;
+    public static final int TRANSFER     = AWTEvent.RESERVED_ID_MAX + 1;
+    public static final int LOST_CONTEXT = AWTEvent.RESERVED_ID_MAX + 3;
+    public static final int HAVE_CONTEXT = AWTEvent.RESERVED_ID_MAX + 2;
     /**
      * Number of bytes transferred so far.
      */
@@ -31,7 +32,7 @@ public class MdsEvent extends AWTEvent{
     int                     total_size;
 
     public MdsEvent(final Object source, final int total_size, final int current_size){
-        super(source, 0);
+        super(source, MdsEvent.TRANSFER);
         this.total_size = total_size;
         this.current_size = current_size;
         this.info = null;
@@ -48,7 +49,7 @@ public class MdsEvent extends AWTEvent{
     }
 
     public MdsEvent(final Object source, final String info, final int total_size, final int current_size){
-        super(source, 0);
+        super(source, MdsEvent.TRANSFER);
         this.total_size = total_size;
         this.current_size = current_size;
         this.info = info;
