@@ -1,4 +1,4 @@
-def treeshr_exceptions():
+def treeshr_exceptions(s=True):
     from MDSplus import mdsExceptions as me
     for k,v in me.treeshrExceptions.__dict__.iteritems():
         try:
@@ -7,10 +7,15 @@ def treeshr_exceptions():
             message = str(e)
         except:
             continue
-        #print('public static final int %s = %d;'%(k,status))
-        print('case %s: return "%s";'%(k,message))
+        if s:
+            print('public static final int %s = %d;'%(k,status))
+        else:
+            print('case %s: return "%s";'%(k,message))
+    if s:
+        treeshr_exceptions(False);
 
-def tdishr_exceptions():
+
+def tdishr_exceptions(s=True):
     from MDSplus import mdsExceptions as me
     for k,v in me.tdishrExceptions.__dict__.iteritems():
         try:
@@ -19,9 +24,15 @@ def tdishr_exceptions():
             message = str(e)
         except:
             continue
-        print('public static final int %s = %d;'%(k,status))
-        #print('case %s: return "%s";'%(k,message))
-def mdsshr_exceptions():
+        if s:
+            print('public static final int %s = %d;'%(k,status))
+        else:
+            print('case %s: return "%s";'%(k,message))
+    if s:
+        tdishr_exceptions(False);
+
+
+def mdsshr_exceptions(s=True):
     from MDSplus import mdsExceptions as me
     for k,v in me.mdsshrExceptions.__dict__.iteritems():
         try:
@@ -30,8 +41,29 @@ def mdsshr_exceptions():
             message = str(e)
         except:
             continue
-        #print('public static final int %s = %d;'%(k,status))
-        print('case %s: return "%s";'%(k,message))
+        if s:
+            print('public static final int %s = %d;'%(k,status))
+        else:
+            print('case %s: return "%s";'%(k,message))
+    if s:
+        mdsshr_exceptions(False);
+
+
+def mdsdcl_exceptions(s=True):
+    from MDSplus import mdsExceptions as me
+    for k,v in me.mdsdclExceptions.__dict__.iteritems():
+        try:
+            e = v()
+            status = e.status;
+            message = str(e)
+        except:
+            continue
+        if s:
+            print('public static final int %s = %d;'%(k,status))
+        else:
+            print('case %s: return "%s";'%(k,message))
+    if s:
+        mdsdcl_exceptions(False);
 
 def opc(filepath):
     with file(filepath) as f:
@@ -191,8 +223,9 @@ def constant(filepath):
 
 
 #treeshr_exceptions()
+mdsdcl_exceptions()
 #tdishr_exceptions()
-mdsshr_exceptions()
+#mdsshr_exceptions()
 #reffun('C:/Git/mdsplus/include/opcbuiltins.h')
 #opc('C:/Git/mdsplus/include/opcbuiltins.h')
 #binary('C:/Git/mdsplus/tdishr/TdiDecompileR.c')

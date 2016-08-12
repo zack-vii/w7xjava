@@ -143,6 +143,22 @@ public final class MdsException extends IOException{
     public static final int LibQUEWASEMP         = 1409772;
     public static final int LibKEYNOTFOU         = 1409788;
     public static final int StrSTRTOOLON         = 2392180;
+    /** MdsDcl Exceptions **/
+    public static final int MdsdclERROR          = 134348824;
+    public static final int MdsdclTOO_MANY_VALS  = 134349682;
+    public static final int MdsdclIVQUAL         = 134349658;
+    public static final int MdsdclException      = -1;
+    public static final int MdsdclPROMPT_MORE    = 134349666;
+    public static final int MdsdclIVVERB         = 134349626;
+    public static final int MdsdclABSENT         = 134349632;
+    public static final int MdsdclEXIT           = 134348817;
+    public static final int MdsdclPRESENT        = 134349617;
+    public static final int MdsdclTOO_MANY_PRMS  = 134349674;
+    public static final int MdsdclNOTNEGATABLE   = 134349650;
+    public static final int MdsdclNEGATED        = 134349640;
+    public static final int MdsdclMISSING_VALUE  = 134349690;
+    public static final int MdsdclSUCCESS        = 134348809;
+    public static final int MdsdclNORMAL         = 134349609;
 
     public static final String getMdsMessage(final int status) {
         switch(status){
@@ -415,6 +431,37 @@ public final class MdsException extends IOException{
                 return "%LIB-F-KEYNOTFOU, Key not found";
             case StrSTRTOOLON:
                 return "%STR-F-STRTOOLON, String too long";
+            /** MdsDcl Exceptions **/
+            case MdsdclERROR:
+                return "%MDSDCL-W-ERROR, Unsuccessful execution of command";
+            case MdsdclTOO_MANY_VALS:
+                return "%MDSDCL-E-TOO_MANY_VALS, Too many values";
+            case MdsdclIVQUAL:
+                return "%MDSDCL-E-IVQUAL, Invalid qualifier";
+            case MdsdclException:
+                return "%MDSPLUS-?-UNKNOWN, Unknown exception";
+            case MdsdclPROMPT_MORE:
+                return "%MDSDCL-E-PROMPT_MORE, More input required for command";
+            case MdsdclIVVERB:
+                return "%MDSDCL-E-IVVERB, No such command";
+            case MdsdclABSENT:
+                return "%MDSDCL-W-ABSENT, Entity is absent";
+            case MdsdclEXIT:
+                return "%MDSDCL-S-EXIT, Normal exit";
+            case MdsdclPRESENT:
+                return "%MDSDCL-S-PRESENT, Entity is present";
+            case MdsdclTOO_MANY_PRMS:
+                return "%MDSDCL-E-TOO_MANY_PRMS, Too many parameters specified";
+            case MdsdclNOTNEGATABLE:
+                return "%MDSDCL-E-NOTNEGATABLE, Entity cannot be negated";
+            case MdsdclNEGATED:
+                return "%MDSDCL-W-NEGATED, Entity is present but negated";
+            case MdsdclMISSING_VALUE:
+                return "%MDSDCL-E-MISSING_VALUE, Qualifier value needed";
+            case MdsdclSUCCESS:
+                return "%MDSDCL-S-SUCCESS, Normal successful completion";
+            case MdsdclNORMAL:
+                return "%MDSDCL-S-NORMAL, Normal successful completion";
         }
     }
 
