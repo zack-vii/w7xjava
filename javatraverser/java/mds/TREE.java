@@ -202,8 +202,11 @@ public final class TREE implements MdsListener{
     }
 
     public final Nid[] findNodeWild(final String searchstr, final int usage_mask) throws MdsException {
-        final int[] nidnums = this.setActive().mds.getIntegerArray(String.format("_i=-1;_a='[';_q=0Q;WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref($),ref(_i),ref(_q),val(%d)),1)==1) _a=_a//TEXT(_i)//',';_a=COMPILE(_a//'*]')", usage_mask), new CString(searchstr));
-        if(nidnums == null) MdsException.handleStatus(this.mds.getInteger("_s"));
+        final int[] nidnums;
+        synchronized(this.mds){
+            nidnums = this.setActive().mds.getIntegerArray(String.format("_i=-1;_a='[';_q=0Q;WHILE(IAND(_s=TreeShr->TreeFindNodeWild(ref($),ref(_i),ref(_q),val(%d)),1)==1) _a=_a//TEXT(_i)//',';_a=COMPILE(_a//'*]')", usage_mask), new CString(searchstr));
+            if(nidnums == null) MdsException.handleStatus(this.mds.getInteger("_s"));
+        }
         final Nid[] nids = Nid.getArrayOfNids(nidnums, this);
         return nids;
     }
