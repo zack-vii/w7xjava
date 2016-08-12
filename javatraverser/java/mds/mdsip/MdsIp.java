@@ -129,7 +129,7 @@ public class MdsIp extends Mds{
                         PmdsEvent.setEventid(message.body.get(12));
                         PmdsEvent.start();
                     }else{
-                        MdsIp.this.pending_count--;
+                            MdsIp.this.pending_count--;
                         synchronized(this){
                             this.message = message;
                             if(MdsIp.this.pending_count == 0) this.notify();
@@ -597,7 +597,8 @@ public class MdsIp extends Mds{
 
     @Override
     public final String isReady() {
-        if(this.isConnected()) return MdsIp.NOT_CONNECTED;
+        this.waitTried();
+        if(!this.isConnected()) return MdsIp.NOT_CONNECTED;
         return null;
     }
 

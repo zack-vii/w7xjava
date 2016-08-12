@@ -640,7 +640,7 @@ public class TreeManager extends JTabbedPane{
         this.openmds_dialog.setFields(provider.toString());
         // first we need to check if the tree is already open
         final Mds mds = MdsIp.sharedConnection(provider);
-        if(mds == null){
+        if(mds.isReady() != null){
             JOptionPane.showMessageDialog(this.frame, "Could not connect to server " + provider.toString(), "Connection Error", JOptionPane.ERROR_MESSAGE);
             return null;
         }
