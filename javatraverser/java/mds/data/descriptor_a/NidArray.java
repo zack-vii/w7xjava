@@ -1,22 +1,27 @@
 package mds.data.descriptor_a;
 
 import java.nio.ByteBuffer;
+import mds.TREE;
 import mds.data.descriptor.DTYPE;
 import mds.data.descriptor.Descriptor_A;
 import mds.data.descriptor_s.Nid;
 
 public final class NidArray extends Descriptor_A<Nid>{
+    public final TREE tree;
+
     public NidArray(){
         super(DTYPE.NID, ByteBuffer.allocate(0));
+        this.tree = TREE.getActiveTree();
     }
 
     public NidArray(final ByteBuffer b){
         super(b);
+        this.tree = TREE.getActiveTree();
     }
 
     @Override
     protected final Nid getElement(final ByteBuffer b) {
-        return new Nid(b.getInt());
+        return new Nid(b.getInt(), this.tree);
     }
 
     @Override
