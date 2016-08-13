@@ -138,12 +138,16 @@ SET LOCAL_SRC=^
 
 SET MDSIP_SRC=^
   mds\Mds.java ^
+  mds\MdsEvent.java ^
+  mds\MdsListener.java ^
   mds\MdsException.java ^
   mds\MdsShr.java ^
   mds\TCL.java ^
   mds\TdiShr.java ^
   mds\TreeShr.java ^
   mds\TREE.java ^
+  mds\UpdateEvent.java ^
+  mds\UpdateEventListener.java ^
   mds\data\descriptor\ARRAY.java ^
   mds\data\descriptor\DTYPE.java ^
   mds\data\descriptor\OPC.java ^
@@ -222,12 +226,8 @@ SET MDSIP_SRC=^
   mds\data\descriptor_s\Uint32.java ^
   mds\data\descriptor_s\Uint64.java ^
   mds\data\descriptor_s\Uint8.java ^
-  mds\mdsip\Connection.java ^
-  mds\mdsip\ConnectionEvent.java ^
-  mds\mdsip\ConnectionListener.java ^
-  mds\mdsip\Message.java ^
-  mds\mdsip\UpdateEvent.java ^
-  mds\mdsip\UpdateEventListener.java
+  mds\mdsip\MdsIp.java ^
+  mds\mdsip\Message.java
 
 SET DEVICE_GIF=^
   devicebeans\DeviceApply.gif ^
