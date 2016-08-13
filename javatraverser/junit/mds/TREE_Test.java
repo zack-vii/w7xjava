@@ -59,8 +59,10 @@ public class TREE_Test{
         Assert.assertEquals("[]", node.getNciChildrenNids().toString());
         Assert.assertEquals("[\\TEST::TOP.STRUCT]", tree.getTop().getNciChildrenNids().toString());
         Assert.assertEquals("[\\TEST::TOP:DATA]", tree.getTop().getNciMemberNids().toString());
-        Assert.assertTrue(node1.putRecord(node).isNidReference() && tree.isNidReference(node1.getNidNumber()));
-        Assert.assertTrue(node1.putRecord(node.toFullPath()).isPathReference() && tree.isPathReference(node1.toMinPath().getNidNumber()));
+        Assert.assertTrue(node1.putRecord(node).isNidReference());
+        Assert.assertTrue(tree.isNidReference(node1.getNidNumber()));
+        Assert.assertTrue(node1.putRecord(node.toFullPath()).isPathReference());
+        Assert.assertTrue(tree.isPathReference(node1.getNidNumber()));
         Assert.assertEquals(node.getNciMinPath(), node1.followReference().getNciMinPath());
         Assert.assertEquals("\\TEST::TOP:SIGNAL", node.setPath(":SIGNAL").toPath().toString());
         Assert.assertEquals("Build_Conglom(*, \"E1429\", *, *)", new Path(".STRUCT").addConglom("E1429", "E1429").getRecord().decompile());
@@ -72,7 +74,7 @@ public class TREE_Test{
         Assert.assertEquals(NODE.Flags.COMPRESS_ON_PUT | NODE.Flags.NO_WRITE_MODEL, node.clearFlags(-1).setFlags(NODE.Flags.COMPRESS_ON_PUT | NODE.Flags.NO_WRITE_MODEL).getNciFlags());
         Assert.assertFalse(node.setOn(false).isOn());
         Assert.assertTrue(node.setOn(true).isOn());
-        Assert.assertEquals("TreeUSAGE_SUBTREE", (node = tree.addNode("SUBTREE", NODE.USAGE_SUBTREE)).setSubtree().getNciUsageStr());
+        Assert.assertEquals("TreeUSAGE_SUBTREE", (node = tree.addNode("SUBTREE", NODE.USAGE_SUBTREE)).getNciUsageStr());
         Assert.assertEquals(2, tree.getNciMemberNids(0).getLength());
         Assert.assertEquals(2, tree.getNciChildrenNids(0).getLength());
         Assert.assertEquals(1, node.deleteInitialize());
