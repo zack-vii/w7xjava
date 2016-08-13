@@ -41,7 +41,7 @@ public class StoreFile{
         }
         final Nid nid;
         try{
-            nid = new Path(nodeName).toNid();
+            nid = new Path(nodeName, tree.tree).toNid();
         }catch(final Exception exc){
             System.err.println("Cannot find node " + nodeName);
             System.exit(0);
@@ -59,7 +59,7 @@ public class StoreFile{
             return;
         }
         try{
-            tree.putData(nid, new Int8Array(serialized));
+            nid.putRecord(new Int8Array(serialized));
         }catch(final Exception exc){
             System.err.println("Error writing data in" + nodeName + ": " + exc);
             System.exit(0);

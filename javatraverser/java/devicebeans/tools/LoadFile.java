@@ -8,8 +8,6 @@ package devicebeans.tools;
 // 4) Node name
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import devicebeans.Database;
-import mds.TREE;
 import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.Path;
 
@@ -21,24 +19,6 @@ public class LoadFile{
         }
         final String fileName = args[0];
         final String nodeName = args[1];
-        final String expt = args[2];
-        int shot = -1;
-        if(args.length == 4){
-            try{
-                shot = Integer.parseInt(args[3]);
-            }catch(final Exception exc){
-                System.err.println("Invalid shot number");
-                System.exit(0);
-            }
-        }
-        final Database tree;
-        try{
-            tree = new Database(expt, shot, TREE.READONLY);
-        }catch(final Exception exc){
-            System.err.println("Cannot open experiment " + expt + " shot " + shot + ": " + exc);
-            System.exit(0);
-            return;
-        }
         final Nid nid;
         try{
             nid = new Path(nodeName).toNid();
@@ -49,7 +29,7 @@ public class LoadFile{
         }
         ByteBuffer serialized;
         try{
-            serialized = tree.getData(nid).serialize();
+            serialized = nid.getRecord().serialize();
         }catch(final Exception exc){
             System.err.println("Error reading data in" + nodeName + ": " + exc);
             System.exit(0);

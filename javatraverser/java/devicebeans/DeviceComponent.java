@@ -47,7 +47,7 @@ public abstract class DeviceComponent extends JPanel{
               */
             if(this.editable && this.isDataChanged()){
                 try{
-                    this.subtree.putData(this.nidData, this.curr_data);
+                    this.nidData.putRecord(this.curr_data);
                 }catch(final Exception e){
                     System.err.println("Error writing device data: " + e);
                     System.err.println(this.curr_data);
@@ -58,7 +58,7 @@ public abstract class DeviceComponent extends JPanel{
         if(this.mode != DeviceComponent.DISPATCH && this.supportsState()){
             this.curr_on = this.getState();
             try{
-                this.subtree.setOn(this.nidData, this.curr_on);
+                this.nidData.setOn(this.curr_on);
             }catch(final Exception e){
                 System.err.println("Error writing device state: " + e);
             }
@@ -66,14 +66,14 @@ public abstract class DeviceComponent extends JPanel{
     }
 
     public void apply(final int currBaseNid) throws Exception {
-        final Nid currNidData = new Nid(currBaseNid + this.offsetNid);
+        final Nid currNidData = new Nid(currBaseNid + this.offsetNid, this.subtree.tree);
         if(!this.enabled) return;
         if(this.mode == DeviceComponent.DATA){
             this.curr_data = this.getData();
             if(this.editable)// && isDataChanged())
             {
                 try{
-                    this.subtree.putData(currNidData, this.curr_data);
+                    currNidData.putRecord(this.curr_data);
                 }catch(final Exception e){
                     System.err.println("Error writing device data: " + e);
                     System.err.println("at node: " + currNidData.getNciFullPath());
@@ -85,7 +85,7 @@ public abstract class DeviceComponent extends JPanel{
         if(this.mode != DeviceComponent.DISPATCH && this.supportsState()){
             this.curr_on = this.getState();
             try{
-                this.subtree.setOn(currNidData, this.curr_on);
+                currNidData.setOn(this.curr_on);
             }catch(final Exception e){
                 System.err.println("Error writing device state: " + e);
             }
@@ -94,11 +94,11 @@ public abstract class DeviceComponent extends JPanel{
 
     public void configure(final int baseNidNum) {
         this.baseNidNum = baseNidNum;
-        this.nidData = new Nid(this.baseNidNum + this.offsetNid);
-        this.baseNid = new Nid(this.baseNidNum);
+        this.nidData = new Nid(this.baseNidNum + this.offsetNid, this.subtree.tree);
+        this.baseNid = new Nid(this.baseNidNum, this.subtree.tree);
         if(this.mode == DeviceComponent.DATA){
             try{
-                this.init_data = this.curr_data = this.subtree.getData(this.nidData);
+                this.init_data = this.curr_data = this.nidData.getRecord();
             }catch(final Exception e){
                 this.init_data = this.curr_data = null;
             }
@@ -106,7 +106,7 @@ public abstract class DeviceComponent extends JPanel{
         // if(mode != DISPATCH)
         {
             try{
-                this.init_on = this.curr_on = this.subtree.isOn(this.nidData);
+                this.init_on = this.curr_on = this.nidData.isOn();
             }catch(final Exception e){
                 System.err.println("Error configuring device: " + e);
             }

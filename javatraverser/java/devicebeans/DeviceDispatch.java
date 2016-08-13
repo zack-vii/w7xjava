@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import mds.MdsException;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.NODE;
+import mds.data.descriptor_s.Nid;
 
 @SuppressWarnings("serial")
 public class DeviceDispatch extends DeviceComponent{
@@ -122,15 +122,15 @@ public class DeviceDispatch extends DeviceComponent{
         try{
             this.initializing = true;
             if(this.subtree == null) return;
-            Nid currNid = new Nid(this.baseNid.getValue());
+            Nid currNid = new Nid(this.baseNid.getValue(), this.subtree.tree);
             final Nid[] components = this.nidData.getNciConglomerateNids().toArray();
             for(this.i = this.num_actions = 0; this.i < components.length; this.i++){
                 if(components[this.i].getNciUsage() == NODE.USAGE_ACTION) this.num_actions++;
-                currNid = new Nid(currNid.getValue() + 1);
+                currNid = new Nid(currNid.getValue() + 1, this.subtree.tree);
             }
             this.actions = new Descriptor[this.num_actions];
             this.dispatch_fields = new DeviceDispatchField[this.num_actions];
-            currNid = new Nid(this.nidData.getValue());
+            currNid = new Nid(this.nidData.getValue(), this.subtree.tree);
             for(this.i = this.j = this.num_actions = 0; this.i < components.length; this.i++){
                 if(components[this.i].getNciUsage() == NODE.USAGE_ACTION){
                     try{
@@ -145,7 +145,7 @@ public class DeviceDispatch extends DeviceComponent{
                     this.dispatch_fields[this.j].configure(this.nidData.getValue());
                     this.j++;
                 }
-                currNid = new Nid(currNid.getValue() + 1);
+                currNid = new Nid(currNid.getValue() + 1, this.subtree.tree);
             }
             for(this.i = 0; this.i < components.length; this.i++){
                 if(components[this.i].getNciUsage() == NODE.USAGE_ACTION){

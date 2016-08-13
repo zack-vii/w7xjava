@@ -13,7 +13,7 @@ public class DeviceParameters extends DeviceMultiComponent{
     @Override
     protected void addParameter(final JPanel jp, final Nid nidData) {
         try{
-            this.subtree.setDefault(nidData);
+            nidData.setDefault();
             Nid currNode;
             currNode = new Path(":DESCRIPTION").toNid();
             final String description = currNode.getRecord().toString();
@@ -96,11 +96,11 @@ public class DeviceParameters extends DeviceMultiComponent{
         else parName = paramName + "_" + (idx + 1);
         try{
             prevDefNid = this.subtree.getDefault();
-            this.subtree.setDefault(nidData);
+            nidData.setDefault();
             Nid currNode;
             currNode = new Path(parName + ":NAME").toNid();
             parName = this.subtree.tdiEvaluate(currNode).toString();
-            this.subtree.setDefault(prevDefNid);
+            prevDefNid.setDefault();
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(this, "Error getting Component Name in DeviceParameters: " + exc);
             parName = "";
@@ -118,10 +118,10 @@ public class DeviceParameters extends DeviceMultiComponent{
         else parName = paramName + "_" + (idx + 1);
         try{
             prevDefNid = this.subtree.getDefault();
-            this.subtree.setDefault(nidData);
+            nidData.setDefault();
             Nid currNode;
-            currNode = new Path(parName).toNid();
-            this.subtree.setDefault(prevDefNid);
+            currNode = new Path(parName, this.subtree.tree).toNid();
+            prevDefNid.setDefault();
             return currNode;
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(this, "Error getting Component Nid in DeviceParameters: " + exc);
@@ -133,11 +133,11 @@ public class DeviceParameters extends DeviceMultiComponent{
     protected int getNumComponents(final Nid nidData) {
         try{
             final Nid prevDefNid = this.subtree.getDefault();
-            this.subtree.setDefault(nidData);
+            nidData.setDefault();
             Nid currNode;
-            currNode = new Path(":NUM_ACTIVE").toNid();
+            currNode = new Path(":NUM_ACTIVE", this.subtree.tree).toNid();
             final int numComponents = this.subtree.tdiEvaluate(currNode).toInt();
-            this.subtree.setDefault(prevDefNid);
+            prevDefNid.setDefault();
             return numComponents;
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(this, "Error getting Num Components in DeviceParameters: " + exc);

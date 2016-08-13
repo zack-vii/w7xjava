@@ -88,7 +88,7 @@ public class DeviceSetup extends JDialog{
             ds.setFrame(node.treeview.getFrame());
             final Dimension prevDim = ds.getSize();
             ds.addDataChangeListener(node.treeview);
-            ds.configure(new Database(node.nid.tree.mds, node.nid.tree.expt, node.nid.tree.shot, TREE.NORMAL), node.nid.getNidNumber());
+            ds.configure(new Database(node.nid.getTree()), node.nid.getNidNumber());
             if(ds.getContentPane().getLayout() != null) ds.pack();
             ds.setLocation(node.treeview.getLocationOnScreen());
             ds.setSize(prevDim);
@@ -157,7 +157,7 @@ public class DeviceSetup extends JDialog{
         Nid oldNid = null;
         try{
             oldNid = this.subtree.getDefault();
-            this.subtree.setDefault(new Nid(this.baseNid));
+            new Nid(this.baseNid, this.subtree.tree).setDefault();
         }catch(final Exception exc){}
         for(int i = 0; i < this.num_components; i++){
             try{
@@ -171,7 +171,7 @@ public class DeviceSetup extends JDialog{
         }
         this.fireDataChangeEvent();
         try{
-            this.subtree.setDefault(oldNid);
+            if(oldNid != null) oldNid.setDefault();
         }catch(final Exception exc){}
         for(int i = 0; i < this.deviceUpdateListenerV.size(); i++){
             if(this.isChanged()) this.deviceUpdateListenerV.elementAt(i).deviceUpdated();
@@ -187,7 +187,7 @@ public class DeviceSetup extends JDialog{
         Nid oldNid = null;
         try{
             oldNid = this.subtree.getDefault();
-            this.subtree.setDefault(new Nid(currBaseNid));
+            new Nid(currBaseNid, this.subtree.tree).setDefault();
         }catch(final Exception exc){}
         for(int i = 0; i < this.num_components; i++){
             try{
@@ -197,7 +197,7 @@ public class DeviceSetup extends JDialog{
             }
         }
         try{
-            this.subtree.setDefault(oldNid);
+            if(oldNid != null) oldNid.setDefault();
         }catch(final Exception exc){}
         if(this.deviceNode != null) this.deviceNode.setAllOnUnchecked();
         this.justApplied = true;
@@ -259,7 +259,7 @@ public class DeviceSetup extends JDialog{
         Nid oldNid = null;
         try{
             oldNid = subtree.getDefault();
-            subtree.setDefault(new Nid(baseNid));
+            new Nid(baseNid, subtree.tree).setDefault();
         }catch(final Exception exc){
             System.out.println(exc);
         }
@@ -267,7 +267,7 @@ public class DeviceSetup extends JDialog{
         this.subtree = subtree;
         String path = null;
         try{
-            path = new Nid(baseNid).getNciFullPath();
+            path = new Nid(baseNid, this.subtree.tree).getNciFullPath();
         }catch(final Exception exc){
             System.out.println(exc);
         }
@@ -326,7 +326,7 @@ public class DeviceSetup extends JDialog{
                         if(j == DeviceSetup.this.pop_items.length) return;
                         if(JOptionPane.showConfirmDialog(DeviceSetup.this, "Execute " + DeviceSetup.this.methods[j] + "?", "Execute a device method", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
                             try{
-                                DeviceSetup.this.subtree.doDeviceMethod(new Nid(DeviceSetup.this.baseNid), DeviceSetup.this.methods[j]);
+                                DeviceSetup.this.subtree.doDeviceMethod(new Nid(DeviceSetup.this.baseNid, DeviceSetup.this.subtree.tree), DeviceSetup.this.methods[j]);
                             }catch(final Exception exc){
                                 errmsg = exc.toString();
                                 success = false;
@@ -354,7 +354,7 @@ public class DeviceSetup extends JDialog{
             });
         }
         try{
-            subtree.setDefault(oldNid);
+            if(oldNid != null) oldNid.setDefault();
         }catch(final Exception exc){
             System.out.println("Error in Configure: " + exc);
         }
@@ -425,14 +425,14 @@ public class DeviceSetup extends JDialog{
         Nid oldNid = null;
         try{
             oldNid = this.subtree.getDefault();
-            this.subtree.setDefault(new Nid(this.baseNid));
+            new Nid(this.baseNid, this.subtree.tree).setDefault();
         }catch(final Exception exc){
             System.out.println(exc);
         }
         for(int i = 0; i < this.num_components; i++)
             this.device_components.elementAt(i).reset();
         try{
-            this.subtree.setDefault(oldNid);
+            if(oldNid != null) oldNid.setDefault();
         }catch(final Exception exc){
             System.out.println("Error in Configure: " + exc);
         }

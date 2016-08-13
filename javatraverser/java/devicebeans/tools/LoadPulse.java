@@ -14,10 +14,10 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import devicebeans.Database;
 import mds.data.descriptor.Descriptor;
-import mds.data.descriptor_s.Nid;
-import mds.data.descriptor_s.Path;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.NODE.Flags;
+import mds.data.descriptor_s.Nid;
+import mds.data.descriptor_s.Path;
 
 public class LoadPulse{
     static class NodeDescriptor{
@@ -132,7 +132,7 @@ public class LoadPulse{
     Vector<NodeDescriptor> getNodes(final String experiment, final int shot) throws Exception {
         final Vector<NodeDescriptor> nodesV = new Vector<NodeDescriptor>();
         this.tree = new Database(experiment, shot);
-        this.tree.open();
+        this.tree.tree.open();
         final BufferedReader br = new BufferedReader(new FileReader(LoadPulse.confFileName));
         String basePathLine;
         String currPath = "";
@@ -146,7 +146,7 @@ public class LoadPulse{
             try{
                 final StringTokenizer st = new StringTokenizer(basePathLine, " ");
                 basePath = st.nextToken();
-                currNid = new Path(basePath).toNid();
+                currNid = new Path(basePath, this.tree.tree).toNid();
                 outPath = null;
                 if(st.hasMoreTokens()){
                     final String next = st.nextToken();
@@ -163,7 +163,7 @@ public class LoadPulse{
                     }
                     outPath = next.toUpperCase();
                 }
-                this.tree.setDefault(currNid);
+                currNid.setDefault();
                 Nid[] nidsNumeric = this.tree.getWild(NODE.USAGE_NUMERIC);
                 if(nidsNumeric == null) nidsNumeric = new Nid[0];
                 Nid[] nidsText = this.tree.getWild(NODE.USAGE_TEXT);
@@ -175,7 +175,7 @@ public class LoadPulse{
                 //// Get also data from subtree root
                 int addedLen;
                 try{
-                    this.tree.getData(currNid);
+                    currNid.getRecord();
                     addedLen = 1;
                 }catch(final Exception exc){
                     addedLen = 0;
@@ -192,7 +192,7 @@ public class LoadPulse{
                     nids[j++] = element;
                 for(final Nid element : nidsStruct)
                     nids[j++] = element;
-                this.tree.setDefault(defNid);
+                defNid.setDefault();
                 for(int i = 0; i < nids.length; i++){
                     final Flags flags = new Flags(nids[i].getNciFlags());
                     currPath = nids[i].getNciFullPath();
@@ -206,7 +206,7 @@ public class LoadPulse{
                     try{
                         Descriptor currData;
                         try{
-                            currData = this.tree.getData(nids[i]);
+                            currData = nids[i].getRecord();
                         }catch(final Exception exc){
                             currData = null;
                         }
@@ -226,7 +226,7 @@ public class LoadPulse{
         this.evaluatePCConnection();
         this.evaluatePVConnection();
         this.evaluateRTransfer();
-        this.tree.close();
+        this.tree.tree.close();
         br.close();
         return nodesV;
     }
@@ -275,19 +275,19 @@ public class LoadPulse{
         this.getSetup(experiment, shot, currSetupHash, setupOnHash);
         try{
             final Database tree = new Database(experiment, pathRefShot);
-            tree.open();
+            tree.tree.open();
             final Enumeration<String> pathNamesEn = currSetupHash.keys();
             while(pathNamesEn.hasMoreElements()){
                 final String currPath = pathNamesEn.nextElement();
                 try{
-                    final Nid currNid = new Path(currPath).toNid();
+                    final Nid currNid = new Path(currPath, this.tree.tree).toNid();
                     final String currAbsPath = currNid.getNciFullPath();
                     setupHash.put(currAbsPath, currSetupHash.get(currPath));
                 }catch(final Exception exc){
                     System.out.println("LoadSetup: Cannot expand path name " + currPath + " : " + exc);
                 }
             }
-            tree.close();
+            tree.tree.close();
         }catch(final Exception exc){
             System.out.println("Cannot expand path names in LoadSetup: " + exc);
         }
@@ -298,25 +298,25 @@ public class LoadPulse{
         final Vector<NodeDescriptor> nodesV = this.getNodes(experiment, shot);
         try{
             this.tree = new Database(experiment, outShot);
-            this.tree.open();
+            this.tree.tree.open();
             for(int i = 0; i < nodesV.size(); i++){
                 final NodeDescriptor currNode = nodesV.elementAt(i);
                 try{
-                    final Nid currNid = new Path(currNode.getPath()).toNid();
+                    final Nid currNid = new Path(currNode.getPath(), this.tree.tree).toNid();
                     // if(currNode.isNoWriteModel()) System.out.println("NO WRITE MODEL!!" + currNode.getPath());
                     if(currNode.getDecompiled() != null && !currNode.isNoWriteModel()){
                         final Descriptor currData = this.tree.tdiCompile(currNode.getDecompiled());
-                        this.tree.putData(currNid, currData);
+                        currNid.putRecord(currData);
                     }
-                    if(currNode.isOn() && currNode.isParentOn()) this.tree.setOn(currNid, true);
+                    if(currNode.isOn() && currNode.isParentOn()) currNid.setOn(true);
                     else if(currNode.isParentOn()){
-                        this.tree.setOn(currNid, false);
+                        currNid.setOn(false);
                     }
                 }catch(final Exception exc){
                     System.out.println("Error writing " + currNode.getPath() + " in model: " + exc);
                 }
             }
-            this.tree.close();
+            this.tree.tree.close();
         }catch(final Exception exc){
             System.out.println("FATAL ERROR: " + exc);
         }
