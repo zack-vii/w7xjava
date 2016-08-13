@@ -62,6 +62,5 @@ public final class Descriptor_A_Test{
     @Test
     public final void testInt64Array() throws MdsException {
         Assert.assertEquals("[1234567890123456QU,1234567890123457QU]", new Uint64Array(1234567890123456l, 1234567890123457l).decompile());
-        /** [0X462d53c8abac0QU,0X462d53c8abac1QU] **/
     }
 }

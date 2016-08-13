@@ -349,7 +349,7 @@ public final class TreeShr{
      **/
     public final NodeRefStatus treeFindNodeWild(final Pointer ctx, final String searchstr, final int usage_mask, final NodeRefStatus ref) throws MdsException {
         synchronized(this.mds){
-            final int status = this.mds.getInteger(ctx, String.format("_a=-1;_q=%dQ;TreeShr->treeFindNodeWild(ref($),ref(_a),ref(_q),val(%d))", ref.ref, usage_mask), new CString(searchstr));
+            final int status = this.mds.getInteger(ctx, String.format("_a=-1;_q=%dQ;TreeShr->TreeFindNodeWild(ref($),ref(_a),ref(_q),val(%d))", ref.ref, usage_mask), new CString(searchstr));
             if(status == 0) return NodeRefStatus.init;
             return new NodeRefStatus(this.mds.getInteger("_a"), this.mds.getLong("_q"), status);
         }
