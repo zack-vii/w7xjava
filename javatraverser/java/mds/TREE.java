@@ -104,11 +104,14 @@ public final class TREE implements MdsListener{
         this(mds, expt, shot, TREE.READONLY);
     }
 
-    public TREE(final Mds mds, final String expt, final int shot, final int mode){
+    public TREE(final Mds mds, final String expt, int shot, final int mode){
         this.mds = mds;
         this.ready = mds.isReady() == null;
         this.treeshr = new TreeShr(mds);
         this.expt = expt.toUpperCase();
+        try{
+            if(shot == 0) shot = this.getCurrentShot();
+        }catch(final MdsException e){}
         this.shot = shot;
         this.mode = mode;
         this.def_nid = this.getTop();
@@ -141,7 +144,7 @@ public final class TREE implements MdsListener{
 
     public final Nid addConglom(final NODE node, final String name, final String model) throws MdsException {
         synchronized(this.mds){
-            final Nid def = this.getDefault();
+            final Nid def = this.getDefaultNid();
             node.setDefault();
             final Nid nid = this.addConglom(name, model);
             def.setDefault();
@@ -153,16 +156,6 @@ public final class TREE implements MdsListener{
         final IntegerStatus res = this.setActive().treeshr.treeAddConglom(this.ctx, path, model);
         MdsException.handleStatus(res.status);
         return new Nid(res.data, this);
-    }
-
-    public final Nid addNode(final NODE node, final String name, final byte usage) throws MdsException {
-        synchronized(this.mds){
-            final Nid def = this.getDefault();
-            node.setDefault();
-            final Nid nid = this.addNode(name, usage);
-            def.setDefault();
-            return nid;
-        }
     }
 
     public final Nid addNode(final String path, final byte usage) throws MdsException {
@@ -194,6 +187,11 @@ public final class TREE implements MdsListener{
         MdsException.handleStatus(this.treeshr.treeClose(this.ctx, this.expt, this.shot));
         this.updateListener(false);
         return this;
+    }
+
+    public final TREE createTreeFiles(final int newshot) throws MdsException {
+        MdsException.handleStatus(this.treeshr.treeCreateTreeFiles(this.expt, newshot, this.shot));
+        return new TREE(this.mds, this.expt, newshot);
     }
 
     public final TREE deleteNodeExecute() throws MdsException {
@@ -234,7 +232,7 @@ public final class TREE implements MdsListener{
     @Override
     public final void finalize() {
         if(this.opened) try{
-            this.quit();
+            this.quitTree();
         }catch(final MdsException e){
             this.mds.removeMdsListener(this);
         }
@@ -271,7 +269,7 @@ public final class TREE implements MdsListener{
         return taglist;
     }
 
-    public final Pointer getContext() throws MdsException {
+    public final Pointer getCtx() throws MdsException {
         return this.setActive().treeshr.treeCtx(this.ctx);
     }
 
@@ -279,14 +277,14 @@ public final class TREE implements MdsListener{
         return this.treeshr.treeGetCurrentShotId(this.expt);
     }
 
-    public final Nid getDefault() throws MdsException {
+    public final Nid getDefaultCached() {
+        return this.def_nid;
+    }
+
+    public final Nid getDefaultNid() throws MdsException {
         final IntegerStatus res = this.setActive().treeshr.treeGetDefaultNid(this.ctx);
         MdsException.handleStatus(res.status);
         return this.def_nid = new Nid(res.data, this);
-    }
-
-    public final Nid getDefaultCached() {
-        return this.def_nid;
     }
 
     public final Descriptor getNci(final int nid, final String name) throws MdsException {
@@ -622,7 +620,7 @@ public final class TREE implements MdsListener{
         return this;
     }
 
-    public final TREE quit() throws MdsException {
+    public final TREE quitTree() throws MdsException {
         MdsException.handleStatus(this.treeshr.treeQuitTree(this.ctx, this.expt, this.shot));
         this.updateListener(false);
         return this;
@@ -717,7 +715,7 @@ public final class TREE implements MdsListener{
         return new TREE(new MdsIp(((MdsIp)this.mds).getProvider()), this.expt, this.shot);
     }
 
-    public final TREE write() throws MdsException {
+    public final TREE writeTree() throws MdsException {
         MdsException.handleStatus(this.setActive().treeshr.treeWriteTree(this.ctx, this.expt, this.shot));
         return this;
     }

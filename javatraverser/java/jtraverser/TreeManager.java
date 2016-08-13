@@ -299,7 +299,7 @@ public class TreeManager extends JTabbedPane{
                         try{
                             final String root = new StringBuilder(tree.expt.length() + 3).append("\\").append(tree.expt).append("::").toString();
                             while((tag = tree.treeFindTagWild("***", tag)).ok()){
-                                model.addRow(new String[]{tag.data.replace(root, "\\"), new Nid(tag.nid).toString()});
+                                model.addRow(new String[]{tag.data.replace(root, "\\"), new Nid(tag.nid, tree).toString()});
                                 synchronized(this){
                                     if(this.isInterrupted()) return;
                                 }
@@ -376,7 +376,7 @@ public class TreeManager extends JTabbedPane{
         private final class write implements ActionListener{
             @Override
             public void actionPerformed(final ActionEvent e) {
-                FileMenu.this.treeman.write();
+                FileMenu.this.treeman.writeTree();
             }
         }
 
@@ -676,7 +676,7 @@ public class TreeManager extends JTabbedPane{
         this.frame.repaint();
     }
 
-    public final void write() {
-        this.getCurrentTreeView().write();
+    public final void writeTree() {
+        this.getCurrentTreeView().writeTree();
     }
 }

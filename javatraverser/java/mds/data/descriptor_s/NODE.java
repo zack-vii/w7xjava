@@ -164,7 +164,14 @@ public abstract class NODE<T>extends Descriptor_S<T>{
     }
 
     public final Nid addNode(final String name, final byte usage) throws MdsException {
-        return this.tree.addNode(this, name, usage);
+        synchronized(this.tree.mds){
+            final Nid def = this.tree.getDefaultNid();
+            this.setDefault();
+            final Nid nid = this.tree.addNode(name, usage);
+            def.setDefault();
+            if(usage == NODE.USAGE_SUBTREE) nid.setSubtree();
+            return nid;
+        }
     }
 
     public final NODE addTag(final String tag) throws MdsException {

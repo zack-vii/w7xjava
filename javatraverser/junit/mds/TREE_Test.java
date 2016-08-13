@@ -44,7 +44,7 @@ public class TREE_Test{
         Assert.assertEquals(TREE_Test.shot, tree.setCurrentShot().getCurrentShot());
         Assert.assertTrue(tree.open(TREE.NEW).isOpen());
         Assert.assertEquals("Tree(\"TEST\", 7633, edit)", tree.toString());
-        Assert.assertTrue(tree.getContext().decompile().matches("Pointer\\(0x[a-f0-9]+\\)"));
+        Assert.assertTrue(tree.getCtx().decompile().matches("Pointer\\(0x[a-f0-9]+\\)"));
         Assert.assertEquals("\\TEST::TOP.STRUCT", (node = tree.addNode("STRUCT", Nid.USAGE_STRUCTURE)).decompile());
         Assert.assertEquals("\\TEST::TOP.STRUCT:SIGNAL", (node = node.addNode("SIGNAL", Nid.USAGE_SIGNAL)).decompile());
         Assert.assertEquals("[\\TEST::TOP.STRUCT:SIGNAL]", Arrays.toString(tree.findNodeWild(NODE.USAGE_SIGNAL)));
@@ -78,7 +78,7 @@ public class TREE_Test{
         Assert.assertEquals(1, node.deleteInitialize());
         Assert.assertEquals("[\\TEST::TOP.SUBTREE]", Arrays.toString(tree.deleteNodeGetNids()));
         Assert.assertEquals(0, tree.deleteNodeExecute().findNodeWild(NODE.USAGE_SUBTREE).length);
-        Assert.assertFalse(tree.write().quit().isOpen());
+        Assert.assertFalse(tree.writeTree().quitTree().isOpen());
     }
 
     @Before

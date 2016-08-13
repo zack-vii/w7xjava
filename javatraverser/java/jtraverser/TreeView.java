@@ -296,7 +296,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
 
     public final TreeView close(final boolean quit) {
         try{
-            if(quit) this.tree.quit();
+            if(quit) this.tree.quitTree();
             else this.tree.close();
         }catch(final Exception e){
             boolean editable = false;
@@ -309,14 +309,14 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
                 final int n = JOptionPane.showConfirmDialog(this.getFrame(), "Tree " + name + " open in edit mode has been changed: Write it before closing?", "Closing Tree ", JOptionPane.YES_NO_OPTION);
                 if(n == JOptionPane.YES_OPTION){
                     try{
-                        this.tree.write();
+                        this.tree.writeTree();
                         this.tree.close();
                     }catch(final Exception exc){
                         JOptionPane.showMessageDialog(this.getFrame(), "Error closing tree", exc.getMessage(), JOptionPane.WARNING_MESSAGE);
                     }
                 }else{
                     try{
-                        this.tree.quit();
+                        this.tree.quitTree();
                     }catch(final Exception exce){
                         JOptionPane.showMessageDialog(this.getFrame(), "Error quitting tree", exce.getMessage(), JOptionPane.WARNING_MESSAGE);
                     }
@@ -505,7 +505,7 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
     }
 
     public final void updateDefault() throws MdsException {
-        this.tree.getDefault();
+        this.tree.getDefaultNid();
     }
 
     @Override
@@ -535,9 +535,9 @@ public final class TreeView extends JTree implements TreeSelectionListener, Data
         }
     }
 
-    public final void write() {
+    public final void writeTree() {
         try{
-            this.tree.write();
+            this.tree.writeTree();
         }catch(final Exception exc){
             JOptionPane.showMessageDialog(this.getFrame(), "Error writing tree", exc.getMessage(), JOptionPane.WARNING_MESSAGE);
         }

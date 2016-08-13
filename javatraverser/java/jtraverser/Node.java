@@ -184,7 +184,7 @@ public class Node{
 
     public final Node addDevice(final String name, final String type) throws MdsException {
         Nid new_nid;
-        final Nid prev_default = this.nid.getTree().getDefault();
+        final Nid prev_default = this.nid.getTree().getDefaultNid();
         this.nid.setDefault();
         try{
             new_nid = this.nid.getTree().addConglom(this.path, type);
@@ -217,7 +217,7 @@ public class Node{
 
     public final Node addNode(final String name, final byte usage) throws MdsException {
         Nid new_nid;
-        final Nid prev_default = this.nid.getTree().getDefault();
+        final Nid prev_default = this.nid.getTree().getDefaultNid();
         this.nid.setDefault();
         try{
             new_nid = this.nid.getTree().addNode(name, usage);
@@ -234,7 +234,7 @@ public class Node{
             return false;
         }
         try{
-            final Nid prev_default = this.nid.getTree().getDefault();
+            final Nid prev_default = this.nid.getTree().getDefaultNid();
             this.nid.setDefault();
             try{
                 this.nid.setPath(newName);

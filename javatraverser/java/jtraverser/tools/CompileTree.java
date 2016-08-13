@@ -65,7 +65,7 @@ public class CompileTree extends Thread{
         final String usageStr = node.getAttribute("USAGE");
         Nid nid = null;
         try{
-            final Nid parentNid = this.tree.getDefault();
+            final Nid parentNid = this.tree.getDefaultNid();
             if(type.equals("data")){
                 // final Element parentNode = (Element)node.getParentNode();
                 final boolean isDeviceField = node.getNodeName().equals("field");
@@ -75,10 +75,10 @@ public class CompileTree extends Thread{
                     final Descriptor data = null;
                     {
                         this.unresolvedExprV.addElement(dataStr);
-                        this.unresolvedNidV.addElement(this.tree.getDefault());
+                        this.unresolvedNidV.addElement(this.tree.getDefaultNid());
                     }
                     try{
-                        nid = this.tree.getDefault();
+                        nid = this.tree.getDefaultNid();
                         if(isDeviceField){
                             Descriptor oldData;
                             try{
@@ -286,7 +286,7 @@ public class CompileTree extends Thread{
             }
         }
         try{
-            this.tree.write();
+            this.tree.writeTree();
             this.tree.close();
         }catch(final Exception e){
             System.err.println("Error closeing tree: " + e);

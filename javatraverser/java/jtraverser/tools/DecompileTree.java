@@ -21,9 +21,9 @@ import mds.MdsException;
 import mds.TREE;
 import mds.data.descriptor.Descriptor;
 import mds.data.descriptor_r.Conglom;
-import mds.data.descriptor_s.Nid;
 import mds.data.descriptor_s.NODE;
 import mds.data.descriptor_s.NODE.Flags;
+import mds.data.descriptor_s.Nid;
 import mds.mdsip.MdsIp;
 
 public class DecompileTree{
@@ -141,7 +141,7 @@ public class DecompileTree{
 
     private void recDecompile(final Nid nid, final Element node, final boolean isDeviceField, final boolean isFull) {
         try{
-            final Nid prevNid = this.tree.getDefault();
+            final Nid prevNid = this.tree.getDefaultNid();
             nid.setDefault();
             final Flags flags;
             try{
