@@ -40,6 +40,12 @@ public abstract class Descriptor<T>{
         return t == null ? "*" : t.decompile();
     }
 
+    /** Returns the Descriptor deserialized from the given byte[] with native byte order (Descriptor.BYTEORDER) **/
+    public static final Descriptor deserialize(final byte[] buf) throws MdsException {
+        if(buf == null) return null;
+        return Descriptor.deserialize(Descriptor.Buffer(buf, Descriptor.BYTEORDER));
+    }
+
     /** Returns the Descriptor deserialized from the given byte[] with byte order **/
     public static final Descriptor deserialize(final byte[] buf, final boolean swap) throws MdsException {
         if(buf == null) return null;
@@ -266,6 +272,12 @@ public abstract class Descriptor<T>{
 
     /** Returns serialized byte stream as byte[] **/
     public final byte[] serializeArray() {
+        if(this.b.arrayOffset() == 0) return this.b.array();
+        return this.serializeArray_copy();
+    }
+
+    /** Returns serialized byte stream as byte[] **/
+    public final byte[] serializeArray_copy() {
         final ByteBuffer b = this.serialize();
         return ByteBuffer.allocate(b.limit()).put(b).array();
     }
